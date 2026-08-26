@@ -16,7 +16,7 @@ class FailureCategory(str, Enum):
 
 class CreateAttemptRequest(BaseModel):
     result: AttemptResult
-    phase_reached: int
+    phase_reached: int | None = None
     failure_move_id: str | None = None
     failure_category: FailureCategory | None = None
     notes: str = ""

@@ -1,1 +1,92 @@
-[]
+[
+  {
+    "id": "attempt-001",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:37:13.617959Z",
+    "result": "failed",
+    "phase_reached": 1,
+    "failure_move_id": "thrust-attack",
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-002",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:37:18.143097Z",
+    "result": "failed",
+    "phase_reached": 2,
+    "failure_move_id": "sweep-attack",
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-003",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:37:26.004928Z",
+    "result": "failed",
+    "phase_reached": 1,
+    "failure_move_id": "floating-passage",
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-004",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:51:47.505507Z",
+    "result": "victory",
+    "phase_reached": 3,
+    "failure_move_id": null,
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-005",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:56:32.947451Z",
+    "result": "failed",
+    "phase_reached": 1,
+    "failure_move_id": "floating-passage",
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-006",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T19:58:47.783272Z",
+    "result": "failed",
+    "phase_reached": 3,
+    "failure_move_id": "lightning-attack",
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-007",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T20:35:48.789880Z",
+    "result": "victory",
+    "phase_reached": 3,
+    "failure_move_id": null,
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-008",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T20:40:29.045415Z",
+    "result": "victory",
+    "phase_reached": 3,
+    "failure_move_id": null,
+    "failure_category": null,
+    "notes": ""
+  },
+  {
+    "id": "attempt-009",
+    "boss_id": "genichiro-ashina",
+    "timestamp": "2026-08-26T20:41:07.900873Z",
+    "result": "victory",
+    "phase_reached": 3,
+    "failure_move_id": null,
+    "failure_category": null,
+    "notes": ""
+  }
+]

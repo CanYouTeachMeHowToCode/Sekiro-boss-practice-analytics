@@ -43,7 +43,7 @@ export interface Attempt {
 
 export interface CreateAttemptRequest {
   result: AttemptResult;
-  phase_reached: number;
+  phase_reached: number | null;
   failure_move_id: string | null;
   failure_category: FailureCategory | null;
   notes: string;

@@ -39,7 +39,7 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
 
     const payload: CreateAttemptRequest =
       result === "victory"
-        ? { result, phase_reached: phaseReached, failure_move_id: null, failure_category: null, notes }
+        ? { result, phase_reached: null, failure_move_id: null, failure_category: null, notes }
         : {
             result,
             phase_reached: phaseReached,
@@ -86,16 +86,18 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
         </label>
       </fieldset>
 
-      <label>
-        Phase Reached
-        <select value={phaseReached} onChange={(e) => setPhaseReached(Number(e.target.value))}>
-          {boss.phases.map((phase) => (
-            <option key={phase.phase_number} value={phase.phase_number}>
-              {phase.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      {result === "failed" && (
+        <label>
+          Phase Reached
+          <select value={phaseReached} onChange={(e) => setPhaseReached(Number(e.target.value))}>
+            {boss.phases.map((phase) => (
+              <option key={phase.phase_number} value={phase.phase_number}>
+                {phase.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       {result === "failed" && (
         <label>
