@@ -71,14 +71,17 @@ describe("RecordAttemptForm", () => {
     expect(onSuccess).toHaveBeenCalled();
   });
 
-  it("hides the failure cause field and omits it from the payload when the result is Victory", async () => {
+  it("hides the phase and failure cause fields and omits them from the payload when the result is Victory", async () => {
     const user = userEvent.setup();
-    vi.mocked(attemptsApi.createAttempt).mockResolvedValue(stubbedAttempt({ result: "victory" }));
+    vi.mocked(attemptsApi.createAttempt).mockResolvedValue(
+      stubbedAttempt({ result: "victory", phase_reached: 2 })
+    );
 
     render(<RecordAttemptForm boss={boss} onSuccess={vi.fn()} onCancel={vi.fn()} />);
 
     await user.click(screen.getByLabelText(/victory/i));
 
+    expect(screen.queryByLabelText(/phase reached/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/what ended this attempt/i)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /save attempt/i }));
@@ -86,7 +89,7 @@ describe("RecordAttemptForm", () => {
     await waitFor(() =>
       expect(attemptsApi.createAttempt).toHaveBeenCalledWith("genichiro-ashina", {
         result: "victory",
-        phase_reached: 1,
+        phase_reached: null,
         failure_move_id: null,
         failure_category: null,
         notes: "",

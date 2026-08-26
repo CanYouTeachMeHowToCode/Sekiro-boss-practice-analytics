@@ -28,12 +28,29 @@ def test_create_attempt_invalid_phase(client):
 def test_create_victory_without_failure_move(client):
     resp = client.post(
         "/api/bosses/genichiro-ashina/attempts",
-        json={"result": "victory", "phase_reached": 3},
+        json={"result": "victory"},
     )
     assert resp.status_code == 201
     data = resp.json()
     assert data["failure_move_id"] is None
     assert data["failure_category"] is None
+
+
+def test_create_victory_normalizes_phase_reached_to_bosss_final_phase(client):
+    resp = client.post(
+        "/api/bosses/genichiro-ashina/attempts",
+        json={"result": "victory", "phase_reached": 1},
+    )
+    assert resp.status_code == 201
+    assert resp.json()["phase_reached"] == 3
+
+
+def test_create_failed_attempt_requires_phase_reached(client):
+    resp = client.post(
+        "/api/bosses/genichiro-ashina/attempts",
+        json={"result": "failed"},
+    )
+    assert resp.status_code == 400
 
 
 def test_create_failed_attempt_not_sure(client):

@@ -1,11 +1,12 @@
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 from app.models.attempt import Attempt, AttemptResult, CreateAttemptRequest, FailureCategory
 from app.services import boss_service
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(os.environ.get("SEKIRO_DATA_DIR", str(Path(__file__).resolve().parent.parent / "data")))
 ATTEMPTS_FILE = "attempts.json"
 
 
@@ -38,18 +39,26 @@ def get_attempts(boss_id: str) -> list[Attempt]:
 
 
 def create_attempt(boss_id: str, req: CreateAttemptRequest) -> Attempt:
-    if not boss_service.phase_exists(boss_id, req.phase_reached):
-        raise AttemptValidationError(
-            f"Phase {req.phase_reached} does not exist for boss '{boss_id}'"
-        )
-
     failure_move_id = req.failure_move_id
     failure_category = req.failure_category
 
     if req.result == AttemptResult.VICTORY:
+        # A victory means the boss's final phase was cleared, regardless of
+        # what phase the client sends - the client shouldn't need to know
+        # (or be able to get wrong) which phase that is.
+        boss = boss_service.get_boss(boss_id)
+        phase_reached = max(phase.phase_number for phase in boss.phases)
         failure_move_id = None
         failure_category = None
     else:
+        if req.phase_reached is None:
+            raise AttemptValidationError("phase_reached is required for a failed attempt")
+        if not boss_service.phase_exists(boss_id, req.phase_reached):
+            raise AttemptValidationError(
+                f"Phase {req.phase_reached} does not exist for boss '{boss_id}'"
+            )
+        phase_reached = req.phase_reached
+
         if failure_move_id is not None:
             if boss_service.get_move(boss_id, failure_move_id) is None:
                 raise AttemptValidationError(
@@ -65,7 +74,7 @@ def create_attempt(boss_id: str, req: CreateAttemptRequest) -> Attempt:
         boss_id=boss_id,
         timestamp=datetime.now(timezone.utc),
         result=req.result,
-        phase_reached=req.phase_reached,
+        phase_reached=phase_reached,
         failure_move_id=failure_move_id,
         failure_category=failure_category,
         notes=req.notes or "",

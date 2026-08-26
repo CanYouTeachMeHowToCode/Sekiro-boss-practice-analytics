@@ -1,9 +1,10 @@
 import json
+import os
 from pathlib import Path
 
 from app.models.boss import Boss, BossMove, BossSummary
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(os.environ.get("SEKIRO_DATA_DIR", str(Path(__file__).resolve().parent.parent / "data")))
 BOSSES_FILE = "bosses.json"
 
 
