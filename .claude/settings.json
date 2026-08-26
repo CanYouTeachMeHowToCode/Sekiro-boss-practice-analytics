@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m venv .venv)",
+      "Bash(./.venv/Scripts/python.exe -m pip install -q -r requirements.txt)",
+      "Bash(./.venv/Scripts/python.exe -m pytest -v)",
+      "Bash(curl -s http://127.0.0.1:8123/health)",
+      "Bash(curl -s http://127.0.0.1:8123/api/bosses)",
+      "Bash(curl -s http://127.0.0.1:8123/api/bosses/genichiro-ashina)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8123/api/bosses/nonexistent)",
+      "Bash(curl -s -X POST http://127.0.0.1:8123/api/bosses/genichiro-ashina/attempts -H 'Content-Type: application/json' -d '{\"result\":\"failed\",\"phase_reached\":2,\"failure_move_id\":\"floating-passage\",\"notes\":\"got greedy\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8123/api/bosses/genichiro-ashina/attempts -H 'Content-Type: application/json' -d '{\"result\":\"victory\",\"phase_reached\":3}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8123/api/bosses/genichiro-ashina/attempts -H 'Content-Type: application/json' -d '{\"result\":\"failed\",\"phase_reached\":2}')",
+      "Bash(curl -s http://127.0.0.1:8123/api/bosses/genichiro-ashina/attempts)",
+      "Bash(curl -s http://127.0.0.1:8123/api/bosses/genichiro-ashina/analytics)",
+      "Bash(git status *)"
+    ]
+  }
+}

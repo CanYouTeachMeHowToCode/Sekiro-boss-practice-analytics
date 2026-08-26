@@ -1,0 +1,91 @@
+[
+  {
+    "id": "genichiro-ashina",
+    "name": "Genichiro Ashina",
+    "game": "sekiro",
+    "location": "Ashina Castle",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": null,
+            "recommended_response": null
+          },
+          {
+            "id": "floating-passage",
+            "name": "Floating Passage",
+            "move_type": "combo",
+            "description": "Multi-hit sword combo.",
+            "recommended_response": "Deflect the sequence."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": null,
+            "recommended_response": null
+          },
+          { 
+            "id": "sweep-attack",
+            "name": "Sweep Attack",
+            "move_type": "sweep",
+            "description": "second/third stage has sweep attack",
+            "recommended_response": null
+          },
+          {
+            "id": "floating-passage",
+            "name": "Floating Passage",
+            "move_type": "combo",
+            "description": "Multi-hit sword combo.",
+            "recommended_response": "Deflect the sequence."
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Phase 3",
+        "moves": [
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": null,
+            "recommended_response": null
+          },
+          { 
+            "id": "sweep-attack",
+            "name": "Sweep Attack",
+            "move_type": "sweep",
+            "description": "second/third stage has sweep attack",
+            "recommended_response": null
+          },
+          {
+            "id": "floating-passage",
+            "name": "Floating Passage",
+            "move_type": "combo",
+            "description": "Multi-hit sword combo.",
+            "recommended_response": "Deflect the sequence."
+          },
+          {
+            "id": "lightning-attack",
+            "name": "Lightning Attack",
+            "move_type": "lightning",
+            "description": null,
+            "recommended_response": null
+          }
+        ]
+      }
+    ]
+  }
+]
