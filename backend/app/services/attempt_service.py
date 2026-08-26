@@ -1,11 +1,12 @@
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 from app.models.attempt import Attempt, AttemptResult, CreateAttemptRequest, FailureCategory
 from app.services import boss_service
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(os.environ.get("SEKIRO_DATA_DIR", str(Path(__file__).resolve().parent.parent / "data")))
 ATTEMPTS_FILE = "attempts.json"
 
 
