@@ -4,421 +4,220 @@
 
 Sekiro Boss Practice Analytics is a web application for tracking and analyzing player attempts against bosses in *Sekiro: Shadows Die Twice*.
 
-The core problem is simple:
+Players manually record information they can realistically remember after each boss attempt:
 
-After repeatedly fighting a difficult boss, players usually remember that they died, roughly how far they reached, and sometimes which move killed them. However, they usually do not have a structured way to determine:
+* whether the attempt ended in victory or failure
+* which phase they reached
+* which move caused the final failure, if known
+* optional notes
 
-* which boss moves cause the most deaths
-* which phase is the main bottleneck
-* whether they are progressing further over time
-* how many attempts it takes to defeat a boss
+The application derives analytics from this attempt history to identify:
 
-V1 turns this lightweight, manually recorded information into useful failure analytics.
-
-This repository is currently focused on **V1 only**.
-
----
-
-# V1 Product Definition
-
-V1 is a:
-
-> **Manual boss-attempt tracking and failure analytics tool.**
-
-Players record how far they reached and what ended each attempt.
-
-The application uses attempt history to identify:
-
-* the player's most common failure moves
-* the player's main bottleneck phase
+* frequently recorded failure moves
+* bottleneck phases
 * progression across attempts
-* number of attempts
-* whether the boss has been defeated
-
-V1 is NOT intended to measure every action performed during a fight.
-
-The user should not be expected to remember detailed combat statistics such as:
-
-* every attack they were hit by
-* total deflect success rate
-* number of successful Mikiri Counters
-* number of times each move appeared
-* damage taken from each move
-* detailed per-move performance
-
-Those require gameplay observation or video analysis and belong to future versions.
+* overall boss progression
 
 ---
 
-# Core User Flow
+# Current Project Status
 
-The primary V1 user flow is:
+## V1 — Completed
+
+V1 established the complete MVP workflow:
 
 ```text
-Open Web App
-    ↓
 Choose Boss
     ↓
 Boss Dashboard
     ↓
 Record Attempt
     ↓
-Select Result
+Result + Phase + Failure Move
     ↓
-Select Phase Reached
+Attempt History
     ↓
-Select What Ended the Attempt
-    ↓
-Save
-    ↓
-Attempt History + Analytics Update
+Basic Analytics
 ```
 
-For example:
+V1 uses:
 
-```text
-Sekiro Boss Practice Analytics
+* React + TypeScript
+* FastAPI + Pydantic
+* JSON persistence
+* GitHub Actions CI
+* Docker
 
-Choose a Boss
-
-[ Genichiro Ashina ]
-[ Lady Butterfly ]
-[ Guardian Ape ]
-```
-
-The initial implementation should start with only one boss:
-
-```text
-Genichiro Ashina
-```
-
-Additional bosses should only be added after the complete V1 workflow works end-to-end.
+V1 intentionally validated one complete vertical slice before expanding the system.
 
 ---
 
-# Boss Dashboard
+# Current Development Focus
 
-After selecting a boss, the user should arrive at a single primary boss dashboard.
+This repository is now focused on:
 
-Example:
+> **V2 — Structured Sekiro Analytics Platform**
 
-```text
-Genichiro Ashina
-Ashina Castle
+V2 evolves the JSON-backed MVP into a structured, multi-boss Sekiro analytics application.
 
-Attempts: 12
-Best Result: Phase 3
-Defeated: No
-
-[ + Record Attempt ]
-
-
-Your Analytics
-
-Main Bottleneck:
-Phase 2
-
-Most Common Failure:
-Floating Passage
-
-Failure Breakdown:
-
-Floating Passage    5
-Thrust Attack       3
-Lightning           2
-Other               1
-
-
-Recent Attempts
-
-#12  Phase 3  Lightning Attack
-#11  Phase 2  Floating Passage
-#10  Phase 2  Floating Passage
-
-
-Boss Moveset
-
-Phase 1
-- Thrust Attack
-- Sweep Attack
-- Floating Passage
-
-Phase 2
-...
-
-Phase 3
-- Lightning Attack
-...
-```
-
-The Boss Dashboard combines three types of information:
+The main V2 transition is:
 
 ```text
-Action
-→ Record Attempt
+V1
 
-Personal Analytics
-→ What the player struggles with
+Small boss dataset
++
+JSON persistence
++
+basic boss-level analytics
 
-Boss Reference
-→ Phases and moveset
+        ↓
+
+V2
+
+Multiple bosses
++
+PostgreSQL
++
+relational data model
++
+progression analytics
++
+game-level analytics
++
+stable deployment
 ```
-
-Do not unnecessarily split these into many separate pages during V1.
 
 ---
 
-# Record Attempt
+# V2 Product Goal
 
-Recording an attempt is the most important interaction in V1.
+V2 should answer:
 
-It should be fast and require minimal memory from the player.
+> **Where am I improving or struggling across Sekiro?**
 
-A player who just finished a boss attempt should ideally be able to record it in approximately a few selections.
+V1 primarily answers:
 
-Example:
+> What killed me?
+
+V2 should preserve that functionality while adding:
+
+* multiple major Sekiro bosses
+* relational persistence
+* richer boss metadata
+* progression analytics
+* recent vs historical comparisons
+* overall Sekiro-level analytics
+* search and filtering
+* stronger integration testing
+* stable public deployment
+
+---
+
+# V2 Core Product Principles
+
+## Preserve Lightweight Attempt Recording
+
+The most important V1 interaction remains unchanged.
+
+Users should still be able to record an attempt quickly using:
 
 ```text
-Record Attempt — Genichiro Ashina
-
 Result
-
-(●) Failed
-( ) Victory
-
-
 Phase Reached
-
-[ Phase 2 ▼ ]
-
-
-What ended this attempt?
-
-[ Floating Passage ▼ ]
-
-Options may include:
-
-- known boss moves
-- Other
-- Not Sure
-
-
-Notes
-
-[ Optional ]
-
-
-[ Save Attempt ]
+Failure Move / Other / Not Sure
+Optional Notes
 ```
+
+Do NOT expand attempt recording into detailed manual combat telemetry.
+
+Do NOT require users to remember:
+
+* every move encountered
+* total deflect attempts
+* Mikiri success count
+* healing usage
+* damage taken
+* posture events
+* move frequency
+* detailed per-action performance
+
+Those belong to gameplay analysis in later versions.
 
 ---
 
-# What Users Are Expected to Remember
+## Prefer Derived Analytics
 
-V1 assumes users can reasonably remember:
+The system should derive weaknesses from attempt history whenever possible.
 
-1. Which boss they fought.
-2. Whether they won or lost.
-3. Approximately which phase they reached.
-4. If known, which move caused the final failure.
-5. Optionally, a short note about the attempt.
+Do not ask users to manually declare:
 
-V1 must NOT assume users accurately remember their performance against every move during an entire fight.
+```text
+"My weakest move is Floating Passage."
+```
+
+Prefer computing:
+
+```text
+Most Common Recorded Failure:
+Floating Passage
+```
+
+from attempt data.
 
 ---
 
-# Unknown Failure Cause
+## Maintain Honest Analytics
 
-Users may not always know exactly which move killed them.
-
-Therefore:
-
-```text
-What ended this attempt?
-```
-
-must support:
-
-```text
-Not Sure
-Other
-```
-
-A failure move must NOT be required.
-
-An attempt such as:
-
-```text
-Boss:
-Genichiro
-
-Result:
-Failed
-
-Phase Reached:
-Phase 2
-
-Failure Cause:
-Not Sure
-```
-
-is still valuable.
-
-It contributes to phase analytics even if it cannot contribute to move-specific analytics.
-
-Do not force users to guess a move simply to satisfy structured data requirements.
-
----
-
-# Boss Moveset Purpose
-
-The Boss Moveset is reference data.
-
-Its purpose in V1 is NOT to ask the user to manually score their performance against every move.
-
-The moveset serves three purposes.
-
-## 1. Failure Identification
-
-It helps players identify the move that ended their attempt.
+Do not calculate or display statistics that the available data cannot support.
 
 For example:
 
 ```text
-Floating Passage
-
-Type:
-Combo
-
-Description:
-Multi-hit sword combo.
-
-Recommended Response:
-Deflect the sequence.
+Floating Passage failures: 5
 ```
 
-The player may recognize:
+is valid.
+
+But:
 
 ```text
-"That is the attack I died to."
+Floating Passage success rate: 75%
 ```
 
-and select it when recording an attempt.
+is NOT valid unless the system knows how many times Floating Passage actually occurred.
+
+True per-move success rates belong to V4 gameplay analysis.
 
 ---
 
-## 2. Structured Analytics
-
-Failure causes should use structured move IDs rather than arbitrary user-entered strings.
-
-Prefer:
-
-```text
-floating-passage
-```
-
-instead of free-text variants such as:
-
-```text
-"floating combo"
-"that long sword combo"
-"the multi slash attack"
-```
-
-This allows attempts to be aggregated reliably.
-
----
-
-## 3. Future Video Analysis Compatibility
-
-V1:
-
-```text
-User manually selects:
-Floating Passage
-```
-
-Future version:
-
-```text
-Gameplay analyzer detects:
-Floating Passage
-```
-
-Both can ultimately reference:
-
-```text
-move_id = "floating-passage"
-```
-
-Design the move model so this future transition is possible.
-
-Do NOT implement automatic detection in V1.
-
----
-
-# V1 Core Features
-
-Users should be able to:
-
-1. Browse supported Sekiro bosses.
-2. Select a boss.
-3. View the boss dashboard.
-4. View basic boss phases and moves.
-5. Record a boss attempt.
-6. Record whether the attempt ended in failure or victory.
-7. Record the phase reached.
-8. Optionally record the move that ended the attempt.
-9. Select `Other` or `Not Sure` when appropriate.
-10. Add an optional note.
-11. View attempt history.
-12. View failure breakdown by boss move.
-13. View failure breakdown by phase.
-14. Identify the main bottleneck phase.
-15. Identify the most common known failure move.
-16. View basic progression across attempts.
-
----
-
-# V1 Non-Goals
+# V2 Non-Goals
 
 Do NOT introduce the following unless explicitly requested:
 
-* PostgreSQL
-* MySQL
-* SQLite
-* SQLAlchemy
-* Alembic
-* Redis
-* Authentication
-* User accounts
+* user accounts
+* authentication
 * OAuth
-* Kubernetes
-* Microservices
-* Message queues
-* automated Wiki scraping
-* game file unpacking
-* game memory reading
-* gameplay video upload
+* personalized multi-user histories
+* recommendation engines
+* gameplay video uploads
 * computer vision
 * machine learning
 * automatic boss move detection
-* automatic deflect detection
 * automatic player action recognition
+* Black Myth: Wukong support
+* multi-game UI
+* Redis without a demonstrated need
+* Kafka or message queues without a demonstrated need
+* microservices
+* Kubernetes purely for complexity
 * detailed combat telemetry
-* predictive recommendation systems
 
-Do not implement future-version functionality prematurely.
+These belong to V3–V5 or should only be introduced when justified by an actual technical requirement.
 
 ---
 
-# Tech Stack
-
-## Backend
-
-* Python
-* FastAPI
-* Pydantic
+# V2 Tech Stack
 
 ## Frontend
 
@@ -426,90 +225,113 @@ Do not implement future-version functionality prematurely.
 * TypeScript
 * Vite
 
-## Persistence
+## Backend
 
-V1 uses JSON files instead of a database.
+* Python
+* FastAPI
+* Pydantic
 
-Suggested structure:
+## Database
 
-```text
-backend/app/data/
-├── bosses.json
-└── attempts.json
-```
+* PostgreSQL
+* SQLAlchemy
+* Alembic
 
-`bosses.json` contains relatively static boss knowledge.
+## Testing
 
-`attempts.json` contains manually recorded player attempts.
+* pytest
+* API tests
+* database integration tests
+* frontend type checking
+* frontend build validation
 
-V1 intentionally uses JSON because:
+## CI/CD
 
-* only a few bosses are supported
-* the dataset is small
-* persistence requirements are simple
-* the goal is to validate the full product workflow first
-
-PostgreSQL may replace JSON in V2.
+* GitHub Actions
 
 ## Deployment
 
 * Docker
 
-Dockerization should be added after the application works locally end-to-end.
+V2 may introduce staging and production deployment environments.
+
+A separate `stg` Git branch is not required.
 
 ---
 
-# High-Level Architecture
+# V2 High-Level Architecture
 
 ```text
 Browser
-   |
-   v
+   ↓
 React + TypeScript
-   |
-   | HTTP / JSON
-   v
-FastAPI
-   |
-   +-------------------+
-   |                   |
-   v                   v
-bosses.json        attempts.json
-```
-
-The frontend should access application data only through FastAPI APIs.
-
-Do not import backend JSON directly into React.
-
-This keeps the frontend independent of the persistence implementation.
-
-Future migration should be possible:
-
-```text
-V1
-
+   ↓
+HTTP / JSON
+   ↓
 FastAPI
    ↓
-JSON
-
-        ↓
-
-V2
-
-FastAPI
+Service Layer
+   ↓
+SQLAlchemy
    ↓
 PostgreSQL
 ```
 
-without significantly changing frontend API contracts.
+Analytics should conceptually follow:
+
+```text
+FastAPI
+   ↓
+Analytics Service
+   ↓
+SQLAlchemy Queries
+   ↓
+PostgreSQL Attempt Data
+```
+
+The frontend must remain independent of the persistence implementation.
 
 ---
 
-# Core Data Model
+# API Compatibility Principle
 
-V1 contains two categories of data.
+The V1 frontend already communicates with FastAPI.
 
-## Game Knowledge
+The PostgreSQL migration should preserve existing API contracts wherever practical.
+
+Conceptually:
+
+```text
+V1
+
+React
+ ↓
+FastAPI
+ ↓
+JSON
+```
+
+becomes:
+
+```text
+V2
+
+React
+ ↓
+FastAPI
+ ↓
+PostgreSQL
+```
+
+The frontend should not require a large rewrite simply because persistence changes.
+
+If an API contract must change, make the change deliberately and update frontend types and clients together.
+
+---
+
+# V2 Core Domain Model
+
+The primary domain hierarchy remains:
 
 ```text
 Game
@@ -518,7 +340,7 @@ Game
            └── Move
 ```
 
-## Player Attempt Data
+Player attempt data:
 
 ```text
 Boss
@@ -526,265 +348,349 @@ Boss
       ├── Result
       ├── Phase Reached
       ├── Failure Move
-      └── Optional Notes
+      ├── Failure Category
+      ├── Notes
+      └── Timestamp
 ```
-
-Analytics are derived from attempt data.
 
 ---
 
-# Boss Model
+# V2 Relational Data Model
 
-A boss should approximately follow:
-
-```json
-{
-  "id": "genichiro-ashina",
-  "name": "Genichiro Ashina",
-  "game": "sekiro",
-  "location": "Ashina Castle",
-  "phases": [
-    {
-      "phase_number": 1,
-      "name": "Phase 1",
-      "moves": [
-        {
-          "id": "floating-passage",
-          "name": "Floating Passage",
-          "move_type": "combo",
-          "description": "Multi-hit sword combo.",
-          "recommended_response": "Deflect the sequence."
-        }
-      ]
-    }
-  ]
-}
-```
-
-Optional move fields may include:
+The initial PostgreSQL schema should approximately contain:
 
 ```text
+games
+bosses
+boss_phases
+moves
+attempts
+```
+
+Avoid adding tables solely for hypothetical future requirements.
+
+---
+
+## Games
+
+Conceptual fields:
+
+```text
+id
+slug
+name
+```
+
+Example:
+
+```text
+1
+sekiro
+Sekiro: Shadows Die Twice
+```
+
+Even though V2 supports only Sekiro, retaining the Game entity keeps the domain model clean.
+
+Do NOT build full multi-game functionality in V2.
+
+---
+
+## Bosses
+
+Conceptual fields:
+
+```text
+id
+game_id
+slug
+name
+location
+```
+
+Relationship:
+
+```text
+Game
+ 1
+ ↓
+Many Bosses
+```
+
+---
+
+## Boss Phases
+
+Conceptual fields:
+
+```text
+id
+boss_id
+phase_number
+name
+```
+
+Relationship:
+
+```text
+Boss
+ 1
+ ↓
+Many Phases
+```
+
+A boss may have a different number of phases from another boss.
+
+Do not assume every boss has exactly three phases.
+
+---
+
+## Moves
+
+Conceptual fields:
+
+```text
+id
+boss_phase_id
+slug
+name
+move_type
 description
 telegraph
 recommended_response
 common_mistakes
+source_name
+source_url
+```
+
+Not every optional field must be populated immediately.
+
+Do not block V2 development on complete moveset documentation.
+
+---
+
+## Attempts
+
+Conceptual fields:
+
+```text
+id
+boss_id
+result
+phase_reached
+failure_move_id
+failure_category
 notes
+created_at
 ```
 
-Avoid excessive data collection during initial development.
+`failure_move_id` should be nullable.
 
-Do not invent boss mechanics or statistics when uncertain.
+Valid failure categories may include:
+
+```text
+known_move
+other
+not_sure
+```
+
+A victory should not require a failure move.
 
 ---
 
-# Attempt Model
+# Database Integrity
 
-Keep an attempt intentionally small.
+Use relational constraints where they protect meaningful domain rules.
 
-Approximate model:
+Examples:
 
-```json
-{
-  "id": "attempt-001",
-  "boss_id": "genichiro-ashina",
-  "timestamp": "2026-08-24T21:00:00Z",
-  "result": "failed",
-  "phase_reached": 2,
-  "failure_move_id": "floating-passage",
-  "notes": ""
-}
-```
+* boss must reference an existing game
+* phase must reference an existing boss
+* move must reference an existing phase
+* attempt must reference an existing boss
+* failure move must reference an existing move when present
 
-A failure with unknown cause:
+Application-level validation should still ensure that:
 
-```json
-{
-  "id": "attempt-002",
-  "boss_id": "genichiro-ashina",
-  "timestamp": "2026-08-24T21:15:00Z",
-  "result": "failed",
-  "phase_reached": 2,
-  "failure_move_id": null,
-  "failure_category": "not_sure",
-  "notes": ""
-}
-```
+* the selected phase belongs to the selected boss
+* the selected failure move belongs to the selected boss
+* invalid boss / phase / move combinations are rejected
 
-A victory:
-
-```json
-{
-  "id": "attempt-003",
-  "boss_id": "genichiro-ashina",
-  "timestamp": "2026-08-24T21:30:00Z",
-  "result": "victory",
-  "phase_reached": 3,
-  "failure_move_id": null,
-  "notes": ""
-}
-```
-
-Do not add detailed fight telemetry fields to V1.
+Do not rely only on frontend validation.
 
 ---
 
-# Analytics Philosophy
+# SQLAlchemy Guidelines
 
-Analytics should be derived from attempt history.
+Use SQLAlchemy for database persistence.
 
-Do not ask users to manually state:
+Prefer clear ORM models and explicit relationships.
 
-```text
-"My weakest move is Floating Passage."
-```
+Avoid:
 
-Instead, infer it from recorded attempts where possible.
+* unnecessarily generic base repository frameworks
+* excessive abstraction around simple CRUD
+* dynamic query builders without a concrete need
+* hidden database behavior
 
-For example:
-
-```text
-Attempt 1
-Phase 1
-Killed by Thrust
-
-Attempt 2
-Phase 2
-Killed by Floating Passage
-
-Attempt 3
-Phase 2
-Killed by Floating Passage
-
-Attempt 4
-Phase 3
-Killed by Lightning
-
-Attempt 5
-Phase 2
-Killed by Floating Passage
-```
-
-The application can derive:
-
-```text
-Most Common Failure:
-Floating Passage
-
-Main Bottleneck:
-Phase 2
-```
-
-The product should prefer:
-
-```text
-data-derived insight
-```
-
-over:
-
-```text
-user self-assessment
-```
-
-when the available attempt data supports it.
+Database access should remain understandable to someone reading the code.
 
 ---
 
-# V1 Analytics
+# Alembic Guidelines
 
-## Total Attempts
+Use Alembic for schema evolution.
 
-```text
-Total Attempts: 15
-```
+Do not manually mutate the production schema without migrations.
 
----
-
-## Victory Status
+Typical workflow:
 
 ```text
-Defeated: Yes
+Modify SQLAlchemy model
+        ↓
+Generate / write Alembic migration
+        ↓
+Review migration
+        ↓
+Apply migration
 ```
 
-Optional:
+Do not blindly trust autogenerated migrations.
+
+Review:
+
+* created tables
+* dropped columns
+* constraints
+* foreign keys
+* nullable changes
+* indexes
+
+before applying them.
+
+---
+
+# V1 JSON Migration
+
+Existing V1 data should not simply be discarded.
+
+Create an explicit migration / seed process.
+
+Conceptual flow:
 
 ```text
-Attempts Until First Victory: 15
+bosses.json
+attempts.json
+      ↓
+Import Script
+      ↓
+Validate Data
+      ↓
+PostgreSQL
 ```
 
----
-
-## Most Common Failure Move
-
-Use attempts with known structured failure moves.
-
-Example:
+Suggested location:
 
 ```text
-Floating Passage    5
-Thrust Attack       3
-Lightning Attack    2
+backend/scripts/
 ```
 
-If too many attempts have unknown causes, do not pretend the move analytics are complete.
-
----
-
-## Phase Failure Breakdown
-
-Use failed attempts grouped by phase reached.
-
-Example:
+Potential script:
 
 ```text
-Phase 1    3 failures
-Phase 2    8 failures
-Phase 3    4 failures
+import_v1_data.py
 ```
 
----
+The import process should:
 
-## Main Bottleneck Phase
+1. load V1 boss data
+2. validate the source records
+3. create the game
+4. create bosses
+5. create phases
+6. create moves
+7. migrate existing attempt history
+8. preserve relationships between attempts and moves
+9. avoid creating duplicate seed data when rerun accidentally
 
-The simplest V1 definition may be:
-
-> the phase associated with the largest number of failed attempts
-
-Keep this definition explicit.
-
-Do not introduce sophisticated statistical interpretations during V1.
-
----
-
-## Progress Over Time
-
-Keep progress analytics simple.
-
-Useful signals may include:
-
-* phase reached per attempt
-* recent attempts reaching later phases
-* number of attempts before victory
-* reduction in failures to a particular move
-
-Do not claim that the user is objectively improving based on insufficient evidence.
+Do not permanently maintain two competing persistence implementations after migration is complete.
 
 ---
 
-# Backend API
+# V2 Boss Coverage
+
+V2 should expand from one representative boss to approximately **5–8 major Sekiro bosses**.
+
+Potential set:
+
+* Genichiro Ashina
+* Lady Butterfly
+* Guardian Ape
+* Corrupted Monk
+* Great Shinobi Owl
+* Owl (Father)
+* Isshin
+* Demon of Hatred
+
+The exact list may change.
+
+The objective is NOT full Sekiro encyclopedia coverage.
+
+The objective is to validate that the architecture handles:
+
+* different boss phase counts
+* different movesets
+* different attempt histories
+* multiple boss dashboards
+* game-level comparisons
+
+---
+
+# Boss Data Strategy
+
+Do not spend excessive development time entering every possible boss move.
+
+Prioritize:
+
+1. representative bosses
+2. major identifiable moves
+3. correct phase relationships
+4. useful practice information
+5. source traceability
+
+Avoid creating hundreds of low-quality placeholder records.
+
+---
+
+# Data Provenance
+
+V2 may include source metadata for boss and move information.
+
+Potential fields:
+
+```text
+source_name
+source_url
+```
+
+This is useful for:
+
+* verifying move descriptions
+* future data cleanup
+* future structured ingestion
+* avoiding invented mechanics
+
+Do not present uncertain Sekiro mechanics as verified facts.
+
+---
+
+# Existing V1 APIs
+
+The following capabilities should remain functional.
 
 ## Health
 
 ```text
 GET /health
-```
-
-Example:
-
-```json
-{
-  "status": "ok"
-}
 ```
 
 ---
@@ -795,20 +701,6 @@ Example:
 GET /api/bosses
 ```
 
-Return boss summaries.
-
-Example:
-
-```json
-[
-  {
-    "id": "genichiro-ashina",
-    "name": "Genichiro Ashina",
-    "location": "Ashina Castle"
-  }
-]
-```
-
 ---
 
 ## Boss Detail
@@ -816,14 +708,6 @@ Example:
 ```text
 GET /api/bosses/{boss_id}
 ```
-
-Return:
-
-* boss metadata
-* phases
-* moves
-
-Return HTTP 404 for unknown bosses.
 
 ---
 
@@ -833,28 +717,6 @@ Return HTTP 404 for unknown bosses.
 POST /api/bosses/{boss_id}/attempts
 ```
 
-The request should contain only information needed to represent the attempt.
-
-Example:
-
-```json
-{
-  "result": "failed",
-  "phase_reached": 2,
-  "failure_move_id": "floating-passage",
-  "notes": ""
-}
-```
-
-Validate:
-
-* boss exists
-* phase exists
-* selected move belongs to the relevant boss
-* victory does not require a failure move
-
-Do not overcomplicate validation.
-
 ---
 
 ## Attempt History
@@ -863,100 +725,246 @@ Do not overcomplicate validation.
 GET /api/bosses/{boss_id}/attempts
 ```
 
-Return attempts for the selected boss.
-
-Prefer reverse chronological ordering when presenting history.
-
 ---
 
-## Analytics
+## Boss Analytics
 
 ```text
 GET /api/bosses/{boss_id}/analytics
 ```
 
-Compute analytics from attempt records.
-
-Potential response:
-
-```json
-{
-  "total_attempts": 12,
-  "defeated": false,
-  "best_phase": 3,
-  "main_bottleneck_phase": 2,
-  "most_common_failure_move": "floating-passage",
-  "failure_by_phase": {
-    "1": 2,
-    "2": 6,
-    "3": 4
-  },
-  "failure_by_move": {
-    "floating-passage": 4,
-    "thrust": 2,
-    "lightning": 2
-  }
-}
-```
-
-Analytics should normally be computed rather than stored separately.
+These endpoints should move from JSON-backed services to database-backed services without unnecessary frontend disruption.
 
 ---
 
-# Backend Structure
+# V2 Analytics Goal
 
-Prefer:
+V1 mainly provides aggregate failure analytics.
 
-```text
-backend/
-└── app/
-    ├── main.py
-    │
-    ├── models/
-    │   ├── boss.py
-    │   └── attempt.py
-    │
-    ├── routers/
-    │   ├── bosses.py
-    │   └── attempts.py
-    │
-    ├── services/
-    │   ├── boss_service.py
-    │   ├── attempt_service.py
-    │   └── analytics_service.py
-    │
-    └── data/
-        ├── bosses.json
-        └── attempts.json
-```
+V2 should introduce meaningful progression analytics.
 
-Preferred flow:
+The main questions are:
 
 ```text
-Router
-   ↓
-Service
-   ↓
-JSON
+Am I reaching later phases more often?
+
+Are earlier bottlenecks becoming less frequent?
+
+Which boss is currently giving me the most difficulty?
+
+How does recent performance compare with historical performance?
 ```
 
-Analytics:
+---
+
+# Boss-Level Analytics
+
+Boss dashboards should continue to support:
+
+* total attempts
+* defeated status
+* best phase reached
+* main bottleneck phase
+* most common known failure move
+* failure breakdown by phase
+* failure breakdown by move
+
+V2 should extend these with progression-oriented metrics.
+
+---
+
+# Attempt Progression
+
+Track phase reached across attempts.
+
+Example:
 
 ```text
-Analytics Router
-      ↓
-Analytics Service
-      ↓
-Attempt Data
+Attempt 1    Phase 1
+Attempt 2    Phase 1
+Attempt 3    Phase 2
+Attempt 4    Phase 2
+Attempt 5    Phase 3
+Attempt 6    Phase 2
+Attempt 7    Phase 3
+Attempt 8    Victory
 ```
 
-Avoid repository interfaces, dependency injection frameworks, factories, or enterprise patterns unless they solve a concrete V1 problem.
+The frontend may visualize this as a simple progression chart.
+
+Avoid overly complicated visualization libraries if a simple implementation is sufficient.
+
+---
+
+# Recent vs Historical Analytics
+
+V2 should support a concept such as:
+
+```text
+All-Time
+vs
+Recent Attempts
+```
+
+Default recent window may be:
+
+```text
+Last 10 attempts
+```
+
+unless a better product reason emerges.
+
+Example:
+
+| Metric           | All-Time | Last 10 |
+| ---------------- | -------: | ------: |
+| Phase 1 Failures |       10 |       1 |
+| Phase 2 Failures |       15 |       4 |
+| Phase 3 Failures |        7 |       5 |
+
+This helps identify changing bottlenecks.
+
+---
+
+# Failure Trend
+
+The application may compare failure counts over time.
+
+Example:
+
+```text
+Floating Passage
+
+All-Time Failures:
+12
+
+Last 10 Attempts:
+2
+```
+
+Acceptable interpretation:
+
+> Recorded failures attributed to Floating Passage are less common recently.
+
+Do NOT automatically interpret this as:
+
+```text
+Floating Passage success rate increased to X%.
+```
+
+The application does not know how many times the move occurred.
+
+---
+
+# First Victory
+
+Where useful, track:
+
+```text
+Attempts Until First Victory
+```
+
+This can be calculated from chronological attempt history.
+
+Avoid storing derived values redundantly unless there is a performance reason.
+
+---
+
+# Game-Level Sekiro Dashboard
+
+V2 should introduce an overall Sekiro analytics view.
+
+This is one of the main product upgrades from V1.
+
+Potential metrics:
+
+```text
+Bosses Attempted
+Bosses Defeated
+Total Attempts
+Most Practiced Boss
+Boss Requiring Most Attempts
+Recent Practice Activity
+```
+
+Example:
+
+```text
+Sekiro Practice Dashboard
+
+Bosses Attempted      6
+Bosses Defeated       4
+Total Attempts      143
+
+Most Practiced Boss
+Genichiro Ashina
+
+Boss Requiring Most Attempts
+Owl (Father)
+```
+
+---
+
+# Boss Comparison
+
+The Sekiro dashboard may include:
+
+| Boss             | Attempts | Best Result | Defeated |
+| ---------------- | -------: | ----------- | -------- |
+| Genichiro Ashina |       24 | Victory     | Yes      |
+| Guardian Ape     |       18 | Victory     | Yes      |
+| Owl (Father)     |       31 | Phase 2     | No       |
+| Isshin           |       14 | Phase 3     | No       |
+
+Do not invent a universal boss difficulty ranking.
+
+Any "hardest boss" metric must be clearly defined from the player's own attempt data.
+
+For example:
+
+```text
+Boss Requiring Most Attempts
+```
+
+is more precise than:
+
+```text
+Hardest Boss
+```
+
+unless the definition is explicitly shown.
+
+---
+
+# Search and Filtering
+
+As boss coverage expands, the boss selection experience may include:
+
+```text
+Search Boss...
+```
+
+Suggested filters:
+
+```text
+All
+Attempted
+Not Attempted
+Defeated
+Not Defeated
+```
+
+Keep filtering lightweight.
+
+Do not build a generic search platform.
 
 ---
 
 # Frontend Structure
 
-Prefer approximately:
+The current frontend structure should remain simple and explicit.
+
+Preferred conceptual structure:
 
 ```text
 frontend/src/
@@ -967,102 +975,43 @@ frontend/src/
 └── App.tsx
 ```
 
-Potential main pages:
+V2 may introduce an additional page:
 
 ```text
-Boss Selection
+Sekiro Dashboard
+Boss Selection / Browse
 Boss Dashboard
 ```
 
-The Record Attempt interaction can be:
-
-* a modal
-* a form on the boss dashboard
-* a small dedicated route
-
-Choose whichever keeps the V1 experience simplest.
-
-Do not create many pages unnecessarily.
+Avoid turning every dashboard section into a separate route unless the UX benefits.
 
 ---
 
-# Boss Selection Page
+# Boss Dashboard Priority
 
-The initial page should primarily answer:
-
-> Which boss do you want to practice?
-
-Example:
+The boss dashboard should prioritize:
 
 ```text
-Sekiro Boss Practice Analytics
-
-Choose a Boss
-
-┌──────────────────────┐
-│ Genichiro Ashina     │
-│ Ashina Castle        │
-│                      │
-│ [ View Boss ]        │
-└──────────────────────┘
-```
-
----
-
-# Boss Dashboard Layout
-
-Prefer a hierarchy approximately like:
-
-```text
-Boss Identity / Summary
-
-[ Record Attempt ]
-
----------------------
-
-Analytics
-
----------------------
-
+Boss Summary
+↓
+Record Attempt
+↓
+Progress Analytics
+↓
 Recent Attempts
-
----------------------
-
+↓
 Boss Moveset Reference
 ```
 
-Recording attempts and understanding current weaknesses should be visually more important than reading general boss information.
+This remains an analytics application.
 
-This is an analytics application, not primarily a Wiki.
-
----
-
-# Attempt History
-
-Keep the history concise.
-
-Example:
-
-```text
-Attempt #12
-Failed — Phase 3
-Lightning Attack
-
-Attempt #11
-Failed — Phase 2
-Floating Passage
-
-Attempt #10
-Victory
-```
-
-The user should be able to quickly understand progression without opening each attempt individually.
+It should not become primarily a Wiki.
 
 ---
 
-# TypeScript Types
+# Frontend Type Safety
 
-Use explicit types.
+Continue using explicit TypeScript domain types.
 
 Examples:
 
@@ -1072,29 +1021,30 @@ Boss
 BossPhase
 BossMove
 Attempt
-CreateAttemptRequest
 BossAnalytics
+SekiroAnalytics
+ProgressionPoint
 ```
 
 Avoid `any`.
 
-Keep frontend types aligned with API contracts.
+Keep frontend types synchronized with backend response models.
 
 ---
 
 # API Client
 
-Centralize frontend HTTP access.
+Continue centralizing backend calls.
 
 Prefer:
 
 ```text
 frontend/src/api/
-├── bosses.ts
-└── attempts.ts
 ```
 
-Possible functions:
+rather than raw fetch calls inside many components.
+
+Potential V2 functions:
 
 ```text
 getBosses()
@@ -1102,212 +1052,725 @@ getBossById()
 createAttempt()
 getBossAttempts()
 getBossAnalytics()
+getSekiroAnalytics()
 ```
 
-Avoid putting raw fetch logic throughout UI components.
+---
+
+# Backend Structure
+
+A reasonable V2 backend structure is:
+
+```text
+backend/
+└── app/
+    ├── main.py
+    │
+    ├── models/
+    │   ├── db/
+    │   └── schemas/
+    │
+    ├── routers/
+    │   ├── bosses.py
+    │   ├── attempts.py
+    │   └── analytics.py
+    │
+    ├── services/
+    │   ├── boss_service.py
+    │   ├── attempt_service.py
+    │   └── analytics_service.py
+    │
+    ├── db/
+    │   ├── session.py
+    │   └── base.py
+    │
+    └── ...
+```
+
+Exact folder names may differ.
+
+Do not reorganize the entire repository merely to match this example if the existing layout is already clear.
 
 ---
 
-# JSON Persistence Rules
+# Service Layer
 
-JSON is intentionally temporary persistence for V1.
+Prefer:
 
-Keep implementation simple.
+```text
+Router
+   ↓
+Service
+   ↓
+Database
+```
 
-Rules:
+Route handlers should primarily:
 
-1. Keep boss metadata separate from attempt data.
-2. Validate loaded data where practical.
-3. Keep file reading/writing outside route handlers.
-4. Do not silently discard malformed records.
-5. Do not build database-like querying abstractions on top of JSON.
-6. Assume a small local V1 dataset.
-7. Do not design JSON persistence for large-scale concurrent multi-user writes.
+1. receive input
+2. validate request parameters
+3. call application logic
+4. return response models
 
-If persistence complexity grows substantially, defer that work to the PostgreSQL migration in V2.
+Analytics calculations should remain outside route handlers.
 
 ---
 
-# Testing
+# Database Session Management
 
-Prioritize behavior that represents the product workflow.
+Database session lifecycle should be explicit and safe.
 
-Backend tests should include:
+Avoid:
+
+* long-lived global sessions
+* silently swallowed transaction failures
+* manual transaction handling scattered across route handlers
+
+Use clear FastAPI dependency patterns or equivalent clean session management.
+
+---
+
+# Query Efficiency
+
+V2 remains a small application.
+
+Do not prematurely optimize database queries.
+
+However, avoid obvious issues such as:
+
+* loading the entire attempts table when only one boss is needed
+* N+1 queries caused by careless relationship loading
+* repeated identical queries inside loops
+
+Only introduce indexing or query optimization when the access pattern justifies it.
+
+---
+
+# V2 Testing Strategy
+
+Testing should focus on product behavior and database correctness.
+
+---
+
+## Existing API Behavior
+
+Continue testing:
 
 ```text
 GET /health
-→ 200
-
 GET /api/bosses
-→ boss list
-
-GET /api/bosses/genichiro-ashina
-→ Genichiro data
-
-GET /api/bosses/nonexistent
-→ 404
-
-POST attempt with valid phase and move
-→ success
-
-POST attempt with invalid boss
-→ error
-
-POST victory without failure move
-→ success
-
-POST failed attempt with Not Sure
-→ success
-
-GET attempt history
-→ expected attempts
-
-GET analytics
-→ correct failure aggregation
+GET /api/bosses/{boss_id}
+POST /api/bosses/{boss_id}/attempts
+GET /api/bosses/{boss_id}/attempts
+GET /api/bosses/{boss_id}/analytics
 ```
-
-Do not optimize for an arbitrary coverage percentage.
 
 ---
 
-# Initial V1 Development Order
+## Database Tests
 
-Build vertically.
+Add tests for:
 
-```text
-1. Initialize repository
+* boss persistence
+* phase relationships
+* move relationships
+* attempt persistence
+* nullable failure moves
+* invalid boss references
+* invalid phase / move combinations
 
-2. Create Genichiro boss data
+---
 
-3. Create Pydantic boss models
+## Migration Tests
 
-4. GET /api/bosses
-
-5. GET /api/bosses/{boss_id}
-
-6. React boss selection page
-
-7. React Genichiro dashboard
-
-8. Attempt model
-
-9. POST attempt API
-
-10. Record Attempt UI
-
-11. Attempt history
-
-12. Failure-by-phase analytics
-
-13. Failure-by-move analytics
-
-14. Boss dashboard analytics UI
-
-15. Tests
-
-16. Docker
-```
-
-Do not start by collecting data for every Sekiro boss.
-
-The first priority is:
+Verify that:
 
 ```text
-one boss
-+
-complete workflow
+Alembic upgrade
 ```
 
-rather than:
+can create the expected schema from a clean database.
+
+Where practical, test V1 data import independently.
+
+---
+
+## Analytics Tests
+
+Analytics tests should use controlled datasets.
+
+Example:
 
 ```text
-many bosses
-+
-incomplete workflow
+Attempt 1 → Phase 1 → Thrust
+Attempt 2 → Phase 2 → Floating Passage
+Attempt 3 → Phase 2 → Floating Passage
+Attempt 4 → Phase 3 → Lightning
 ```
+
+Expected:
+
+```text
+main bottleneck = Phase 2
+most common failure move = Floating Passage
+```
+
+Progression logic should also be tested with deterministic histories.
+
+---
+
+# Integration Testing
+
+V2 should contain at least one meaningful end-to-end backend integration workflow.
+
+Example:
+
+```text
+Create Boss Data
+      ↓
+Create Attempt
+      ↓
+Persist to PostgreSQL
+      ↓
+Read Attempt History
+      ↓
+Request Analytics
+      ↓
+Verify Updated Metrics
+```
+
+This is more valuable than testing implementation details individually.
+
+---
+
+# CI
+
+GitHub Actions should validate both backend and frontend.
+
+Conceptually:
+
+```text
+Pull Request / Push
+        ↓
+Backend Checks
+├── install dependencies
+├── pytest
+└── database tests
+
+Frontend Checks
+├── npm ci
+├── typecheck
+├── lint
+└── build
+```
+
+Only include commands that actually exist in the project.
+
+Do not invent package scripts solely because they are listed here.
+
+---
+
+# V2 CD / Deployment
+
+V2 may introduce:
+
+```text
+dev
+ ↓
+Staging
+
+main
+ ↓
+Production
+```
+
+Conceptual workflow:
+
+```text
+feature/*
+    ↓
+Pull Request
+    ↓
+dev
+    ↓
+CI
+    ↓
+Staging Deployment
+
+main
+    ↓
+CI
+    ↓
+Production Deployment
+```
+
+A separate staging Git branch is not required.
+
+---
+
+# Stable Public Demo
+
+By the end of V2, the application should ideally have:
+
+```text
+stable public URL
+```
+
+that can be shared without requiring the developer's local machine to remain online.
+
+Cloudflare Tunnel may still be used for local testing.
+
+A portfolio release should preferably use stable hosting.
+
+---
+
+# Docker
+
+Continue supporting Docker.
+
+V2 Docker setup should account for:
+
+```text
+frontend
+backend
+postgres
+```
+
+Local development may use:
+
+```text
+docker compose
+```
+
+Do not introduce Kubernetes simply to orchestrate three local services.
+
+---
+
+# Environment Configuration
+
+Database URLs and deployment-specific configuration should use environment variables.
+
+Do not commit:
+
+* passwords
+* production credentials
+* secret keys
+* private database URLs
+
+Provide an example environment file where useful:
+
+```text
+.env.example
+```
+
+Do not commit real `.env` secrets.
+
+---
+
+# V2 Milestones
+
+Implement V2 incrementally.
+
+Each milestone should leave the project in a working state.
+
+---
+
+## Milestone 1 — PostgreSQL Foundation
+
+### Goal
+
+Replace JSON persistence with a relational persistence foundation.
+
+### Tasks
+
+* add PostgreSQL development environment
+* add SQLAlchemy
+* add Alembic
+* configure database connection
+* configure database session handling
+* define initial relational schema
+* create first Alembic migration
+* verify schema can be created from scratch
+
+### Completion Criteria
+
+```text
+FastAPI
+   ↓
+SQLAlchemy
+   ↓
+PostgreSQL
+```
+
+is working locally.
+
+Existing APIs do not yet need every V2 feature, but database infrastructure must be stable.
+
+---
+
+## Milestone 2 — V1 Data Migration
+
+### Goal
+
+Move existing boss and attempt data into PostgreSQL.
+
+### Tasks
+
+* create V1 JSON import script
+* migrate Genichiro
+* migrate phases
+* migrate moves
+* migrate attempt history
+* validate relationships
+* preserve existing API behavior
+* remove application dependency on JSON persistence once migration is validated
+
+### Completion Criteria
+
+The existing V1 workflow works against PostgreSQL:
+
+```text
+Choose Genichiro
+      ↓
+View Dashboard
+      ↓
+Record Attempt
+      ↓
+PostgreSQL
+      ↓
+History + Analytics
+```
+
+The frontend should require minimal or no persistence-specific changes.
+
+---
+
+## Milestone 3 — Multi-Boss Support
+
+### Goal
+
+Validate the relational model across several different Sekiro bosses.
+
+### Tasks
+
+* add approximately 5–8 major bosses
+* add phase structures
+* add representative moves
+* verify attempt creation for every supported boss
+* verify analytics remain boss-specific
+* eliminate any Genichiro-specific application logic
+
+### Completion Criteria
+
+The same code path supports multiple bosses without special-case logic.
+
+---
+
+## Milestone 4 — Richer Boss Metadata
+
+### Goal
+
+Improve the moveset reference enough to support better failure identification.
+
+### Potential Fields
+
+* move type
+* description
+* telegraph
+* recommended response
+* common mistakes
+* source name
+* source URL
+
+### Completion Criteria
+
+Boss moves contain useful practice context without turning the application into a Wiki clone.
+
+---
+
+## Milestone 5 — Progression Analytics
+
+### Goal
+
+Answer:
+
+> Am I improving over time?
+
+### Tasks
+
+* model chronological attempt progression
+* expose phase progression data
+* implement recent-attempt window
+* compare recent vs all-time failure patterns
+* calculate attempts until first victory
+* add relevant backend tests
+
+### Completion Criteria
+
+A boss dashboard can show meaningful change over time, not only lifetime totals.
+
+---
+
+## Milestone 6 — Progression UI
+
+### Goal
+
+Make the new analytics understandable visually.
+
+### Tasks
+
+* add attempt progression visualization
+* add all-time vs recent comparison
+* display recent failure patterns
+* retain existing V1 metrics
+* preserve mobile usability
+
+### Completion Criteria
+
+A user should be able to inspect a boss page and quickly understand whether recent attempts differ from older ones.
+
+---
+
+## Milestone 7 — Overall Sekiro Dashboard
+
+### Goal
+
+Move from boss-specific analytics to game-level analytics.
+
+### Tasks
+
+Add metrics such as:
+
+```text
+Bosses Attempted
+Bosses Defeated
+Total Attempts
+Most Practiced Boss
+Boss Requiring Most Attempts
+Recent Practice Activity
+```
+
+Add a boss comparison view.
+
+### Completion Criteria
+
+The user can understand their overall Sekiro practice history without opening every boss individually.
+
+---
+
+## Milestone 8 — Search and Filtering
+
+### Goal
+
+Keep boss discovery usable as the dataset expands.
+
+### Tasks
+
+Potentially add:
+
+```text
+Search Boss
+
+All
+Attempted
+Not Attempted
+Defeated
+Not Defeated
+```
+
+### Completion Criteria
+
+Users can quickly locate relevant bosses without unnecessary UI complexity.
+
+---
+
+## Milestone 9 — Integration Testing and CI Hardening
+
+### Goal
+
+Protect the full PostgreSQL-backed workflow.
+
+### Tasks
+
+* database-backed API tests
+* analytics tests
+* migration tests
+* one complete attempt integration test
+* backend CI
+* frontend CI
+* verify Docker build in CI if useful
+
+### Completion Criteria
+
+A broken persistence or analytics change should normally be detected before merging into `dev`.
+
+---
+
+## Milestone 10 — Stable Deployment
+
+### Goal
+
+Produce a reliable public V2 demo.
+
+### Tasks
+
+* production PostgreSQL configuration
+* environment configuration
+* Docker deployment
+* staging deployment if useful
+* production deployment
+* fixed public URL
+* verify mobile access
+* update README screenshots and setup instructions
+
+### Completion Criteria
+
+The application can be opened from a stable public URL and the complete V2 workflow functions correctly.
+
+---
+
+# V2 Development Order
+
+Recommended sequence:
+
+```text
+1. PostgreSQL Foundation
+
+2. SQLAlchemy Models
+
+3. Alembic Migration
+
+4. V1 JSON → PostgreSQL Migration
+
+5. Verify Existing V1 APIs
+
+6. Multi-Boss Support
+
+7. Richer Boss Metadata
+
+8. Progression Analytics Backend
+
+9. Progression Analytics Frontend
+
+10. Overall Sekiro Dashboard
+
+11. Search / Filter
+
+12. Integration Tests
+
+13. CI Hardening
+
+14. Stable Deployment
+
+15. Release v2.0.0
+```
+
+Do not start several major milestones simultaneously unless there is a clear dependency reason.
+
+---
+
+# V2 Success Criteria
+
+V2 is complete when a user can:
+
+```text
+Open Sekiro Dashboard
+        ↓
+View Multiple Bosses
+        ↓
+See Overall Sekiro Progress
+        ↓
+Choose a Boss
+        ↓
+View Attempt History
+        ↓
+View Progression Analytics
+        ↓
+Compare Recent vs Historical Performance
+        ↓
+Record New Attempt
+        ↓
+Persist to PostgreSQL
+        ↓
+Analytics Update
+```
+
+and the system can support multiple bosses through the same architecture.
+
+---
+
+# Release Boundary
+
+Once the V2 success criteria are complete:
+
+```text
+dev
+ ↓
+main
+ ↓
+v2.0.0
+```
+
+Stop V2 development.
+
+Do not delay the V2 release by introducing V3 features.
 
 ---
 
 # Future Versions
 
-## V2
+## V3 — Personalized Practice Coach
+
+Core question:
+
+> What should I practice next?
 
 Potential additions:
 
-* PostgreSQL
-* relational boss/move/attempt schema
-* larger Sekiro boss dataset
-* improved search and filtering
-* cleaner data ingestion
-* richer analytics
-
----
-
-## V3
-
-Potential additions:
-
+* authentication
 * user accounts
-* persistent player profiles
-* personalized long-term progress
-* cross-session practice history
-* more advanced recommendations
+* user-owned attempts
+* long-term player profiles
+* practice goals
+* personalized recommendations
+
+These are NOT V2 requirements.
 
 ---
 
-## V4
+## V4 — Gameplay Analysis
 
-Gameplay analysis.
+Core question:
 
-Instead of relying only on user memory:
+> What actually happened during the fight?
 
-```text
-Gameplay Video
-      ↓
-Move Detection
-      ↓
-Player Response
-      ↓
-Success / Failure
-      ↓
-Detailed Analytics
-```
+Potential additions:
 
-Possible metrics:
+* gameplay video upload
+* move occurrence annotation
+* player response annotation
+* computer vision
+* automatic move detection
+* true per-move success rates
 
-* number of times a move appeared
-* number of successful responses
-* deflect success rate
-* Mikiri success rate
-* per-move failure probability
-
-These metrics should NOT be requested manually from users in V1.
+These are NOT V2 requirements.
 
 ---
 
-## V5
+## V5 — Multi-Game Analytics
 
-Multi-game boss practice analytics.
+Core question:
 
-Potential games include:
+> Can the same analysis work across games?
 
-```text
-Sekiro
-Black Myth: Wukong
-```
+Potential additions:
 
-Shared abstraction:
+* Black Myth: Wukong
+* shared multi-game domain model
+* game-specific combat mechanics
+* cross-game analytics
 
-```text
-Game
- └── Boss
-      └── Phase
-           └── Move
-```
-
-Game-specific mechanics may extend the shared model.
-
-Do not implement multi-game abstractions prematurely unless they simplify the current code.
+These are NOT V2 requirements.
 
 ---
 
@@ -1315,67 +1778,58 @@ Do not implement multi-game abstractions prematurely unless they simplify the cu
 
 When working in this repository:
 
-1. Treat V1 as a manual attempt logger and failure analytics application.
-2. Do not turn V1 into detailed manual combat telemetry.
-3. Never require users to remember every move encountered during a fight.
-4. Keep attempt recording quick and lightweight.
-5. Allow unknown failure causes.
-6. Prefer structured move selection over free-text failure names.
-7. Derive weaknesses from recorded attempt data instead of asking users to declare them manually.
-8. Do not introduce PostgreSQL in V1.
-9. Do not add authentication unless explicitly requested.
-10. Do not introduce microservices.
-11. Do not implement video analysis in V1.
-12. Do not silently expand scope.
-13. Prefer incremental changes.
-14. Preserve working functionality.
-15. Explain significant architectural changes before making them.
-16. When debugging, identify the root cause instead of rewriting unrelated code.
-17. Do not invent Sekiro gameplay mechanics or statistics when uncertain.
-18. Keep JSON persistence isolated so it can later be replaced by PostgreSQL.
-19. Compute analytics from attempt source data rather than storing unnecessary duplicated analytics.
-20. Prioritize a complete user workflow over infrastructure sophistication.
+1. Treat V1 as completed.
+2. Treat V2 as the current active development scope.
+3. Preserve the lightweight manual attempt-recording workflow.
+4. Do not add detailed manual combat telemetry.
+5. Continue supporting `Other` and `Not Sure`.
+6. Prefer structured move IDs over free-text move names.
+7. Keep analytics derived from attempt data where practical.
+8. Do not invent success rates without occurrence denominators.
+9. Migrate persistence from JSON to PostgreSQL cleanly.
+10. Use SQLAlchemy for relational persistence.
+11. Use Alembic for schema migrations.
+12. Review generated migrations before applying them.
+13. Preserve frontend API contracts where practical.
+14. Do not silently rewrite working frontend behavior during the database migration.
+15. Keep database access outside route handlers where practical.
+16. Keep analytics logic outside route handlers.
+17. Avoid unnecessary repository/factory/framework abstractions.
+18. Expand boss coverage only after the PostgreSQL-backed V1 workflow is stable.
+19. Do not create large amounts of low-quality boss data.
+20. Do not invent Sekiro mechanics when uncertain.
+21. Keep game knowledge traceable to sources where practical.
+22. Do not add authentication in V2.
+23. Do not add video analysis in V2.
+24. Do not add Black Myth: Wukong in V2.
+25. Do not add Redis, Kafka, Kubernetes, or microservices without a concrete requirement.
+26. Prefer incremental changes over large rewrites.
+27. Preserve working functionality after every milestone.
+28. Add tests for meaningful behavior, not arbitrary coverage targets.
+29. Keep derived analytics semantically honest.
+30. Stop V2 once the defined V2 success criteria are complete.
 
 ---
 
-# V1 Success Criteria
+# Current Milestone Rule
 
-V1 is complete when a user can:
+Before implementing a new feature, identify which V2 milestone it belongs to.
 
-```text
-Open App
-   ↓
-Choose Genichiro
-   ↓
-View Genichiro Dashboard
-   ↓
-Record Attempt
-   ↓
-Failed / Victory
-   ↓
-Select Phase Reached
-   ↓
-Select Failure Move / Other / Not Sure
-   ↓
-Save Attempt
-   ↓
-View Attempt History
-   ↓
-See Analytics
-```
-
-and the application can answer:
+If the feature does not clearly belong to:
 
 ```text
-How many times have I attempted this boss?
-
-How far am I usually getting?
-
-Which phase causes the most failures?
-
-Which known move kills me most often?
-
-Have I defeated the boss?
+PostgreSQL Migration
+Multi-Boss Support
+Richer Boss Data
+Progression Analytics
+Sekiro Dashboard
+Search / Filtering
+Testing / CI
+Deployment
 ```
 
-That is the complete V1 product scope.
+check whether it actually belongs to V3, V4, or V5 before adding it.
+
+The goal of V2 is not to maximize feature count.
+
+The goal is to turn the completed V1 MVP into a structured, maintainable, multi-boss Sekiro analytics application and then release `v2.0.0`.
