@@ -6,7 +6,7 @@ class BossMove(BaseModel):
     name: str
     move_type: str
     description: str | None = None
-    recommended_response: str | None = None
+    counter: str | None = None
 
 
 class BossPhase(BaseModel):
