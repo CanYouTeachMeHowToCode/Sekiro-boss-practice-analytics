@@ -21,6 +21,7 @@ class Boss(BaseModel):
     game: str
     location: str
     phases: list[BossPhase]
+    source_url: str | None = None
 
 
 class BossSummary(BaseModel):

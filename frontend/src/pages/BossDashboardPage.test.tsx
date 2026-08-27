@@ -25,6 +25,7 @@ const boss: Boss = {
       ],
     },
   ],
+  source_url: null,
 };
 
 const emptyAnalytics: BossAnalytics = {

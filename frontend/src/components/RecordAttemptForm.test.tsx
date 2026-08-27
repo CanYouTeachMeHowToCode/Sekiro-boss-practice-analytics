@@ -29,6 +29,7 @@ const boss: Boss = {
       ],
     },
   ],
+  source_url: null,
 };
 
 function stubbedAttempt(overrides: Partial<Attempt>): Attempt {

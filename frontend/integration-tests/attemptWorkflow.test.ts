@@ -82,7 +82,16 @@ describe("frontend calling the real backend", () => {
 
     const bosses = await getBosses();
 
-    expect(bosses.map((b) => b.id).sort()).toEqual(["genichiro-ashina", "owl-father"]);
+    expect(bosses.map((b) => b.id).sort()).toEqual([
+      "corrupted-monk",
+      "genichiro-ashina",
+      "great-shinobi-owl",
+      "guardian-ape",
+      "isshin-sword-saint",
+      "lady-butterfly",
+      "owl-father",
+      "true-corrupted-monk",
+    ]);
   });
 
   it("fetches boss detail with a real move id usable for recording an attempt", async () => {

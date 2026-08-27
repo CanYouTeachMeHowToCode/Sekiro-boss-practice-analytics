@@ -4,6 +4,7 @@
     "name": "Genichiro Ashina",
     "game": "sekiro",
     "location": "Ashina Castle - Castle Tower Lookout",
+    "source_url": null,
     "phases": [
       {
         "phase_number": 1,
@@ -135,6 +136,7 @@
     "name": "Owl (Father)",
     "game": "sekiro",
     "location": "Hirata Estate Revisited - Hidden Temple",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Owl+(Father)",
     "phases": [
       {
         "phase_number": 1,
@@ -348,6 +350,880 @@
             "move_type": "combo",
             "description": "Summons his owl and throws an unblockable fire owl projectile, then follows up with Shadowfall.",
             "counter": "Jump over the fire owl and Mikiri the thrust."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lady-butterfly",
+    "name": "Lady Butterfly",
+    "game": "sekiro",
+    "location": "Hirata Estate - Hidden Temple",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Lady+Butterfly",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "kunai-throw",
+            "name": "Kunai Throw",
+            "move_type": "ranged",
+            "description": "Projectile attack using kunai.",
+            "counter": "Can be blocked or deflected."
+          },
+          {
+            "id": "jump-into-rafters",
+            "name": "Jump into the Rafters",
+            "move_type": "movement",
+            "description": "Leaps into the air and disappears.",
+            "counter": "Use the Shuriken Prosthetic immediately as she begins jumping to knock her out of the air and create an opening."
+          },
+          {
+            "id": "perilous-aerial-grab",
+            "name": "Perilous Attack - Above (Aerial Grab)",
+            "move_type": "unblockable",
+            "description": "Overhead perilous attack performed while airborne.",
+            "counter": "Dodge or move out of the way. Alternatively, use the Shuriken Prosthetic to knock her down for a punish window."
+          },
+          {
+            "id": "perilous-sweep",
+            "name": "Perilous Attack - Sweep",
+            "move_type": "sweep",
+            "description": "Low-sweeping perilous attack.",
+            "counter": "Jump and kick her for considerable posture damage."
+          },
+          {
+            "id": "ground-combos",
+            "name": "Ground Combos",
+            "move_type": "combo",
+            "description": "Standard melee attack sequences performed from ground level.",
+            "counter": "Stay close, deflect attacks, then counter-attack during her recovery windows."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "kunai-throw",
+            "name": "Kunai Throw",
+            "move_type": "ranged",
+            "description": "Projectile attack using kunai.",
+            "counter": "Can be blocked or deflected."
+          },
+          {
+            "id": "jump-into-rafters",
+            "name": "Jump into the Rafters",
+            "move_type": "movement",
+            "description": "Leaps into the air and disappears.",
+            "counter": "Use the Shuriken Prosthetic immediately as she begins jumping to knock her out of the air and create an opening."
+          },
+          {
+            "id": "perilous-aerial-grab",
+            "name": "Perilous Attack - Above (Aerial Grab)",
+            "move_type": "unblockable",
+            "description": "Overhead perilous attack performed while airborne.",
+            "counter": "Dodge or move out of the way. Alternatively, use the Shuriken Prosthetic to knock her down for a punish window."
+          },
+          {
+            "id": "perilous-sweep",
+            "name": "Perilous Attack - Sweep",
+            "move_type": "sweep",
+            "description": "Low-sweeping perilous attack.",
+            "counter": "Jump and kick her for considerable posture damage."
+          },
+          {
+            "id": "ground-combos",
+            "name": "Ground Combos",
+            "move_type": "combo",
+            "description": "Standard melee attack sequences performed from ground level.",
+            "counter": "Stay close, deflect attacks, then counter-attack during her recovery windows."
+          },
+          {
+            "id": "illusions",
+            "name": "Illusions",
+            "move_type": "summon",
+            "description": "Summons phantom enemies that attack with spears.",
+            "counter": "Use a Snap Seed to dispel the phantoms, or kill them individually for Spirit Emblems. Alternatively, run around the arena perimeter to avoid their attacks."
+          },
+          {
+            "id": "phantom-kunai",
+            "name": "Phantom Kunai",
+            "move_type": "ranged",
+            "description": "Upgraded kunai projectile attack with additional volleys.",
+            "counter": "Deflect or block; dodging sideways offers the best protection."
+          },
+          {
+            "id": "homing-butterflies",
+            "name": "Homing Butterflies",
+            "move_type": "ranged",
+            "description": "Homing projectiles created when illusions are dispelled.",
+            "counter": "Hide behind pillars or keep sprinting around the arena perimeter; turning corners while they're tracking can cause them to hit you."
+          },
+          {
+            "id": "aerial-attacks-enhanced",
+            "name": "Aerial Attacks (Enhanced)",
+            "move_type": "combo",
+            "description": "Enhanced aerial maneuvers performed with increased frequency.",
+            "counter": "Continue using the Shuriken Prosthetic to interrupt; maintain aggressive pressure to prevent aerial transitions."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "guardian-ape",
+    "name": "Guardian Ape",
+    "game": "sekiro",
+    "location": "Sunken Valley Passage",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Guardian+Ape",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "rapid-slamming",
+            "name": "Rapid Slamming",
+            "move_type": "combo",
+            "description": "Rapid slamming combinations performed at close range.",
+            "counter": "All slamming attacks can be blocked; attempt to deflect them."
+          },
+          {
+            "id": "hand-swipe-grab",
+            "name": "Hand Swipe Grab",
+            "move_type": "unblockable",
+            "description": "Unblockable grab attack where the ape swipes the floor from left to right at close range.",
+            "counter": "Time a jump to dodge it."
+          },
+          {
+            "id": "body-slam-grab",
+            "name": "Body Slam Grab",
+            "move_type": "unblockable",
+            "description": "The ape jumps and attempts to grab the player.",
+            "counter": "Time a dodge to avoid it; a double dodge (tap the button twice) is safer."
+          },
+          {
+            "id": "poisonous-fart",
+            "name": "Poisonous Fart",
+            "move_type": "status",
+            "description": "Status attack inflicting heavy poison buildup when the ape's back is turned; always followed by running away and jumping high.",
+            "counter": "Quickly dodge away from the cloud to avoid the poison."
+          },
+          {
+            "id": "poisonous-poo-throw",
+            "name": "Poisonous Poo Throw",
+            "move_type": "ranged",
+            "description": "High-damage instant poison attack, heavily telegraphed as the ape jumps high before throwing.",
+            "counter": "Run underneath as it jumps and retaliate; its recovery from this attack is lengthy."
+          },
+          {
+            "id": "roar-jump-back",
+            "name": "Roar / Jump Back",
+            "move_type": "movement",
+            "description": "The ape jumps back and unleashes a roar.",
+            "counter": "A grapple prompt appears, letting Sekiro close the gap and causing a brief stagger."
+          },
+          {
+            "id": "rolling-body-slam",
+            "name": "Body Slam (Rolling)",
+            "move_type": "unblockable",
+            "description": "The ape jumps onto its back and thrashes the ground.",
+            "counter": "Stay away from its arms and hit its head."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "wide-sword-swipes",
+            "name": "Sword Swipes (Wide Area)",
+            "move_type": "combo",
+            "description": "Sword attacks that cover a wide area, after the ape decapitates itself and resurrects wielding a sword through its neck.",
+            "counter": "Don't stay in range attacking for too long; strike a few times after its combos, then back away."
+          },
+          {
+            "id": "diving-lunge",
+            "name": "Diving Lunge",
+            "move_type": "thrust",
+            "description": "Heavily telegraphed attack where it lunges forward with a swipe while falling to the ground.",
+            "counter": "Jump over it as it dives and strike it in the air, following with a full combo."
+          },
+          {
+            "id": "overhead-slam",
+            "name": "Overhead Slam",
+            "move_type": "overhead",
+            "description": "Large overhead attack that can be deflected.",
+            "counter": "Deflecting it stuns the boss and exposes its neck. Using the Loaded Spear (activate it twice) briefly pulls out the centipede for massive posture and health damage."
+          },
+          {
+            "id": "blood-scream",
+            "name": "Blood Scream",
+            "move_type": "terror",
+            "description": "Battle roar that unleashes shockwaves filling the Terror meter, which can inflict Terror status and instantly kill Sekiro. The ape puts its head back on its neck before screaming.",
+            "counter": "Any Loaded Umbrella-type prosthetic completely negates the scream; the Phoenix's Lilac Umbrella is recommended for NG+."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "corrupted-monk",
+    "name": "Corrupted Monk",
+    "game": "sekiro",
+    "location": "Ashina Depths - Mibu Village",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Corrupted+Monk",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "sweep-attack",
+            "name": "Sweep Attack",
+            "move_type": "sweep",
+            "description": "Perilous sweep attack variant, often followed by attack opportunities.",
+            "counter": "Jump over it."
+          },
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": "Perilous thrust attack variant.",
+            "counter": "Mikiri Counter."
+          },
+          {
+            "id": "jump-attack-sweep",
+            "name": "Jump Attack (Sweep Variant)",
+            "move_type": "sweep",
+            "description": "Jumping attack that sweeps during the jump.",
+            "counter": "Sidestep and strike as she lands."
+          },
+          {
+            "id": "jump-attack-overhead",
+            "name": "Jump Attack (Overhead Variant)",
+            "move_type": "overhead",
+            "description": "Jumping attack that ends in an overhead slash.",
+            "counter": "Run below and attack her exposed back."
+          },
+          {
+            "id": "upwards-slash",
+            "name": "Upwards Slash",
+            "move_type": "unblockable",
+            "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
+            "counter": "Can be deflected, though the timing is very precise."
+          },
+          {
+            "id": "whirlwind-attack",
+            "name": "Whirlwind Attack",
+            "move_type": "combo",
+            "description": "Continuous spinning attack with the Naginata that can quickly exhaust Sekiro's posture gauge. Tends to be used when at a distance from the player, more often if the player uses a consumable.",
+            "counter": "Run away when she starts spinning."
+          },
+          {
+            "id": "mid-range-combo",
+            "name": "Mid-Range Combo",
+            "move_type": "combo",
+            "description": "One jumping air hit followed by two ground hits at mid-range.",
+            "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "true-corrupted-monk",
+    "name": "True Corrupted Monk",
+    "game": "sekiro",
+    "location": "Fountainhead Palace",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Corrupted+Monk",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "sweep-attack",
+            "name": "Sweep Attack",
+            "move_type": "sweep",
+            "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight.",
+            "counter": "Jump over it."
+          },
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": "Perilous thrust attack variant, used more often here than in the Mibu Village fight.",
+            "counter": "Mikiri Counter."
+          },
+          {
+            "id": "jump-attack-sweep",
+            "name": "Jump Attack (Sweep Variant)",
+            "move_type": "sweep",
+            "description": "Jumping attack that sweeps during the jump.",
+            "counter": "Sidestep and strike as she lands."
+          },
+          {
+            "id": "jump-attack-overhead",
+            "name": "Jump Attack (Overhead Variant)",
+            "move_type": "overhead",
+            "description": "Jumping attack that ends in an overhead slash.",
+            "counter": "Run below and attack her exposed back."
+          },
+          {
+            "id": "upwards-slash",
+            "name": "Upwards Slash",
+            "move_type": "unblockable",
+            "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
+            "counter": "Can be deflected, though the timing is very precise."
+          },
+          {
+            "id": "mid-range-combo",
+            "name": "Mid-Range Combo",
+            "move_type": "combo",
+            "description": "One jumping air hit followed by two ground hits at mid-range.",
+            "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "illusion-summoning",
+            "name": "Illusion Summoning",
+            "move_type": "summon",
+            "description": "She disappears and the area fills with mist, then summons three shadow illusions of herself that each attack the player three times. The shadows disappear between attacks, making lock-on difficult. Standing near a wall before the shadows spawn limits them to one direction, repeating the same three moves.",
+            "counter": "The shadows don't need to be defeated - she eventually ends the illusion and returns on her own. A Bite Down pill instantly dispels them too."
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Phase 3",
+        "moves": [
+          {
+            "id": "sweep-attack",
+            "name": "Sweep Attack",
+            "move_type": "sweep",
+            "description": "Perilous sweep attack variant, now more telegraphed and predictable.",
+            "counter": "Jump over it."
+          },
+          {
+            "id": "thrust-attack",
+            "name": "Thrust Attack",
+            "move_type": "thrust",
+            "description": "Perilous thrust attack variant.",
+            "counter": "Mikiri Counter."
+          },
+          {
+            "id": "jump-attack-sweep",
+            "name": "Jump Attack (Sweep Variant)",
+            "move_type": "sweep",
+            "description": "Jumping attack that sweeps during the jump.",
+            "counter": "Sidestep and strike as she lands."
+          },
+          {
+            "id": "jump-attack-overhead",
+            "name": "Jump Attack (Overhead Variant)",
+            "move_type": "overhead",
+            "description": "Jumping attack that ends in an overhead slash. Tends to be used as a finishing move in this phase.",
+            "counter": "Run below and attack her exposed back."
+          },
+          {
+            "id": "upwards-slash",
+            "name": "Upwards Slash",
+            "move_type": "unblockable",
+            "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
+            "counter": "Can be deflected, though the timing is very precise."
+          },
+          {
+            "id": "mid-range-combo",
+            "name": "Mid-Range Combo",
+            "move_type": "combo",
+            "description": "One jumping air hit followed by two ground hits at mid-range.",
+            "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range."
+          },
+          {
+            "id": "whirlwind-attack",
+            "name": "Whirlwind Attack",
+            "move_type": "combo",
+            "description": "Continuous spinning attack with the Naginata, regained in this phase after being absent since Phase 1. Very susceptible to the Shinobi Firecracker, especially during the windup.",
+            "counter": "Run away when she starts spinning, or interrupt the windup with a Shinobi Firecracker."
+          },
+          {
+            "id": "centipede-toxic-goo",
+            "name": "Centipede Toxic Goo",
+            "move_type": "unblockable",
+            "description": "Perilous attack where the demon centipede erupting from her neck spews toxic goo in front of her; can inflict Terror.",
+            "counter": "Sidestep or jump-kick when she uses this and retaliate - the attack has lengthy ending lag."
+          },
+          {
+            "id": "centipede-toxic-cloud",
+            "name": "Centipede Toxic Cloud",
+            "move_type": "status",
+            "description": "A non-perilous variant of the centipede's toxin attack.",
+            "counter": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "great-shinobi-owl",
+    "name": "Great Shinobi Owl",
+    "game": "sekiro",
+    "location": "Ashina Castle",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Great+Shinobi+Owl",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "shinobi-charm",
+            "name": "Shinobi Charm",
+            "move_type": "status",
+            "description": "Tosses a charm that releases a green mist, preventing healing item usage for 30 seconds.",
+            "counter": "Sidestep and then strike, taking care not to get debuffed."
+          },
+          {
+            "id": "backflip",
+            "name": "Backflip",
+            "move_type": "combo",
+            "description": "Leaps backward while throwing a shuriken.",
+            "counter": "Deflect or dodge the projectile."
+          },
+          {
+            "id": "running-slash",
+            "name": "Running Slash",
+            "move_type": "combo",
+            "description": "A single powerful slash performed while charging toward the player.",
+            "counter": "Deflect or dodge depending on posture status."
+          },
+          {
+            "id": "four-slash-combo",
+            "name": "4-Slash Combo",
+            "move_type": "combo",
+            "description": "Four consecutive sword strikes, often followed by Shinobi Charm.",
+            "counter": "Deflect or retreat."
+          },
+          {
+            "id": "shuriken-throw-flip",
+            "name": "Shuriken Throw & Flip",
+            "move_type": "combo",
+            "description": "Two shuriken throws followed by an airborne downward strike.",
+            "counter": "Dodge diagonally forward through the flip strike to open up an opportunity to attack 3-4 times, or land two Mortal Draw hits."
+          },
+          {
+            "id": "shuriken-slash",
+            "name": "Shuriken Slash",
+            "move_type": "combo",
+            "description": "A quick shuriken throw immediately followed by a running slash.",
+            "counter": "Sidestep the projectile, then deflect or retreat."
+          },
+          {
+            "id": "firecracker",
+            "name": "Firecracker",
+            "move_type": "ranged",
+            "description": "Black gunpowder explosion attack dealing significant damage.",
+            "counter": "Run away, or dodge in aggressively."
+          },
+          {
+            "id": "stomp-grab",
+            "name": "Stomp (Grab)",
+            "move_type": "unblockable",
+            "description": "Raises a foot then stomps down, pinning and stabbing the player. Deals massive damage, cannot be blocked, and gives no Perilous indicator.",
+            "counter": null
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "shinobi-charm",
+            "name": "Shinobi Charm",
+            "move_type": "status",
+            "description": "Identical to the Phase 1 version.",
+            "counter": "Sidestep and then strike, taking care not to get debuffed."
+          },
+          {
+            "id": "backflip-poison",
+            "name": "Backflip (Poison)",
+            "move_type": "combo",
+            "description": "Same motion as the Phase 1 backflip, but throws poison instead of a shuriken.",
+            "counter": "Dodge and maintain distance from the poisoned area."
+          },
+          {
+            "id": "running-slash",
+            "name": "Running Slash",
+            "move_type": "combo",
+            "description": "A single powerful slash performed while charging toward the player.",
+            "counter": "Deflect or dodge depending on posture status."
+          },
+          {
+            "id": "four-slash-combo",
+            "name": "4-Slash Combo",
+            "move_type": "combo",
+            "description": "Four consecutive sword strikes, often followed by Shinobi Charm.",
+            "counter": "Deflect or retreat."
+          },
+          {
+            "id": "shuriken-throw-flip",
+            "name": "Shuriken Throw & Flip",
+            "move_type": "combo",
+            "description": "Two shuriken throws followed by an airborne downward strike.",
+            "counter": "Dodge diagonally forward through the flip strike to open up an opportunity to attack 3-4 times, or land two Mortal Draw hits."
+          },
+          {
+            "id": "shuriken-slash",
+            "name": "Shuriken Slash",
+            "move_type": "combo",
+            "description": "A quick shuriken throw immediately followed by a running slash.",
+            "counter": "Sidestep the projectile, then deflect or retreat."
+          },
+          {
+            "id": "firecracker",
+            "name": "Firecracker",
+            "move_type": "ranged",
+            "description": "Black gunpowder explosion attack dealing significant damage.",
+            "counter": "Run away, or dodge in aggressively."
+          },
+          {
+            "id": "stomp-grab",
+            "name": "Stomp (Grab)",
+            "move_type": "unblockable",
+            "description": "Raises a foot then stomps down, pinning and stabbing the player. Deals massive damage, cannot be blocked, and gives no Perilous indicator.",
+            "counter": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "isshin-sword-saint",
+    "name": "Isshin, the Sword Saint",
+    "game": "sekiro",
+    "location": "Ashina Reservoir - Secret Passage",
+    "source_url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Isshin,+the+Sword+Saint",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "dragon-flash",
+            "name": "Dragon Flash",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, readies his stance with a glint on the hilt, delays briefly, then strikes downward launching a force wave, followed by a second wave after a short delay.",
+            "counter": "Deflect the first wave, then dodge the second. Both waves can be fully deflected but will leak damage if only blocked."
+          },
+          {
+            "id": "ashina-cross",
+            "name": "Ashina Cross",
+            "move_type": "combo",
+            "description": "Sheathes his sword, a brief delay with a flash of light at his hand, then steps forward with two rapid slashes.",
+            "counter": "Press deflect twice without pausing, or run far away to avoid it entirely."
+          },
+          {
+            "id": "ashina-cross-cancel",
+            "name": "Ashina Cross Cancel",
+            "move_type": "combo",
+            "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep.",
+            "counter": "Deflect the initial hit, then jump and stomp."
+          },
+          {
+            "id": "ichimonji-double",
+            "name": "Ichimonji Double",
+            "move_type": "overhead",
+            "description": "Raises his blade into a ready stance and performs a double overhead strike.",
+            "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger."
+          },
+          {
+            "id": "distance-slash",
+            "name": "Distance Slash",
+            "move_type": "combo",
+            "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
+            "counter": "Maintain enough distance to react in time."
+          },
+          {
+            "id": "charged-horizontal-force-wave",
+            "name": "Charged Attack, Horizontal Force Wave",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, charges, then swings in a spinning motion causing a large circular force wave.",
+            "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head."
+          },
+          {
+            "id": "three-to-four-hit-combo",
+            "name": "Three-to-Four Hit Combo",
+            "move_type": "combo",
+            "description": "A series of main slashes with delays between hits.",
+            "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits."
+          },
+          {
+            "id": "thrust",
+            "name": "Thrust",
+            "move_type": "thrust",
+            "description": "A telegraphed thrust attack.",
+            "counter": "Mikiri Counter - easy to react to once telegraphed."
+          },
+          {
+            "id": "long-range-wind-attack",
+            "name": "Long Range Wind Attack",
+            "move_type": "ranged",
+            "description": "A long-range wind-based attack.",
+            "counter": "Dodge by running sideways to gain a couple of free hits."
+          },
+          {
+            "id": "close-range-full-screen-sweep",
+            "name": "Close Range Full Screen Sweep",
+            "move_type": "sweep",
+            "description": "A close-range sweep that covers the full screen.",
+            "counter": "Sprint backwards before it goes off."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "dragon-flash",
+            "name": "Dragon Flash",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, readies his stance with a glint on the hilt, delays briefly, then strikes downward launching a force wave, followed by a second wave after a short delay.",
+            "counter": "Deflect the first wave, then dodge the second. Both waves can be fully deflected but will leak damage if only blocked."
+          },
+          {
+            "id": "ashina-cross",
+            "name": "Ashina Cross",
+            "move_type": "combo",
+            "description": "Sheathes his sword, a brief delay with a flash of light at his hand, then steps forward with two rapid slashes.",
+            "counter": "Press deflect twice without pausing, or run far away to avoid it entirely."
+          },
+          {
+            "id": "ashina-cross-cancel",
+            "name": "Ashina Cross Cancel",
+            "move_type": "combo",
+            "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep.",
+            "counter": "Deflect the initial hit, then jump and stomp."
+          },
+          {
+            "id": "ichimonji-double",
+            "name": "Ichimonji Double",
+            "move_type": "overhead",
+            "description": "Raises his blade into a ready stance and performs a double overhead strike.",
+            "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger."
+          },
+          {
+            "id": "distance-slash",
+            "name": "Distance Slash",
+            "move_type": "combo",
+            "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
+            "counter": "Maintain enough distance to react in time."
+          },
+          {
+            "id": "charged-horizontal-force-wave",
+            "name": "Charged Attack, Horizontal Force Wave",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, charges, then swings in a spinning motion causing a large circular force wave.",
+            "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head."
+          },
+          {
+            "id": "three-to-four-hit-combo",
+            "name": "Three-to-Four Hit Combo",
+            "move_type": "combo",
+            "description": "A series of main slashes with delays between hits.",
+            "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits."
+          },
+          {
+            "id": "thrust",
+            "name": "Thrust",
+            "move_type": "thrust",
+            "description": "A telegraphed thrust attack.",
+            "counter": "Mikiri Counter - easy to react to once telegraphed."
+          },
+          {
+            "id": "long-range-wind-attack",
+            "name": "Long Range Wind Attack",
+            "move_type": "ranged",
+            "description": "A long-range wind-based attack.",
+            "counter": "Dodge by running sideways to gain a couple of free hits."
+          },
+          {
+            "id": "close-range-full-screen-sweep",
+            "name": "Close Range Full Screen Sweep",
+            "move_type": "sweep",
+            "description": "A close-range sweep that covers the full screen.",
+            "counter": "Sprint backwards before it goes off."
+          },
+          {
+            "id": "charged-double-projected-force",
+            "name": "Charge Attack, Double Projected Force",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, charges, then makes two slashes that each launch a force disc.",
+            "counter": "The discs deal damage through block if not deflected properly, but the attack is easy to dodge."
+          },
+          {
+            "id": "leaping-slam",
+            "name": "Leaping Slam",
+            "move_type": "unblockable",
+            "description": "When far away or the player is using an item, he leaps and slams with his spear, followed by a sword strike or gunshots.",
+            "counter": "Deflect the slam, then counter-attack."
+          },
+          {
+            "id": "retreating-sweep",
+            "name": "Retreating Sweep",
+            "move_type": "sweep",
+            "description": "Leaps backward into the air and sweeps with his spear, often following several blocked player attacks. Comes out very quickly.",
+            "counter": "Deflect, or quickly dodge forward for a free hit."
+          },
+          {
+            "id": "quad-shot",
+            "name": "Quad Shot",
+            "move_type": "ranged",
+            "description": "At a distance, fires several rapid pistol shots followed by a large thrust from the spear. The last bullet is slightly delayed.",
+            "counter": "Learn to deflect the shots, then Mikiri counter the following thrust or jump-attack if it's a sweep. Simply blocking the bullets damages posture heavily."
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Phase 3",
+        "moves": [
+          {
+            "id": "dragon-flash",
+            "name": "Dragon Flash",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, readies his stance with a glint on the hilt, delays briefly, then strikes downward launching a force wave, followed by a second wave after a short delay.",
+            "counter": "Deflect the first wave, then dodge the second. Both waves can be fully deflected but will leak damage if only blocked."
+          },
+          {
+            "id": "ashina-cross",
+            "name": "Ashina Cross",
+            "move_type": "combo",
+            "description": "Sheathes his sword, a brief delay with a flash of light at his hand, then steps forward with two rapid slashes.",
+            "counter": "Press deflect twice without pausing, or run far away to avoid it entirely."
+          },
+          {
+            "id": "ashina-cross-cancel",
+            "name": "Ashina Cross Cancel",
+            "move_type": "combo",
+            "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep.",
+            "counter": "Deflect the initial hit, then jump and stomp."
+          },
+          {
+            "id": "ichimonji-double",
+            "name": "Ichimonji Double",
+            "move_type": "overhead",
+            "description": "Raises his blade into a ready stance and performs a double overhead strike.",
+            "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger."
+          },
+          {
+            "id": "distance-slash",
+            "name": "Distance Slash",
+            "move_type": "combo",
+            "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
+            "counter": "Maintain enough distance to react in time."
+          },
+          {
+            "id": "charged-horizontal-force-wave",
+            "name": "Charged Attack, Horizontal Force Wave",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, charges, then swings in a spinning motion causing a large circular force wave.",
+            "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head."
+          },
+          {
+            "id": "three-to-four-hit-combo",
+            "name": "Three-to-Four Hit Combo",
+            "move_type": "combo",
+            "description": "A series of main slashes with delays between hits.",
+            "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits."
+          },
+          {
+            "id": "thrust",
+            "name": "Thrust",
+            "move_type": "thrust",
+            "description": "A telegraphed thrust attack.",
+            "counter": "Mikiri Counter - easy to react to once telegraphed."
+          },
+          {
+            "id": "long-range-wind-attack",
+            "name": "Long Range Wind Attack",
+            "move_type": "ranged",
+            "description": "A long-range wind-based attack.",
+            "counter": "Dodge by running sideways to gain a couple of free hits."
+          },
+          {
+            "id": "close-range-full-screen-sweep",
+            "name": "Close Range Full Screen Sweep",
+            "move_type": "sweep",
+            "description": "A close-range sweep that covers the full screen.",
+            "counter": "Sprint backwards before it goes off."
+          },
+          {
+            "id": "charged-double-projected-force",
+            "name": "Charge Attack, Double Projected Force",
+            "move_type": "ranged",
+            "description": "Sheathes his sword, charges, then makes two slashes that each launch a force disc.",
+            "counter": "The discs deal damage through block if not deflected properly, but the attack is easy to dodge."
+          },
+          {
+            "id": "leaping-slam",
+            "name": "Leaping Slam",
+            "move_type": "unblockable",
+            "description": "When far away or the player is using an item, he leaps and slams with his spear, followed by a sword strike or gunshots.",
+            "counter": "Deflect the slam, then counter-attack."
+          },
+          {
+            "id": "retreating-sweep",
+            "name": "Retreating Sweep",
+            "move_type": "sweep",
+            "description": "Leaps backward into the air and sweeps with his spear, often following several blocked player attacks. Comes out very quickly.",
+            "counter": "Deflect, or quickly dodge forward for a free hit."
+          },
+          {
+            "id": "quad-shot",
+            "name": "Quad Shot",
+            "move_type": "ranged",
+            "description": "At a distance, fires several rapid pistol shots followed by a large thrust from the spear. The last bullet is slightly delayed.",
+            "counter": "Learn to deflect the shots, then Mikiri counter the following thrust or jump-attack if it's a sweep. Simply blocking the bullets damages posture heavily."
+          },
+          {
+            "id": "lightning-slash",
+            "name": "Lightning Slash",
+            "move_type": "unblockable",
+            "description": "Jumps into the air, lightning converges on him, then he launches lightning at the player with a sword swing.",
+            "counter": "Jump into the air and use Lightning Reversal, Mist Raven, or Sakura Dance to redirect the attack back at him and stun him."
+          },
+          {
+            "id": "lightning-overhead",
+            "name": "Lightning-Enhanced Overhead Attacks",
+            "move_type": "overhead",
+            "description": "Large overhead attacks with added lightning damage.",
+            "counter": "Can be deflected, though the timing is difficult."
+          },
+          {
+            "id": "lightning-spear-sweep",
+            "name": "Large Sweep with Lightning-Covered Spear",
+            "move_type": "sweep",
+            "description": "A large swing with the spear covered in lightning.",
+            "counter": "Get close when he does this and jump to deflect it directly back at him for big vitality and posture damage, plus a flurry of free hits."
+          },
+          {
+            "id": "distance-slash-lightning",
+            "name": "Distance Slash (Lightning Variant)",
+            "move_type": "combo",
+            "description": "More of a distance slash than the vertical Phase 1 wind attack.",
+            "counter": "Similar avoidance strategy to the wind attacks - dodge by running sideways."
           }
         ]
       }

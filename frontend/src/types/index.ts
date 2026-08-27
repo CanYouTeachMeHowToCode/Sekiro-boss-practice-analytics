@@ -22,6 +22,7 @@ export interface Boss {
   game: string;
   location: string;
   phases: BossPhase[];
+  source_url: string | null;
 }
 
 export interface BossSummary {

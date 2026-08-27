@@ -17,6 +17,7 @@ const boss: Boss = {
       ],
     },
   ],
+  source_url: null,
 };
 
 describe("AnalyticsPanel", () => {
