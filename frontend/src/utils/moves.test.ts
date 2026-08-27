@@ -23,6 +23,7 @@ const boss: Boss = {
       ],
     },
   ],
+  source_url: null,
 };
 
 function makeAttempt(overrides: Partial<Attempt>): Attempt {
