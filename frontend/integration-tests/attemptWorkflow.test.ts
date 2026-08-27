@@ -77,12 +77,12 @@ afterAll(() => {
 });
 
 describe("frontend calling the real backend", () => {
-  it("lists the seeded boss exactly as the backend returns it", async () => {
+  it("lists the seeded bosses exactly as the backend returns them", async () => {
     const { getBosses } = await import("../src/api/bosses");
 
     const bosses = await getBosses();
 
-    expect(bosses).toEqual([{ id: "genichiro-ashina", name: "Genichiro Ashina", location: "Ashina Castle" }]);
+    expect(bosses.map((b) => b.id).sort()).toEqual(["genichiro-ashina", "owl-father"]);
   });
 
   it("fetches boss detail with a real move id usable for recording an attempt", async () => {

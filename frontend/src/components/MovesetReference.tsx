@@ -13,7 +13,7 @@ export default function MovesetReference({ boss }: { boss: Boss }) {
               <li key={move.id}>
                 <strong>{move.name}</strong>
                 {move.description && <p>{move.description}</p>}
-                {move.recommended_response && <p className="recommended-response">Response: {move.recommended_response}</p>}
+                {move.counter && <p className="counter">Counter: {move.counter}</p>}
               </li>
             ))}
           </ul>

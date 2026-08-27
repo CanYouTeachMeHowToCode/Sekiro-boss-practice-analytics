@@ -21,7 +21,7 @@ const boss: Boss = {
       phase_number: 1,
       name: "Phase 1",
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, recommended_response: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, counter: null },
       ],
     },
   ],

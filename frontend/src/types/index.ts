@@ -7,7 +7,7 @@ export interface BossMove {
   name: string;
   move_type: string;
   description: string | null;
-  recommended_response: string | null;
+  counter: string | null;
 }
 
 export interface BossPhase {

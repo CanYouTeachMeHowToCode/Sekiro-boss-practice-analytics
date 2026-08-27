@@ -3,25 +3,39 @@
     "id": "genichiro-ashina",
     "name": "Genichiro Ashina",
     "game": "sekiro",
-    "location": "Ashina Castle",
+    "location": "Ashina Castle - Castle Tower Lookout",
     "phases": [
       {
         "phase_number": 1,
         "name": "Phase 1",
         "moves": [
           {
+            "id": "normal-attack",
+            "name": "Normal Attack",
+            "move_type": "normal",
+            "description": null,
+            "counter": null
+          },
+          {
+            "id": "bow-attack",
+            "name": "Bow Attack",
+            "move_type": "ranged",
+            "description": null,
+            "counter": null
+          },
+          {
             "id": "thrust-attack",
             "name": "Thrust Attack",
             "move_type": "thrust",
             "description": null,
-            "recommended_response": null
+            "counter": null
           },
           {
             "id": "floating-passage",
             "name": "Floating Passage",
             "move_type": "combo",
             "description": "Multi-hit sword combo.",
-            "recommended_response": "Deflect the sequence."
+            "counter": "Deflect the sequence."
           }
         ]
       },
@@ -30,25 +44,39 @@
         "name": "Phase 2",
         "moves": [
           {
+            "id": "normal-attack",
+            "name": "Normal Attack",
+            "move_type": "normal",
+            "description": null,
+            "counter": null
+          },
+          {
+            "id": "bow-attack",
+            "name": "Bow Attack",
+            "move_type": "ranged",
+            "description": null,
+            "counter": null
+          },
+          {
             "id": "thrust-attack",
             "name": "Thrust Attack",
             "move_type": "thrust",
             "description": null,
-            "recommended_response": null
+            "counter": null
           },
-          { 
+          {
             "id": "sweep-attack",
             "name": "Sweep Attack",
             "move_type": "sweep",
             "description": "second/third stage has sweep attack",
-            "recommended_response": null
+            "counter": null
           },
           {
             "id": "floating-passage",
             "name": "Floating Passage",
             "move_type": "combo",
             "description": "Multi-hit sword combo.",
-            "recommended_response": "Deflect the sequence."
+            "counter": "Deflect the sequence."
           }
         ]
       },
@@ -57,32 +85,269 @@
         "name": "Phase 3",
         "moves": [
           {
+            "id": "normal-attack",
+            "name": "Normal Attack",
+            "move_type": "normal",
+            "description": null,
+            "counter": null
+          },
+          {
+            "id": "bow-attack",
+            "name": "Bow Attack",
+            "move_type": "ranged",
+            "description": null,
+            "counter": null
+          },
+          {
             "id": "thrust-attack",
             "name": "Thrust Attack",
             "move_type": "thrust",
             "description": null,
-            "recommended_response": null
+            "counter": null
           },
-          { 
+          {
             "id": "sweep-attack",
             "name": "Sweep Attack",
             "move_type": "sweep",
             "description": "second/third stage has sweep attack",
-            "recommended_response": null
+            "counter": null
           },
           {
             "id": "floating-passage",
             "name": "Floating Passage",
             "move_type": "combo",
             "description": "Multi-hit sword combo.",
-            "recommended_response": "Deflect the sequence."
+            "counter": "Deflect the sequence."
           },
           {
             "id": "lightning-attack",
             "name": "Lightning Attack",
             "move_type": "lightning",
-            "description": null,
-            "recommended_response": null
+            "description": "lightning attack that can be returned",
+            "counter": "lightening return by jumping up and pressing the attack button at the right time"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "owl-father",
+    "name": "Owl (Father)",
+    "game": "sekiro",
+    "location": "Hirata Estate Revisited - Hidden Temple",
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Phase 1",
+        "moves": [
+          {
+            "id": "zig-zag",
+            "name": "Zig-Zag",
+            "move_type": "movement",
+            "description": "Many of Owl's attacks begin with a zig-zag motion designed to confuse the player, leading into one of five possible follow-up attacks.",
+            "counter": "Stay ready to react to whichever attack follows."
+          },
+          {
+            "id": "shuriken-throw",
+            "name": "Shuriken Throw",
+            "move_type": "ranged",
+            "description": "A single shuriken projectile attack.",
+            "counter": "Block, deflect, or dodge to the side."
+          },
+          {
+            "id": "double-shuriken-flip",
+            "name": "Double Shuriken + Flip",
+            "move_type": "combo",
+            "description": "Two shuriken throws followed by an aerial flip and downward sword strike.",
+            "counter": "Deflect/block the shurikens and dodge sideways to avoid the flip, then counter."
+          },
+          {
+            "id": "shadowfall",
+            "name": "Shadowfall",
+            "move_type": "thrust",
+            "description": "Unblockable thrust; if it hits, he jumps off and comes down with two huge slashes.",
+            "counter": "Mikiri the thrust."
+          },
+          {
+            "id": "shuriken-slash",
+            "name": "Shuriken Slash",
+            "move_type": "combo",
+            "description": "Throws a shuriken immediately followed by a running slash.",
+            "counter": "Block/deflect both. A well-timed dodge to the right is also possible."
+          },
+          {
+            "id": "perilous-sweep",
+            "name": "Perilous Sweep",
+            "move_type": "sweep",
+            "description": "Unblockable sweep attack performed from the side.",
+            "counter": "Jump over it and stay close to bait his overhead slash, or jump back for a jump kick to the head."
+          },
+          {
+            "id": "large-overhead-slash",
+            "name": "Large Overhead Slash",
+            "move_type": "overhead",
+            "description": "A very powerful overhead slash that adapts based on the player's response.",
+            "counter": "Dodge at the last moment and counter, or step back out of range. Hits can land during the charge-up."
+          },
+          {
+            "id": "backflip",
+            "name": "Backflip",
+            "move_type": "movement",
+            "description": "Leaps away; deals no vitality damage but significant posture damage.",
+            "counter": "Deflect to minimize posture damage."
+          },
+          {
+            "id": "firecrackers",
+            "name": "Firecrackers",
+            "move_type": "ranged",
+            "description": "Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash.",
+            "counter": "Dodge backwards to avoid."
+          },
+          {
+            "id": "running-slash",
+            "name": "Running Slash",
+            "move_type": "combo",
+            "description": "A single strong slash performed while approaching the player.",
+            "counter": "Block/deflect. Dodging to the left is also possible."
+          },
+          {
+            "id": "five-slash-firecracker-combo",
+            "name": "5-Slash Firecracker Combo",
+            "move_type": "combo",
+            "description": "Three consecutive sword slashes, followed by an elbow strike, followed by firecrackers that he slashes through.",
+            "counter": "Deflect/block the slashes, then dodge right when the firecrackers are thrown for a counter opportunity."
+          },
+          {
+            "id": "double-slash-perilous-sweep",
+            "name": "Double Slash into Perilous Sweep",
+            "move_type": "combo",
+            "description": "Two consecutive slashes ending in an unblockable sweep; can chain into Large Overhead Slash.",
+            "counter": "Jump over it and stay close to bait his overhead slash."
+          },
+          {
+            "id": "stomp-deathblow",
+            "name": "Stomp (Deathblow)",
+            "move_type": "unblockable",
+            "description": "Raises a foot then stomps down, pinning the player and stabbing through the chest for massive damage. Cannot be blocked and gives no Perilous indicator.",
+            "counter": "Dodge backwards or safety roll to avoid it."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Phase 2",
+        "moves": [
+          {
+            "id": "zig-zag",
+            "name": "Zig-Zag",
+            "move_type": "movement",
+            "description": "Many of Owl's attacks begin with a zig-zag motion designed to confuse the player, leading into one of five possible follow-up attacks.",
+            "counter": "Stay ready to react to whichever attack follows."
+          },
+          {
+            "id": "shuriken-throw",
+            "name": "Shuriken Throw",
+            "move_type": "ranged",
+            "description": "A single shuriken projectile attack.",
+            "counter": "Block, deflect, or dodge to the side."
+          },
+          {
+            "id": "double-shuriken-flip",
+            "name": "Double Shuriken + Flip",
+            "move_type": "combo",
+            "description": "Two shuriken throws followed by an aerial flip and downward sword strike.",
+            "counter": "Deflect/block the shurikens and dodge sideways to avoid the flip, then counter."
+          },
+          {
+            "id": "shadowfall",
+            "name": "Shadowfall",
+            "move_type": "thrust",
+            "description": "Unblockable thrust; if it hits, he jumps off and comes down with two huge slashes.",
+            "counter": "Mikiri the thrust."
+          },
+          {
+            "id": "shuriken-slash",
+            "name": "Shuriken Slash",
+            "move_type": "combo",
+            "description": "Throws a shuriken immediately followed by a running slash.",
+            "counter": "Block/deflect both. A well-timed dodge to the right is also possible."
+          },
+          {
+            "id": "perilous-sweep",
+            "name": "Perilous Sweep",
+            "move_type": "sweep",
+            "description": "Unblockable sweep attack performed from the side.",
+            "counter": "Jump over it and stay close to bait his overhead slash, or jump back for a jump kick to the head."
+          },
+          {
+            "id": "large-overhead-slash",
+            "name": "Large Overhead Slash",
+            "move_type": "overhead",
+            "description": "A very powerful overhead slash that adapts based on the player's response.",
+            "counter": "Dodge at the last moment and counter, or step back out of range. Hits can land during the charge-up."
+          },
+          {
+            "id": "backflip",
+            "name": "Backflip",
+            "move_type": "movement",
+            "description": "Leaps away; deals no vitality damage but significant posture damage.",
+            "counter": "Deflect to minimize posture damage."
+          },
+          {
+            "id": "firecrackers",
+            "name": "Firecrackers",
+            "move_type": "ranged",
+            "description": "Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash.",
+            "counter": "Dodge backwards to avoid."
+          },
+          {
+            "id": "running-slash",
+            "name": "Running Slash",
+            "move_type": "combo",
+            "description": "A single strong slash performed while approaching the player.",
+            "counter": "Block/deflect. Dodging to the left is also possible."
+          },
+          {
+            "id": "five-slash-firecracker-combo",
+            "name": "5-Slash Firecracker Combo",
+            "move_type": "combo",
+            "description": "Three consecutive sword slashes, followed by an elbow strike, followed by firecrackers that he slashes through.",
+            "counter": "Deflect/block the slashes, then dodge right when the firecrackers are thrown for a counter opportunity."
+          },
+          {
+            "id": "double-slash-perilous-sweep",
+            "name": "Double Slash into Perilous Sweep",
+            "move_type": "combo",
+            "description": "Two consecutive slashes ending in an unblockable sweep; can chain into Large Overhead Slash.",
+            "counter": "Jump over it and stay close to bait his overhead slash."
+          },
+          {
+            "id": "stomp-deathblow",
+            "name": "Stomp (Deathblow)",
+            "move_type": "unblockable",
+            "description": "Raises a foot then stomps down, pinning the player and stabbing through the chest for massive damage. Cannot be blocked and gives no Perilous indicator.",
+            "counter": "Dodge backwards or safety roll to avoid it."
+          },
+          {
+            "id": "backflip-shuriken",
+            "name": "Backflip + Shuriken",
+            "move_type": "combo",
+            "description": "Same as the Phase 1 backflip, with a shuriken thrown afterward.",
+            "counter": "Block/deflect both."
+          },
+          {
+            "id": "owl-teleport",
+            "name": "Owl Teleport",
+            "move_type": "teleport",
+            "description": "Uses his summoned owl to teleport above the player and drop down with a slash.",
+            "counter": "Deflect the slash, or run/stay away from the owl to avoid it."
+          },
+          {
+            "id": "fire-owl-shadowfall",
+            "name": "Fire Owl + Shadowfall",
+            "move_type": "combo",
+            "description": "Summons his owl and throws an unblockable fire owl projectile, then follows up with Shadowfall.",
+            "counter": "Jump over the fire owl and Mikiri the thrust."
           }
         ]
       }
