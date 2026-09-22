@@ -159,8 +159,10 @@ Shared structure:
 ```text id="iiqf8a"
 Game
  └── Boss
-      └── Phase
-           └── Move
+      ├── Phase
+      └── Move
+
+Phase ←── many-to-many ──→ Move
 ```
 
 Examples of game-specific mechanics:
