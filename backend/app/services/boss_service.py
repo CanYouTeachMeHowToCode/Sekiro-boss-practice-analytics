@@ -1,47 +1,68 @@
-import json
-import os
-from pathlib import Path
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session, selectinload
 
-from app.models.boss import Boss, BossMove, BossSummary
-
-DATA_DIR = Path(os.environ.get("SEKIRO_DATA_DIR", str(Path(__file__).resolve().parent.parent / "data")))
-BOSSES_FILE = "bosses.json"
+from app.db import models as db
+from app.models.boss import Boss, BossMove, BossPhase, BossSummary
 
 
-def _load_bosses() -> list[Boss]:
-    path = DATA_DIR / BOSSES_FILE
-    with open(path, "r", encoding="utf-8") as f:
-        raw = json.load(f)
-    return [Boss.model_validate(entry) for entry in raw]
+def get_all_bosses(session: Session) -> list[BossSummary]:
+    rows = session.scalars(select(db.Boss).order_by(db.Boss.id))
+    return [BossSummary(id=b.slug, name=b.name, location=b.location) for b in rows]
 
 
-def get_all_bosses() -> list[BossSummary]:
-    return [
-        BossSummary(id=boss.id, name=boss.name, location=boss.location)
-        for boss in _load_bosses()
-    ]
+def get_boss_row(session: Session, boss_slug: str) -> db.Boss | None:
+    return session.scalar(select(db.Boss).where(db.Boss.slug == boss_slug))
 
 
-def get_boss(boss_id: str) -> Boss | None:
-    for boss in _load_bosses():
-        if boss.id == boss_id:
-            return boss
-    return None
-
-
-def get_move(boss_id: str, move_id: str) -> BossMove | None:
-    boss = get_boss(boss_id)
+def get_boss(session: Session, boss_slug: str) -> Boss | None:
+    boss = session.scalar(
+        select(db.Boss)
+        .where(db.Boss.slug == boss_slug)
+        .options(
+            selectinload(db.Boss.game),
+            selectinload(db.Boss.phases).selectinload(db.BossPhase.move_links).selectinload(db.PhaseMove.move),
+        )
+    )
     if boss is None:
         return None
-    for phase in boss.phases:
-        for move in phase.moves:
-            if move.id == move_id:
-                return move
-    return None
+    return Boss(
+        id=boss.slug,
+        name=boss.name,
+        game=boss.game.slug,
+        location=boss.location,
+        source_url=boss.source_url,
+        phases=[
+            BossPhase(
+                phase_number=phase.phase_number,
+                name=phase.name,
+                moves=[
+                    BossMove(
+                        id=link.move.slug,
+                        name=link.move.name,
+                        move_type=link.move.move_type,
+                        description=link.move.description,
+                        counter=link.move.counter,
+                    )
+                    for link in phase.move_links
+                ],
+            )
+            for phase in boss.phases
+        ],
+    )
 
 
-def phase_exists(boss_id: str, phase_number: int) -> bool:
-    boss = get_boss(boss_id)
-    if boss is None:
-        return False
-    return any(phase.phase_number == phase_number for phase in boss.phases)
+def get_move_row(session: Session, boss_id: int, move_slug: str) -> db.Move | None:
+    return session.scalar(select(db.Move).where(db.Move.boss_id == boss_id, db.Move.slug == move_slug))
+
+
+def phase_exists(session: Session, boss_id: int, phase_number: int) -> bool:
+    return (
+        session.scalar(
+            select(db.BossPhase.id).where(db.BossPhase.boss_id == boss_id, db.BossPhase.phase_number == phase_number)
+        )
+        is not None
+    )
+
+
+def final_phase_number(session: Session, boss_id: int) -> int:
+    return session.scalar(select(func.max(db.BossPhase.phase_number)).where(db.BossPhase.boss_id == boss_id))

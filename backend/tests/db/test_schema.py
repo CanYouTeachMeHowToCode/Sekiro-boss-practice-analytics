@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import session as db_session
-from app.db.models import Attempt, Boss, BossPhase, Game, Move
-from tests.db.alembic_helpers import alembic_config
+from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove
+from scripts.reset_test_database import alembic_config
 
 APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts"}
 
@@ -42,16 +42,17 @@ def test_move_is_stored_once_and_shared_across_phases(session):
     phase_2 = BossPhase(boss=boss, phase_number=2, name="Phase 2")
     shadowfall = Move(boss=boss, slug="shadowfall", name="Shadowfall", move_type="thrust")
     teleport = Move(boss=boss, slug="owl-teleport", name="Owl Teleport", move_type="teleport")
-    phase_1.moves.append(shadowfall)
-    phase_2.moves.extend([shadowfall, teleport])
+    phase_1.move_links.append(PhaseMove(move=shadowfall, position=0))
+    # Added out of order to check that position, not insertion order, decides the order.
+    phase_2.move_links.extend([PhaseMove(move=teleport, position=1), PhaseMove(move=shadowfall, position=0)])
     session.add_all([phase_1, phase_2])
     session.flush()
     session.expire_all()
 
     reloaded = session.get(Boss, boss.id)
     assert [p.phase_number for p in reloaded.phases] == [1, 2]
-    assert [m.slug for m in reloaded.phases[0].moves] == ["shadowfall"]
-    assert {m.slug for m in reloaded.phases[1].moves} == {"shadowfall", "owl-teleport"}
+    assert [link.move.slug for link in reloaded.phases[0].move_links] == ["shadowfall"]
+    assert [link.move.slug for link in reloaded.phases[1].move_links] == ["shadowfall", "owl-teleport"]
     assert session.query(Move).filter_by(boss_id=boss.id, slug="shadowfall").count() == 1
 
 

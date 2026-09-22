@@ -1,12 +1,14 @@
 from collections import Counter
 
+from sqlalchemy.orm import Session
+
 from app.models.analytics import BossAnalytics
 from app.models.attempt import AttemptResult
 from app.services import attempt_service
 
 
-def compute_analytics(boss_id: str) -> BossAnalytics:
-    attempts = attempt_service.get_attempts(boss_id)
+def compute_analytics(session: Session, boss_id: str) -> BossAnalytics:
+    attempts = attempt_service.get_attempts(session, boss_id)
 
     total_attempts = len(attempts)
     defeated = any(a.result == AttemptResult.VICTORY for a in attempts)

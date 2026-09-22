@@ -2,12 +2,10 @@ from datetime import datetime
 
 from sqlalchemy import (
     CheckConstraint,
-    Column,
     DateTime,
     ForeignKey,
     Integer,
     String,
-    Table,
     Text,
     UniqueConstraint,
     func,
@@ -15,13 +13,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-
-phase_moves = Table(
-    "phase_moves",
-    Base.metadata,
-    Column("boss_phase_id", ForeignKey("boss_phases.id", ondelete="CASCADE"), primary_key=True),
-    Column("move_id", ForeignKey("moves.id", ondelete="CASCADE"), primary_key=True),
-)
 
 
 class Game(Base):
@@ -61,7 +52,9 @@ class BossPhase(Base):
     name: Mapped[str] = mapped_column(String(100))
 
     boss: Mapped[Boss] = relationship(back_populates="phases")
-    moves: Mapped[list["Move"]] = relationship(secondary=phase_moves, back_populates="phases")
+    move_links: Mapped[list["PhaseMove"]] = relationship(
+        back_populates="phase", order_by="PhaseMove.position", cascade="all, delete-orphan"
+    )
 
 
 class Move(Base):
@@ -81,7 +74,20 @@ class Move(Base):
     source_url: Mapped[str | None] = mapped_column(Text)
 
     boss: Mapped[Boss] = relationship(back_populates="moves")
-    phases: Mapped[list[BossPhase]] = relationship(secondary=phase_moves, back_populates="moves")
+    phase_links: Mapped[list["PhaseMove"]] = relationship(back_populates="move", cascade="all, delete-orphan")
+
+
+class PhaseMove(Base):
+    """Which moves appear in which phase, and in what order."""
+
+    __tablename__ = "phase_moves"
+
+    boss_phase_id: Mapped[int] = mapped_column(ForeignKey("boss_phases.id", ondelete="CASCADE"), primary_key=True)
+    move_id: Mapped[int] = mapped_column(ForeignKey("moves.id", ondelete="CASCADE"), primary_key=True)
+    position: Mapped[int] = mapped_column(Integer)
+
+    phase: Mapped[BossPhase] = relationship(back_populates="move_links")
+    move: Mapped[Move] = relationship(back_populates="phase_links")
 
 
 class Attempt(Base):
