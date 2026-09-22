@@ -1,8 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
-import { existsSync, mkdtempSync, copyFileSync, writeFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,17 +10,41 @@ import { fileURLToPath } from "node:url";
 // TypeScript request/response shapes actually match what the backend
 // returns over the wire, which the mocked component/page tests can't catch.
 //
-// Requires the backend's Python environment to already be set up locally
-// (backend/.venv with requirements.txt installed) — not run as part of the
-// default `npm test` / CI, see `npm run test:integration`.
+// Requires the backend's Python environment (backend/.venv) and a running
+// PostgreSQL server. The connection comes from TEST_DATABASE_URL, or from
+// the repo's .env file. Not run as part of the default `npm test` / CI, see
+// `npm run test:integration`.
 
-const BACKEND_DIR = fileURLToPath(new URL("../../backend", import.meta.url));
+const REPO_DIR = fileURLToPath(new URL("../..", import.meta.url));
+const BACKEND_DIR = join(REPO_DIR, "backend");
 const PORT = 8123;
 const HEALTH_URL = `http://127.0.0.1:${PORT}/health`;
 const API_BASE_URL = `http://127.0.0.1:${PORT}/api`;
+// Separate from the backend's pytest database so the two suites never wipe each other's data.
+const DATABASE_NAME = "sekiro_integration_test";
 
 let backendProcess: ChildProcess;
-let dataDir: string;
+
+function readDotEnv(): Record<string, string> {
+  const path = join(REPO_DIR, ".env");
+  if (!existsSync(path)) return {};
+  const entries = readFileSync(path, "utf-8")
+    .split(/\r?\n/)
+    .map((line) => line.match(/^([^#=]+)=(.*)$/))
+    .filter((match): match is RegExpMatchArray => match !== null)
+    .map((match) => [match[1].trim(), match[2].trim()]);
+  return Object.fromEntries(entries);
+}
+
+function integrationDatabaseUrl(): string {
+  const base = process.env.TEST_DATABASE_URL ?? readDotEnv().TEST_DATABASE_URL;
+  if (!base) {
+    throw new Error("Set TEST_DATABASE_URL (or add it to the repo's .env) to run the integration tests");
+  }
+  const url = new URL(base);
+  url.pathname = `/${DATABASE_NAME}`;
+  return url.toString();
+}
 
 function resolvePython(): string {
   const isWindows = process.platform === "win32";
@@ -48,13 +71,20 @@ async function waitForHealth(timeoutMs: number): Promise<void> {
 }
 
 beforeAll(async () => {
-  dataDir = mkdtempSync(join(tmpdir(), "sekiro-integration-"));
-  copyFileSync(join(BACKEND_DIR, "app", "data", "bosses.json"), join(dataDir, "bosses.json"));
-  writeFileSync(join(dataDir, "attempts.json"), "[]");
+  const env = { ...process.env, DATABASE_URL: integrationDatabaseUrl() };
+
+  const reset = spawnSync(resolvePython(), ["-m", "scripts.reset_test_database"], {
+    cwd: BACKEND_DIR,
+    env,
+    encoding: "utf-8",
+  });
+  if (reset.status !== 0) {
+    throw new Error(`Failed to reset the integration database:\n${reset.stderr}`);
+  }
 
   backendProcess = spawn(resolvePython(), ["-m", "uvicorn", "app.main:app", "--port", String(PORT)], {
     cwd: BACKEND_DIR,
-    env: { ...process.env, SEKIRO_DATA_DIR: dataDir },
+    env,
     stdio: "pipe",
   });
 
@@ -73,7 +103,6 @@ beforeAll(async () => {
 afterAll(() => {
   backendProcess?.kill();
   vi.unstubAllEnvs();
-  rmSync(dataDir, { recursive: true, force: true });
 });
 
 describe("frontend calling the real backend", () => {

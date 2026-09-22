@@ -22,8 +22,6 @@ services:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sekiro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-sekiro}
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend/app/data:/app/app/data
     depends_on:
       postgres:
         condition: service_healthy

@@ -651,7 +651,7 @@
             "id": "sweep-attack",
             "name": "Sweep Attack",
             "move_type": "sweep",
-            "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight.",
+            "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight. More telegraphed and predictable in Phase 3.",
             "counter": "Jump over it."
           },
           {
@@ -672,7 +672,7 @@
             "id": "jump-attack-overhead",
             "name": "Jump Attack (Overhead Variant)",
             "move_type": "overhead",
-            "description": "Jumping attack that ends in an overhead slash.",
+            "description": "Jumping attack that ends in an overhead slash. In Phase 3 it tends to be used as a finishing move.",
             "counter": "Run below and attack her exposed back."
           },
           {
@@ -712,14 +712,14 @@
             "id": "sweep-attack",
             "name": "Sweep Attack",
             "move_type": "sweep",
-            "description": "Perilous sweep attack variant, now more telegraphed and predictable.",
+            "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight. More telegraphed and predictable in Phase 3.",
             "counter": "Jump over it."
           },
           {
             "id": "thrust-attack",
             "name": "Thrust Attack",
             "move_type": "thrust",
-            "description": "Perilous thrust attack variant.",
+            "description": "Perilous thrust attack variant, used more often here than in the Mibu Village fight.",
             "counter": "Mikiri Counter."
           },
           {
@@ -733,7 +733,7 @@
             "id": "jump-attack-overhead",
             "name": "Jump Attack (Overhead Variant)",
             "move_type": "overhead",
-            "description": "Jumping attack that ends in an overhead slash. Tends to be used as a finishing move in this phase.",
+            "description": "Jumping attack that ends in an overhead slash. In Phase 3 it tends to be used as a finishing move.",
             "counter": "Run below and attack her exposed back."
           },
           {
@@ -852,7 +852,7 @@
             "id": "shinobi-charm",
             "name": "Shinobi Charm",
             "move_type": "status",
-            "description": "Identical to the Phase 1 version.",
+            "description": "Tosses a charm that releases a green mist, preventing healing item usage for 30 seconds.",
             "counter": "Sidestep and then strike, taking care not to get debuffed."
           },
           {
