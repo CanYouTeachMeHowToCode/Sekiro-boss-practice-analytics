@@ -64,5 +64,20 @@ def phase_exists(session: Session, boss_id: int, phase_number: int) -> bool:
     )
 
 
+def move_appears_in_phase(session: Session, boss_id: int, phase_number: int, move_id: int) -> bool:
+    return (
+        session.scalar(
+            select(db.PhaseMove.move_id)
+            .join(db.BossPhase)
+            .where(
+                db.BossPhase.boss_id == boss_id,
+                db.BossPhase.phase_number == phase_number,
+                db.PhaseMove.move_id == move_id,
+            )
+        )
+        is not None
+    )
+
+
 def final_phase_number(session: Session, boss_id: int) -> int:
     return session.scalar(select(func.max(db.BossPhase.phase_number)).where(db.BossPhase.boss_id == boss_id))
