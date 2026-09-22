@@ -336,9 +336,13 @@ The primary domain hierarchy remains:
 ```text
 Game
  └── Boss
-      └── Phase
-           └── Move
+      ├── Phase
+      └── Move
+
+Phase ←── many-to-many ──→ Move
 ```
+
+A move belongs to a boss and may appear in several of that boss's phases.
 
 Player attempt data:
 
@@ -364,10 +368,13 @@ games
 bosses
 boss_phases
 moves
+phase_moves
 attempts
 ```
 
 Avoid adding tables solely for hypothetical future requirements.
+
+`phase_moves` is not hypothetical: the existing boss data already reuses the same move across multiple phases (for example, Owl (Father)'s Shadowfall appears in both phases).
 
 ---
 
@@ -450,21 +457,66 @@ Conceptual fields:
 
 ```text
 id
-boss_phase_id
+boss_id
 slug
 name
 move_type
 description
 telegraph
-recommended_response
+counter
 common_mistakes
 source_name
 source_url
 ```
 
+Relationship:
+
+```text
+Boss
+ 1
+ ↓
+Many Moves
+```
+
+Each move is stored once per boss, even if it appears in several phases. `slug` should be unique within a boss.
+
 Not every optional field must be populated immediately.
 
 Do not block V2 development on complete moveset documentation.
+
+---
+
+## Phase Moves
+
+Join table recording which moves appear in which phases.
+
+Conceptual fields:
+
+```text
+boss_phase_id
+move_id
+```
+
+Relationship:
+
+```text
+Phase
+ Many
+ ↕
+Many Moves
+```
+
+Example (Owl (Father)):
+
+| boss_phase_id | move_id | meaning |
+| ------------- | ------- | ------- |
+| Phase 1 | Shadowfall | Shadowfall appears in Phase 1 |
+| Phase 2 | Shadowfall | Shadowfall also appears in Phase 2 |
+| Phase 2 | Owl Teleport | Owl Teleport only appears in Phase 2 |
+
+Because a move is stored once, an attempt that failed to Shadowfall always references the same `failure_move_id`, regardless of the phase. Phase information comes from `phase_reached`.
+
+The phase and the move must belong to the same boss.
 
 ---
 
@@ -482,6 +534,8 @@ failure_category
 notes
 created_at
 ```
+
+`id` is an integer primary key. The API exposes it as a string so the existing frontend `Attempt.id: string` contract does not change.
 
 `failure_move_id` should be nullable.
 
@@ -505,7 +559,8 @@ Examples:
 
 * boss must reference an existing game
 * phase must reference an existing boss
-* move must reference an existing phase
+* move must reference an existing boss
+* phase_moves entries must reference an existing phase and an existing move
 * attempt must reference an existing boss
 * failure move must reference an existing move when present
 
@@ -513,6 +568,7 @@ Application-level validation should still ensure that:
 
 * the selected phase belongs to the selected boss
 * the selected failure move belongs to the selected boss
+* a phase_moves entry never links a phase and a move from different bosses
 * invalid boss / phase / move combinations are rejected
 
 Do not rely only on frontend validation.
@@ -1391,6 +1447,7 @@ Replace JSON persistence with a relational persistence foundation.
 * define initial relational schema
 * create first Alembic migration
 * verify schema can be created from scratch
+* run database tests against a PostgreSQL service in backend CI
 
 ### Completion Criteria
 
@@ -1477,7 +1534,7 @@ Improve the moveset reference enough to support better failure identification.
 * move type
 * description
 * telegraph
-* recommended response
+* counter
 * common mistakes
 * source name
 * source URL
