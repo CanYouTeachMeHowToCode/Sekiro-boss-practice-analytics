@@ -60,6 +60,10 @@ def create_attempt(session: Session, boss_slug: str, req: CreateAttemptRequest) 
             failure_move = boss_service.get_move_row(session, boss.id, req.failure_move_id)
             if failure_move is None:
                 raise AttemptValidationError(f"Move '{req.failure_move_id}' does not belong to boss '{boss_slug}'")
+            if not boss_service.move_appears_in_phase(session, boss.id, phase_reached, failure_move.id):
+                raise AttemptValidationError(
+                    f"Move '{req.failure_move_id}' does not appear in phase {phase_reached} of boss '{boss_slug}'"
+                )
             failure_category = None
         elif failure_category is None:
             failure_category = FailureCategory.NOT_SURE
