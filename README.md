@@ -1,5 +1,7 @@
 # Sekiro Boss Practice Analytics
 
+English | [简体中文](README.zh-CN.md)
+
 A web app for tracking *Sekiro: Shadows Die Twice* boss attempts, mistakes, and player improvement over time.
 
 ## Why This Tool
@@ -86,13 +88,15 @@ The V2 relational model will approximately represent:
 ```text
 Game
  └── Boss
-      └── Phase
-           └── Move
+      ├── Phase
+      ├── Move
+      └── Attempt
+           └── Failure Move
 
-Boss
- └── Attempt
-      └── Failure Move
+Phase ←── many-to-many ──→ Move
 ```
+
+A move belongs to a boss and is stored once, even when it appears in several phases. A join table records which phases each move appears in, so an attempt that failed to the same move always points to the same record, regardless of the phase.
 
 This will introduce:
 
@@ -127,7 +131,7 @@ Boss moves may contain additional structured information such as:
 * move type
 * attack description
 * telegraph
-* recommended response
+* counter
 * common mistakes
 
 This boss metadata will also provide a stronger foundation for future gameplay analysis.
