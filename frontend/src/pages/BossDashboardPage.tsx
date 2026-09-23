@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getBossById } from "../api/bosses";
-import { getBossAnalytics, getBossAttempts } from "../api/attempts";
+import { getBossAnalytics, getBossAttempts, getBossProgression } from "../api/attempts";
 import { ApiError } from "../api/client";
-import type { Attempt, Boss, BossAnalytics } from "../types";
+import type { Attempt, Boss, BossAnalytics, ProgressionPoint } from "../types";
 import RecordAttemptForm from "../components/RecordAttemptForm";
 import AnalyticsPanel from "../components/AnalyticsPanel";
 import AttemptHistory from "../components/AttemptHistory";
 import MovesetReference from "../components/MovesetReference";
+import ProgressionChart from "../components/ProgressionChart";
 
 type LoadState = "loading" | "error" | "not-found" | "ready";
 
@@ -16,13 +17,19 @@ export default function BossDashboardPage() {
   const [boss, setBoss] = useState<Boss | null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [analytics, setAnalytics] = useState<BossAnalytics | null>(null);
+  const [progression, setProgression] = useState<ProgressionPoint[]>([]);
   const [state, setState] = useState<LoadState>("loading");
   const [showForm, setShowForm] = useState(false);
 
   const loadAttemptData = useCallback(async (id: string) => {
-    const [attemptsData, analyticsData] = await Promise.all([getBossAttempts(id), getBossAnalytics(id)]);
+    const [attemptsData, analyticsData, progressionData] = await Promise.all([
+      getBossAttempts(id),
+      getBossAnalytics(id),
+      getBossProgression(id),
+    ]);
     setAttempts(attemptsData);
     setAnalytics(analyticsData);
+    setProgression(progressionData);
   }, []);
 
   useEffect(() => {
@@ -30,12 +37,13 @@ export default function BossDashboardPage() {
     let cancelled = false;
     setState("loading");
 
-    Promise.all([getBossById(bossId), getBossAttempts(bossId), getBossAnalytics(bossId)])
-      .then(([bossData, attemptsData, analyticsData]) => {
+    Promise.all([getBossById(bossId), getBossAttempts(bossId), getBossAnalytics(bossId), getBossProgression(bossId)])
+      .then(([bossData, attemptsData, analyticsData, progressionData]) => {
         if (cancelled) return;
         setBoss(bossData);
         setAttempts(attemptsData);
         setAnalytics(analyticsData);
+        setProgression(progressionData);
         setState("ready");
       })
       .catch((err) => {
@@ -67,7 +75,7 @@ export default function BossDashboardPage() {
     return (
       <main className="page">
         <p>Boss not found.</p>
-        <Link to="/">Back to boss selection</Link>
+        <Link to="/bosses">Back to boss selection</Link>
       </main>
     );
   }
@@ -82,11 +90,12 @@ export default function BossDashboardPage() {
 
   return (
     <main className="page">
-      <Link to="/" className="back-link">
+      <Link to="/bosses" className="back-link">
         ← Choose a different boss
       </Link>
 
       <h1>{boss.name}</h1>
+      {boss.name_zh && <p className="boss-name-zh">{boss.name_zh}</p>}
       <p>{boss.location}</p>
 
       <div className="stat-grid">
@@ -102,6 +111,14 @@ export default function BossDashboardPage() {
           <h3>Defeated</h3>
           <p>{analytics.defeated ? "Yes" : "No"}</p>
         </div>
+        <div>
+          <h3>First Victory</h3>
+          <p>
+            {analytics.attempts_until_first_victory !== null
+              ? `Attempt #${analytics.attempts_until_first_victory}`
+              : "Not yet"}
+          </p>
+        </div>
       </div>
 
       <button className="btn btn-primary" onClick={() => setShowForm((v) => !v)}>
@@ -112,6 +129,7 @@ export default function BossDashboardPage() {
         <RecordAttemptForm boss={boss} onSuccess={handleAttemptSaved} onCancel={() => setShowForm(false)} />
       )}
 
+      <ProgressionChart boss={boss} points={progression} />
       <AnalyticsPanel boss={boss} analytics={analytics} />
       <AttemptHistory boss={boss} attempts={attempts} />
       <MovesetReference boss={boss} />

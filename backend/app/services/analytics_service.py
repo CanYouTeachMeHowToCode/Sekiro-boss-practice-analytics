@@ -1,37 +1,63 @@
 from collections import Counter
 
-from app.models.analytics import BossAnalytics
-from app.models.attempt import AttemptResult
+from sqlalchemy.orm import Session
+
+from app.models.analytics import BossAnalytics, ProgressionPoint, RecentAnalytics
+from app.models.attempt import Attempt, AttemptResult
 from app.services import attempt_service
 
+DEFAULT_RECENT_WINDOW = 10
 
-def compute_analytics(boss_id: str) -> BossAnalytics:
-    attempts = attempt_service.get_attempts(boss_id)
 
-    total_attempts = len(attempts)
-    defeated = any(a.result == AttemptResult.VICTORY for a in attempts)
-    best_phase = max((a.phase_reached for a in attempts), default=None)
-
+def _failure_stats(attempts: list[Attempt]) -> dict:
+    """Failure breakdowns for attempts ordered newest first; ties favor the more recent move."""
     failed = [a for a in attempts if a.result == AttemptResult.FAILED]
-    failure_by_phase = Counter(a.phase_reached for a in failed)
-    failure_by_move = Counter(a.failure_move_id for a in failed if a.failure_move_id)
+    by_phase = Counter(a.phase_reached for a in failed)
+    by_move = Counter(a.failure_move_id for a in failed if a.failure_move_id)
+    return {
+        "main_bottleneck_phase": max(sorted(by_phase), key=lambda p: by_phase[p]) if by_phase else None,
+        "most_common_failure_move": by_move.most_common(1)[0][0] if by_move else None,
+        "failure_by_phase": {str(k): v for k, v in by_phase.items()},
+        "failure_by_move": dict(by_move),
+    }
 
-    main_bottleneck_phase = None
-    if failure_by_phase:
-        main_bottleneck_phase = max(
-            sorted(failure_by_phase), key=lambda phase: failure_by_phase[phase]
-        )
 
-    most_common_failure_move = None
-    if failure_by_move:
-        most_common_failure_move = failure_by_move.most_common(1)[0][0]
+def summarize(attempts: list[Attempt], recent_window: int = DEFAULT_RECENT_WINDOW) -> BossAnalytics:
+    """Analytics for one boss's attempts, ordered newest first."""
+    chronological = list(reversed(attempts))
+    first_victory = next(
+        (n for n, a in enumerate(chronological, start=1) if a.result == AttemptResult.VICTORY), None
+    )
+    recent = attempts[:recent_window]
 
     return BossAnalytics(
-        total_attempts=total_attempts,
-        defeated=defeated,
-        best_phase=best_phase,
-        main_bottleneck_phase=main_bottleneck_phase,
-        most_common_failure_move=most_common_failure_move,
-        failure_by_phase={str(k): v for k, v in failure_by_phase.items()},
-        failure_by_move={str(k): v for k, v in failure_by_move.items()},
+        total_attempts=len(attempts),
+        defeated=first_victory is not None,
+        best_phase=max((a.phase_reached for a in attempts), default=None),
+        attempts_until_first_victory=first_victory,
+        recent=RecentAnalytics(window_size=recent_window, total_attempts=len(recent), **_failure_stats(recent)),
+        **_failure_stats(attempts),
     )
+
+
+def progression(attempts: list[Attempt]) -> list[ProgressionPoint]:
+    """Each attempt with its chronological number, oldest first, from attempts ordered newest first."""
+    return [
+        ProgressionPoint(
+            attempt_number=n,
+            attempt_id=a.id,
+            timestamp=a.timestamp,
+            result=a.result,
+            phase_reached=a.phase_reached,
+            failure_move_id=a.failure_move_id,
+        )
+        for n, a in enumerate(reversed(attempts), start=1)
+    ]
+
+
+def compute_analytics(session: Session, boss_id: str, recent_window: int = DEFAULT_RECENT_WINDOW) -> BossAnalytics:
+    return summarize(attempt_service.get_attempts(session, boss_id), recent_window)
+
+
+def compute_progression(session: Session, boss_id: str) -> list[ProgressionPoint]:
+    return progression(attempt_service.get_attempts(session, boss_id))

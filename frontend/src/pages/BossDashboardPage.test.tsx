@@ -21,10 +21,12 @@ const boss: Boss = {
       phase_number: 1,
       name: "Phase 1",
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, counter: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null },
       ],
     },
   ],
+  name_zh: null,
+  source_name: null,
   source_url: null,
 };
 
@@ -36,6 +38,8 @@ const emptyAnalytics: BossAnalytics = {
   most_common_failure_move: null,
   failure_by_phase: {},
   failure_by_move: {},
+  attempts_until_first_victory: null,
+  recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
 };
 
 function renderDashboard() {
@@ -53,6 +57,7 @@ describe("BossDashboardPage", () => {
     vi.mocked(bossesApi.getBossById).mockResolvedValue(boss);
     vi.mocked(attemptsApi.getBossAttempts).mockResolvedValue([]);
     vi.mocked(attemptsApi.getBossAnalytics).mockResolvedValue(emptyAnalytics);
+    vi.mocked(attemptsApi.getBossProgression).mockResolvedValue([]);
 
     renderDashboard();
 
@@ -64,6 +69,7 @@ describe("BossDashboardPage", () => {
     vi.mocked(bossesApi.getBossById).mockRejectedValue(new ApiError(404, "Boss not found"));
     vi.mocked(attemptsApi.getBossAttempts).mockResolvedValue([]);
     vi.mocked(attemptsApi.getBossAnalytics).mockResolvedValue(emptyAnalytics);
+    vi.mocked(attemptsApi.getBossProgression).mockResolvedValue([]);
 
     renderDashboard();
 
@@ -97,7 +103,21 @@ describe("BossDashboardPage", () => {
         most_common_failure_move: "thrust-attack",
         failure_by_phase: { "1": 1 },
         failure_by_move: { "thrust-attack": 1 },
+        attempts_until_first_victory: null,
+        recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
       });
+    vi.mocked(attemptsApi.getBossProgression)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          attempt_number: 1,
+          attempt_id: "attempt-001",
+          timestamp: "2026-08-24T21:00:00Z",
+          result: "failed",
+          phase_reached: 1,
+          failure_move_id: "thrust-attack",
+        },
+      ]);
     vi.mocked(attemptsApi.createAttempt).mockResolvedValue({
       id: "attempt-001",
       boss_id: boss.id,
@@ -119,5 +139,18 @@ describe("BossDashboardPage", () => {
     await waitFor(() => expect(attemptsApi.getBossAttempts).toHaveBeenCalledTimes(2));
     expect(await screen.findByText(/failed — phase 1/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /save attempt/i })).not.toBeInTheDocument();
+    expect(await screen.findByLabelText("Attempt 1: Phase 1, failed")).toBeInTheDocument();
+  });
+
+  it("shows which attempt first defeated the boss", async () => {
+    vi.mocked(bossesApi.getBossById).mockResolvedValue(boss);
+    vi.mocked(attemptsApi.getBossAttempts).mockResolvedValue([]);
+    vi.mocked(attemptsApi.getBossAnalytics).mockResolvedValue({ ...emptyAnalytics, total_attempts: 8, defeated: true, attempts_until_first_victory: 8 });
+    vi.mocked(attemptsApi.getBossProgression).mockResolvedValue([]);
+
+    renderDashboard();
+
+    const card = (await screen.findByRole("heading", { name: "First Victory" })).closest("div") as HTMLElement;
+    expect(card).toHaveTextContent("Attempt #8");
   });
 });

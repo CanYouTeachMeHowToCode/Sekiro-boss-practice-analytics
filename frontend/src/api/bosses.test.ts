@@ -10,7 +10,7 @@ describe("bosses api", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => [{ id: "genichiro-ashina", name: "Genichiro Ashina", location: "Ashina Castle" }],
+      json: async () => [{ id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle" }],
     });
     vi.stubGlobal("fetch", fetchMock);
 

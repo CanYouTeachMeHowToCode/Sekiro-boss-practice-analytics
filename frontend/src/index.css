@@ -122,10 +122,88 @@ a {
   font-weight: 600;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table-scroll .failure-breakdown td {
+  white-space: nowrap;
+}
+
+.boss-comparison,
+.progression,
 .analytics-panel,
 .attempt-history,
 .moveset-reference {
   margin-top: 2rem;
+}
+
+.progression-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.progression-scroll svg {
+  display: block;
+}
+
+.progression-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.progression-axis {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.progression-line {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+.progression-point {
+  fill: var(--color-failed);
+}
+
+.progression-point.victory {
+  fill: var(--color-victory);
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+
+.comparison dt {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.comparison dd {
+  margin: 0;
+}
+
+.failure-breakdown th {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: normal;
+  text-align: right;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.failure-breakdown th:first-child {
+  text-align: left;
+}
+
+.failure-breakdown td:not(:first-child) {
+  text-align: right;
 }
 
 .analytics-summary {
@@ -202,6 +280,21 @@ a {
   margin: 0.15rem 0;
   color: var(--color-text-muted);
   font-size: 0.9rem;
+}
+
+.moveset-phase .common-mistakes {
+  color: var(--color-failed);
+}
+
+.moveset-source {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.boss-name-zh,
+.boss-card .boss-name-zh {
+  margin: 0;
+  color: var(--color-text-muted);
 }
 
 .record-attempt-form {

@@ -17,13 +17,15 @@ function renderPage() {
 describe("BossSelectionPage", () => {
   it("renders each boss returned by the API as a link to its dashboard", async () => {
     vi.mocked(bossesApi.getBosses).mockResolvedValue([
-      { id: "genichiro-ashina", name: "Genichiro Ashina", location: "Ashina Castle" },
+      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle" },
     ]);
 
     renderPage();
 
     expect(await screen.findByText("Genichiro Ashina")).toBeInTheDocument();
+    expect(screen.getByText("苇名弦一郎")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /view boss/i })).toHaveAttribute("href", "/bosses/genichiro-ashina");
+    expect(screen.getByRole("link", { name: /sekiro dashboard/i })).toHaveAttribute("href", "/");
   });
 
   it("shows an error message when the boss list fails to load", async () => {

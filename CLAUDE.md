@@ -50,15 +50,31 @@ V1 uses:
 
 V1 intentionally validated one complete vertical slice before expanding the system.
 
+## V2 — Completed
+
+V2 delivered the structured, multi-boss Sekiro analytics application:
+
+* PostgreSQL persistence with SQLAlchemy and Alembic (Plan B schema: moves stored once per boss, linked to phases through `phase_moves`)
+* 8 bosses: Genichiro Ashina, Owl (Father), Lady Butterfly, Guardian Ape, Corrupted Monk, True Corrupted Monk, Great Shinobi Owl, Isshin, the Sword Saint
+* richer move metadata with a source page for each boss
+* progression analytics: progression chart, all-time vs. last 10 attempts, attempts until first victory
+* an overall Sekiro dashboard at `/`, with the boss list at `/bosses`
+* four required CI jobs: backend, frontend, integration, docker
+* local deployment with Docker Compose
+
+Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) is deferred until after V3.
+
+The V2 sections below remain the reference for how the existing code was built. V3 scope has not been written into this file yet.
+
 ---
 
-# Current Development Focus
+# V2 Scope (Completed)
 
-This repository is now focused on:
+This section records what V2 covered:
 
 > **V2 — Structured Sekiro Analytics Platform**
 
-V2 evolves the JSON-backed MVP into a structured, multi-boss Sekiro analytics application.
+V2 evolved the JSON-backed MVP into a structured, multi-boss Sekiro analytics application.
 
 The main V2 transition is:
 
@@ -85,7 +101,7 @@ progression analytics
 +
 game-level analytics
 +
-stable deployment
+local Docker deployment
 ```
 
 ---
@@ -108,9 +124,8 @@ V2 should preserve that functionality while adding:
 * progression analytics
 * recent vs historical comparisons
 * overall Sekiro-level analytics
-* search and filtering
 * stronger integration testing
-* stable public deployment
+* a reliable local deployment with Docker Compose (public hosting is deferred until after V3)
 
 ---
 
@@ -251,11 +266,9 @@ These belong to V3–V5 or should only be introduced when justified by an actual
 
 ## Deployment
 
-* Docker
+* Docker Compose, run locally
 
-V2 may introduce staging and production deployment environments.
-
-A separate `stg` Git branch is not required.
+V2 has no public hosting and no staging or production environments. Public deployment is deferred until after V3; see Milestone 10.
 
 ---
 
@@ -336,9 +349,13 @@ The primary domain hierarchy remains:
 ```text
 Game
  └── Boss
-      └── Phase
-           └── Move
+      ├── Phase
+      └── Move
+
+Phase ←── many-to-many ──→ Move
 ```
+
+A move belongs to a boss and may appear in several of that boss's phases.
 
 Player attempt data:
 
@@ -364,10 +381,13 @@ games
 bosses
 boss_phases
 moves
+phase_moves
 attempts
 ```
 
 Avoid adding tables solely for hypothetical future requirements.
+
+`phase_moves` is not hypothetical: the existing boss data already reuses the same move across multiple phases (for example, Owl (Father)'s Shadowfall appears in both phases).
 
 ---
 
@@ -404,8 +424,15 @@ id
 game_id
 slug
 name
+name_zh
 location
+source_name
+source_url
 ```
+
+`name_zh` is the official Simplified Chinese name. Only boss names are localized; move names and the UI stay in English for now.
+
+`source_name` and `source_url` record where the boss's phase and move data came from. All moves of a boss share this source.
 
 Relationship:
 
@@ -450,21 +477,68 @@ Conceptual fields:
 
 ```text
 id
-boss_phase_id
+boss_id
 slug
 name
 move_type
 description
 telegraph
-recommended_response
+counter
 common_mistakes
-source_name
-source_url
 ```
+
+Moves do not have their own source fields; they use their boss's `source_name` and `source_url`. Add move-level sources only if a move's data ever comes from a different page than its boss.
+
+Only fill `telegraph` and `common_mistakes` from what the source explicitly states. Leave them null rather than inferring them.
+
+Relationship:
+
+```text
+Boss
+ 1
+ ↓
+Many Moves
+```
+
+Each move is stored once per boss, even if it appears in several phases. `slug` should be unique within a boss.
 
 Not every optional field must be populated immediately.
 
 Do not block V2 development on complete moveset documentation.
+
+---
+
+## Phase Moves
+
+Join table recording which moves appear in which phases.
+
+Conceptual fields:
+
+```text
+boss_phase_id
+move_id
+```
+
+Relationship:
+
+```text
+Phase
+ Many
+ ↕
+Many Moves
+```
+
+Example (Owl (Father)):
+
+| boss_phase_id | move_id | meaning |
+| ------------- | ------- | ------- |
+| Phase 1 | Shadowfall | Shadowfall appears in Phase 1 |
+| Phase 2 | Shadowfall | Shadowfall also appears in Phase 2 |
+| Phase 2 | Owl Teleport | Owl Teleport only appears in Phase 2 |
+
+Because a move is stored once, an attempt that failed to Shadowfall always references the same `failure_move_id`, regardless of the phase. Phase information comes from `phase_reached`.
+
+The phase and the move must belong to the same boss.
 
 ---
 
@@ -482,6 +556,8 @@ failure_category
 notes
 created_at
 ```
+
+`id` is an integer primary key. The API exposes it as a string so the existing frontend `Attempt.id: string` contract does not change.
 
 `failure_move_id` should be nullable.
 
@@ -505,7 +581,8 @@ Examples:
 
 * boss must reference an existing game
 * phase must reference an existing boss
-* move must reference an existing phase
+* move must reference an existing boss
+* phase_moves entries must reference an existing phase and an existing move
 * attempt must reference an existing boss
 * failure move must reference an existing move when present
 
@@ -513,6 +590,7 @@ Application-level validation should still ensure that:
 
 * the selected phase belongs to the selected boss
 * the selected failure move belongs to the selected boss
+* a phase_moves entry never links a phase and a move from different bosses
 * invalid boss / phase / move combinations are rejected
 
 Do not rely only on frontend validation.
@@ -663,14 +741,14 @@ Avoid creating hundreds of low-quality placeholder records.
 
 # Data Provenance
 
-V2 may include source metadata for boss and move information.
-
-Potential fields:
+Each boss records the source of its phase and move data:
 
 ```text
 source_name
 source_url
 ```
+
+Source metadata is kept at the boss level because every move currently comes from its boss's page.
 
 This is useful for:
 
@@ -938,25 +1016,9 @@ unless the definition is explicitly shown.
 
 # Search and Filtering
 
-As boss coverage expands, the boss selection experience may include:
+Not planned. Sekiro has roughly 20 bosses even including mini-bosses, so every boss fits on one page, and the Sekiro Dashboard's boss comparison table already shows each boss's attempts and defeat status. See Milestone 8.
 
-```text
-Search Boss...
-```
-
-Suggested filters:
-
-```text
-All
-Attempted
-Not Attempted
-Defeated
-Not Defeated
-```
-
-Keep filtering lightweight.
-
-Do not build a generic search platform.
+Revisit only if the boss list grows well beyond what fits on one page.
 
 ---
 
@@ -1270,57 +1332,46 @@ Do not invent package scripts solely because they are listed here.
 
 ---
 
-# V2 CD / Deployment
+# V2 CI / Deployment
 
-V2 may introduce:
-
-```text
-dev
- ↓
-Staging
-
-main
- ↓
-Production
-```
-
-Conceptual workflow:
+V2 has continuous integration but no continuous deployment.
 
 ```text
 feature/*
     ↓
 Pull Request
     ↓
+CI (backend, frontend, integration, docker)
+    ↓
 dev
     ↓
-CI
-    ↓
-Staging Deployment
-
 main
     ↓
-CI
-    ↓
-Production Deployment
+v2.0.0 (run locally with Docker Compose)
 ```
 
-A separate staging Git branch is not required.
+`dev` and `main` are protected: all four CI jobs must pass before a pull request can merge.
 
 ---
 
-# Stable Public Demo
+# Public Deployment (Deferred Until After V3)
 
-By the end of V2, the application should ideally have:
+V2 runs locally only. A stable public URL is deferred until after V3, because:
 
-```text
-stable public URL
-```
+* the application currently has a single user, who can run it locally
+* V2 has no authentication, so a public instance would let anyone record attempts into the only attempt history
+* V3 adds user accounts, which solves that problem directly
+* V4 gameplay analysis (video storage, computer vision) will likely need different infrastructure anyway, so a hosting setup chosen now may not carry forward
 
-that can be shared without requiring the developer's local machine to remain online.
+For temporary remote access, such as from a phone away from home, a Cloudflare Tunnel to the local instance is acceptable.
 
-Cloudflare Tunnel may still be used for local testing.
+When public deployment is picked up, the provider-independent work is:
 
-A portfolio release should preferably use stable hosting.
+* a production compose configuration that does not publish the PostgreSQL or backend ports
+* HTTPS
+* scheduled `pg_dump` backups of attempt data
+* deployment from `main` through GitHub Actions
+* setup documentation
 
 ---
 
@@ -1375,7 +1426,7 @@ Each milestone should leave the project in a working state.
 
 ---
 
-## Milestone 1 — PostgreSQL Foundation
+## Milestone 1 — PostgreSQL Foundation (Completed)
 
 ### Goal
 
@@ -1391,6 +1442,7 @@ Replace JSON persistence with a relational persistence foundation.
 * define initial relational schema
 * create first Alembic migration
 * verify schema can be created from scratch
+* run database tests against a PostgreSQL service in backend CI
 
 ### Completion Criteria
 
@@ -1408,7 +1460,7 @@ Existing APIs do not yet need every V2 feature, but database infrastructure must
 
 ---
 
-## Milestone 2 — V1 Data Migration
+## Milestone 2 — V1 Data Migration (Completed)
 
 ### Goal
 
@@ -1445,7 +1497,7 @@ The frontend should require minimal or no persistence-specific changes.
 
 ---
 
-## Milestone 3 — Multi-Boss Support
+## Milestone 3 — Multi-Boss Support (Completed)
 
 ### Goal
 
@@ -1466,7 +1518,7 @@ The same code path supports multiple bosses without special-case logic.
 
 ---
 
-## Milestone 4 — Richer Boss Metadata
+## Milestone 4 — Richer Boss Metadata (Completed)
 
 ### Goal
 
@@ -1477,7 +1529,7 @@ Improve the moveset reference enough to support better failure identification.
 * move type
 * description
 * telegraph
-* recommended response
+* counter
 * common mistakes
 * source name
 * source URL
@@ -1488,7 +1540,7 @@ Boss moves contain useful practice context without turning the application into 
 
 ---
 
-## Milestone 5 — Progression Analytics
+## Milestone 5 — Progression Analytics (Completed)
 
 ### Goal
 
@@ -1511,7 +1563,7 @@ A boss dashboard can show meaningful change over time, not only lifetime totals.
 
 ---
 
-## Milestone 6 — Progression UI
+## Milestone 6 — Progression UI (Completed)
 
 ### Goal
 
@@ -1531,7 +1583,7 @@ A user should be able to inspect a boss page and quickly understand whether rece
 
 ---
 
-## Milestone 7 — Overall Sekiro Dashboard
+## Milestone 7 — Overall Sekiro Dashboard (Completed)
 
 ### Goal
 
@@ -1558,33 +1610,19 @@ The user can understand their overall Sekiro practice history without opening ev
 
 ---
 
-## Milestone 8 — Search and Filtering
+## Milestone 8 — Search and Filtering (Skipped)
 
-### Goal
+### Decision
 
-Keep boss discovery usable as the dataset expands.
+Skipped. Sekiro has roughly 20 bosses even including mini-bosses, so the full list fits on one page and search adds little. The Sekiro Dashboard's boss comparison table (Milestone 7) already shows each boss's attempts and defeat status.
 
-### Tasks
+This does not affect the V2 success criteria, which never required search or filtering.
 
-Potentially add:
-
-```text
-Search Boss
-
-All
-Attempted
-Not Attempted
-Defeated
-Not Defeated
-```
-
-### Completion Criteria
-
-Users can quickly locate relevant bosses without unnecessary UI complexity.
+Do not add search or filtering unless the boss list grows well beyond what fits on one page.
 
 ---
 
-## Milestone 9 — Integration Testing and CI Hardening
+## Milestone 9 — Integration Testing and CI Hardening (Completed)
 
 ### Goal
 
@@ -1606,26 +1644,19 @@ A broken persistence or analytics change should normally be detected before merg
 
 ---
 
-## Milestone 10 — Stable Deployment
+## Milestone 10 — Stable Deployment (Deferred Until After V3)
 
-### Goal
+### Decision
 
-Produce a reliable public V2 demo.
+Public deployment is deferred until after V3. See "Public Deployment (Deferred Until After V3)" for the reasons and the work involved.
 
-### Tasks
+### What V2 Still Includes
 
-* production PostgreSQL configuration
-* environment configuration
-* Docker deployment
-* staging deployment if useful
-* production deployment
-* fixed public URL
-* verify mobile access
-* update README screenshots and setup instructions
+* running the full stack locally with `docker compose up`
+* local setup instructions in the README
+* LAN access from other devices, such as a phone on the same network
 
-### Completion Criteria
-
-The application can be opened from a stable public URL and the complete V2 workflow functions correctly.
+The V2 success criteria do not require public hosting.
 
 ---
 
@@ -1654,13 +1685,13 @@ Recommended sequence:
 
 10. Overall Sekiro Dashboard
 
-11. Search / Filter
+11. Search / Filter (skipped, see Milestone 8)
 
 12. Integration Tests
 
 13. CI Hardening
 
-14. Stable Deployment
+14. Stable Deployment (deferred until after V3, see Milestone 10)
 
 15. Release v2.0.0
 ```
@@ -1733,6 +1764,7 @@ Potential additions:
 * long-term player profiles
 * practice goals
 * personalized recommendations
+* public deployment with a stable URL (moved from V2 Milestone 10)
 
 These are NOT V2 requirements.
 
@@ -1823,9 +1855,8 @@ Multi-Boss Support
 Richer Boss Data
 Progression Analytics
 Sekiro Dashboard
-Search / Filtering
 Testing / CI
-Deployment
+Local Docker Setup
 ```
 
 check whether it actually belongs to V3, V4, or V5 before adding it.

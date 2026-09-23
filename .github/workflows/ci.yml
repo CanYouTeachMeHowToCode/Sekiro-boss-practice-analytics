@@ -1,0 +1,178 @@
+name: CI
+
+# Every job runs on every push and pull request, with no path filters, so all
+# four checks always report and can be marked as required for merging.
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sekiro_test
+          POSTGRES_USER: sekiro
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sekiro -d sekiro_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://sekiro:ci-only-password@localhost:5432/sekiro_test
+      REQUIRE_DATABASE_TESTS: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  # The frontend's real API client against the real backend and PostgreSQL.
+  # Catches frontend types drifting from backend responses, which neither
+  # suite above can see on its own.
+  integration:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sekiro_test
+          POSTGRES_USER: sekiro
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sekiro -d sekiro_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://sekiro:ci-only-password@localhost:5432/sekiro_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run integration tests
+        working-directory: frontend
+        run: npm run test:integration
+
+  # Builds the images and checks the deployed startup path: migrations,
+  # seed sync, the backend, and nginx proxying to it.
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env for docker compose
+        run: |
+          {
+            echo "POSTGRES_DB=sekiro"
+            echo "POSTGRES_USER=sekiro"
+            echo "POSTGRES_PASSWORD=ci-only-password"
+          } > .env
+
+      - name: Build and start the stack
+        run: docker compose up -d --build
+
+      - name: Wait for the backend to become healthy
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8000/health > /dev/null; then
+              echo "backend healthy after ${i} tries"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "backend did not become healthy" >&2
+          exit 1
+
+      - name: Smoke test through nginx
+        run: |
+          curl -sf -o /dev/null http://localhost:8080/
+          bosses=$(curl -sf http://localhost:8080/api/bosses | jq 'length')
+          echo "bosses served: ${bosses}"
+          test "${bosses}" -gt 0
+          curl -sf http://localhost:8080/api/sekiro/analytics | jq -e '.total_bosses == '"${bosses}"
+
+      - name: Show container logs
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v
