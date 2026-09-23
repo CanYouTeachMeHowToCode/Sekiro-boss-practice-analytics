@@ -1,5 +1,7 @@
 import pytest
 from alembic import command
+from alembic.autogenerate import compare_metadata
+from alembic.migration import MigrationContext
 from fastapi import Depends, FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import inspect, text
@@ -7,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import session as db_session
+from app.db.base import Base
 from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove
 from scripts.reset_test_database import alembic_config
 
@@ -26,6 +29,17 @@ def make_boss(session: Session, slug: str = "owl-father") -> Boss:
 def test_migration_creates_expected_tables(engine):
     tables = set(inspect(engine).get_table_names())
     assert APP_TABLES <= tables
+
+
+def test_models_match_the_migrations(engine):
+    """Fails when models.py changes without a matching Alembic migration."""
+    with engine.connect() as connection:
+        differences = compare_metadata(MigrationContext.configure(connection), Base.metadata)
+
+    assert differences == [], (
+        "The SQLAlchemy models and the migrations have drifted apart. "
+        "Generate a migration with `alembic revision --autogenerate` and review it."
+    )
 
 
 def test_migration_can_downgrade_and_upgrade_again(engine, database_url):
