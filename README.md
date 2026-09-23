@@ -73,17 +73,19 @@ V1 intentionally focuses on a small dataset and a complete vertical slice rather
 
 ## V2 — Structured Sekiro Analytics Platform
 
-V2 will expand the V1 prototype into a more complete Sekiro practice analytics platform.
+### V2.0 — Completed
 
-The main focus of V2 is moving from a small JSON-backed MVP to a structured persistence and analytics architecture capable of supporting multiple bosses and larger attempt histories.
+V2 expanded the V1 prototype into a structured, multi-boss Sekiro practice analytics platform.
 
-### Planned V2 Features
+The main change in V2 was moving from a small JSON-backed MVP to a relational persistence and analytics architecture that supports multiple bosses and larger attempt histories. The lightweight attempt form from V1 is unchanged: result, phase reached, failure move / `Other` / `Not Sure`, and optional notes.
+
+### V2 Features
 
 #### PostgreSQL Persistence
 
-Replace the V1 JSON persistence layer with PostgreSQL.
+The V1 JSON persistence layer was replaced with PostgreSQL, using SQLAlchemy for the ORM and Alembic for schema migrations.
 
-The V2 relational model will approximately represent:
+The relational model:
 
 ```text
 Game
@@ -96,87 +98,75 @@ Game
 Phase ←── many-to-many ──→ Move
 ```
 
-A move belongs to a boss and is stored once, even when it appears in several phases. A join table records which phases each move appears in, so an attempt that failed to the same move always points to the same record, regardless of the phase.
+A move belongs to a boss and is stored once, even when it appears in several phases. A join table records which phases each move appears in, and in what order, so an attempt that failed to the same move always points to the same record, regardless of the phase.
 
-This will introduce:
+Database constraints and service-level validation reject invalid data, such as a failure move from another boss, a move that does not appear in the phase reached, or a victory with a failure cause.
 
-* PostgreSQL
-* SQLAlchemy
-* database relationships and foreign keys
-* schema migrations with Alembic
-* migration of existing V1 JSON data into PostgreSQL
+Boss data lives in `backend/seed/bosses.json` and is synced into PostgreSQL every time the backend starts. The sync is idempotent. A separate one-time import script migrated the V1 attempt history.
 
-The frontend API contract should remain largely unchanged when the underlying persistence layer moves from JSON to PostgreSQL.
+The frontend API contract from V1 was preserved through the migration.
 
 #### Expanded Boss Coverage
 
-V2 will add additional major Sekiro bosses beyond Genichiro.
+V2 supports 8 major Sekiro bosses:
 
-Potential additions include:
-
+* Genichiro Ashina
+* Owl (Father)
 * Lady Butterfly
 * Guardian Ape
 * Corrupted Monk
+* True Corrupted Monk
 * Great Shinobi Owl
-* Owl (Father)
-* Isshin
+* Isshin, the Sword Saint
 
-Boss coverage will be expanded incrementally rather than attempting to build a complete Sekiro encyclopedia immediately.
+Bosses have different numbers of phases and different movesets, and every boss uses the same code path. Boss cards show both English and Chinese names.
 
 #### Richer Boss Data
 
-Boss moves may contain additional structured information such as:
+Each move includes:
 
-* phase availability
+* the phases it appears in
 * move type
 * attack description
-* telegraph
+* telegraph, where the source describes one
 * counter
-* common mistakes
+* common mistakes, where the source describes them
 
-This boss metadata will also provide a stronger foundation for future gameplay analysis.
+#### Progress Analytics
 
-#### Improved Progress Analytics
+On top of the V1 metrics, each boss dashboard now shows:
 
-V2 will move beyond simple aggregate counts and introduce progression-oriented analytics such as:
-
-* attempt progression over time
-* phase reached across recent attempts
-* all-time vs. recent failure patterns
-* changes in commonly reported failure moves
-* attempts required before first victory
-* boss difficulty based on the player's attempt history
+* an attempt progression chart of the phase reached on each attempt
+* all-time vs. last 10 attempts comparisons of failures by phase and by move
+* attempts until first victory, counting the winning attempt
 
 For example:
 
 ```text
-All Attempts
-
-Floating Passage failures: 12
-
-Last 10 Attempts
-
-Floating Passage failures: 2
+                     All-Time   Last 10
+Floating Passage        12         2
 ```
 
-This can provide evidence that a particular weakness is becoming less frequent over time.
+This shows that recorded failures to a move are becoming less common. The app does not present this as a move success rate, because it does not know how many times the move occurred.
 
-V2 will avoid presenting metrics such as move success rate unless the application has enough data to calculate them correctly.
+Ties are shown as ties, not broken arbitrarily.
 
 #### Overall Sekiro Dashboard
 
-In addition to individual boss dashboards, V2 may provide a game-level analytics dashboard showing information such as:
+The home page is now a game-level dashboard showing:
 
-* bosses attempted
-* bosses defeated
+* bosses attempted and bosses defeated
 * total attempts
-* boss requiring the most attempts
-* recent practice activity
-* progression across multiple bosses
+* most practiced boss
+* boss requiring the most attempts before first victory
+* recent practice activity (last 7 days and the last 10 attempts across all bosses)
+* a boss comparison table with attempts, best result, and defeated status
+
+The boss list moved to `/bosses`.
 
 #### Data Provenance
 
-Boss and moveset information may include source metadata so that game knowledge can be traced back to reliable sources such as community documentation or Sekiro Wiki references.
+Every boss records the wiki page its moveset data came from. Move details are taken from those sources rather than invented.
 
 #### CI and Local Deployment
 
@@ -187,7 +177,12 @@ Every pull request runs four GitHub Actions jobs, and all four must pass before 
 * **integration:** the frontend's API client against the real backend and PostgreSQL
 * **docker:** builds the Docker Compose stack and smoke tests it through nginx
 
-V2 runs locally with Docker Compose. Public hosting is deferred until after V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
+V2 runs locally with Docker Compose.
+
+#### Deferred or Skipped
+
+* **Public deployment** is deferred until after V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
+* **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
 
 ---
 
@@ -255,7 +250,7 @@ The long-term goal is to evolve Sekiro Boss Practice Analytics from a manual att
 
 V1 intentionally uses JSON persistence because the initial dataset is small and the primary goal is validating the complete application workflow.
 
-### Planned V2
+### V2.0
 
 * **Backend:** FastAPI
 * **Database:** PostgreSQL

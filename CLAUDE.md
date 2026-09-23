@@ -50,15 +50,31 @@ V1 uses:
 
 V1 intentionally validated one complete vertical slice before expanding the system.
 
+## V2 — Completed
+
+V2 delivered the structured, multi-boss Sekiro analytics application:
+
+* PostgreSQL persistence with SQLAlchemy and Alembic (Plan B schema: moves stored once per boss, linked to phases through `phase_moves`)
+* 8 bosses: Genichiro Ashina, Owl (Father), Lady Butterfly, Guardian Ape, Corrupted Monk, True Corrupted Monk, Great Shinobi Owl, Isshin, the Sword Saint
+* richer move metadata with a source page for each boss
+* progression analytics: progression chart, all-time vs. last 10 attempts, attempts until first victory
+* an overall Sekiro dashboard at `/`, with the boss list at `/bosses`
+* four required CI jobs: backend, frontend, integration, docker
+* local deployment with Docker Compose
+
+Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) is deferred until after V3.
+
+The V2 sections below remain the reference for how the existing code was built. V3 scope has not been written into this file yet.
+
 ---
 
-# Current Development Focus
+# V2 Scope (Completed)
 
-This repository is now focused on:
+This section records what V2 covered:
 
 > **V2 — Structured Sekiro Analytics Platform**
 
-V2 evolves the JSON-backed MVP into a structured, multi-boss Sekiro analytics application.
+V2 evolved the JSON-backed MVP into a structured, multi-boss Sekiro analytics application.
 
 The main V2 transition is:
 
@@ -1410,7 +1426,7 @@ Each milestone should leave the project in a working state.
 
 ---
 
-## Milestone 1 — PostgreSQL Foundation
+## Milestone 1 — PostgreSQL Foundation (Completed)
 
 ### Goal
 
@@ -1444,7 +1460,7 @@ Existing APIs do not yet need every V2 feature, but database infrastructure must
 
 ---
 
-## Milestone 2 — V1 Data Migration
+## Milestone 2 — V1 Data Migration (Completed)
 
 ### Goal
 
@@ -1481,7 +1497,7 @@ The frontend should require minimal or no persistence-specific changes.
 
 ---
 
-## Milestone 3 — Multi-Boss Support
+## Milestone 3 — Multi-Boss Support (Completed)
 
 ### Goal
 
@@ -1502,7 +1518,7 @@ The same code path supports multiple bosses without special-case logic.
 
 ---
 
-## Milestone 4 — Richer Boss Metadata
+## Milestone 4 — Richer Boss Metadata (Completed)
 
 ### Goal
 
@@ -1524,7 +1540,7 @@ Boss moves contain useful practice context without turning the application into 
 
 ---
 
-## Milestone 5 — Progression Analytics
+## Milestone 5 — Progression Analytics (Completed)
 
 ### Goal
 
@@ -1547,7 +1563,7 @@ A boss dashboard can show meaningful change over time, not only lifetime totals.
 
 ---
 
-## Milestone 6 — Progression UI
+## Milestone 6 — Progression UI (Completed)
 
 ### Goal
 
@@ -1567,7 +1583,7 @@ A user should be able to inspect a boss page and quickly understand whether rece
 
 ---
 
-## Milestone 7 — Overall Sekiro Dashboard
+## Milestone 7 — Overall Sekiro Dashboard (Completed)
 
 ### Goal
 
@@ -1606,7 +1622,7 @@ Do not add search or filtering unless the boss list grows well beyond what fits 
 
 ---
 
-## Milestone 9 — Integration Testing and CI Hardening
+## Milestone 9 — Integration Testing and CI Hardening (Completed)
 
 ### Goal
 

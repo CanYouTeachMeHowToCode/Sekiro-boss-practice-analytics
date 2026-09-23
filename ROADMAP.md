@@ -43,30 +43,34 @@ V1 intentionally focuses on a small dataset and a complete end-to-end workflow r
 
 ---
 
-## V2 — Structured Sekiro Analytics Platform
+## V2 — Structured Sekiro Analytics Platform ✅
 
 **Core question:**
 **Where am I improving or struggling?**
 
-V2 expands the MVP into a more complete Sekiro analytics application.
+V2 expanded the MVP into a more complete Sekiro analytics application.
 
-Main goals:
+Delivered:
 
-* migrate persistence from JSON to PostgreSQL
-* use SQLAlchemy and Alembic for relational persistence and migrations
-* support multiple major Sekiro bosses
-* enrich boss and move metadata
-* add progression analytics across attempts
-* compare recent performance with historical performance
-* add an overall Sekiro-level analytics dashboard
-* strengthen integration testing and CI
-* run reliably on a local machine with Docker Compose
+* persistence migrated from JSON to PostgreSQL
+* SQLAlchemy and Alembic for relational persistence and migrations
+* 8 major Sekiro bosses with different phase counts and movesets
+* richer move metadata (type, description, telegraph, counter, common mistakes) with a source page for each boss
+* attempt progression analytics
+* all-time vs. last 10 attempts comparisons
+* attempts until first victory
+* an overall Sekiro-level analytics dashboard with a boss comparison
+* database, integration, and Docker checks in CI, all required before merging
+* reliable local deployment with Docker Compose
 
 V2 remains focused specifically on **Sekiro**.
 
-Public deployment is deferred until after V3: with a single user and no accounts, a public instance would let anyone record attempts.
+Not included in V2:
 
-### Completion target
+* boss search and filtering, which was skipped because 8 bosses fit on one page
+* public deployment, which is deferred until after V3: with a single user and no accounts, a public instance would let anyone record attempts
+
+### Completion target (met)
 
 A stable multi-boss Sekiro analytics application backed by PostgreSQL, running locally, that can show both boss-specific and game-level player progression.
 
