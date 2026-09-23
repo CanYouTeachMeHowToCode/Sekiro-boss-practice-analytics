@@ -32,6 +32,8 @@ describe("AnalyticsPanel", () => {
       most_common_failure_move: "floating-passage",
       failure_by_phase: { "2": 3 },
       failure_by_move: { "floating-passage": 3 },
+      attempts_until_first_victory: null,
+      recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
     };
 
     render(<AnalyticsPanel boss={boss} analytics={analytics} />);
@@ -52,6 +54,8 @@ describe("AnalyticsPanel", () => {
       most_common_failure_move: null,
       failure_by_phase: { "2": 4, "1": 2 },
       failure_by_move: {},
+      attempts_until_first_victory: null,
+      recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
     };
 
     render(<AnalyticsPanel boss={boss} analytics={analytics} />);
@@ -72,6 +76,8 @@ describe("AnalyticsPanel", () => {
       most_common_failure_move: "floating-passage",
       failure_by_phase: { "2": 4 },
       failure_by_move: { "unknown-move": 1, "floating-passage": 3 },
+      attempts_until_first_victory: null,
+      recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
     };
 
     render(<AnalyticsPanel boss={boss} analytics={analytics} />);
@@ -91,6 +97,8 @@ describe("AnalyticsPanel", () => {
       most_common_failure_move: null,
       failure_by_phase: {},
       failure_by_move: {},
+      attempts_until_first_victory: null,
+      recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
     };
 
     render(<AnalyticsPanel boss={boss} analytics={analytics} />);
