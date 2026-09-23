@@ -28,7 +28,16 @@ def test_get_boss(client):
     assert data["name"] == "Genichiro Ashina"
     assert len(data["phases"]) == 3
     phase_1_move_ids = {m["id"] for m in data["phases"][0]["moves"]}
-    assert phase_1_move_ids == {"normal-attack", "bow-attack", "thrust-attack", "floating-passage"}
+    phase_2_move_ids = {m["id"] for m in data["phases"][1]["moves"]}
+    phase_3_move_ids = {m["id"] for m in data["phases"][2]["moves"]}
+
+    # Phase 2 inherits Phase 1, except its Perilous Attack Follow Up can also end in a sweep.
+    assert phase_1_move_ids - phase_2_move_ids == {"perilous-attack-follow-up"}
+    assert phase_2_move_ids - phase_1_move_ids == {"perilous-attack-follow-up-phase-2"}
+    # The Way of Tomoe phase has its own moveset, including three lightning attacks.
+    assert phase_3_move_ids.isdisjoint(phase_2_move_ids)
+    assert {"lightning-of-tomoe-shot", "lightning-of-tomoe-slash", "lightning-of-tomoe-smash"} <= phase_3_move_ids
+    assert data["source_url"].endswith("/Genichiro_Ashina,_Second_Encounter")
 
 
 def test_get_second_boss(client):
@@ -138,3 +147,27 @@ def test_get_eighth_boss_accumulates_moves_across_all_three_phases(client):
 def test_get_boss_not_found(client):
     resp = client.get("/api/bosses/nonexistent")
     assert resp.status_code == 404
+
+
+def test_boss_list_includes_chinese_names(client):
+    names = {b["id"]: b["name_zh"] for b in client.get("/api/bosses").json()}
+    assert names["genichiro-ashina"] == "苇名弦一郎"
+    assert all(names.values())
+
+
+def test_boss_detail_exposes_source_and_move_metadata(client):
+    data = client.get("/api/bosses/isshin-sword-saint").json()
+    assert data["name_zh"] == "剑圣 苇名一心"
+    assert data["source_name"] == "Fextralife Sekiro Wiki"
+    assert data["source_url"].endswith("/Isshin,+the+Sword+Saint")
+
+    dragon_flash = next(m for m in data["phases"][0]["moves"] if m["id"] == "dragon-flash")
+    assert "glint" in dragon_flash["telegraph"]
+    assert dragon_flash["common_mistakes"]
+    assert "source_url" not in dragon_flash
+
+
+def test_every_boss_has_a_source(client):
+    for boss in client.get("/api/bosses").json():
+        detail = client.get(f"/api/bosses/{boss['id']}").json()
+        assert detail["source_name"] and detail["source_url"], boss["id"]

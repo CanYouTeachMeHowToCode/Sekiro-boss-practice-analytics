@@ -7,7 +7,7 @@ from app.models.boss import Boss, BossMove, BossPhase, BossSummary
 
 def get_all_bosses(session: Session) -> list[BossSummary]:
     rows = session.scalars(select(db.Boss).order_by(db.Boss.id))
-    return [BossSummary(id=b.slug, name=b.name, location=b.location) for b in rows]
+    return [BossSummary(id=b.slug, name=b.name, name_zh=b.name_zh, location=b.location) for b in rows]
 
 
 def get_boss_row(session: Session, boss_slug: str) -> db.Boss | None:
@@ -28,8 +28,10 @@ def get_boss(session: Session, boss_slug: str) -> Boss | None:
     return Boss(
         id=boss.slug,
         name=boss.name,
+        name_zh=boss.name_zh,
         game=boss.game.slug,
         location=boss.location,
+        source_name=boss.source_name,
         source_url=boss.source_url,
         phases=[
             BossPhase(
@@ -41,7 +43,9 @@ def get_boss(session: Session, boss_slug: str) -> Boss | None:
                         name=link.move.name,
                         move_type=link.move.move_type,
                         description=link.move.description,
+                        telegraph=link.move.telegraph,
                         counter=link.move.counter,
+                        common_mistakes=link.move.common_mistakes,
                     )
                     for link in phase.move_links
                 ],

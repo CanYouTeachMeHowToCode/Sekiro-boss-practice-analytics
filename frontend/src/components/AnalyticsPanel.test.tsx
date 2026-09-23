@@ -13,10 +13,12 @@ const boss: Boss = {
       phase_number: 2,
       name: "Phase 2",
       moves: [
-        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, counter: null },
+        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, telegraph: null, counter: null, common_mistakes: null },
       ],
     },
   ],
+  name_zh: null,
+  source_name: null,
   source_url: null,
 };
 

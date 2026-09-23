@@ -12,17 +12,19 @@ const boss: Boss = {
       phase_number: 1,
       name: "Phase 1",
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, counter: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null },
       ],
     },
     {
       phase_number: 3,
       name: "Phase 3",
       moves: [
-        { id: "lightning-attack", name: "Lightning Attack", move_type: "lightning", description: null, counter: null },
+        { id: "lightning-attack", name: "Lightning Attack", move_type: "lightning", description: null, telegraph: null, counter: null, common_mistakes: null },
       ],
     },
   ],
+  name_zh: null,
+  source_name: null,
   source_url: null,
 };
 

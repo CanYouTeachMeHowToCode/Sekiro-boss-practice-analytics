@@ -204,6 +204,21 @@ a {
   font-size: 0.9rem;
 }
 
+.moveset-phase .common-mistakes {
+  color: var(--color-failed);
+}
+
+.moveset-source {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.boss-name-zh,
+.boss-card .boss-name-zh {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
 .record-attempt-form {
   border: 1px solid var(--color-border);
   border-radius: 8px;

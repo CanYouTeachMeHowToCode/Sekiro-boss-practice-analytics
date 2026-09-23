@@ -87,6 +87,7 @@ export default function BossDashboardPage() {
       </Link>
 
       <h1>{boss.name}</h1>
+      {boss.name_zh && <p className="boss-name-zh">{boss.name_zh}</p>}
       <p>{boss.location}</p>
 
       <div className="stat-grid">

@@ -7,7 +7,9 @@ export interface BossMove {
   name: string;
   move_type: string;
   description: string | null;
+  telegraph: string | null;
   counter: string | null;
+  common_mistakes: string | null;
 }
 
 export interface BossPhase {
@@ -19,15 +21,18 @@ export interface BossPhase {
 export interface Boss {
   id: string;
   name: string;
+  name_zh: string | null;
   game: string;
   location: string;
   phases: BossPhase[];
+  source_name: string | null;
   source_url: string | null;
 }
 
 export interface BossSummary {
   id: string;
   name: string;
+  name_zh: string | null;
   location: string;
 }
 

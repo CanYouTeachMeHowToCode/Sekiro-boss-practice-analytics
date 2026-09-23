@@ -23,16 +23,25 @@ def phase_move_slugs(session, boss_slug, phase_number):
     return [link.move.slug for link in phase.move_links]
 
 
-def test_sync_loads_every_boss_with_moves_stored_once(session):
-    sync_reference_data(session, load_boss_data())
-
-    assert table_counts(session) == {
+def expected_counts(data):
+    """Row counts the seed data should produce, with each move stored once per boss."""
+    return {
         "games": 1,
-        "bosses": 8,
-        "boss_phases": 18,
-        "moves": 86,
-        "phase_moves": 150,
+        "bosses": len(data),
+        "boss_phases": sum(len(b.phases) for b in data),
+        "moves": sum(len({m.id for p in b.phases for m in p.moves}) for b in data),
+        "phase_moves": sum(len(p.moves) for b in data for p in b.phases),
     }
+
+
+def test_sync_loads_every_boss_with_moves_stored_once(session):
+    data = load_boss_data()
+    sync_reference_data(session, data)
+
+    counts = table_counts(session)
+    assert counts == expected_counts(data)
+    # Moves shared across phases are stored once, so there are fewer moves than phase-move links.
+    assert counts["moves"] < counts["phase_moves"]
 
 
 def test_sync_is_idempotent(session):
@@ -67,7 +76,7 @@ def test_sync_applies_edits_to_existing_rows(session):
 
     move = session.scalar(select(Move).join(Boss).where(Boss.slug == "genichiro-ashina", Move.slug == "floating-passage"))
     assert move.counter == "Deflect every hit."
-    assert count(session, Move) == 86
+    assert count(session, Move) == expected_counts(data)["moves"]
 
 
 def test_sync_reports_but_keeps_moves_removed_from_the_seed_data(session):
@@ -76,13 +85,13 @@ def test_sync_reports_but_keeps_moves_removed_from_the_seed_data(session):
 
     genichiro = next(b for b in data if b.id == "genichiro-ashina")
     for phase in genichiro.phases:
-        phase.moves = [m for m in phase.moves if m.id != "lightning-attack"]
+        phase.moves = [m for m in phase.moves if m.id != "lightning-of-tomoe-smash"]
     report = sync_reference_data(session, data)
 
     # The move still exists (attempts may reference it) but no longer appears in any phase.
-    assert session.scalar(select(Move).join(Boss).where(Boss.slug == "genichiro-ashina", Move.slug == "lightning-attack"))
-    assert "lightning-attack" not in phase_move_slugs(session, "genichiro-ashina", 3)
-    assert any("lightning-attack" in w for w in report.warnings)
+    assert session.scalar(select(Move).join(Boss).where(Boss.slug == "genichiro-ashina", Move.slug == "lightning-of-tomoe-smash"))
+    assert "lightning-of-tomoe-smash" not in phase_move_slugs(session, "genichiro-ashina", 3)
+    assert any("lightning-of-tomoe-smash" in w for w in report.warnings)
 
 
 def test_sync_rejects_a_move_described_differently_across_phases(session):

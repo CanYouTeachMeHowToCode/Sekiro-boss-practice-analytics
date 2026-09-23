@@ -13,12 +13,23 @@ export default function MovesetReference({ boss }: { boss: Boss }) {
               <li key={move.id}>
                 <strong>{move.name}</strong>
                 {move.description && <p>{move.description}</p>}
+                {move.telegraph && <p className="telegraph">Telegraph: {move.telegraph}</p>}
                 {move.counter && <p className="counter">Counter: {move.counter}</p>}
+                {move.common_mistakes && <p className="common-mistakes">Common mistake: {move.common_mistakes}</p>}
               </li>
             ))}
           </ul>
         </div>
       ))}
+
+      {boss.source_url && (
+        <p className="moveset-source">
+          Source:{" "}
+          <a href={boss.source_url} target="_blank" rel="noopener noreferrer">
+            {boss.source_name ?? boss.source_url}
+          </a>
+        </p>
+      )}
     </section>
   );
 }
