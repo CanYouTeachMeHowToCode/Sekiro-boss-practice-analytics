@@ -181,7 +181,7 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** is deferred until after V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
+* **Public deployment** moved into V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
 
 ---
@@ -208,11 +208,11 @@ richer progression analytics
         ↓
 
 V3
-User profiles
+User accounts
 +
-long-term personalized practice tracking
+per-user attempt histories
 +
-practice recommendations
+evidence-based practice recommendations
 +
 public deployment
 

@@ -62,9 +62,124 @@ V2 delivered the structured, multi-boss Sekiro analytics application:
 * four required CI jobs: backend, frontend, integration, docker
 * local deployment with Docker Compose
 
-Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) is deferred until after V3.
+Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) moved into V3 as Milestone 4.
 
-The V2 sections below remain the reference for how the existing code was built. V3 scope has not been written into this file yet.
+Released as `v2.0.0`.
+
+---
+
+# Current Development Focus: V3 — Personalized Practice Coach
+
+V3 answers:
+
+> **What should I practice next?**
+
+V3 scope is exactly three capabilities:
+
+```text
+User accounts
++
+Public deployment
++
+Rule-based practice recommendations
+```
+
+Long-term tracking and practice goals are NOT part of V3. Long-term progression is already covered by V2's progression chart, recent vs. all-time comparisons and Sekiro dashboard. Practice goals were considered and dropped.
+
+## Precedence
+
+The V2 sections later in this file still describe how the existing code is built, and their engineering rules still apply: SQLAlchemy, reviewed Alembic migrations, the service layer, honest analytics, the lightweight attempt form, source-traceable boss data, and testing against PostgreSQL.
+
+Where a V2 section conflicts with this V3 section, this section wins. In particular, V2's non-goals of "user accounts", "authentication", "personalized multi-user histories" and "recommendation engines" are lifted only as far as the V3 milestones below require.
+
+## V3 Product Principles
+
+* Recording an attempt stays as quick as in V2: result, phase reached, failure move / `Other` / `Not Sure`, optional notes. Accounts must not add fields to that form.
+* Boss, phase and move data stays global and shared by all users. Only attempts belong to users.
+* Every analytics and recommendation query is scoped to the current user. A user must never see or write another user's attempts.
+* Recommendations are derived only from the user's own attempt records. There is no in-game telemetry.
+* Every recommendation shows the evidence behind it, as counts from the user's attempts.
+* Do not present recommendations as success rates, skill scores or difficulty ratings. The data cannot support them.
+
+## V3 Non-Goals
+
+Do NOT introduce the following in V3 unless explicitly requested:
+
+* OAuth or third-party login
+* password reset emails or other email infrastructure
+* user roles, admin panels, or teams
+* social features: sharing, following, leaderboards
+* practice goals
+* machine learning or LLM-generated recommendations
+* gameplay video, computer vision, or combat telemetry (V4)
+* Black Myth: Wukong or multi-game UI (V5)
+* Redis, message queues, Kubernetes, or microservices without a demonstrated need
+
+## V3 Milestones
+
+Implement V3 incrementally. Each milestone should leave the project in a working state.
+
+### Milestone 1 — Accounts and Authentication
+
+* add a `users` table through an Alembic migration
+* hash passwords with argon2
+* register, log in, log out
+* authenticate with an httpOnly session cookie. The frontend and backend are same-origin through nginx, so JWTs are not needed.
+* add a login / register page in the frontend
+* boss data remains browsable without logging in; recording attempts and viewing analytics require login
+
+### Milestone 2 — User-Owned Attempts
+
+* add `attempts.user_id` as a foreign key to `users`, through a reviewed Alembic migration
+* migrate existing attempts to the owner's account explicitly. Do not silently delete or orphan them.
+* record the current user on every new attempt
+* read attempt history for the current user only
+
+### Milestone 3 — Per-User Analytics and Isolation
+
+* scope boss analytics, progression and the Sekiro dashboard to the current user
+* add tests proving users cannot read or write each other's attempts, at both the API and service level
+* keep the V2 analytics definitions unchanged apart from the user scope
+
+### Milestone 4 — Public Deployment
+
+Moved from V2 Milestone 10. It comes after Milestones 1–3 because accounts are what make a public instance safe. See "Public Deployment" below for the work involved.
+
+### Milestone 5 — Practice Recommendations
+
+* rule-based and explainable, derived only from the user's attempt records
+* candidate signals include:
+  * the recent bottleneck phase
+  * the most common recorded failure move among attempts that reached that move's phases
+  * undefeated bosses the user has practiced recently
+* every recommendation includes its evidence, for example "6 of your last 10 attempts ended in Phase 2; 4 of those were Floating Passage"
+* failure counts for a move only count attempts that reached a phase containing that move, so dying earlier cannot make a move look "improved"
+* the exact rules are decided with the user before implementation
+
+### Milestone 6 — Integration Testing, CI and Release
+
+* an end-to-end test: register → record attempts → analytics → recommendations
+* extend CI to cover authentication and user isolation
+* verify the production deployment workflow
+* release `v3.0.0`
+
+## V3 Success Criteria
+
+V3 is complete when a user can:
+
+```text
+Open the public URL
+        ↓
+Register / Log In
+        ↓
+Record Attempts
+        ↓
+See Only Their Own History and Analytics
+        ↓
+Get Practice Recommendations with Evidence
+```
+
+Once these criteria are met, merge `dev` into `main`, release `v3.0.0`, and stop V3 development. Do not delay the release by adding V4 features.
 
 ---
 
@@ -125,7 +240,7 @@ V2 should preserve that functionality while adding:
 * recent vs historical comparisons
 * overall Sekiro-level analytics
 * stronger integration testing
-* a reliable local deployment with Docker Compose (public hosting is deferred until after V3)
+* a reliable local deployment with Docker Compose (public hosting moved into V3 Milestone 4)
 
 ---
 
@@ -268,7 +383,7 @@ These belong to V3–V5 or should only be introduced when justified by an actual
 
 * Docker Compose, run locally
 
-V2 has no public hosting and no staging or production environments. Public deployment is deferred until after V3; see Milestone 10.
+V2 has no public hosting and no staging or production environments. Public deployment moved into V3 Milestone 4; see "Public Deployment (V3 Milestone 4)".
 
 ---
 
@@ -1354,24 +1469,27 @@ v2.0.0 (run locally with Docker Compose)
 
 ---
 
-# Public Deployment (Deferred Until After V3)
+# Public Deployment (V3 Milestone 4)
 
-V2 runs locally only. A stable public URL is deferred until after V3, because:
+V2 ran locally only. Public deployment was moved into V3 because:
 
-* the application currently has a single user, who can run it locally
 * V2 has no authentication, so a public instance would let anyone record attempts into the only attempt history
-* V3 adds user accounts, which solves that problem directly
-* V4 gameplay analysis (video storage, computer vision) will likely need different infrastructure anyway, so a hosting setup chosen now may not carry forward
+* V3 Milestones 1–3 add user accounts and per-user data, which solves that problem directly
 
-For temporary remote access, such as from a phone away from home, a Cloudflare Tunnel to the local instance is acceptable.
+Until Milestone 4 is done, a Cloudflare Tunnel to the local instance is acceptable for temporary remote access, such as from a phone away from home.
 
-When public deployment is picked up, the provider-independent work is:
+The work involved:
 
-* a production compose configuration that does not publish the PostgreSQL or backend ports
-* HTTPS
-* scheduled `pg_dump` backups of attempt data
+* a production compose configuration that exposes only the reverse proxy, not the PostgreSQL or backend ports
+* HTTPS, for example with Caddy's automatic certificates
+* secrets supplied through environment variables; secure, SameSite session cookies
+* rate limiting on login and registration
+* scheduled `pg_dump` backups of attempt data, with a restore tested at least once
 * deployment from `main` through GitHub Actions
-* setup documentation
+* choosing a host and a domain. Free tiers such as Oracle Cloud Always Free may reclaim idle instances; a small paid VPS is more predictable.
+* setup documentation in the README
+
+V4 gameplay analysis (video storage, computer vision) will likely need different infrastructure, so keep this deployment simple rather than building for V4.
 
 ---
 
@@ -1644,11 +1762,11 @@ A broken persistence or analytics change should normally be detected before merg
 
 ---
 
-## Milestone 10 — Stable Deployment (Deferred Until After V3)
+## Milestone 10 — Stable Deployment (Moved to V3 Milestone 4)
 
 ### Decision
 
-Public deployment is deferred until after V3. See "Public Deployment (Deferred Until After V3)" for the reasons and the work involved.
+Public deployment moved into V3 as Milestone 4. See "Public Deployment (V3 Milestone 4)" for the reasons and the work involved.
 
 ### What V2 Still Includes
 
@@ -1691,7 +1809,7 @@ Recommended sequence:
 
 13. CI Hardening
 
-14. Stable Deployment (deferred until after V3, see Milestone 10)
+14. Stable Deployment (moved to V3 Milestone 4, see Milestone 10)
 
 15. Release v2.0.0
 ```
@@ -1752,21 +1870,7 @@ Do not delay the V2 release by introducing V3 features.
 
 ## V3 — Personalized Practice Coach
 
-Core question:
-
-> What should I practice next?
-
-Potential additions:
-
-* authentication
-* user accounts
-* user-owned attempts
-* long-term player profiles
-* practice goals
-* personalized recommendations
-* public deployment with a stable URL (moved from V2 Milestone 10)
-
-These are NOT V2 requirements.
+Current development focus. See "Current Development Focus: V3" near the top of this file.
 
 ---
 
@@ -1785,7 +1889,7 @@ Potential additions:
 * automatic move detection
 * true per-move success rates
 
-These are NOT V2 requirements.
+These are NOT V3 requirements.
 
 ---
 
@@ -1802,7 +1906,7 @@ Potential additions:
 * game-specific combat mechanics
 * cross-game analytics
 
-These are NOT V2 requirements.
+These are NOT V3 requirements.
 
 ---
 
@@ -1810,57 +1914,53 @@ These are NOT V2 requirements.
 
 When working in this repository:
 
-1. Treat V1 as completed.
-2. Treat V2 as the current active development scope.
-3. Preserve the lightweight manual attempt-recording workflow.
+1. Treat V1 and V2 as completed.
+2. Treat V3 as the current active development scope, limited to accounts, public deployment and rule-based practice recommendations.
+3. Preserve the lightweight manual attempt-recording workflow; accounts must not add fields to it.
 4. Do not add detailed manual combat telemetry.
 5. Continue supporting `Other` and `Not Sure`.
 6. Prefer structured move IDs over free-text move names.
-7. Keep analytics derived from attempt data where practical.
+7. Keep analytics and recommendations derived from attempt data.
 8. Do not invent success rates without occurrence denominators.
-9. Migrate persistence from JSON to PostgreSQL cleanly.
-10. Use SQLAlchemy for relational persistence.
-11. Use Alembic for schema migrations.
-12. Review generated migrations before applying them.
-13. Preserve frontend API contracts where practical.
-14. Do not silently rewrite working frontend behavior during the database migration.
-15. Keep database access outside route handlers where practical.
-16. Keep analytics logic outside route handlers.
-17. Avoid unnecessary repository/factory/framework abstractions.
-18. Expand boss coverage only after the PostgreSQL-backed V1 workflow is stable.
+9. Show the evidence behind every recommendation.
+10. Scope every attempt, analytics and recommendation query to the current user.
+11. Keep boss, phase and move data global.
+12. Never store plain-text passwords; hash them with argon2.
+13. Use SQLAlchemy for relational persistence.
+14. Use Alembic for schema migrations, and review generated migrations before applying them.
+15. Migrate existing attempts to a user explicitly; never silently drop them.
+16. Preserve frontend API contracts where practical; change frontend types and clients together when a contract must change.
+17. Keep database access and analytics logic outside route handlers.
+18. Avoid unnecessary repository/factory/framework abstractions.
 19. Do not create large amounts of low-quality boss data.
-20. Do not invent Sekiro mechanics when uncertain.
-21. Keep game knowledge traceable to sources where practical.
-22. Do not add authentication in V2.
-23. Do not add video analysis in V2.
-24. Do not add Black Myth: Wukong in V2.
-25. Do not add Redis, Kafka, Kubernetes, or microservices without a concrete requirement.
-26. Prefer incremental changes over large rewrites.
-27. Preserve working functionality after every milestone.
-28. Add tests for meaningful behavior, not arbitrary coverage targets.
-29. Keep derived analytics semantically honest.
-30. Stop V2 once the defined V2 success criteria are complete.
+20. Do not invent Sekiro mechanics when uncertain, and keep game knowledge traceable to sources.
+21. Do not commit secrets, production credentials or private database URLs.
+22. Do not add OAuth, email infrastructure, roles, social features or practice goals in V3.
+23. Do not add video analysis (V4) or Black Myth: Wukong (V5).
+24. Do not add Redis, Kafka, Kubernetes, or microservices without a concrete requirement.
+25. Prefer incremental changes over large rewrites, and preserve working functionality after every milestone.
+26. Add tests for meaningful behavior, including user isolation, not arbitrary coverage targets.
+27. Stop V3 once the defined V3 success criteria are complete.
 
 ---
 
 # Current Milestone Rule
 
-Before implementing a new feature, identify which V2 milestone it belongs to.
+Before implementing a new feature, identify which V3 milestone it belongs to.
 
 If the feature does not clearly belong to:
 
 ```text
-PostgreSQL Migration
-Multi-Boss Support
-Richer Boss Data
-Progression Analytics
-Sekiro Dashboard
-Testing / CI
-Local Docker Setup
+Accounts and Authentication
+User-Owned Attempts
+Per-User Analytics and Isolation
+Public Deployment
+Practice Recommendations
+Testing / CI / Release
 ```
 
-check whether it actually belongs to V3, V4, or V5 before adding it.
+check whether it actually belongs to V4 or V5, or was deliberately dropped from V3, before adding it.
 
-The goal of V2 is not to maximize feature count.
+The goal of V3 is not to maximize feature count.
 
-The goal is to turn the completed V1 MVP into a structured, maintainable, multi-boss Sekiro analytics application and then release `v2.0.0`.
+The goal is to let each player keep their own practice history on a public instance and get honest, evidence-backed practice recommendations, and then release `v3.0.0`.

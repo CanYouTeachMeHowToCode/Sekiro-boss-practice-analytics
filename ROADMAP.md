@@ -68,42 +68,50 @@ V2 remains focused specifically on **Sekiro**.
 Not included in V2:
 
 * boss search and filtering, which was skipped because 8 bosses fit on one page
-* public deployment, which is deferred until after V3: with a single user and no accounts, a public instance would let anyone record attempts
+* public deployment, which moved into V3: with a single user and no accounts, a public instance would let anyone record attempts
 
 ### Completion target (met)
 
 A stable multi-boss Sekiro analytics application backed by PostgreSQL, running locally, that can show both boss-specific and game-level player progression.
 
+Released as `v2.0.0`.
+
 ---
 
-## V3 — Personalized Practice Coach
+## V3 — Personalized Practice Coach 🚧
 
 **Core question:**
 **What should I practice next?**
 
-V3 introduces individual player identity and personalized training.
+V3 introduces individual player identity, public deployment and practice recommendations.
 
-Main goals:
+Milestones:
 
-* user accounts and authentication
-* user-specific attempt histories
-* long-term practice tracking
-* practice goals
-* personalized weakness identification
-* practice recommendations
-* public deployment with a stable URL, once accounts make it safe to expose
+1. **Accounts and authentication:** register, log in, log out, with hashed passwords and session cookies
+2. **User-owned attempts:** every attempt belongs to a user; existing attempts move to the owner's account
+3. **Per-user analytics:** boss analytics, progression and the Sekiro dashboard show only the user's own data
+4. **Public deployment:** a stable URL with HTTPS, backups and deployment from `main`
+5. **Practice recommendations:** rule-based suggestions derived from the user's own attempts, each showing its evidence
+6. **Integration testing, CI and release**
 
 Example output:
 
 ```text id="7v1njg"
 Recommended Practice
 
-1. Floating Passage
-2. Phase 3 Lightning
+1. Genichiro Ashina — Phase 2
+   6 of your last 10 attempts ended in Phase 2.
 
-Next Goal:
-Reach Phase 3 for 3 consecutive attempts
+2. Floating Passage
+   4 of those 6 Phase 2 failures were recorded as Floating Passage.
 ```
+
+Recommendations are based on recorded failures, not success rates, because the app does not know how often each move actually occurred.
+
+Not included in V3:
+
+* long-term practice tracking as a separate feature, since V2's progression analytics already cover it
+* practice goals
 
 V3 turns the application from an analytics tracker into a personalized practice assistant.
 
