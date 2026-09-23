@@ -25,6 +25,7 @@ describe("BossSelectionPage", () => {
     expect(await screen.findByText("Genichiro Ashina")).toBeInTheDocument();
     expect(screen.getByText("苇名弦一郎")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /view boss/i })).toHaveAttribute("href", "/bosses/genichiro-ashina");
+    expect(screen.getByRole("link", { name: /sekiro dashboard/i })).toHaveAttribute("href", "/");
   });
 
   it("shows an error message when the boss list fails to load", async () => {

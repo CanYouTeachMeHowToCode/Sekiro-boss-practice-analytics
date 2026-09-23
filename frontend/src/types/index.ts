@@ -89,3 +89,45 @@ export interface ProgressionPoint {
   phase_reached: number;
   failure_move_id: string | null;
 }
+
+export interface BossComparisonRow {
+  id: string;
+  name: string;
+  name_zh: string | null;
+  total_phases: number;
+  attempts: number;
+  best_phase: number | null;
+  defeated: boolean;
+  attempts_until_first_victory: number | null;
+  last_attempt_at: string | null;
+}
+
+export interface RecentAttempt {
+  attempt_id: string;
+  boss_id: string;
+  boss_name: string;
+  timestamp: string;
+  result: AttemptResult;
+  phase_reached: number;
+  failure_move_id: string | null;
+  failure_move_name: string | null;
+  failure_category: FailureCategory | null;
+}
+
+export interface SekiroAnalytics {
+  total_bosses: number;
+  bosses_attempted: number;
+  bosses_defeated: number;
+  total_attempts: number;
+  /** Boss ids with the most attempts; more than one when tied. */
+  most_practiced_bosses: string[];
+  /** The highest attempts_until_first_victory among defeated bosses. */
+  most_attempts_to_defeat: number | null;
+  /** Defeated boss ids whose first victory took most_attempts_to_defeat attempts. */
+  bosses_requiring_most_attempts: string[];
+  recent_window_days: number;
+  attempts_in_recent_window: number;
+  /** Newest first, across all bosses. */
+  recent_attempts: RecentAttempt[];
+  bosses: BossComparisonRow[];
+}

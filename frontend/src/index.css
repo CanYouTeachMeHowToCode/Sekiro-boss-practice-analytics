@@ -122,6 +122,15 @@ a {
   font-weight: 600;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table-scroll .failure-breakdown td {
+  white-space: nowrap;
+}
+
+.boss-comparison,
 .progression,
 .analytics-panel,
 .attempt-history,
