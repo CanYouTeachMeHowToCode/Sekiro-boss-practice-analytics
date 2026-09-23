@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.models.attempt import AttemptResult
+from app.models.attempt import AttemptResult, FailureCategory
 
 
 class RecentAnalytics(BaseModel):
@@ -30,6 +30,48 @@ class BossAnalytics(BaseModel):
     attempts_until_first_victory: int | None = None
     """Attempts up to and including the first victory; None if never defeated."""
     recent: RecentAnalytics
+
+
+class BossComparisonRow(BaseModel):
+    id: str
+    name: str
+    name_zh: str | None = None
+    total_phases: int
+    attempts: int
+    best_phase: int | None = None
+    defeated: bool
+    attempts_until_first_victory: int | None = None
+    last_attempt_at: datetime | None = None
+
+
+class RecentAttempt(BaseModel):
+    attempt_id: str
+    boss_id: str
+    boss_name: str
+    timestamp: datetime
+    result: AttemptResult
+    phase_reached: int
+    failure_move_id: str | None = None
+    failure_move_name: str | None = None
+    failure_category: FailureCategory | None = None
+
+
+class SekiroAnalytics(BaseModel):
+    total_bosses: int
+    bosses_attempted: int
+    bosses_defeated: int
+    total_attempts: int
+    most_practiced_bosses: list[str]
+    """Boss ids with the most attempts; more than one when tied."""
+    most_attempts_to_defeat: int | None = None
+    """The highest attempts_until_first_victory among defeated bosses."""
+    bosses_requiring_most_attempts: list[str]
+    """Defeated boss ids whose first victory took most_attempts_to_defeat attempts."""
+    recent_window_days: int
+    attempts_in_recent_window: int
+    recent_attempts: list[RecentAttempt]
+    """Newest first, across all bosses."""
+    bosses: list[BossComparisonRow]
 
 
 class ProgressionPoint(BaseModel):

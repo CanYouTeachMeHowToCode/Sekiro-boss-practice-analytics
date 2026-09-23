@@ -75,7 +75,7 @@ export default function BossDashboardPage() {
     return (
       <main className="page">
         <p>Boss not found.</p>
-        <Link to="/">Back to boss selection</Link>
+        <Link to="/bosses">Back to boss selection</Link>
       </main>
     );
   }
@@ -90,7 +90,7 @@ export default function BossDashboardPage() {
 
   return (
     <main className="page">
-      <Link to="/" className="back-link">
+      <Link to="/bosses" className="back-link">
         ← Choose a different boss
       </Link>
 

@@ -180,6 +180,20 @@ describe("frontend calling the real backend", () => {
     expect(created.failure_category).toBe("not_sure");
   });
 
+  it("summarizes the attempts recorded above in the game-level analytics", async () => {
+    const { getSekiroAnalytics } = await import("../src/api/sekiro");
+
+    const analytics = await getSekiroAnalytics();
+
+    expect(analytics.total_bosses).toBe(8);
+    expect(analytics.bosses_attempted).toBe(1);
+    expect(analytics.total_attempts).toBe(2);
+    expect(analytics.most_practiced_bosses).toEqual(["genichiro-ashina"]);
+    expect(analytics.recent_attempts.map((a) => a.boss_id)).toEqual(["genichiro-ashina", "genichiro-ashina"]);
+    const genichiro = analytics.bosses.find((b) => b.id === "genichiro-ashina");
+    expect(genichiro).toMatchObject({ attempts: 2, defeated: false, total_phases: 3, name_zh: "苇名弦一郎" });
+  });
+
   it("returns progression and a recent-window comparison for the attempts recorded above", async () => {
     const { getBossProgression, getBossAnalytics } = await import("../src/api/attempts");
 
