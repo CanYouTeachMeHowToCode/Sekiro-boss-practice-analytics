@@ -16,7 +16,7 @@ BOSSES_FILE = SEED_DIR / "bosses.json"
 
 GAMES = {"sekiro": "Sekiro: Shadows Die Twice"}
 
-MOVE_FIELDS = ("name", "move_type", "description", "counter")
+MOVE_FIELDS = ("name", "move_type", "description", "telegraph", "counter", "common_mistakes")
 
 
 class SeedError(ValueError):
@@ -104,7 +104,9 @@ def sync_reference_data(session: Session, bosses: list[BossData]) -> SyncReport:
             session.add(boss)
         boss.game = games[data.game]
         boss.name = data.name
+        boss.name_zh = data.name_zh
         boss.location = data.location
+        boss.source_name = data.source_name
         boss.source_url = data.source_url
         report.bosses += 1
 

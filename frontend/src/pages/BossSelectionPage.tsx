@@ -42,6 +42,7 @@ export default function BossSelectionPage() {
           {bosses.map((boss) => (
             <li key={boss.id} className="boss-card">
               <h3>{boss.name}</h3>
+              {boss.name_zh && <p className="boss-name-zh">{boss.name_zh}</p>}
               <p>{boss.location}</p>
               <Link to={`/bosses/${boss.id}`} className="btn btn-primary">
                 View Boss

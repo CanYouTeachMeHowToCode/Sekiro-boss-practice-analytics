@@ -32,7 +32,10 @@ class Boss(Base):
     game_id: Mapped[int] = mapped_column(ForeignKey("games.id", ondelete="RESTRICT"))
     slug: Mapped[str] = mapped_column(String(100), unique=True)
     name: Mapped[str] = mapped_column(String(200))
+    name_zh: Mapped[str | None] = mapped_column(String(200))
     location: Mapped[str] = mapped_column(String(200))
+    # Where this boss's phase and move data came from; moves share their boss's source.
+    source_name: Mapped[str | None] = mapped_column(String(200))
     source_url: Mapped[str | None] = mapped_column(Text)
 
     game: Mapped[Game] = relationship(back_populates="bosses")
@@ -70,8 +73,6 @@ class Move(Base):
     telegraph: Mapped[str | None] = mapped_column(Text)
     counter: Mapped[str | None] = mapped_column(Text)
     common_mistakes: Mapped[str | None] = mapped_column(Text)
-    source_name: Mapped[str | None] = mapped_column(String(200))
-    source_url: Mapped[str | None] = mapped_column(Text)
 
     boss: Mapped[Boss] = relationship(back_populates="moves")
     phase_links: Mapped[list["PhaseMove"]] = relationship(back_populates="move", cascade="all, delete-orphan")

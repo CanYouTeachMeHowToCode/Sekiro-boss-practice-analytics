@@ -411,8 +411,15 @@ id
 game_id
 slug
 name
+name_zh
 location
+source_name
+source_url
 ```
+
+`name_zh` is the official Simplified Chinese name. Only boss names are localized; move names and the UI stay in English for now.
+
+`source_name` and `source_url` record where the boss's phase and move data came from. All moves of a boss share this source.
 
 Relationship:
 
@@ -465,9 +472,11 @@ description
 telegraph
 counter
 common_mistakes
-source_name
-source_url
 ```
+
+Moves do not have their own source fields; they use their boss's `source_name` and `source_url`. Add move-level sources only if a move's data ever comes from a different page than its boss.
+
+Only fill `telegraph` and `common_mistakes` from what the source explicitly states. Leave them null rather than inferring them.
 
 Relationship:
 
@@ -719,14 +728,14 @@ Avoid creating hundreds of low-quality placeholder records.
 
 # Data Provenance
 
-V2 may include source metadata for boss and move information.
-
-Potential fields:
+Each boss records the source of its phase and move data:
 
 ```text
 source_name
 source_url
 ```
+
+Source metadata is kept at the boss level because every move currently comes from its boss's page.
 
 This is useful for:
 

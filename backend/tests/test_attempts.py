@@ -75,7 +75,7 @@ def test_create_attempt_move_not_belonging_to_boss(client):
 def test_attempt_history_order(client):
     client.post(
         "/api/bosses/genichiro-ashina/attempts",
-        json={"result": "failed", "phase_reached": 1, "failure_move_id": "thrust-attack"},
+        json={"result": "failed", "phase_reached": 1, "failure_move_id": "perilous-thrust"},
     )
     client.post(
         "/api/bosses/genichiro-ashina/attempts",
@@ -92,10 +92,10 @@ def test_attempt_history_order(client):
 
 def test_analytics_aggregation(client):
     attempts = [
-        {"result": "failed", "phase_reached": 1, "failure_move_id": "thrust-attack"},
+        {"result": "failed", "phase_reached": 1, "failure_move_id": "perilous-thrust"},
         {"result": "failed", "phase_reached": 2, "failure_move_id": "floating-passage"},
         {"result": "failed", "phase_reached": 2, "failure_move_id": "floating-passage"},
-        {"result": "failed", "phase_reached": 3, "failure_move_id": "lightning-attack"},
+        {"result": "failed", "phase_reached": 3, "failure_move_id": "lightning-of-tomoe-slash"},
         {"result": "victory", "phase_reached": 3},
     ]
     for attempt in attempts:
