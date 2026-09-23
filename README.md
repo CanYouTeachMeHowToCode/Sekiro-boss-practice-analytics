@@ -174,15 +174,6 @@ In addition to individual boss dashboards, V2 may provide a game-level analytics
 * recent practice activity
 * progression across multiple bosses
 
-#### Search and Filtering
-
-As the supported boss dataset grows, V2 may add:
-
-* boss search
-* attempted / not attempted filters
-* defeated / not defeated filters
-* location filtering
-
 #### Data Provenance
 
 Boss and moveset information may include source metadata so that game knowledge can be traced back to reliable sources such as community documentation or Sekiro Wiki references.

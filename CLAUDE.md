@@ -108,7 +108,6 @@ V2 should preserve that functionality while adding:
 * progression analytics
 * recent vs historical comparisons
 * overall Sekiro-level analytics
-* search and filtering
 * stronger integration testing
 * stable public deployment
 
@@ -1003,25 +1002,9 @@ unless the definition is explicitly shown.
 
 # Search and Filtering
 
-As boss coverage expands, the boss selection experience may include:
+Not planned. Sekiro has roughly 20 bosses even including mini-bosses, so every boss fits on one page, and the Sekiro Dashboard's boss comparison table already shows each boss's attempts and defeat status. See Milestone 8.
 
-```text
-Search Boss...
-```
-
-Suggested filters:
-
-```text
-All
-Attempted
-Not Attempted
-Defeated
-Not Defeated
-```
-
-Keep filtering lightweight.
-
-Do not build a generic search platform.
+Revisit only if the boss list grows well beyond what fits on one page.
 
 ---
 
@@ -1624,29 +1607,15 @@ The user can understand their overall Sekiro practice history without opening ev
 
 ---
 
-## Milestone 8 — Search and Filtering
+## Milestone 8 — Search and Filtering (Skipped)
 
-### Goal
+### Decision
 
-Keep boss discovery usable as the dataset expands.
+Skipped. Sekiro has roughly 20 bosses even including mini-bosses, so the full list fits on one page and search adds little. The Sekiro Dashboard's boss comparison table (Milestone 7) already shows each boss's attempts and defeat status.
 
-### Tasks
+This does not affect the V2 success criteria, which never required search or filtering.
 
-Potentially add:
-
-```text
-Search Boss
-
-All
-Attempted
-Not Attempted
-Defeated
-Not Defeated
-```
-
-### Completion Criteria
-
-Users can quickly locate relevant bosses without unnecessary UI complexity.
+Do not add search or filtering unless the boss list grows well beyond what fits on one page.
 
 ---
 
@@ -1720,7 +1689,7 @@ Recommended sequence:
 
 10. Overall Sekiro Dashboard
 
-11. Search / Filter
+11. Search / Filter (skipped, see Milestone 8)
 
 12. Integration Tests
 
@@ -1889,7 +1858,6 @@ Multi-Boss Support
 Richer Boss Data
 Progression Analytics
 Sekiro Dashboard
-Search / Filtering
 Testing / CI
 Deployment
 ```

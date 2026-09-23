@@ -59,7 +59,6 @@ Main goals:
 * add progression analytics across attempts
 * compare recent performance with historical performance
 * add an overall Sekiro-level analytics dashboard
-* add lightweight boss search and filtering
 * strengthen integration testing and deployment
 
 V2 remains focused specifically on **Sekiro**.
