@@ -179,4 +179,24 @@ describe("frontend calling the real backend", () => {
     expect(created.failure_move_id).toBeNull();
     expect(created.failure_category).toBe("not_sure");
   });
+
+  it("returns progression and a recent-window comparison for the attempts recorded above", async () => {
+    const { getBossProgression, getBossAnalytics } = await import("../src/api/attempts");
+
+    const points = await getBossProgression("genichiro-ashina");
+    expect(points.map((p) => p.attempt_number)).toEqual([1, 2]);
+    expect(points.map((p) => p.phase_reached)).toEqual([2, 1]);
+
+    const analytics = await getBossAnalytics("genichiro-ashina", 1);
+    expect(analytics.attempts_until_first_victory).toBeNull();
+    expect(analytics.failure_by_phase).toEqual({ "2": 1, "1": 1 });
+    expect(analytics.recent).toEqual({
+      window_size: 1,
+      total_attempts: 1,
+      main_bottleneck_phase: 1,
+      most_common_failure_move: null,
+      failure_by_phase: { "1": 1 },
+      failure_by_move: {},
+    });
+  });
 });

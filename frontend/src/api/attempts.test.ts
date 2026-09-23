@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createAttempt, getBossAnalytics, getBossAttempts } from "./attempts";
+import { createAttempt, getBossAnalytics, getBossAttempts, getBossProgression } from "./attempts";
 
 describe("attempts api", () => {
   afterEach(() => {
@@ -53,5 +53,23 @@ describe("attempts api", () => {
     await getBossAnalytics("genichiro-ashina");
 
     expect(fetchMock).toHaveBeenCalledWith("/api/bosses/genichiro-ashina/analytics", expect.any(Object));
+  });
+
+  it("getBossAnalytics passes the recent window when given", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({}) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getBossAnalytics("genichiro-ashina", 20);
+
+    expect(fetchMock).toHaveBeenCalledWith("/api/bosses/genichiro-ashina/analytics?recent=20", expect.any(Object));
+  });
+
+  it("getBossProgression fetches the boss's progression endpoint", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => [] });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getBossProgression("genichiro-ashina");
+
+    expect(fetchMock).toHaveBeenCalledWith("/api/bosses/genichiro-ashina/progression", expect.any(Object));
   });
 });

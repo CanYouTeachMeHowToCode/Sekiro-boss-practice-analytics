@@ -38,6 +38,8 @@ const emptyAnalytics: BossAnalytics = {
   most_common_failure_move: null,
   failure_by_phase: {},
   failure_by_move: {},
+  attempts_until_first_victory: null,
+  recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
 };
 
 function renderDashboard() {
@@ -99,6 +101,8 @@ describe("BossDashboardPage", () => {
         most_common_failure_move: "thrust-attack",
         failure_by_phase: { "1": 1 },
         failure_by_move: { "thrust-attack": 1 },
+        attempts_until_first_victory: null,
+        recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
       });
     vi.mocked(attemptsApi.createAttempt).mockResolvedValue({
       id: "attempt-001",
