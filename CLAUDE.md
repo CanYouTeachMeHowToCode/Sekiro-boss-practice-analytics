@@ -85,7 +85,7 @@ progression analytics
 +
 game-level analytics
 +
-stable deployment
+local Docker deployment
 ```
 
 ---
@@ -109,7 +109,7 @@ V2 should preserve that functionality while adding:
 * recent vs historical comparisons
 * overall Sekiro-level analytics
 * stronger integration testing
-* stable public deployment
+* a reliable local deployment with Docker Compose (public hosting is deferred until after V3)
 
 ---
 
@@ -250,11 +250,9 @@ These belong to V3–V5 or should only be introduced when justified by an actual
 
 ## Deployment
 
-* Docker
+* Docker Compose, run locally
 
-V2 may introduce staging and production deployment environments.
-
-A separate `stg` Git branch is not required.
+V2 has no public hosting and no staging or production environments. Public deployment is deferred until after V3; see Milestone 10.
 
 ---
 
@@ -1318,57 +1316,46 @@ Do not invent package scripts solely because they are listed here.
 
 ---
 
-# V2 CD / Deployment
+# V2 CI / Deployment
 
-V2 may introduce:
-
-```text
-dev
- ↓
-Staging
-
-main
- ↓
-Production
-```
-
-Conceptual workflow:
+V2 has continuous integration but no continuous deployment.
 
 ```text
 feature/*
     ↓
 Pull Request
     ↓
+CI (backend, frontend, integration, docker)
+    ↓
 dev
     ↓
-CI
-    ↓
-Staging Deployment
-
 main
     ↓
-CI
-    ↓
-Production Deployment
+v2.0.0 (run locally with Docker Compose)
 ```
 
-A separate staging Git branch is not required.
+`dev` and `main` are protected: all four CI jobs must pass before a pull request can merge.
 
 ---
 
-# Stable Public Demo
+# Public Deployment (Deferred Until After V3)
 
-By the end of V2, the application should ideally have:
+V2 runs locally only. A stable public URL is deferred until after V3, because:
 
-```text
-stable public URL
-```
+* the application currently has a single user, who can run it locally
+* V2 has no authentication, so a public instance would let anyone record attempts into the only attempt history
+* V3 adds user accounts, which solves that problem directly
+* V4 gameplay analysis (video storage, computer vision) will likely need different infrastructure anyway, so a hosting setup chosen now may not carry forward
 
-that can be shared without requiring the developer's local machine to remain online.
+For temporary remote access, such as from a phone away from home, a Cloudflare Tunnel to the local instance is acceptable.
 
-Cloudflare Tunnel may still be used for local testing.
+When public deployment is picked up, the provider-independent work is:
 
-A portfolio release should preferably use stable hosting.
+* a production compose configuration that does not publish the PostgreSQL or backend ports
+* HTTPS
+* scheduled `pg_dump` backups of attempt data
+* deployment from `main` through GitHub Actions
+* setup documentation
 
 ---
 
@@ -1641,26 +1628,19 @@ A broken persistence or analytics change should normally be detected before merg
 
 ---
 
-## Milestone 10 — Stable Deployment
+## Milestone 10 — Stable Deployment (Deferred Until After V3)
 
-### Goal
+### Decision
 
-Produce a reliable public V2 demo.
+Public deployment is deferred until after V3. See "Public Deployment (Deferred Until After V3)" for the reasons and the work involved.
 
-### Tasks
+### What V2 Still Includes
 
-* production PostgreSQL configuration
-* environment configuration
-* Docker deployment
-* staging deployment if useful
-* production deployment
-* fixed public URL
-* verify mobile access
-* update README screenshots and setup instructions
+* running the full stack locally with `docker compose up`
+* local setup instructions in the README
+* LAN access from other devices, such as a phone on the same network
 
-### Completion Criteria
-
-The application can be opened from a stable public URL and the complete V2 workflow functions correctly.
+The V2 success criteria do not require public hosting.
 
 ---
 
@@ -1695,7 +1675,7 @@ Recommended sequence:
 
 13. CI Hardening
 
-14. Stable Deployment
+14. Stable Deployment (deferred until after V3, see Milestone 10)
 
 15. Release v2.0.0
 ```
@@ -1768,6 +1748,7 @@ Potential additions:
 * long-term player profiles
 * practice goals
 * personalized recommendations
+* public deployment with a stable URL (moved from V2 Milestone 10)
 
 These are NOT V2 requirements.
 
@@ -1859,7 +1840,7 @@ Richer Boss Data
 Progression Analytics
 Sekiro Dashboard
 Testing / CI
-Deployment
+Local Docker Setup
 ```
 
 check whether it actually belongs to V3, V4, or V5 before adding it.

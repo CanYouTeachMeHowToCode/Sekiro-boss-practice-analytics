@@ -178,34 +178,16 @@ In addition to individual boss dashboards, V2 may provide a game-level analytics
 
 Boss and moveset information may include source metadata so that game knowledge can be traced back to reliable sources such as community documentation or Sekiro Wiki references.
 
-#### Deployment and CI/CD
+#### CI and Local Deployment
 
-V2 may extend the current development workflow into separate deployment environments:
+Every pull request runs four GitHub Actions jobs, and all four must pass before merging into `dev` or `main`:
 
-```text
-feature/*
-    ↓
-dev
-    ↓
-CI
-    ↓
-Staging
+* **backend:** pytest against PostgreSQL, including a check that the models match the Alembic migrations
+* **frontend:** type checking, linting, unit tests, and a production build
+* **integration:** the frontend's API client against the real backend and PostgreSQL
+* **docker:** builds the Docker Compose stack and smoke tests it through nginx
 
-main
-    ↓
-CI
-    ↓
-Production
-```
-
-Potential additions include:
-
-* automated backend tests
-* frontend type checking and builds
-* integration tests
-* Docker image builds
-* automated staging deployment
-* production deployment from stable releases
+V2 runs locally with Docker Compose. Public hosting is deferred until after V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
 
 ---
 
@@ -236,6 +218,8 @@ User profiles
 long-term personalized practice tracking
 +
 practice recommendations
++
+public deployment
 
         ↓
 
@@ -278,5 +262,51 @@ V1 intentionally uses JSON persistence because the initial dataset is small and 
 * **ORM:** SQLAlchemy
 * **Database Migrations:** Alembic
 * **Frontend:** React + TypeScript
-* **Deployment:** Docker
-* **CI/CD:** GitHub Actions
+* **Deployment:** Docker Compose (local)
+* **CI:** GitHub Actions
+
+---
+
+## Running Locally
+
+Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
+
+1. Create your environment file and choose a database password:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Replace `change-me` everywhere in `.env` with the same password.
+
+2. Build and start the stack:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+   On every start the backend applies database migrations and loads the bosses from `backend/seed/bosses.json`.
+
+3. Open http://localhost:8080. The API documentation is at http://localhost:8000/docs.
+
+To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
+
+Attempt data is kept in the `postgres-data` Docker volume. `docker compose down` keeps it; `docker compose down -v` deletes it.
+
+### Running the Tests
+
+The backend and integration tests need PostgreSQL running (`docker compose up -d postgres`).
+
+```bash
+# Backend: database tests read TEST_DATABASE_URL from the environment and are skipped without it
+cd backend
+pip install -r requirements.txt
+set -a; . ../.env; set +a   # load .env into the environment (bash)
+pytest
+
+# Frontend
+cd frontend
+npm ci
+npm test
+npm run test:integration   # reads TEST_DATABASE_URL from .env; needs the backend's Python environment
+```

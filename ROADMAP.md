@@ -59,13 +59,16 @@ Main goals:
 * add progression analytics across attempts
 * compare recent performance with historical performance
 * add an overall Sekiro-level analytics dashboard
-* strengthen integration testing and deployment
+* strengthen integration testing and CI
+* run reliably on a local machine with Docker Compose
 
 V2 remains focused specifically on **Sekiro**.
 
+Public deployment is deferred until after V3: with a single user and no accounts, a public instance would let anyone record attempts.
+
 ### Completion target
 
-A stable multi-boss Sekiro analytics application backed by PostgreSQL that can show both boss-specific and game-level player progression.
+A stable multi-boss Sekiro analytics application backed by PostgreSQL, running locally, that can show both boss-specific and game-level player progression.
 
 ---
 
@@ -84,6 +87,7 @@ Main goals:
 * practice goals
 * personalized weakness identification
 * practice recommendations
+* public deployment with a stable URL, once accounts make it safe to expose
 
 Example output:
 
@@ -227,6 +231,9 @@ PostgreSQL
 
 Authentication
 → needed for personalized users in V3
+
+Public hosting
+→ needed once there are multiple users, after V3 adds accounts
 
 Video / ML pipeline
 → needed for gameplay observation in V4

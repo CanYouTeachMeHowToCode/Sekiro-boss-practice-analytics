@@ -178,34 +178,16 @@ V2 会超越简单的汇总计数，引入以进步为导向的分析，例如�
 
 Boss 和招式信息可以附带来源元数据，让游戏知识能够追溯到可靠的来源，比如社区文档或 Sekiro Wiki 的相关页面。
 
-#### 部署与 CI/CD
+#### CI 与本地部署
 
-V2 可能会把当前的开发流程扩展为独立的部署环境：
+每个 Pull Request 都会运行 4 个 GitHub Actions 任务，全部通过后才能合并进 `dev` 或 `main`：
 
-```text
-feature/*
-    ↓
-dev
-    ↓
-CI
-    ↓
-Staging（预发布环境）
+* **backend：** 在 PostgreSQL 上运行 pytest，包括检查 SQLAlchemy 模型和 Alembic 迁移是否一致
+* **frontend：** 类型检查、代码规范检查、单元测试和生产构建
+* **integration：** 前端的 API 调用层连接真实的后端和 PostgreSQL 进行测试
+* **docker：** 构建 Docker Compose 整套服务，并通过 nginx 进行冒烟测试
 
-main
-    ↓
-CI
-    ↓
-Production（生产环境）
-```
-
-可能加入的内容包括：
-
-* 自动化后端测试
-* 前端类型检查与构建
-* 集成测试
-* Docker 镜像构建
-* 自动部署到预发布环境
-* 从稳定版本部署到生产环境
+V2 使用 Docker Compose 在本地运行。公网部署推迟到 V3 之后：目前只有一个用户，而且在没有账号系统的情况下，公开的实例会让任何人都能新增攻略记录。V3 会加入账号系统，这个问题也就随之解决。
 
 ---
 
@@ -236,6 +218,8 @@ V3
 长期的个性化练习追踪
 +
 练习建议
++
+公网部署
 
         ↓
 
@@ -278,5 +262,51 @@ V1 刻意使用 JSON 持久化，因为初始数据集很小，主要目标是�
 * **ORM：** SQLAlchemy
 * **数据库迁移：** Alembic
 * **前端：** React + TypeScript
-* **部署：** Docker
-* **CI/CD：** GitHub Actions
+* **部署：** Docker Compose（本地）
+* **CI：** GitHub Actions
+
+---
+
+## 本地运行
+
+需要安装 [Docker](https://www.docker.com/)（Windows 或 macOS 上用 Docker Desktop）。
+
+1. 创建环境变量文件，并设置数据库密码：
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   把 `.env` 里所有的 `change-me` 都替换成同一个密码。
+
+2. 构建并启动所有服务：
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+   后端每次启动时都会执行数据库迁移，并从 `backend/seed/bosses.json` 同步 Boss 数据。
+
+3. 打开 http://localhost:8080。API 文档在 http://localhost:8000/docs。
+
+在同一网络下用手机访问时，打开 `http://<电脑的局域网 IP>:8080`。Windows 上可以用 `ipconfig` 查看 IP，要看 Ethernet 或 Wi-Fi 网卡下面的地址，不是 `vEthernet (WSL)` 那一个。
+
+攻略数据保存在名为 `postgres-data` 的 Docker 数据卷里。`docker compose down` 会保留数据；`docker compose down -v` 会把数据一起删除。
+
+### 运行测试
+
+后端测试和集成测试需要 PostgreSQL 正在运行（`docker compose up -d postgres`）。
+
+```bash
+# 后端：数据库测试从环境变量读取 TEST_DATABASE_URL，没有设置时会被跳过
+cd backend
+pip install -r requirements.txt
+set -a; . ../.env; set +a   # 把 .env 加载到环境变量里（bash）
+pytest
+
+# 前端
+cd frontend
+npm ci
+npm test
+npm run test:integration   # 从 .env 读取 TEST_DATABASE_URL；需要后端的 Python 环境
+```
