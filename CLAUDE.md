@@ -74,7 +74,24 @@ Completed so far:
 * **Milestone 2 — User-Owned Attempts:** `attempts.user_id` foreign key. It is nullable for now: attempts from before accounts existed stay ownerless and hidden until `python -m scripts.claim_attempts <username>` assigns them.
 * **Milestone 3 — Per-User Analytics and Isolation:** attempt history, boss analytics, progression and the Sekiro dashboard only cover the logged-in user, with isolation tests at the API and service level.
 
-Next: Milestone 4 (bilingual interface), then Milestone 5 (content completion and moveset review), then Milestone 6 (public deployment), which also makes `attempts.user_id` NOT NULL.
+In progress:
+
+* **Milestone 4 — Bilingual Interface:** code complete on branch `feature/bilingual`, pushed, **no pull request yet**. Waiting for the user's review of the Chinese content.
+  * Done:
+    * Chinese move names (`name_zh`, with `name_zh_source` of `wiki` or `translation`: 6 from BWIKI combat-art pages, 96 translations)
+    * EN / 中文 switch in the nav bar, saved in `users.preferred_language` for logged-in users (`PATCH /api/auth/me`) or `localStorage` for visitors, defaulting to the browser language
+    * every interface string in `frontend/src/i18n/messages.ts`
+    * Chinese boss locations, phase names and all 234 move text fields (description / telegraph / counter / common mistakes) for the 8 existing bosses, translated from the sourced English. The seed rejects an English text field without its Chinese version.
+    * move descriptions shown as hover tooltips and under the move select in the record form
+  * Review file: `review-zh-content.md` at the repo root lists every English/Chinese pair and the uncertain terms (item names, locations). It is committed on the branch only so the review can continue on another machine. **Delete it before opening the pull request.** Apply the user's corrections to `backend/seed/bosses.json`.
+  * Open decisions for the user:
+    * Corrupted Monk's `name_zh`: currently 「破戒僧（幻影）」; BWIKI uses 「幻影破戒僧」
+    * whether Owl (Father)'s Shadowfall really is the combat art 秘传·巨型忍者落杀 (currently mapped as an official wiki name)
+  * Before the pull request:
+    * delete `review-zh-content.md`, and `frontend/vite.manual.config.ts` if it exists (a local manual-testing config, never committed)
+    * mark Milestone 4 completed here, in ROADMAP.md, and in both READMEs
+
+Next: Milestone 5 (content completion and moveset review), then Milestone 6 (public deployment), which also makes `attempts.user_id` NOT NULL.
 
 ---
 
