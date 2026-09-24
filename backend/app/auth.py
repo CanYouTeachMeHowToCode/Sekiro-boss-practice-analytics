@@ -14,7 +14,7 @@ SESSION_COOKIE = "session"
 
 def _cookie_secure() -> bool:
     # Local development runs over plain HTTP, so Secure is opt-in until the
-    # HTTPS deployment (V3 Milestone 5) sets COOKIE_SECURE=true.
+    # HTTPS deployment (V3 Milestone 6) sets COOKIE_SECURE=true.
     return os.environ.get("COOKIE_SECURE", "false").lower() == "true"
 
 

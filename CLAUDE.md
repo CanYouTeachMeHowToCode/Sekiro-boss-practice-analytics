@@ -62,7 +62,7 @@ V2 delivered the structured, multi-boss Sekiro analytics application:
 * four required CI jobs: backend, frontend, integration, docker
 * local deployment with Docker Compose
 
-Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) moved into V3 as Milestone 5.
+Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) moved into V3 as Milestone 6.
 
 Released as `v2.0.0`.
 
@@ -74,7 +74,7 @@ Completed so far:
 * **Milestone 2 — User-Owned Attempts:** `attempts.user_id` foreign key. It is nullable for now: attempts from before accounts existed stay ownerless and hidden until `python -m scripts.claim_attempts <username>` assigns them.
 * **Milestone 3 — Per-User Analytics and Isolation:** attempt history, boss analytics, progression and the Sekiro dashboard only cover the logged-in user, with isolation tests at the API and service level.
 
-Next: Milestone 4 (content completion: the remaining main bosses and Chinese move names), then Milestone 5 (public deployment), which also makes `attempts.user_id` NOT NULL.
+Next: Milestone 4 (bilingual interface), then Milestone 5 (content completion and moveset review), then Milestone 6 (public deployment), which also makes `attempts.user_id` NOT NULL.
 
 ---
 
@@ -89,14 +89,16 @@ V3 scope is:
 ```text
 User accounts
 +
-Content completion (all main bosses, Chinese move names)
+Bilingual interface (English / 中文)
++
+Content completion (all main bosses, reviewed movesets)
 +
 Public deployment
 +
 Rule-based practice recommendations
 ```
 
-Content completion was added after Milestones 1–3, so the public release covers every main boss and shows moves in Chinese as well as English. Move video or GIF references were considered and deferred (Milestone 8).
+The bilingual interface and content completion were added after Milestones 1–3, so the public release covers every main boss in both English and Chinese. Move video or GIF references were considered and deferred (Milestone 9).
 
 Long-term tracking and practice goals are NOT part of V3. Long-term progression is already covered by V2's progression chart, recent vs. all-time comparisons and Sekiro dashboard. Practice goals were considered and dropped.
 
@@ -146,7 +148,7 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 
 * add `attempts.user_id` as a foreign key to `users`, through a reviewed Alembic migration
 * migrate existing attempts to the owner's account explicitly. Do not silently delete or orphan them.
-  * Done by making `attempts.user_id` nullable: pre-account attempts stay ownerless and hidden from everyone until `python -m scripts.claim_attempts <username>` assigns them. Milestone 5 makes the column NOT NULL.
+  * Done by making `attempts.user_id` nullable: pre-account attempts stay ownerless and hidden from everyone until `python -m scripts.claim_attempts <username>` assigns them. Milestone 6 makes the column NOT NULL.
 * record the current user on every new attempt
 * read attempt history for the current user only
 
@@ -156,22 +158,36 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 * add tests proving users cannot read or write each other's attempts, at both the API and service level
 * keep the V2 analytics definitions unchanged apart from the user scope
 
-### Milestone 4 — Content Completion
+### Milestone 4 — Bilingual Interface (English / 中文)
+
+Users choose English or Chinese, and each language shows only its own text; the two are never mixed on one page.
+
+* a language switch in the nav bar
+  * logged-in users: the choice is saved in their account (a `users` column) and follows them across devices
+  * visitors: the choice is kept in the browser; the first visit follows the browser language
+* all interface text in both languages, through a small in-house dictionary and `t()` helper; no i18n framework is needed for two languages
+* Chinese versions of all boss content for the existing bosses: boss locations, phase names, move names, descriptions, telegraphs, counters and common mistakes
+* Chinese move names: the name used by a Chinese Sekiro wiki where one exists (recorded with its page), otherwise a translation (marked as such in the data, never presented as official)
+* Chinese descriptions are translations of the English, wiki-sourced text; the Chinese moveset shows one note saying so instead of a marker on every move
+* the API returns both languages and the frontend picks one, so existing clients keep working
+* the user reviews all Chinese text manually
+* analytics definitions do not change with the language; only the displayed text does
+
+### Milestone 5 — Content Completion and Moveset Review
 
 Comes before public deployment so the public release is complete.
 
-* add the remaining **main** bosses (mini-bosses stay out of scope), following the existing data rules: sourced from a wiki, boss-level `source_name` / `source_url`, `telegraph` and `common_mistakes` only when the source states them, reviewed by the user
-* add a Chinese name to every move:
-  * prefer the name used by a Chinese Sekiro wiki (option A), recorded with its source
-  * where no Chinese wiki name exists, provide a translation (option B), stored and shown as a translation, never presented as an official name
-  * the user reviews all Chinese names manually
-* keep boss data quality over quantity; do not create placeholder moves
+* add the remaining main bosses, each in both languages: Gyoubu Masataka Oniwa, Headless Ape, Demon of Hatred, Genichiro (Way of Tomoe), Emma the Gentle Blade, Isshin Ashina, Folding Screen Monkeys, Divine Dragon, Inner Father, Inner Genichiro, Inner Isshin. Mini-bosses stay out of scope.
+* for new bosses, compare the Fextralife and Fandom wikis; every conflict between them, in English or Chinese, goes to the user for review
+* review the movesets of the existing bosses; the user may remove or edit moves
+  * the seed sync never deletes a move on its own, because attempts may reference it. Removing a move that has recorded attempts needs an explicit decision about those attempts (for example, keep the move but hide it from new attempts, or reassign the attempts) before it is deleted.
+* follow the existing data rules: sourced from a wiki, boss-level `source_name` / `source_url`, `telegraph` and `common_mistakes` only when the source states them, no placeholder moves
 
-### Milestone 5 — Public Deployment
+### Milestone 6 — Public Deployment
 
-Moved from V2 Milestone 10. It comes after the account milestones because accounts are what make a public instance safe, and after content completion so the public release is complete. See "Public Deployment" below for the work involved.
+Moved from V2 Milestone 10. It comes after the account milestones because accounts are what make a public instance safe, and after the bilingual and content milestones so the public release is complete. See "Public Deployment" below for the work involved.
 
-### Milestone 6 — Practice Recommendations
+### Milestone 7 — Practice Recommendations
 
 * rule-based and explainable, derived only from the user's attempt records
 * candidate signals include:
@@ -180,16 +196,17 @@ Moved from V2 Milestone 10. It comes after the account milestones because accoun
   * undefeated bosses the user has practiced recently
 * every recommendation includes its evidence, for example "6 of your last 10 attempts ended in Phase 2; 4 of those were Floating Passage"
 * failure counts for a move only count attempts that reached a phase containing that move, so dying earlier cannot make a move look "improved"
+* recommendations are shown in both languages
 * the exact rules are decided with the user before implementation
 
-### Milestone 7 — Integration Testing, CI and Release
+### Milestone 8 — Integration Testing, CI and Release
 
 * an end-to-end test: register → record attempts → analytics → recommendations
 * extend CI to cover authentication and user isolation
 * verify the production deployment workflow
 * release `v3.0.0`
 
-### Milestone 8 — Move Video References (Deferred)
+### Milestone 9 — Move Video References (Deferred)
 
 Short clips or GIFs showing each move, so players can identify it more easily.
 
@@ -274,7 +291,7 @@ V2 should preserve that functionality while adding:
 * recent vs historical comparisons
 * overall Sekiro-level analytics
 * stronger integration testing
-* a reliable local deployment with Docker Compose (public hosting moved into V3 Milestone 5)
+* a reliable local deployment with Docker Compose (public hosting moved into V3 Milestone 6)
 
 ---
 
@@ -417,7 +434,7 @@ These belong to V3–V5 or should only be introduced when justified by an actual
 
 * Docker Compose, run locally
 
-V2 has no public hosting and no staging or production environments. Public deployment moved into V3 Milestone 5; see "Public Deployment (V3 Milestone 5)".
+V2 has no public hosting and no staging or production environments. Public deployment moved into V3 Milestone 6; see "Public Deployment (V3 Milestone 6)".
 
 ---
 
@@ -579,7 +596,7 @@ source_name
 source_url
 ```
 
-`name_zh` is the official Simplified Chinese name. Boss names and (from V3 Milestone 4) move names have Chinese versions; the rest of the UI stays in English for now.
+`name_zh` is the official Simplified Chinese name. From V3 Milestone 4 the whole interface and all boss content exist in English and Chinese; see Milestone 4.
 
 `source_name` and `source_url` record where the boss's phase and move data came from. All moves of a boss share this source.
 
@@ -1503,14 +1520,14 @@ v2.0.0 (run locally with Docker Compose)
 
 ---
 
-# Public Deployment (V3 Milestone 5)
+# Public Deployment (V3 Milestone 6)
 
 V2 ran locally only. Public deployment was moved into V3 because:
 
 * V2 has no authentication, so a public instance would let anyone record attempts into the only attempt history
 * V3 Milestones 1–3 add user accounts and per-user data, which solves that problem directly
 
-Until Milestone 5 is done, a Cloudflare Tunnel to the local instance is acceptable for temporary remote access, such as from a phone away from home.
+Until Milestone 6 is done, a Cloudflare Tunnel to the local instance is acceptable for temporary remote access, such as from a phone away from home.
 
 The work involved:
 
@@ -1797,11 +1814,11 @@ A broken persistence or analytics change should normally be detected before merg
 
 ---
 
-## Milestone 10 — Stable Deployment (Moved to V3 Milestone 5)
+## Milestone 10 — Stable Deployment (Moved to V3 Milestone 6)
 
 ### Decision
 
-Public deployment moved into V3 as Milestone 5. See "Public Deployment (V3 Milestone 5)" for the reasons and the work involved.
+Public deployment moved into V3 as Milestone 6. See "Public Deployment (V3 Milestone 6)" for the reasons and the work involved.
 
 ### What V2 Still Includes
 
@@ -1844,7 +1861,7 @@ Recommended sequence:
 
 13. CI Hardening
 
-14. Stable Deployment (moved to V3 Milestone 5, see Milestone 10)
+14. Stable Deployment (moved to V3 Milestone 6, see Milestone 10)
 
 15. Release v2.0.0
 ```
@@ -1950,7 +1967,7 @@ These are NOT V3 requirements.
 When working in this repository:
 
 1. Treat V1 and V2 as completed.
-2. Treat V3 as the current active development scope, limited to accounts, content completion, public deployment and rule-based practice recommendations.
+2. Treat V3 as the current active development scope, limited to accounts, the bilingual interface, content completion, public deployment and rule-based practice recommendations.
 3. Preserve the lightweight manual attempt-recording workflow; accounts must not add fields to it.
 4. Do not add detailed manual combat telemetry.
 5. Continue supporting `Other` and `Not Sure`.
@@ -1968,7 +1985,7 @@ When working in this repository:
 17. Keep database access and analytics logic outside route handlers.
 18. Avoid unnecessary repository/factory/framework abstractions.
 19. Do not create large amounts of low-quality boss data.
-20. Do not invent Sekiro mechanics when uncertain, and keep game knowledge traceable to sources. Chinese move names come from a Chinese wiki where one exists; otherwise they are marked as translations.
+20. Do not invent Sekiro mechanics when uncertain, and keep game knowledge traceable to sources. Chinese move names come from a Chinese wiki where one exists; otherwise they are marked as translations. Chinese descriptions are translations of the sourced English text.
 21. Do not commit secrets, production credentials or private database URLs.
 22. Do not add OAuth, email infrastructure, roles, social features or practice goals in V3.
 23. Do not add video analysis (V4) or Black Myth: Wukong (V5).
@@ -1989,7 +2006,8 @@ If the feature does not clearly belong to:
 Accounts and Authentication
 User-Owned Attempts
 Per-User Analytics and Isolation
-Content Completion
+Bilingual Interface
+Content Completion and Moveset Review
 Public Deployment
 Practice Recommendations
 Testing / CI / Release
