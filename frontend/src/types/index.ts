@@ -10,6 +10,11 @@ export interface BossMove {
   telegraph: string | null;
   counter: string | null;
   common_mistakes: string | null;
+  /** Chinese versions of the text above: translations of the sourced English text. */
+  description_zh: string | null;
+  telegraph_zh: string | null;
+  counter_zh: string | null;
+  common_mistakes_zh: string | null;
   /** Chinese name: from a Chinese wiki ("wiki", see name_zh_source_url) or a translation. */
   name_zh: string | null;
   name_zh_source: ChineseNameSource | null;
@@ -21,6 +26,7 @@ export type ChineseNameSource = "wiki" | "translation";
 export interface BossPhase {
   phase_number: number;
   name: string;
+  name_zh: string | null;
   moves: BossMove[];
 }
 
@@ -30,6 +36,7 @@ export interface Boss {
   name_zh: string | null;
   game: string;
   location: string;
+  location_zh: string | null;
   phases: BossPhase[];
   source_name: string | null;
   source_url: string | null;
@@ -40,6 +47,7 @@ export interface BossSummary {
   name: string;
   name_zh: string | null;
   location: string;
+  location_zh: string | null;
 }
 
 export interface Attempt {
@@ -118,6 +126,7 @@ export interface RecentAttempt {
   failure_move_id: string | null;
   failure_move_name: string | null;
   failure_move_name_zh: string | null;
+  boss_name_zh: string | null;
   failure_category: FailureCategory | null;
 }
 
@@ -142,6 +151,8 @@ export interface SekiroAnalytics {
 export interface User {
   id: string;
   username: string;
+  /** Interface language saved in the account; null until the user picks one. */
+  preferred_language: "en" | "zh" | null;
 }
 
 export interface Credentials {

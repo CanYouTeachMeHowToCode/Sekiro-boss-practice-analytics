@@ -88,7 +88,7 @@ def _boss_rows(session: Session, user_id: int) -> list[BossComparisonRow]:
 
 def _recent_attempts(session: Session, user_id: int) -> list[RecentAttempt]:
     rows = session.execute(
-        select(db.Attempt, db.Boss.slug, db.Boss.name, db.Move.slug, db.Move.name, db.Move.name_zh)
+        select(db.Attempt, db.Boss.slug, db.Boss.name, db.Boss.name_zh, db.Move.slug, db.Move.name, db.Move.name_zh)
         .join(db.Boss, db.Attempt.boss_id == db.Boss.id)
         .outerjoin(db.Move, db.Attempt.failure_move_id == db.Move.id)
         .where(db.Attempt.user_id == user_id)
@@ -100,6 +100,7 @@ def _recent_attempts(session: Session, user_id: int) -> list[RecentAttempt]:
             attempt_id=str(attempt.id),
             boss_id=boss_slug,
             boss_name=boss_name,
+            boss_name_zh=boss_name_zh,
             timestamp=attempt.created_at,
             result=AttemptResult(attempt.result),
             phase_reached=attempt.phase_reached,
@@ -108,7 +109,7 @@ def _recent_attempts(session: Session, user_id: int) -> list[RecentAttempt]:
             failure_move_name_zh=move_name_zh,
             failure_category=FailureCategory(attempt.failure_category) if attempt.failure_category else None,
         )
-        for attempt, boss_slug, boss_name, move_slug, move_name, move_name_zh in rows
+        for attempt, boss_slug, boss_name, boss_name_zh, move_slug, move_name, move_name_zh in rows
     ]
 
 

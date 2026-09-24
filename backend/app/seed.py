@@ -26,7 +26,14 @@ MOVE_FIELDS = (
     "name_zh",
     "name_zh_source",
     "name_zh_source_url",
+    "description_zh",
+    "telegraph_zh",
+    "counter_zh",
+    "common_mistakes_zh",
 )
+
+# Every English text field that has a value needs its Chinese version.
+TRANSLATED_MOVE_FIELDS = ("description", "telegraph", "counter", "common_mistakes")
 
 
 class SeedError(ValueError):
@@ -57,6 +64,12 @@ def _validate(bosses: list[BossData]) -> None:
         if boss.game not in GAMES:
             errors.append(f"boss '{boss.id}' references unknown game '{boss.game}'")
 
+        if boss.location_zh is None:
+            errors.append(f"boss '{boss.id}' has no Chinese location (location_zh)")
+        for phase in boss.phases:
+            if phase.name_zh is None:
+                errors.append(f"boss '{boss.id}' phase {phase.phase_number} has no Chinese name (name_zh)")
+
         numbers = [p.phase_number for p in boss.phases]
         if len(numbers) != len(set(numbers)):
             errors.append(f"boss '{boss.id}' has duplicate phase numbers")
@@ -69,6 +82,13 @@ def _validate(bosses: list[BossData]) -> None:
             for move in phase.moves:
                 if move.name_zh is None:
                     errors.append(f"boss '{boss.id}' move '{move.id}' has no Chinese name (name_zh)")
+                for field_name in TRANSLATED_MOVE_FIELDS:
+                    has_english = getattr(move, field_name) is not None
+                    has_chinese = getattr(move, f"{field_name}_zh") is not None
+                    if has_english != has_chinese:
+                        errors.append(
+                            f"boss '{boss.id}' move '{move.id}': {field_name} and {field_name}_zh must both be set or both be empty"
+                        )
                 data = move.model_dump(include=set(MOVE_FIELDS))
                 if move.id not in first_seen:
                     first_seen[move.id] = (phase.phase_number, data)
@@ -118,6 +138,7 @@ def sync_reference_data(session: Session, bosses: list[BossData]) -> SyncReport:
         boss.name = data.name
         boss.name_zh = data.name_zh
         boss.location = data.location
+        boss.location_zh = data.location_zh
         boss.source_name = data.source_name
         boss.source_url = data.source_url
         report.bosses += 1
@@ -147,6 +168,7 @@ def sync_reference_data(session: Session, bosses: list[BossData]) -> SyncReport:
                 phase = BossPhase(phase_number=phase_data.phase_number)
                 boss.phases.append(phase)
             phase.name = phase_data.name
+            phase.name_zh = phase_data.name_zh
             report.phases += 1
 
             phase.move_links.clear()

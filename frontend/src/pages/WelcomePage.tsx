@@ -1,24 +1,23 @@
 import { Link } from "react-router-dom";
 import BossList from "../components/BossList";
+import { useLanguage } from "../i18n/language";
 
 export default function WelcomePage() {
+  const { t } = useLanguage();
   return (
     <main className="page">
-      <h1>Sekiro Boss Practice Analytics</h1>
-      <p>
-        Record each boss attempt in a few seconds (how far you got and what ended the attempt) and see which phases and
-        moves are holding you back, and whether you are improving.
-      </p>
+      <h1>{t("appTitle")}</h1>
+      <p>{t("welcome.intro")}</p>
       <p className="welcome-actions">
         <Link to="/register" className="btn btn-primary">
-          Create an Account
+          {t("welcome.createAccount")}
         </Link>
         <Link to="/login" className="btn">
-          Log In
+          {t("welcome.logIn")}
         </Link>
       </p>
-      <h2>Bosses</h2>
-      <p>Browse each boss&apos;s phases and moveset without an account.</p>
+      <h2>{t("welcome.bosses")}</h2>
+      <p>{t("welcome.browse")}</p>
       <BossList />
     </main>
   );

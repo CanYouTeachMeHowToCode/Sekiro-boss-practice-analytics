@@ -54,6 +54,7 @@ class RecentAttempt(BaseModel):
     failure_move_id: str | None = None
     failure_move_name: str | None = None
     failure_move_name_zh: str | None = None
+    boss_name_zh: str | None = None
     failure_category: FailureCategory | None = None
 
 

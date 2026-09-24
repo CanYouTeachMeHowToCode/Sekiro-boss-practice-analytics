@@ -35,6 +35,7 @@ class Boss(Base):
     name: Mapped[str] = mapped_column(String(200))
     name_zh: Mapped[str | None] = mapped_column(String(200))
     location: Mapped[str] = mapped_column(String(200))
+    location_zh: Mapped[str | None] = mapped_column(String(200))
     # Where this boss's phase and move data came from; moves share their boss's source.
     source_name: Mapped[str | None] = mapped_column(String(200))
     source_url: Mapped[str | None] = mapped_column(Text)
@@ -54,6 +55,7 @@ class BossPhase(Base):
     boss_id: Mapped[int] = mapped_column(ForeignKey("bosses.id", ondelete="CASCADE"))
     phase_number: Mapped[int] = mapped_column(Integer)
     name: Mapped[str] = mapped_column(String(100))
+    name_zh: Mapped[str | None] = mapped_column(String(100))
 
     boss: Mapped[Boss] = relationship(back_populates="phases")
     move_links: Mapped[list["PhaseMove"]] = relationship(
@@ -85,6 +87,11 @@ class Move(Base):
     telegraph: Mapped[str | None] = mapped_column(Text)
     counter: Mapped[str | None] = mapped_column(Text)
     common_mistakes: Mapped[str | None] = mapped_column(Text)
+    # Chinese versions of the text fields above: translations of the sourced English text.
+    description_zh: Mapped[str | None] = mapped_column(Text)
+    telegraph_zh: Mapped[str | None] = mapped_column(Text)
+    counter_zh: Mapped[str | None] = mapped_column(Text)
+    common_mistakes_zh: Mapped[str | None] = mapped_column(Text)
     # Chinese name: either the name used by a Chinese wiki ('wiki', with the page in
     # name_zh_source_url) or a translation ('translation'), never presented as official.
     name_zh: Mapped[str | None] = mapped_column(String(200))
@@ -149,12 +156,17 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = (
         CheckConstraint("username = lower(username)", name="ck_users_username_lowercase"),
+        CheckConstraint(
+            "preferred_language IS NULL OR preferred_language IN ('en', 'zh')", name="ck_users_preferred_language"
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # Stored lowercase so usernames are unique regardless of case.
     username: Mapped[str] = mapped_column(String(30), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
+    # Interface language chosen in the app; null until the user picks one.
+    preferred_language: Mapped[str | None] = mapped_column(String(5))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     sessions: Mapped[list["UserSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")

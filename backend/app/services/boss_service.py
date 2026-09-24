@@ -7,7 +7,10 @@ from app.models.boss import Boss, BossMove, BossPhase, BossSummary
 
 def get_all_bosses(session: Session) -> list[BossSummary]:
     rows = session.scalars(select(db.Boss).order_by(db.Boss.id))
-    return [BossSummary(id=b.slug, name=b.name, name_zh=b.name_zh, location=b.location) for b in rows]
+    return [
+        BossSummary(id=b.slug, name=b.name, name_zh=b.name_zh, location=b.location, location_zh=b.location_zh)
+        for b in rows
+    ]
 
 
 def get_boss_row(session: Session, boss_slug: str) -> db.Boss | None:
@@ -31,12 +34,14 @@ def get_boss(session: Session, boss_slug: str) -> Boss | None:
         name_zh=boss.name_zh,
         game=boss.game.slug,
         location=boss.location,
+        location_zh=boss.location_zh,
         source_name=boss.source_name,
         source_url=boss.source_url,
         phases=[
             BossPhase(
                 phase_number=phase.phase_number,
                 name=phase.name,
+                name_zh=phase.name_zh,
                 moves=[
                     BossMove(
                         id=link.move.slug,
@@ -47,6 +52,10 @@ def get_boss(session: Session, boss_slug: str) -> Boss | None:
                         counter=link.move.counter,
                         common_mistakes=link.move.common_mistakes,
                         name_zh=link.move.name_zh,
+                        description_zh=link.move.description_zh,
+                        telegraph_zh=link.move.telegraph_zh,
+                        counter_zh=link.move.counter_zh,
+                        common_mistakes_zh=link.move.common_mistakes_zh,
                         name_zh_source=link.move.name_zh_source,
                         name_zh_source_url=link.move.name_zh_source_url,
                     )

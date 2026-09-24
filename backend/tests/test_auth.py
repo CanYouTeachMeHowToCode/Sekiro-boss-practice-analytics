@@ -128,3 +128,22 @@ def test_boss_data_is_public(anon_client):
 def test_attempts_and_analytics_require_login(anon_client, method, path):
     kwargs = {"json": {"result": "victory"}} if method == "post" else {}
     assert getattr(anon_client, method)(path, **kwargs).status_code == 401
+
+
+def test_language_preference_starts_unset_and_is_saved_on_the_account(anon_client):
+    assert register(anon_client).json()["preferred_language"] is None
+
+    resp = anon_client.patch("/api/auth/me", json={"preferred_language": "zh"})
+
+    assert resp.status_code == 200
+    assert resp.json()["preferred_language"] == "zh"
+    anon_client.cookies.clear()
+    login = anon_client.post("/api/auth/login", json=CREDENTIALS)
+    assert login.json()["preferred_language"] == "zh"
+
+
+def test_language_preference_rejects_unknown_languages_and_requires_login(anon_client):
+    assert anon_client.patch("/api/auth/me", json={"preferred_language": "zh"}).status_code == 401
+
+    register(anon_client)
+    assert anon_client.patch("/api/auth/me", json={"preferred_language": "fr"}).status_code == 422

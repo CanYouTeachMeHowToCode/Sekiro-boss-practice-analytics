@@ -4,6 +4,8 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { useAuth } from "../auth/authContext";
 import PasswordInput from "../components/PasswordInput";
+import { useLanguage } from "../i18n/language";
+import type { MessageKey, Translate } from "../i18n/language";
 
 type Mode = "login" | "register";
 
@@ -11,36 +13,35 @@ interface LocationState {
   from?: string;
 }
 
-const COPY: Record<Mode, { title: string; submit: string; switchText: string; switchLink: string; switchTo: string }> = {
+const COPY: Record<Mode, { title: MessageKey; submit: MessageKey; switchText: MessageKey; switchLink: MessageKey; switchTo: string }> = {
   login: {
-    title: "Log In",
-    submit: "Log In",
-    switchText: "No account yet?",
-    switchLink: "Register",
+    title: "auth.login.title",
+    submit: "auth.login.submit",
+    switchText: "auth.login.switchText",
+    switchLink: "auth.login.switchLink",
     switchTo: "/register",
   },
   register: {
-    title: "Create an Account",
-    submit: "Register",
-    switchText: "Already have an account?",
-    switchLink: "Log in",
+    title: "auth.register.title",
+    submit: "auth.register.submit",
+    switchText: "auth.register.switchText",
+    switchLink: "auth.register.switchLink",
     switchTo: "/login",
   },
 };
 
-const REGISTER_RULES = "Username: 3–30 letters, digits, '_' or '-'. Password: at least 8 characters.";
-
-function errorMessage(err: unknown, mode: Mode): string {
+function errorMessage(err: unknown, mode: Mode, t: Translate): string {
   if (err instanceof ApiError) {
-    if (err.status === 401) return "Incorrect username or password.";
-    if (err.status === 409) return "That username is already taken.";
-    if (err.status === 422) return mode === "register" ? REGISTER_RULES : "Enter your username and password.";
+    if (err.status === 401) return t("auth.error.incorrect");
+    if (err.status === 409) return t("auth.error.taken");
+    if (err.status === 422) return mode === "register" ? t("auth.rules") : t("auth.error.missing");
   }
-  return "Something went wrong. Please try again.";
+  return t("auth.error.generic");
 }
 
 export default function AuthPage({ mode }: { mode: Mode }) {
   const { status, user, login, register } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as LocationState | null)?.from ?? "/";
@@ -65,17 +66,17 @@ export default function AuthPage({ mode }: { mode: Mode }) {
       await (mode === "login" ? login : register)({ username, password });
       navigate(from, { replace: true });
     } catch (err) {
-      setError(errorMessage(err, mode));
+      setError(errorMessage(err, mode, t));
       setSubmitting(false);
     }
   }
 
   return (
     <main className="page auth-page">
-      <h1>{copy.title}</h1>
+      <h1>{t(copy.title)}</h1>
       <form className="auth-form" onSubmit={handleSubmit}>
         <label>
-          Username
+          {t("auth.username")}
           <input
             name="username"
             autoComplete="username"
@@ -89,16 +90,16 @@ export default function AuthPage({ mode }: { mode: Mode }) {
           onChange={setPassword}
           autoComplete={mode === "login" ? "current-password" : "new-password"}
         />
-        {mode === "register" && <p className="form-hint">{REGISTER_RULES}</p>}
+        {mode === "register" && <p className="form-hint">{t("auth.rules")}</p>}
         {error && <p role="alert">{error}</p>}
         <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? "Please wait…" : copy.submit}
+          {submitting ? t("auth.pleaseWait") : t(copy.submit)}
         </button>
       </form>
       <p>
-        {copy.switchText}{" "}
+        {t(copy.switchText)}{" "}
         <Link to={copy.switchTo} state={location.state}>
-          {copy.switchLink}
+          {t(copy.switchLink)}
         </Link>
       </p>
     </main>

@@ -4,7 +4,7 @@ import type { User } from "../types";
 import { AuthContext } from "./authContext";
 import type { AuthState } from "./authContext";
 
-export const testUser: User = { id: "1", username: "wolf" };
+export const testUser: User = { id: "1", username: "wolf", preferred_language: null };
 
 /** Wraps `ui` in a fixed auth state for component tests, without touching the network. */
 export function withAuth(ui: ReactElement, overrides: Partial<AuthState> = {}): ReactElement {

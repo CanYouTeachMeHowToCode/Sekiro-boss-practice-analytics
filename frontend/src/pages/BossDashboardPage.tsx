@@ -4,6 +4,8 @@ import { getBossById } from "../api/bosses";
 import { getBossAnalytics, getBossAttempts, getBossProgression } from "../api/attempts";
 import { ApiError } from "../api/client";
 import { useAuth } from "../auth/authContext";
+import { bossLocation, bossName } from "../i18n/content";
+import { formatPhase, useLanguage } from "../i18n/language";
 import type { Attempt, Boss, BossAnalytics, ProgressionPoint } from "../types";
 import RecordAttemptForm from "../components/RecordAttemptForm";
 import AnalyticsPanel from "../components/AnalyticsPanel";
@@ -16,6 +18,7 @@ type LoadState = "loading" | "error" | "not-found" | "ready";
 export default function BossDashboardPage() {
   const { bossId } = useParams<{ bossId: string }>();
   const { status: authStatus, user } = useAuth();
+  const { language, t } = useLanguage();
   const location = useLocation();
   const loggedIn = user !== null;
   const [boss, setBoss] = useState<Boss | null>(null);
@@ -80,7 +83,7 @@ export default function BossDashboardPage() {
   if (state === "loading") {
     return (
       <main className="page">
-        <p>Loading…</p>
+        <p>{t("loading")}</p>
       </main>
     );
   }
@@ -88,8 +91,8 @@ export default function BossDashboardPage() {
   if (state === "not-found") {
     return (
       <main className="page">
-        <p>Boss not found.</p>
-        <Link to="/bosses">Back to boss selection</Link>
+        <p>{t("boss.notFound")}</p>
+        <Link to="/bosses">{t("boss.backToSelection")}</Link>
       </main>
     );
   }
@@ -97,7 +100,7 @@ export default function BossDashboardPage() {
   if (state === "error" || !boss || (loggedIn && !analytics)) {
     return (
       <main className="page">
-        <p role="alert">Failed to load boss dashboard.</p>
+        <p role="alert">{t("boss.loadError")}</p>
       </main>
     );
   }
@@ -105,51 +108,50 @@ export default function BossDashboardPage() {
   return (
     <main className="page">
       <Link to="/bosses" className="back-link">
-        ← Choose a different boss
+        {t("boss.back")}
       </Link>
 
-      <h1>{boss.name}</h1>
-      {boss.name_zh && <p className="boss-name-zh">{boss.name_zh}</p>}
-      <p>{boss.location}</p>
+      <h1>{bossName(boss, language)}</h1>
+      <p>{bossLocation(boss, language)}</p>
 
       {!analytics ? (
         <p className="login-prompt">
           <Link to="/login" state={{ from: location.pathname }}>
-            Log in
-          </Link>{" "}
-          or{" "}
+            {t("boss.loginPrompt.login")}
+          </Link>
+          {t("boss.loginPrompt.or")}
           <Link to="/register" state={{ from: location.pathname }}>
-            create an account
-          </Link>{" "}
-          to record attempts and see your analytics for this boss.
+            {t("boss.loginPrompt.register")}
+          </Link>
+          {t("boss.loginPrompt.rest")}
         </p>
       ) : (
         <>
           <div className="stat-grid">
             <div>
-              <h3>Attempts</h3>
+              <h3>{t("boss.stat.attempts")}</h3>
               <p>{analytics.total_attempts}</p>
             </div>
             <div>
-              <h3>Best Result</h3>
-              <p>{analytics.best_phase !== null ? `Phase ${analytics.best_phase}` : "—"}</p>
+              <h3>{t("boss.stat.bestResult")}</h3>
+              <p>{analytics.best_phase !== null ? formatPhase(analytics.best_phase, language) : "—"}</p>
             </div>
             <div>
-              <h3>Defeated</h3>
-              <p>{analytics.defeated ? "Yes" : "No"}</p>
+              <h3>{t("boss.stat.defeated")}</h3>
+              <p>{analytics.defeated ? t("yes") : t("no")}</p>
             </div>
             <div>
-              <h3>First Victory</h3>
+              <h3>{t("boss.stat.firstVictory")}</h3>
               <p>
                 {analytics.attempts_until_first_victory !== null
-                  ? `Attempt #${analytics.attempts_until_first_victory}`
-                  : "Not yet"}
+                  ? t("boss.attemptNumber", { n: analytics.attempts_until_first_victory })
+                  : t("boss.notYet")}
               </p>
             </div>
           </div>
 
           <button className="btn btn-primary" onClick={() => setShowForm((v) => !v)}>
-            {showForm ? "Cancel" : "+ Record Attempt"}
+            {showForm ? t("cancel") : t("boss.recordAttempt")}
           </button>
 
           {showForm && (

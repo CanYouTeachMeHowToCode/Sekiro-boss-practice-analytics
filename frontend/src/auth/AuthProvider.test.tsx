@@ -30,7 +30,7 @@ function renderProbe() {
 
 describe("AuthProvider", () => {
   it("restores the logged-in user from the session cookie", async () => {
-    vi.mocked(authApi.getCurrentUser).mockResolvedValue({ id: "1", username: "wolf" });
+    vi.mocked(authApi.getCurrentUser).mockResolvedValue({ id: "1", username: "wolf", preferred_language: null });
 
     renderProbe();
 
@@ -41,7 +41,7 @@ describe("AuthProvider", () => {
 
   it("logs in and out", async () => {
     vi.mocked(authApi.getCurrentUser).mockResolvedValue(null);
-    vi.mocked(authApi.login).mockResolvedValue({ id: "1", username: "wolf" });
+    vi.mocked(authApi.login).mockResolvedValue({ id: "1", username: "wolf", preferred_language: null });
     vi.mocked(authApi.logout).mockResolvedValue(undefined);
     renderProbe();
     await screen.findByText("status: ready");
@@ -54,7 +54,7 @@ describe("AuthProvider", () => {
   });
 
   it("forgets the user when any request comes back 401", async () => {
-    vi.mocked(authApi.getCurrentUser).mockResolvedValue({ id: "1", username: "wolf" });
+    vi.mocked(authApi.getCurrentUser).mockResolvedValue({ id: "1", username: "wolf", preferred_language: null });
     renderProbe();
     await screen.findByText("user: wolf");
 

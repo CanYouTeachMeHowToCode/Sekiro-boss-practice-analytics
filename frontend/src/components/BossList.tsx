@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getBosses } from "../api/bosses";
+import { bossLocation, bossName } from "../i18n/content";
+import { useLanguage } from "../i18n/language";
 import type { BossSummary } from "../types";
 
 type LoadState = "loading" | "error" | "ready";
 
 export default function BossList() {
+  const { language, t } = useLanguage();
   const [bosses, setBosses] = useState<BossSummary[]>([]);
   const [state, setState] = useState<LoadState>("loading");
 
@@ -29,18 +32,17 @@ export default function BossList() {
     };
   }, []);
 
-  if (state === "loading") return <p>Loading bosses…</p>;
-  if (state === "error") return <p role="alert">Failed to load bosses.</p>;
+  if (state === "loading") return <p>{t("bossList.loading")}</p>;
+  if (state === "error") return <p role="alert">{t("bossList.error")}</p>;
 
   return (
     <ul className="boss-list">
       {bosses.map((boss) => (
         <li key={boss.id} className="boss-card">
-          <h3>{boss.name}</h3>
-          {boss.name_zh && <p className="boss-name-zh">{boss.name_zh}</p>}
-          <p>{boss.location}</p>
+          <h3>{bossName(boss, language)}</h3>
+          <p>{bossLocation(boss, language)}</p>
           <Link to={`/bosses/${boss.id}`} className="btn btn-primary">
-            View Boss
+            {t("bossList.view")}
           </Link>
         </li>
       ))}

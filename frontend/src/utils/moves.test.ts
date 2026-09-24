@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { makeTranslate } from "../i18n/language";
 import { getFailureLabel, getMoveName } from "./moves";
+
+const t = makeTranslate("en");
 import type { Attempt, Boss } from "../types";
 
 const boss: Boss = {
@@ -7,19 +10,22 @@ const boss: Boss = {
   name: "Genichiro Ashina",
   game: "sekiro",
   location: "Ashina Castle",
+  location_zh: null,
   phases: [
     {
       phase_number: 1,
       name: "Phase 1",
+      name_zh: null,
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null, description_zh: null, telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
       ],
     },
     {
       phase_number: 3,
       name: "Phase 3",
+      name_zh: null,
       moves: [
-        { id: "lightning-attack", name: "Lightning Attack", move_type: "lightning", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
+        { id: "lightning-attack", name: "Lightning Attack", move_type: "lightning", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null, description_zh: null, telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
       ],
     },
   ],
@@ -58,18 +64,18 @@ describe("getMoveName", () => {
 
 describe("getFailureLabel", () => {
   it("labels a victory", () => {
-    expect(getFailureLabel(boss, makeAttempt({ result: "victory" }))).toBe("Victory");
+    expect(getFailureLabel(boss, makeAttempt({ result: "victory" }), t, "en")).toBe("Victory");
   });
 
   it("labels a known failure move by its display name", () => {
-    expect(getFailureLabel(boss, makeAttempt({ failure_move_id: "thrust-attack" }))).toBe("Thrust Attack");
+    expect(getFailureLabel(boss, makeAttempt({ failure_move_id: "thrust-attack" }), t, "en")).toBe("Thrust Attack");
   });
 
   it("labels a not_sure failure", () => {
-    expect(getFailureLabel(boss, makeAttempt({ failure_category: "not_sure" }))).toBe("Not Sure");
+    expect(getFailureLabel(boss, makeAttempt({ failure_category: "not_sure" }), t, "en")).toBe("Not Sure");
   });
 
   it("labels an other failure", () => {
-    expect(getFailureLabel(boss, makeAttempt({ failure_category: "other" }))).toBe("Other");
+    expect(getFailureLabel(boss, makeAttempt({ failure_category: "other" }), t, "en")).toBe("Other");
   });
 });

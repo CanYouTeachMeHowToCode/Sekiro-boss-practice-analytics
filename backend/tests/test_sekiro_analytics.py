@@ -93,6 +93,7 @@ def test_recent_attempts_are_newest_first_with_names_and_capped_at_ten(client):
         "attempt_id": last["id"],
         "boss_id": "guardian-ape",
         "boss_name": "Guardian Ape",
+        "boss_name_zh": "狮子猿",
         "timestamp": None,
         "result": "failed",
         "phase_reached": 2,

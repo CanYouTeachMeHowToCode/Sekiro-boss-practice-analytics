@@ -13,19 +13,22 @@ const boss: Boss = {
   name: "Genichiro Ashina",
   game: "sekiro",
   location: "Ashina Castle",
+  location_zh: null,
   phases: [
     {
       phase_number: 1,
       name: "Phase 1",
+      name_zh: null,
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null, description_zh: null, telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
       ],
     },
     {
       phase_number: 2,
       name: "Phase 2",
+      name_zh: null,
       moves: [
-        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
+        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null, description_zh: null, telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
       ],
     },
   ],

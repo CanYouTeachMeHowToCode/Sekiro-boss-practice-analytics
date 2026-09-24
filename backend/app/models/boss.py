@@ -12,6 +12,10 @@ class BossMove(BaseModel):
     counter: str | None = None
     common_mistakes: str | None = None
     name_zh: str | None = None
+    description_zh: str | None = None
+    telegraph_zh: str | None = None
+    counter_zh: str | None = None
+    common_mistakes_zh: str | None = None
     # "wiki": the name used by a Chinese wiki, see name_zh_source_url.
     # "translation": translated for this app; not an official name.
     name_zh_source: Literal["wiki", "translation"] | None = None
@@ -29,6 +33,7 @@ class BossMove(BaseModel):
 class BossPhase(BaseModel):
     phase_number: int
     name: str
+    name_zh: str | None = None
     moves: list[BossMove] = []
 
 
@@ -38,6 +43,7 @@ class Boss(BaseModel):
     name_zh: str | None = None
     game: str
     location: str
+    location_zh: str | None = None
     phases: list[BossPhase]
     source_name: str | None = None
     source_url: str | None = None
@@ -48,3 +54,4 @@ class BossSummary(BaseModel):
     name: str
     name_zh: str | None = None
     location: str
+    location_zh: str | None = None

@@ -9,11 +9,12 @@ const boss: Boss = {
   name_zh: null,
   game: "sekiro",
   location: "Hirata Estate",
+  location_zh: null,
   source_name: null,
   source_url: null,
   phases: [
-    { phase_number: 1, name: "Phase 1", moves: [] },
-    { phase_number: 2, name: "Phase 2", moves: [] },
+    { phase_number: 1, name: "Phase 1", name_zh: null, moves: [] },
+    { phase_number: 2, name: "Phase 2", name_zh: null, moves: [] },
   ],
 };
 
