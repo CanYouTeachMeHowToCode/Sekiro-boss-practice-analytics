@@ -282,7 +282,7 @@ Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
 
    On every start the backend applies database migrations and loads the bosses from `backend/seed/bosses.json`.
 
-3. Open http://localhost:8080. The API documentation is at http://localhost:8000/docs.
+3. Open http://localhost:8080 and create an account. Boss movesets can be browsed without one; recording attempts and viewing analytics need a login. The API documentation is at http://localhost:8000/docs.
 
 To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
 

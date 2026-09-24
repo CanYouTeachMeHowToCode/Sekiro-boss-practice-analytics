@@ -1,12 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.db.session import get_db
 from app.models.analytics import BossAnalytics, ProgressionPoint
 from app.models.attempt import Attempt, CreateAttemptRequest
 from app.services import analytics_service, attempt_service, boss_service
 
-router = APIRouter(prefix="/api/bosses/{boss_id}", tags=["attempts"])
+# Attempts and analytics require login. Until V3 Milestone 2 gives attempts an
+# owner, every logged-in user still shares one attempt history.
+router = APIRouter(
+    prefix="/api/bosses/{boss_id}", tags=["attempts"], dependencies=[Depends(get_current_user)]
+)
 
 
 def _ensure_boss_exists(db: Session, boss_id: str) -> None:

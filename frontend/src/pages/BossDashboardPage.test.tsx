@@ -6,6 +6,8 @@ import BossDashboardPage from "./BossDashboardPage";
 import * as bossesApi from "../api/bosses";
 import * as attemptsApi from "../api/attempts";
 import { ApiError } from "../api/client";
+import { withAuth } from "../auth/testAuth";
+import type { AuthState } from "../auth/authContext";
 import type { Boss, BossAnalytics } from "../types";
 
 vi.mock("../api/bosses");
@@ -42,13 +44,16 @@ const emptyAnalytics: BossAnalytics = {
   recent: { window_size: 10, total_attempts: 0, main_bottleneck_phase: null, most_common_failure_move: null, failure_by_phase: {}, failure_by_move: {} },
 };
 
-function renderDashboard() {
+function renderDashboard(auth: Partial<AuthState> = {}) {
   return render(
-    <MemoryRouter initialEntries={["/bosses/genichiro-ashina"]}>
-      <Routes>
-        <Route path="/bosses/:bossId" element={<BossDashboardPage />} />
-      </Routes>
-    </MemoryRouter>
+    withAuth(
+      <MemoryRouter initialEntries={["/bosses/genichiro-ashina"]}>
+        <Routes>
+          <Route path="/bosses/:bossId" element={<BossDashboardPage />} />
+        </Routes>
+      </MemoryRouter>,
+      auth
+    )
   );
 }
 
@@ -152,5 +157,19 @@ describe("BossDashboardPage", () => {
 
     const card = (await screen.findByRole("heading", { name: "First Victory" })).closest("div") as HTMLElement;
     expect(card).toHaveTextContent("Attempt #8");
+  });
+
+  it("shows only the public boss data and a login prompt to visitors", async () => {
+    vi.mocked(bossesApi.getBossById).mockResolvedValue(boss);
+
+    renderDashboard({ user: null });
+
+    expect(await screen.findByRole("heading", { name: "Genichiro Ashina" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/login");
+    expect(screen.getByText("Thrust Attack")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /record attempt/i })).not.toBeInTheDocument();
+    expect(attemptsApi.getBossAttempts).not.toHaveBeenCalled();
+    expect(attemptsApi.getBossAnalytics).not.toHaveBeenCalled();
+    expect(attemptsApi.getBossProgression).not.toHaveBeenCalled();
   });
 });

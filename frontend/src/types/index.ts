@@ -131,3 +131,13 @@ export interface SekiroAnalytics {
   recent_attempts: RecentAttempt[];
   bosses: BossComparisonRow[];
 }
+
+export interface User {
+  id: string;
+  username: string;
+}
+
+export interface Credentials {
+  username: string;
+  password: string;
+}
