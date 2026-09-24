@@ -255,6 +255,41 @@ describe("frontend calling the real backend", () => {
     });
   });
 
+  it("gives a second user an empty history that stays separate from the first", async () => {
+    const { register } = await import("../src/api/auth");
+    const { createAttempt, getBossAnalytics, getBossAttempts } = await import("../src/api/attempts");
+    const { getSekiroAnalytics } = await import("../src/api/sekiro");
+
+    // Act as a different browser: set the first user's session aside.
+    const firstUserCookies = new Map(cookieJar);
+    cookieJar.clear();
+    try {
+      await register({ username: "integration_emma", password: "kusabimaru" });
+
+      expect(await getBossAttempts("genichiro-ashina")).toEqual([]);
+      expect((await getSekiroAnalytics()).total_attempts).toBe(0);
+
+      await createAttempt("genichiro-ashina", {
+        result: "victory",
+        phase_reached: null,
+        failure_move_id: null,
+        failure_category: null,
+        notes: "",
+      });
+      const analytics = await getBossAnalytics("genichiro-ashina");
+      expect(analytics.total_attempts).toBe(1);
+      expect(analytics.attempts_until_first_victory).toBe(1);
+    } finally {
+      cookieJar.clear();
+      for (const [name, value] of firstUserCookies) cookieJar.set(name, value);
+    }
+
+    // The first user's numbers are unchanged by the second user's victory.
+    const analytics = await getBossAnalytics("genichiro-ashina");
+    expect(analytics.total_attempts).toBe(2);
+    expect(analytics.defeated).toBe(false);
+  });
+
   it("logs out and loses access to attempts again", async () => {
     const { getCurrentUser, login, logout } = await import("../src/api/auth");
     const { getBossAttempts } = await import("../src/api/attempts");

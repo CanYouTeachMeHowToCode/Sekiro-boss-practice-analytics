@@ -55,9 +55,11 @@ def progression(attempts: list[Attempt]) -> list[ProgressionPoint]:
     ]
 
 
-def compute_analytics(session: Session, boss_id: str, recent_window: int = DEFAULT_RECENT_WINDOW) -> BossAnalytics:
-    return summarize(attempt_service.get_attempts(session, boss_id), recent_window)
+def compute_analytics(
+    session: Session, user_id: int, boss_id: str, recent_window: int = DEFAULT_RECENT_WINDOW
+) -> BossAnalytics:
+    return summarize(attempt_service.get_attempts(session, user_id, boss_id), recent_window)
 
 
-def compute_progression(session: Session, boss_id: str) -> list[ProgressionPoint]:
-    return progression(attempt_service.get_attempts(session, boss_id))
+def compute_progression(session: Session, user_id: int, boss_id: str) -> list[ProgressionPoint]:
+    return progression(attempt_service.get_attempts(session, user_id, boss_id))

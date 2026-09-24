@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from app.db.models import User
 from app.db.session import get_db
 from app.main import app
 from app.seed import load_boss_data, sync_reference_data
@@ -46,6 +47,19 @@ def session(engine):
 def seeded_session(session):
     sync_reference_data(session, load_boss_data())
     return session
+
+
+@pytest.fixture()
+def make_user(seeded_session):
+    """Creates a user row directly, for service-level tests that don't go through the API."""
+
+    def make(username: str) -> User:
+        user = User(username=username, password_hash="not-a-real-hash")
+        seeded_session.add(user)
+        seeded_session.flush()
+        return user
+
+    return make
 
 
 @pytest.fixture()
