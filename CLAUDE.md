@@ -132,6 +132,7 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 
 * add `attempts.user_id` as a foreign key to `users`, through a reviewed Alembic migration
 * migrate existing attempts to the owner's account explicitly. Do not silently delete or orphan them.
+  * Done by making `attempts.user_id` nullable: pre-account attempts stay ownerless and hidden from everyone until `python -m scripts.claim_attempts <username>` assigns them. Milestone 4 makes the column NOT NULL.
 * record the current user on every new attempt
 * read attempt history for the current user only
 
@@ -1485,6 +1486,7 @@ The work involved:
 * secrets supplied through environment variables; secure, SameSite session cookies
 * rate limiting on login and registration
 * scheduled `pg_dump` backups of attempt data, with a restore tested at least once
+* make `attempts.user_id` NOT NULL through a migration. Milestone 2 left it nullable so pre-account attempts could stay ownerless until claimed with `scripts.claim_attempts`. The migration should fail loudly if any ownerless attempts remain.
 * deployment from `main` through GitHub Actions
 * choosing a host and a domain. Free tiers such as Oracle Cloud Always Free may reclaim idle instances; a small paid VPS is more predictable.
 * setup documentation in the README

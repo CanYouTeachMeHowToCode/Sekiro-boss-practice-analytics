@@ -1,4 +1,4 @@
-"""Game-level analytics across every Sekiro boss."""
+"""Game-level analytics across every Sekiro boss, for one user's attempts."""
 
 from datetime import datetime, timedelta, timezone
 
@@ -13,7 +13,7 @@ RECENT_WINDOW_DAYS = 7
 RECENT_ATTEMPTS_LIMIT = 10
 
 
-def _boss_rows(session: Session) -> list[BossComparisonRow]:
+def _boss_rows(session: Session, user_id: int) -> list[BossComparisonRow]:
     """One row per boss, computed with grouped queries rather than a query per boss."""
     phase_counts = (
         select(db.BossPhase.boss_id, func.count().label("total_phases")).group_by(db.BossPhase.boss_id).subquery()
@@ -26,17 +26,22 @@ def _boss_rows(session: Session) -> list[BossComparisonRow]:
             func.bool_or(db.Attempt.result == AttemptResult.VICTORY.value).label("defeated"),
             func.max(db.Attempt.created_at).label("last_attempt_at"),
         )
+        .where(db.Attempt.user_id == user_id)
         .group_by(db.Attempt.boss_id)
         .subquery()
     )
     # Number each boss's attempts chronologically, then take the number of its first victory.
-    numbered = select(
-        db.Attempt.boss_id,
-        db.Attempt.result,
-        func.row_number()
-        .over(partition_by=db.Attempt.boss_id, order_by=(db.Attempt.created_at, db.Attempt.id))
-        .label("attempt_number"),
-    ).subquery()
+    numbered = (
+        select(
+            db.Attempt.boss_id,
+            db.Attempt.result,
+            func.row_number()
+            .over(partition_by=db.Attempt.boss_id, order_by=(db.Attempt.created_at, db.Attempt.id))
+            .label("attempt_number"),
+        )
+        .where(db.Attempt.user_id == user_id)
+        .subquery()
+    )
     first_victory = (
         select(
             numbered.c.boss_id,
@@ -81,11 +86,12 @@ def _boss_rows(session: Session) -> list[BossComparisonRow]:
     ]
 
 
-def _recent_attempts(session: Session) -> list[RecentAttempt]:
+def _recent_attempts(session: Session, user_id: int) -> list[RecentAttempt]:
     rows = session.execute(
         select(db.Attempt, db.Boss.slug, db.Boss.name, db.Move.slug, db.Move.name)
         .join(db.Boss, db.Attempt.boss_id == db.Boss.id)
         .outerjoin(db.Move, db.Attempt.failure_move_id == db.Move.id)
+        .where(db.Attempt.user_id == user_id)
         .order_by(db.Attempt.created_at.desc(), db.Attempt.id.desc())
         .limit(RECENT_ATTEMPTS_LIMIT)
     )
@@ -113,15 +119,15 @@ def _ids_with_max(rows: list[BossComparisonRow], value) -> list[str]:
     return [r.id for r in rows if value(r) == top]
 
 
-def compute_sekiro_analytics(session: Session, now: datetime | None = None) -> SekiroAnalytics:
+def compute_sekiro_analytics(session: Session, user_id: int, now: datetime | None = None) -> SekiroAnalytics:
     now = now or datetime.now(timezone.utc)
-    bosses = _boss_rows(session)
+    bosses = _boss_rows(session, user_id)
     attempted = [b for b in bosses if b.attempts > 0]
     defeated = [b for b in bosses if b.defeated]
     in_window = session.scalar(
         select(func.count())
         .select_from(db.Attempt)
-        .where(db.Attempt.created_at >= now - timedelta(days=RECENT_WINDOW_DAYS))
+        .where(db.Attempt.user_id == user_id, db.Attempt.created_at >= now - timedelta(days=RECENT_WINDOW_DAYS))
     )
 
     return SekiroAnalytics(
@@ -134,6 +140,6 @@ def compute_sekiro_analytics(session: Session, now: datetime | None = None) -> S
         bosses_requiring_most_attempts=_ids_with_max(defeated, lambda b: b.attempts_until_first_victory),
         recent_window_days=RECENT_WINDOW_DAYS,
         attempts_in_recent_window=in_window,
-        recent_attempts=_recent_attempts(session),
+        recent_attempts=_recent_attempts(session, user_id),
         bosses=bosses,
     )

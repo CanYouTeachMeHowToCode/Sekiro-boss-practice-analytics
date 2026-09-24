@@ -103,23 +103,27 @@ def test_recent_attempts_are_newest_first_with_names_and_capped_at_ten(client):
     assert [int(a["attempt_id"]) for a in recent] == sorted((int(a["attempt_id"]) for a in recent), reverse=True)
 
 
-def test_counts_only_attempts_from_the_last_seven_days(seeded_session):
+def test_counts_only_attempts_from_the_last_seven_days(seeded_session, make_user):
     now = datetime(2026, 9, 22, 12, tzinfo=timezone.utc)
+    user = make_user("wolf")
     owl = seeded_session.scalar(select(db.Boss).where(db.Boss.slug == "owl-father"))
     for days_ago in (0, 3, 6.9, 7.1, 30):
         seeded_session.add(
-            db.Attempt(boss=owl, result="failed", phase_reached=1, created_at=now - timedelta(days=days_ago))
+            db.Attempt(
+                boss=owl, user=user, result="failed", phase_reached=1, created_at=now - timedelta(days=days_ago)
+            )
         )
     seeded_session.flush()
 
-    data = compute_sekiro_analytics(seeded_session, now=now)
+    data = compute_sekiro_analytics(seeded_session, user.id, now=now)
 
     assert data.recent_window_days == 7
     assert data.attempts_in_recent_window == 3
     assert data.total_attempts == 5
 
 
-def test_uses_a_fixed_number_of_queries_regardless_of_boss_count(seeded_session):
+def test_uses_a_fixed_number_of_queries_regardless_of_boss_count(seeded_session, make_user):
+    user = make_user("wolf")
     statements = []
 
     def listener(conn, cursor, statement, parameters, context, executemany):
@@ -128,7 +132,7 @@ def test_uses_a_fixed_number_of_queries_regardless_of_boss_count(seeded_session)
     connection = seeded_session.connection()
     event.listen(connection, "before_cursor_execute", listener)
     try:
-        compute_sekiro_analytics(seeded_session)
+        compute_sekiro_analytics(seeded_session, user.id)
     finally:
         event.remove(connection, "before_cursor_execute", listener)
 

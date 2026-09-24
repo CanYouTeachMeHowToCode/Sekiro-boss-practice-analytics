@@ -286,6 +286,14 @@ V1 刻意使用 JSON 持久化，因为初始数据集很小，主要目标是�
 
 在同一网络下用手机访问时，打开 `http://<电脑的局域网 IP>:8080`。Windows 上可以用 `ipconfig` 查看 IP，要看 Ethernet 或 Wi-Fi 网卡下面的地址，不是 `vEthernet (WSL)` 那一个。
 
+每个账号只能看到自己的攻略记录。有账号系统之前（V1 和 V2）记录的尝试没有归属，在你认领之前对所有人都不可见。注册账号后运行一次：
+
+```bash
+docker compose exec backend python -m scripts.claim_attempts <你的用户名>
+```
+
+这个命令只会认领没有归属的记录，重复运行也不会有影响。
+
 攻略数据保存在名为 `postgres-data` 的 Docker 数据卷里。`docker compose down` 会保留数据；`docker compose down -v` 会把数据一起删除。
 
 ### 运行测试

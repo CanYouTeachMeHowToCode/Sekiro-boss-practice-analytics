@@ -4,6 +4,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -107,10 +108,15 @@ class Attempt(Base):
             "failure_move_id IS NULL OR failure_category IS NULL",
             name="ck_attempts_single_failure_cause",
         ),
+        # Every attempt query filters by user and boss.
+        Index("ix_attempts_user_id_boss_id", "user_id", "boss_id"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     boss_id: Mapped[int] = mapped_column(ForeignKey("bosses.id", ondelete="RESTRICT"), index=True)
+    # Null only for attempts recorded before accounts existed. They are visible to
+    # nobody until `python -m scripts.claim_attempts <username>` assigns them.
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
     result: Mapped[str] = mapped_column(String(20))
     phase_reached: Mapped[int] = mapped_column(Integer)
     failure_move_id: Mapped[int | None] = mapped_column(ForeignKey("moves.id", ondelete="RESTRICT"))
@@ -119,6 +125,7 @@ class Attempt(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     boss: Mapped[Boss] = relationship()
+    user: Mapped["User | None"] = relationship()
     failure_move: Mapped[Move | None] = relationship()
 
 
