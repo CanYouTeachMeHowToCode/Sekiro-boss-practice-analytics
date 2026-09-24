@@ -1,4 +1,5 @@
 import type { Boss } from "../types";
+import ChineseMoveName from "./ChineseMoveName";
 
 export default function MovesetReference({ boss }: { boss: Boss }) {
   return (
@@ -12,6 +13,7 @@ export default function MovesetReference({ boss }: { boss: Boss }) {
             {phase.moves.map((move) => (
               <li key={move.id}>
                 <strong>{move.name}</strong>
+                <ChineseMoveName move={move} />
                 {move.description && <p>{move.description}</p>}
                 {move.telegraph && <p className="telegraph">Telegraph: {move.telegraph}</p>}
                 {move.counter && <p className="counter">Counter: {move.counter}</p>}

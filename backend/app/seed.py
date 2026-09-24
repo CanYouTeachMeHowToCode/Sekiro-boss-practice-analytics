@@ -16,7 +16,17 @@ BOSSES_FILE = SEED_DIR / "bosses.json"
 
 GAMES = {"sekiro": "Sekiro: Shadows Die Twice"}
 
-MOVE_FIELDS = ("name", "move_type", "description", "telegraph", "counter", "common_mistakes")
+MOVE_FIELDS = (
+    "name",
+    "move_type",
+    "description",
+    "telegraph",
+    "counter",
+    "common_mistakes",
+    "name_zh",
+    "name_zh_source",
+    "name_zh_source_url",
+)
 
 
 class SeedError(ValueError):
@@ -57,6 +67,8 @@ def _validate(bosses: list[BossData]) -> None:
             if len(move_ids) != len(set(move_ids)):
                 errors.append(f"boss '{boss.id}' phase {phase.phase_number} lists a move twice")
             for move in phase.moves:
+                if move.name_zh is None:
+                    errors.append(f"boss '{boss.id}' move '{move.id}' has no Chinese name (name_zh)")
                 data = move.model_dump(include=set(MOVE_FIELDS))
                 if move.id not in first_seen:
                     first_seen[move.id] = (phase.phase_number, data)

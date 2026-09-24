@@ -10,7 +10,13 @@ export interface BossMove {
   telegraph: string | null;
   counter: string | null;
   common_mistakes: string | null;
+  /** Chinese name: from a Chinese wiki ("wiki", see name_zh_source_url) or a translation. */
+  name_zh: string | null;
+  name_zh_source: ChineseNameSource | null;
+  name_zh_source_url: string | null;
 }
+
+export type ChineseNameSource = "wiki" | "translation";
 
 export interface BossPhase {
   phase_number: number;
@@ -111,6 +117,7 @@ export interface RecentAttempt {
   phase_reached: number;
   failure_move_id: string | null;
   failure_move_name: string | null;
+  failure_move_name_zh: string | null;
   failure_category: FailureCategory | null;
 }
 

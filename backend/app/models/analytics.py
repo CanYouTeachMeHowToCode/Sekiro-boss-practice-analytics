@@ -53,6 +53,7 @@ class RecentAttempt(BaseModel):
     phase_reached: int
     failure_move_id: str | None = None
     failure_move_name: str | None = None
+    failure_move_name_zh: str | None = None
     failure_category: FailureCategory | None = None
 
 

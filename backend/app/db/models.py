@@ -63,7 +63,18 @@ class BossPhase(Base):
 
 class Move(Base):
     __tablename__ = "moves"
-    __table_args__ = (UniqueConstraint("boss_id", "slug"),)
+    __table_args__ = (
+        UniqueConstraint("boss_id", "slug"),
+        CheckConstraint(
+            "name_zh_source IS NULL OR name_zh_source IN ('wiki', 'translation')",
+            name="ck_moves_name_zh_source",
+        ),
+        CheckConstraint("(name_zh IS NULL) = (name_zh_source IS NULL)", name="ck_moves_name_zh_has_source"),
+        # A name taken from a Chinese wiki must say which page; a translation has no page.
+        CheckConstraint(
+            "(name_zh_source = 'wiki') = (name_zh_source_url IS NOT NULL)", name="ck_moves_name_zh_source_url"
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     boss_id: Mapped[int] = mapped_column(ForeignKey("bosses.id", ondelete="CASCADE"))
@@ -74,6 +85,11 @@ class Move(Base):
     telegraph: Mapped[str | None] = mapped_column(Text)
     counter: Mapped[str | None] = mapped_column(Text)
     common_mistakes: Mapped[str | None] = mapped_column(Text)
+    # Chinese name: either the name used by a Chinese wiki ('wiki', with the page in
+    # name_zh_source_url) or a translation ('translation'), never presented as official.
+    name_zh: Mapped[str | None] = mapped_column(String(200))
+    name_zh_source: Mapped[str | None] = mapped_column(String(20))
+    name_zh_source_url: Mapped[str | None] = mapped_column(Text)
 
     boss: Mapped[Boss] = relationship(back_populates="moves")
     phase_links: Mapped[list["PhaseMove"]] = relationship(back_populates="move", cascade="all, delete-orphan")

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getSekiroAnalytics } from "../api/sekiro";
+import { formatMoveName } from "../utils/moves";
 import type { BossComparisonRow, RecentAttempt, SekiroAnalytics } from "../types";
 
 type LoadState = "loading" | "error" | "ready";
@@ -17,7 +18,7 @@ function bestResult(row: BossComparisonRow): string {
 
 function attemptCause(attempt: RecentAttempt): string | null {
   if (attempt.result === "victory") return null;
-  if (attempt.failure_move_name) return attempt.failure_move_name;
+  if (attempt.failure_move_name) return formatMoveName(attempt.failure_move_name, attempt.failure_move_name_zh);
   if (attempt.failure_category === "other") return "Other";
   return "Not Sure";
 }

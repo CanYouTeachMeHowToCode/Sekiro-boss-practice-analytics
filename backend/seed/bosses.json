@@ -19,7 +19,10 @@
             "description": "Delivers an overhead smash while airborne and connects with a Perilous Thrust upon landing.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "In this phase he always follows with a Perilous Thrust, opening him up to an easy Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危攻击后续追击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-attack",
@@ -28,7 +31,10 @@
             "description": "Runs towards Wolf and does a plunging attack.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-grab",
@@ -37,7 +43,10 @@
             "description": "A sideways jumping slash to the left, then a quick elbow jab; if it connects, he punches Wolf in the stomach.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Striking him during this attack topples his balance, even with a visible block at the end of the move.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·投技",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-thrust",
@@ -46,7 +55,10 @@
             "description": "Thrusts with his katana.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -55,7 +67,10 @@
             "description": "Sweeps the floor and follows up with an arrow shot.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "advance",
@@ -64,7 +79,10 @@
             "description": "Two horizontal slashes while stepping forth.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突进",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "chasing-slice",
@@ -73,7 +91,10 @@
             "description": "Runs a short distance, then slashes twice.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "追击斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "closing-tide",
@@ -82,7 +103,10 @@
             "description": "Slides and shoots one or two arrows, then rolls forward and slashes once. In Phase 1, it is always his first attack.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "涨潮",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "floating-passage",
@@ -91,7 +115,10 @@
             "description": "A deadly seven-hit combo ending in a guard-breaking strike. If the target is too far away, he may cancel it at any time into an arrow shot.",
             "telegraph": "Starts with him sliding to the left.",
             "counter": "If your posture bar is almost full, deflect the first two hits, then dodge away and punish him once he finishes.",
-            "common_mistakes": "Getting too far away during the combo - he interrupts it with a Guard Breaking Shot."
+            "common_mistakes": "Getting too far away during the combo - he interrupts it with a Guard Breaking Shot.",
+            "name_zh": "绝技·飞渡浮舟",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E9%A3%9E%E6%B8%A1%E6%B5%AE%E8%88%9F"
           },
           {
             "id": "guard-breaking-shot",
@@ -100,7 +127,10 @@
             "description": "Notches an arrow with incredible force, capable of breaking guard when released.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": "Healing in front of him - he answers every use of the Healing Gourd or another healing item with this shot."
+            "common_mistakes": "Healing in front of him - he answers every use of the Healing Gourd or another healing item with this shot.",
+            "name_zh": "破防射击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "hawk-shot",
@@ -109,7 +139,10 @@
             "description": "Stays airborne and shoots rapidly four times.",
             "telegraph": "Always dashes backward first.",
             "counter": "Interrupt the move as it starts, or dodge all the arrows by dashing twice toward him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "鹰射",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "iaijutsu",
@@ -118,7 +151,10 @@
             "description": "A quick drawn strike with a short closing distance.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "居合斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "receding-tide",
@@ -127,7 +163,10 @@
             "description": "Slides back and shoots two arrows at the same time, then prepares for an Iaijutsu.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "退潮",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "two-hit-combo",
@@ -136,7 +175,10 @@
             "description": "Spins his body, slashing, then kicks right after. May follow up with a Guard Breaking Shot.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "二连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -151,7 +193,10 @@
             "description": "Delivers an overhead smash while airborne and connects with a Perilous Thrust or a Perilous Sweep upon landing.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危攻击后续追击（第二阶段）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-attack",
@@ -160,7 +205,10 @@
             "description": "Runs towards Wolf and does a plunging attack.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-grab",
@@ -169,7 +217,10 @@
             "description": "A sideways jumping slash to the left, then a quick elbow jab; if it connects, he punches Wolf in the stomach.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Striking him during this attack topples his balance, even with a visible block at the end of the move.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·投技",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-thrust",
@@ -178,7 +229,10 @@
             "description": "Thrusts with his katana.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -187,7 +241,10 @@
             "description": "Sweeps the floor and follows up with an arrow shot.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "advance",
@@ -196,7 +253,10 @@
             "description": "Two horizontal slashes while stepping forth.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突进",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "chasing-slice",
@@ -205,7 +265,10 @@
             "description": "Runs a short distance, then slashes twice.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "追击斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "closing-tide",
@@ -214,7 +277,10 @@
             "description": "Slides and shoots one or two arrows, then rolls forward and slashes once. In Phase 1, it is always his first attack.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "涨潮",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "floating-passage",
@@ -223,7 +289,10 @@
             "description": "A deadly seven-hit combo ending in a guard-breaking strike. If the target is too far away, he may cancel it at any time into an arrow shot.",
             "telegraph": "Starts with him sliding to the left.",
             "counter": "If your posture bar is almost full, deflect the first two hits, then dodge away and punish him once he finishes.",
-            "common_mistakes": "Getting too far away during the combo - he interrupts it with a Guard Breaking Shot."
+            "common_mistakes": "Getting too far away during the combo - he interrupts it with a Guard Breaking Shot.",
+            "name_zh": "绝技·飞渡浮舟",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E9%A3%9E%E6%B8%A1%E6%B5%AE%E8%88%9F"
           },
           {
             "id": "guard-breaking-shot",
@@ -232,7 +301,10 @@
             "description": "Notches an arrow with incredible force, capable of breaking guard when released.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": "Healing in front of him - he answers every use of the Healing Gourd or another healing item with this shot."
+            "common_mistakes": "Healing in front of him - he answers every use of the Healing Gourd or another healing item with this shot.",
+            "name_zh": "破防射击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "hawk-shot",
@@ -241,7 +313,10 @@
             "description": "Stays airborne and shoots rapidly four times.",
             "telegraph": "Always dashes backward first.",
             "counter": "Interrupt the move as it starts, or dodge all the arrows by dashing twice toward him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "鹰射",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "iaijutsu",
@@ -250,7 +325,10 @@
             "description": "A quick drawn strike with a short closing distance.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "居合斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "receding-tide",
@@ -259,7 +337,10 @@
             "description": "Slides back and shoots two arrows at the same time, then prepares for an Iaijutsu.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "退潮",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "two-hit-combo",
@@ -268,7 +349,10 @@
             "description": "Spins his body, slashing, then kicks right after. May follow up with a Guard Breaking Shot.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "二连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -283,7 +367,10 @@
             "description": "Lunges forward, thrusting over a long distance. He always opens Phase 3 with this move. May follow up with a Perilous Grab.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": "Using an item - he answers it with this thrust."
+            "common_mistakes": "Using an item - he answers it with this thrust.",
+            "name_zh": "死亡突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "floating-passage-phase-3",
@@ -292,7 +379,10 @@
             "description": "A deadly seven-hit combo ending in a guard-breaking strike, followed by a delayed Perilous Thrust. If the target is too far away, he may cancel it at any time into an arrow shot.",
             "telegraph": "Perilous Attack kanji. Starts with him sliding to the left.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "绝技·飞渡浮舟（第三阶段）",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E9%A3%9E%E6%B8%A1%E6%B5%AE%E8%88%9F"
           },
           {
             "id": "perilous-attack-follow-up-phase-3",
@@ -301,7 +391,10 @@
             "description": "Delivers an overhead smash while airborne, then one of three follow-ups: a Perilous Thrust, a Perilous Sweep, or a quick upward cut that, if deflected, is followed by a delayed Perilous Thrust.",
             "telegraph": "Perilous Attack kanji. After landing: crouching down means a Perilous Thrust, turning clockwise means a Perilous Sweep, turning anti-clockwise means the quick upward cut.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危攻击后续追击（第三阶段）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-grab-phase-3",
@@ -310,7 +403,10 @@
             "description": "Runs toward Wolf attempting to grab him. If it connects, he throws Wolf to the ground and stabs him in the chest.",
             "telegraph": "Perilous Attack kanji.",
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·投技（第三阶段）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-of-tomoe-shot",
@@ -319,7 +415,10 @@
             "description": "Shoots an electrifying arrow that instantly inflicts Shock.",
             "telegraph": "Jumps up and imbues his arrow with lightning.",
             "counter": "Lightning Reversal sends it back for significant posture and vitality damage and briefly paralyzes him. His lightning attacks can also be interrupted by hitting him, or avoided by dashing under him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "巴之雷·射击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-of-tomoe-slash",
@@ -328,7 +427,10 @@
             "description": "Leaps up, then slashes forward in a long horizontal arc of lightning.",
             "telegraph": "Raises his katana to his right with both hands as it is imbued with lightning.",
             "counter": "Lightning Reversal sends it back for significant posture and vitality damage and briefly paralyzes him. His lightning attacks can also be interrupted by hitting him, or avoided by dashing under him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "巴之雷·斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-of-tomoe-smash",
@@ -337,7 +439,10 @@
             "description": "Leaps up, then smashes straight down with lightning.",
             "telegraph": "Raises his katana to his left as it is imbued with lightning.",
             "counter": "Lightning Reversal sends it back for significant posture and vitality damage and briefly paralyzes him. His lightning attacks can also be interrupted by hitting him, or avoided by dashing under him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "巴之雷·砸击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -363,7 +468,10 @@
             "description": "Many of Owl's attacks begin with a zig-zag motion designed to confuse the player, leading into one of five possible follow-up attacks.",
             "telegraph": null,
             "counter": "Stay ready to react to whichever attack follows.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "之字形移动",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-throw",
@@ -372,7 +480,10 @@
             "description": "A single shuriken projectile attack.",
             "telegraph": null,
             "counter": "Block, deflect, or dodge to the side.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷手里剑",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "double-shuriken-flip",
@@ -381,7 +492,10 @@
             "description": "Two shuriken throws followed by an aerial flip and downward sword strike.",
             "telegraph": null,
             "counter": "Deflect/block the shurikens and dodge sideways to avoid the flip, then counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "双手里剑 + 后翻",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shadowfall",
@@ -390,7 +504,10 @@
             "description": "Unblockable thrust; if it hits, he jumps off and comes down with two huge slashes.",
             "telegraph": "Charges up before the unblockable thrust.",
             "counter": "Mikiri the thrust.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "秘传·巨型忍者落杀",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E5%B7%A8%E5%9E%8B%E5%BF%8D%E8%80%85%E8%90%BD%E6%9D%80"
           },
           {
             "id": "shuriken-slash",
@@ -399,7 +516,10 @@
             "description": "Throws a shuriken immediately followed by a running slash.",
             "telegraph": null,
             "counter": "Block/deflect both. A well-timed dodge to the right is also possible.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "手里剑 + 斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -408,7 +528,10 @@
             "description": "Unblockable sweep attack performed from the side.",
             "telegraph": null,
             "counter": "Jump over it and stay close to bait his overhead slash, or jump back for a jump kick to the head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "large-overhead-slash",
@@ -417,7 +540,10 @@
             "description": "A very powerful overhead slash that adapts based on the player's response.",
             "telegraph": "Loads up for the overhead slash.",
             "counter": "Dodge at the last moment and counter, or step back out of range. Hits can land during the charge-up.",
-            "common_mistakes": "Dodging too early makes him switch to a quick horizontal attack."
+            "common_mistakes": "Dodging too early makes him switch to a quick horizontal attack.",
+            "name_zh": "大幅度下劈",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "backflip",
@@ -426,7 +552,10 @@
             "description": "Leaps away; deals no vitality damage but significant posture damage.",
             "telegraph": null,
             "counter": "Deflect to minimize posture damage.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后空翻",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "firecrackers",
@@ -435,7 +564,10 @@
             "description": "Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash.",
             "telegraph": null,
             "counter": "Dodge backwards to avoid.",
-            "common_mistakes": "Dodging too quickly after the throw lets his follow-up slash hit you."
+            "common_mistakes": "Dodging too quickly after the throw lets his follow-up slash hit you.",
+            "name_zh": "爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "running-slash",
@@ -444,7 +576,10 @@
             "description": "A single strong slash performed while approaching the player.",
             "telegraph": null,
             "counter": "Block/deflect. Dodging to the left is also possible.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "冲刺斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "five-slash-firecracker-combo",
@@ -453,7 +588,10 @@
             "description": "Three consecutive sword slashes, followed by an elbow strike, followed by firecrackers that he slashes through.",
             "telegraph": null,
             "counter": "Deflect/block the slashes, then dodge right when the firecrackers are thrown for a counter opportunity.",
-            "common_mistakes": "Getting pushed back into a corner by the combo, where there is no chance of survival."
+            "common_mistakes": "Getting pushed back into a corner by the combo, where there is no chance of survival.",
+            "name_zh": "五连斩接爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "double-slash-perilous-sweep",
@@ -462,7 +600,10 @@
             "description": "Two consecutive slashes ending in an unblockable sweep; can chain into Large Overhead Slash.",
             "telegraph": null,
             "counter": "Jump over it and stay close to bait his overhead slash.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "二连斩接危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "stomp-deathblow",
@@ -471,7 +612,10 @@
             "description": "Raises a foot then stomps down, pinning the player and stabbing through the chest for massive damage. Cannot be blocked and gives no Perilous indicator.",
             "telegraph": "Raises his foot into the air before stomping down. There is no Perilous indicator.",
             "counter": "Dodge backwards or safety roll to avoid it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "踩踏（忍杀）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -486,7 +630,10 @@
             "description": "Many of Owl's attacks begin with a zig-zag motion designed to confuse the player, leading into one of five possible follow-up attacks.",
             "telegraph": null,
             "counter": "Stay ready to react to whichever attack follows.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "之字形移动",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-throw",
@@ -495,7 +642,10 @@
             "description": "A single shuriken projectile attack.",
             "telegraph": null,
             "counter": "Block, deflect, or dodge to the side.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷手里剑",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "double-shuriken-flip",
@@ -504,7 +654,10 @@
             "description": "Two shuriken throws followed by an aerial flip and downward sword strike.",
             "telegraph": null,
             "counter": "Deflect/block the shurikens and dodge sideways to avoid the flip, then counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "双手里剑 + 后翻",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shadowfall",
@@ -513,7 +666,10 @@
             "description": "Unblockable thrust; if it hits, he jumps off and comes down with two huge slashes.",
             "telegraph": "Charges up before the unblockable thrust.",
             "counter": "Mikiri the thrust.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "秘传·巨型忍者落杀",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E5%B7%A8%E5%9E%8B%E5%BF%8D%E8%80%85%E8%90%BD%E6%9D%80"
           },
           {
             "id": "shuriken-slash",
@@ -522,7 +678,10 @@
             "description": "Throws a shuriken immediately followed by a running slash.",
             "telegraph": null,
             "counter": "Block/deflect both. A well-timed dodge to the right is also possible.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "手里剑 + 斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -531,7 +690,10 @@
             "description": "Unblockable sweep attack performed from the side.",
             "telegraph": null,
             "counter": "Jump over it and stay close to bait his overhead slash, or jump back for a jump kick to the head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "large-overhead-slash",
@@ -540,7 +702,10 @@
             "description": "A very powerful overhead slash that adapts based on the player's response.",
             "telegraph": "Loads up for the overhead slash.",
             "counter": "Dodge at the last moment and counter, or step back out of range. Hits can land during the charge-up.",
-            "common_mistakes": "Dodging too early makes him switch to a quick horizontal attack."
+            "common_mistakes": "Dodging too early makes him switch to a quick horizontal attack.",
+            "name_zh": "大幅度下劈",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "backflip",
@@ -549,7 +714,10 @@
             "description": "Leaps away; deals no vitality damage but significant posture damage.",
             "telegraph": null,
             "counter": "Deflect to minimize posture damage.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后空翻",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "firecrackers",
@@ -558,7 +726,10 @@
             "description": "Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash.",
             "telegraph": null,
             "counter": "Dodge backwards to avoid.",
-            "common_mistakes": "Dodging too quickly after the throw lets his follow-up slash hit you."
+            "common_mistakes": "Dodging too quickly after the throw lets his follow-up slash hit you.",
+            "name_zh": "爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "running-slash",
@@ -567,7 +738,10 @@
             "description": "A single strong slash performed while approaching the player.",
             "telegraph": null,
             "counter": "Block/deflect. Dodging to the left is also possible.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "冲刺斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "five-slash-firecracker-combo",
@@ -576,7 +750,10 @@
             "description": "Three consecutive sword slashes, followed by an elbow strike, followed by firecrackers that he slashes through.",
             "telegraph": null,
             "counter": "Deflect/block the slashes, then dodge right when the firecrackers are thrown for a counter opportunity.",
-            "common_mistakes": "Getting pushed back into a corner by the combo, where there is no chance of survival."
+            "common_mistakes": "Getting pushed back into a corner by the combo, where there is no chance of survival.",
+            "name_zh": "五连斩接爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "double-slash-perilous-sweep",
@@ -585,7 +762,10 @@
             "description": "Two consecutive slashes ending in an unblockable sweep; can chain into Large Overhead Slash.",
             "telegraph": null,
             "counter": "Jump over it and stay close to bait his overhead slash.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "二连斩接危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "stomp-deathblow",
@@ -594,7 +774,10 @@
             "description": "Raises a foot then stomps down, pinning the player and stabbing through the chest for massive damage. Cannot be blocked and gives no Perilous indicator.",
             "telegraph": "Raises his foot into the air before stomping down. There is no Perilous indicator.",
             "counter": "Dodge backwards or safety roll to avoid it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "踩踏（忍杀）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "backflip-shuriken",
@@ -603,7 +786,10 @@
             "description": "Same as the Phase 1 backflip, with a shuriken thrown afterward.",
             "telegraph": null,
             "counter": "Block/deflect both.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后空翻 + 手里剑",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "owl-teleport",
@@ -612,7 +798,10 @@
             "description": "Uses his summoned owl to teleport above the player and drop down with a slash.",
             "telegraph": null,
             "counter": "Deflect the slash, or run/stay away from the owl to avoid it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "枭之瞬移",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "fire-owl-shadowfall",
@@ -621,7 +810,10 @@
             "description": "Summons his owl and throws an unblockable fire owl projectile, then follows up with Shadowfall.",
             "telegraph": null,
             "counter": "Jump over the fire owl and Mikiri the thrust.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "火枭 + 巨型忍者落杀",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -647,7 +839,10 @@
             "description": "Projectile attack using kunai.",
             "telegraph": null,
             "counter": "Can be blocked or deflected.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷苦无",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-into-rafters",
@@ -656,7 +851,10 @@
             "description": "Leaps into the air and disappears.",
             "telegraph": null,
             "counter": "Use the Shuriken Prosthetic immediately as she begins jumping to knock her out of the air and create an opening.",
-            "common_mistakes": "Throwing the shuriken too late - she will likely deflect it."
+            "common_mistakes": "Throwing the shuriken too late - she will likely deflect it.",
+            "name_zh": "跃上房梁",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-aerial-grab",
@@ -665,7 +863,10 @@
             "description": "Overhead perilous attack performed while airborne.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Dodge or move out of the way. Alternatively, use the Shuriken Prosthetic to knock her down for a punish window.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·空中投技",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -674,7 +875,10 @@
             "description": "Low-sweeping perilous attack.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Jump and kick her for considerable posture damage.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "ground-combos",
@@ -683,7 +887,10 @@
             "description": "Standard melee attack sequences performed from ground level.",
             "telegraph": null,
             "counter": "Stay close, deflect attacks, then counter-attack during her recovery windows.",
-            "common_mistakes": "Attacking too much. Deflect more than you attack, and only strike after openings such as her perilous attacks."
+            "common_mistakes": "Attacking too much. Deflect more than you attack, and only strike after openings such as her perilous attacks.",
+            "name_zh": "地面连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -698,7 +905,10 @@
             "description": "Projectile attack using kunai.",
             "telegraph": null,
             "counter": "Can be blocked or deflected.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷苦无",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-into-rafters",
@@ -707,7 +917,10 @@
             "description": "Leaps into the air and disappears.",
             "telegraph": null,
             "counter": "Use the Shuriken Prosthetic immediately as she begins jumping to knock her out of the air and create an opening.",
-            "common_mistakes": "Throwing the shuriken too late - she will likely deflect it."
+            "common_mistakes": "Throwing the shuriken too late - she will likely deflect it.",
+            "name_zh": "跃上房梁",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-aerial-grab",
@@ -716,7 +929,10 @@
             "description": "Overhead perilous attack performed while airborne.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Dodge or move out of the way. Alternatively, use the Shuriken Prosthetic to knock her down for a punish window.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·空中投技",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "perilous-sweep",
@@ -725,7 +941,10 @@
             "description": "Low-sweeping perilous attack.",
             "telegraph": "Perilous Attack kanji.",
             "counter": "Jump and kick her for considerable posture damage.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "危·下段横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "ground-combos",
@@ -734,7 +953,10 @@
             "description": "Standard melee attack sequences performed from ground level.",
             "telegraph": null,
             "counter": "Stay close, deflect attacks, then counter-attack during her recovery windows.",
-            "common_mistakes": "Attacking too much. Deflect more than you attack, and only strike after openings such as her perilous attacks."
+            "common_mistakes": "Attacking too much. Deflect more than you attack, and only strike after openings such as her perilous attacks.",
+            "name_zh": "地面连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "illusions",
@@ -743,7 +965,10 @@
             "description": "Summons phantom enemies that attack with spears.",
             "telegraph": null,
             "counter": "Use a Snap Seed to dispel the phantoms, or kill them individually for Spirit Emblems. Alternatively, run around the arena perimeter to avoid their attacks.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "幻影",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "phantom-kunai",
@@ -752,7 +977,10 @@
             "description": "Upgraded kunai projectile attack with additional volleys.",
             "telegraph": null,
             "counter": "Deflect or block; dodging sideways offers the best protection.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "幻影苦无",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "homing-butterflies",
@@ -761,7 +989,10 @@
             "description": "Homing projectiles created when illusions are dispelled.",
             "telegraph": null,
             "counter": "Hide behind pillars or keep sprinting around the arena perimeter.",
-            "common_mistakes": "Turning corners while the butterflies are tracking you can make them hit you."
+            "common_mistakes": "Turning corners while the butterflies are tracking you can make them hit you.",
+            "name_zh": "追踪幻蝶",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "aerial-attacks-enhanced",
@@ -770,7 +1001,10 @@
             "description": "Enhanced aerial maneuvers performed with increased frequency.",
             "telegraph": null,
             "counter": "Continue using the Shuriken Prosthetic to interrupt; maintain aggressive pressure to prevent aerial transitions.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "空中攻击（强化）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -796,7 +1030,10 @@
             "description": "Rapid slamming combinations performed at close range.",
             "telegraph": null,
             "counter": "All slamming attacks can be blocked; attempt to deflect them.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "连续拍地",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "hand-swipe-grab",
@@ -805,7 +1042,10 @@
             "description": "Unblockable grab attack where the ape swipes the floor from left to right at close range.",
             "telegraph": null,
             "counter": "Time a jump to dodge it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "挥手抓取",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "body-slam-grab",
@@ -814,7 +1054,10 @@
             "description": "The ape jumps and attempts to grab the player.",
             "telegraph": null,
             "counter": "Time a dodge to avoid it; a double dodge (tap the button twice) is safer.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "扑身抓取",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "poisonous-fart",
@@ -823,7 +1066,10 @@
             "description": "Status attack inflicting heavy poison buildup when the ape's back is turned; always followed by running away and jumping high.",
             "telegraph": null,
             "counter": "Quickly dodge away from the cloud to avoid the poison.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "毒屁",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "poisonous-poo-throw",
@@ -832,7 +1078,10 @@
             "description": "High-damage instant poison attack.",
             "telegraph": "Jumps high before throwing.",
             "counter": "Run underneath as it jumps and retaliate; its recovery from this attack is lengthy.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷毒粪",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "roar-jump-back",
@@ -841,7 +1090,10 @@
             "description": "The ape jumps back and unleashes a roar.",
             "telegraph": null,
             "counter": "A grapple prompt appears, letting Sekiro close the gap and causing a brief stagger.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "咆哮 / 后跳",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "rolling-body-slam",
@@ -850,7 +1102,10 @@
             "description": "The ape jumps onto its back and thrashes the ground.",
             "telegraph": null,
             "counter": "Stay away from its arms and hit its head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "翻滚压击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -865,7 +1120,10 @@
             "description": "Sword attacks that cover a wide area, after the ape decapitates itself and resurrects wielding a sword through its neck.",
             "telegraph": null,
             "counter": "Strike a few times after its combos, then back away.",
-            "common_mistakes": "Staying on top of it and attacking for too long."
+            "common_mistakes": "Staying on top of it and attacking for too long.",
+            "name_zh": "大范围挥刀",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "diving-lunge",
@@ -874,7 +1132,10 @@
             "description": "Lunges forward with a swipe while falling to the ground.",
             "telegraph": "Clear wind-up before it dives.",
             "counter": "Jump over it as it dives and strike it in the air, following with a full combo.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "飞扑",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "overhead-slam",
@@ -883,7 +1144,10 @@
             "description": "Large overhead attack that can be deflected.",
             "telegraph": null,
             "counter": "Deflecting it stuns the boss and exposes its neck. Using the Loaded Spear (activate it twice) briefly pulls out the centipede for massive posture and health damage.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "高举砸地",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "blood-scream",
@@ -892,7 +1156,10 @@
             "description": "Battle roar that unleashes shockwaves filling the Terror meter, which can inflict Terror status and instantly kill Sekiro.",
             "telegraph": "Puts its head back on its neck before screaming.",
             "counter": "Any Loaded Umbrella-type prosthetic completely negates the scream; the Phoenix's Lilac Umbrella is recommended for NG+.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "血之咆哮",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -918,7 +1185,10 @@
             "description": "Perilous sweep attack variant, often followed by attack opportunities.",
             "telegraph": null,
             "counter": "Jump over it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "横扫攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust-attack",
@@ -927,7 +1197,10 @@
             "description": "Perilous thrust attack variant.",
             "telegraph": null,
             "counter": "Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-sweep",
@@ -936,7 +1209,10 @@
             "description": "Jumping attack that sweeps during the jump.",
             "telegraph": null,
             "counter": "Sidestep and strike as she lands.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（横扫）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-overhead",
@@ -945,7 +1221,10 @@
             "description": "Jumping attack that ends in an overhead slash.",
             "telegraph": null,
             "counter": "Run below and attack her exposed back.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（下劈）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "upwards-slash",
@@ -954,7 +1233,10 @@
             "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
             "telegraph": null,
             "counter": "Can be deflected, though the timing is very precise.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "上挑斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "whirlwind-attack",
@@ -963,7 +1245,10 @@
             "description": "Continuous spinning attack with the Naginata that can quickly exhaust Sekiro's posture gauge. Tends to be used when at a distance from the player, more often if the player uses a consumable.",
             "telegraph": null,
             "counter": "Run away when she starts spinning.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "旋风攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "mid-range-combo",
@@ -972,7 +1257,10 @@
             "description": "One jumping air hit followed by two ground hits at mid-range.",
             "telegraph": null,
             "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "中距离连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -998,7 +1286,10 @@
             "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight. More telegraphed and predictable in Phase 3.",
             "telegraph": null,
             "counter": "Jump over it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "横扫攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust-attack",
@@ -1007,7 +1298,10 @@
             "description": "Perilous thrust attack variant, used more often here than in the Mibu Village fight.",
             "telegraph": null,
             "counter": "Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-sweep",
@@ -1016,7 +1310,10 @@
             "description": "Jumping attack that sweeps during the jump.",
             "telegraph": null,
             "counter": "Sidestep and strike as she lands.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（横扫）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-overhead",
@@ -1025,7 +1322,10 @@
             "description": "Jumping attack that ends in an overhead slash. In Phase 3 it tends to be used as a finishing move.",
             "telegraph": null,
             "counter": "Run below and attack her exposed back.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（下劈）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "upwards-slash",
@@ -1034,7 +1334,10 @@
             "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
             "telegraph": null,
             "counter": "Can be deflected, though the timing is very precise.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "上挑斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "mid-range-combo",
@@ -1043,7 +1346,10 @@
             "description": "One jumping air hit followed by two ground hits at mid-range.",
             "telegraph": null,
             "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "中距离连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -1058,7 +1364,10 @@
             "description": "She disappears and the area fills with mist, then summons three shadow illusions of herself that each attack the player three times. The shadows disappear between attacks, making lock-on difficult. Standing near a wall before the shadows spawn limits them to one direction, repeating the same three moves.",
             "telegraph": null,
             "counter": "The shadows don't need to be defeated - she eventually ends the illusion and returns on her own. A Bite Down pill instantly dispels them too.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "召唤幻影",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -1073,7 +1382,10 @@
             "description": "Perilous sweep attack variant, used more often here than in the Mibu Village fight. More telegraphed and predictable in Phase 3.",
             "telegraph": null,
             "counter": "Jump over it.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "横扫攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust-attack",
@@ -1082,7 +1394,10 @@
             "description": "Perilous thrust attack variant, used more often here than in the Mibu Village fight.",
             "telegraph": null,
             "counter": "Mikiri Counter.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-sweep",
@@ -1091,7 +1406,10 @@
             "description": "Jumping attack that sweeps during the jump.",
             "telegraph": null,
             "counter": "Sidestep and strike as she lands.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（横扫）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "jump-attack-overhead",
@@ -1100,7 +1418,10 @@
             "description": "Jumping attack that ends in an overhead slash. In Phase 3 it tends to be used as a finishing move.",
             "telegraph": null,
             "counter": "Run below and attack her exposed back.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃攻击（下劈）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "upwards-slash",
@@ -1109,7 +1430,10 @@
             "description": "An upward slash that goes through Sekiro's normal defenses and cannot be blocked.",
             "telegraph": null,
             "counter": "Can be deflected, though the timing is very precise.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "上挑斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "mid-range-combo",
@@ -1118,7 +1442,10 @@
             "description": "One jumping air hit followed by two ground hits at mid-range.",
             "telegraph": null,
             "counter": "Let the landing cancel the air-attack lag, then jump away to mid-range.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "中距离连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "whirlwind-attack",
@@ -1127,7 +1454,10 @@
             "description": "Continuous spinning attack with the Naginata, regained in this phase after being absent since Phase 1. Very susceptible to the Shinobi Firecracker, especially during the windup.",
             "telegraph": null,
             "counter": "Run away when she starts spinning, or interrupt the windup with a Shinobi Firecracker.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "旋风攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "centipede-toxic-goo",
@@ -1136,7 +1466,10 @@
             "description": "Perilous attack where the demon centipede erupting from her neck spews toxic goo in front of her; can inflict Terror.",
             "telegraph": null,
             "counter": "Sidestep or jump-kick when she uses this and retaliate - the attack has lengthy ending lag.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "百足毒液",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "centipede-toxic-cloud",
@@ -1145,7 +1478,10 @@
             "description": "A non-perilous variant of the centipede's toxin attack.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "百足毒雾",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -1171,7 +1507,10 @@
             "description": "Tosses a charm that releases a green mist, preventing healing item usage for 30 seconds.",
             "telegraph": null,
             "counter": "Sidestep and then strike, taking care not to get debuffed.",
-            "common_mistakes": "Walking into the mist, which locks you out of healing items."
+            "common_mistakes": "Walking into the mist, which locks you out of healing items.",
+            "name_zh": "忍符",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "backflip",
@@ -1180,7 +1519,10 @@
             "description": "Leaps backward while throwing a shuriken.",
             "telegraph": null,
             "counter": "Deflect or dodge the projectile.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后空翻",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "running-slash",
@@ -1189,7 +1531,10 @@
             "description": "A single powerful slash performed while charging toward the player.",
             "telegraph": null,
             "counter": "Deflect or dodge depending on posture status.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "冲刺斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "four-slash-combo",
@@ -1198,7 +1543,10 @@
             "description": "Four consecutive sword strikes, often followed by Shinobi Charm.",
             "telegraph": null,
             "counter": "Deflect or retreat.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "四连斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-throw-flip",
@@ -1207,7 +1555,10 @@
             "description": "Two shuriken throws followed by an airborne downward strike.",
             "telegraph": null,
             "counter": "Dodge diagonally forward through the flip strike to open up an opportunity to attack 3-4 times, or land two Mortal Draw hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷手里剑 + 翻身",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-slash",
@@ -1216,7 +1567,10 @@
             "description": "A quick shuriken throw immediately followed by a running slash.",
             "telegraph": null,
             "counter": "Sidestep the projectile, then deflect or retreat.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "手里剑 + 斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "firecracker",
@@ -1225,7 +1579,10 @@
             "description": "Black gunpowder explosion attack dealing significant damage.",
             "telegraph": "Black smoke.",
             "counter": "Run away when you see black smoke, or dodge in aggressively.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "stomp-grab",
@@ -1234,7 +1591,10 @@
             "description": "Raises a foot then stomps down, pinning and stabbing the player. Deals massive damage, cannot be blocked, and gives no Perilous indicator.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "踩踏（投技）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -1249,7 +1609,10 @@
             "description": "Tosses a charm that releases a green mist, preventing healing item usage for 30 seconds.",
             "telegraph": null,
             "counter": "Sidestep and then strike, taking care not to get debuffed.",
-            "common_mistakes": "Walking into the mist, which locks you out of healing items."
+            "common_mistakes": "Walking into the mist, which locks you out of healing items.",
+            "name_zh": "忍符",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "backflip-poison",
@@ -1258,7 +1621,10 @@
             "description": "Same motion as the Phase 1 backflip, but throws poison instead of a shuriken.",
             "telegraph": null,
             "counter": "Dodge and maintain distance from the poisoned area.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后空翻（毒）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "running-slash",
@@ -1267,7 +1633,10 @@
             "description": "A single powerful slash performed while charging toward the player.",
             "telegraph": null,
             "counter": "Deflect or dodge depending on posture status.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "冲刺斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "four-slash-combo",
@@ -1276,7 +1645,10 @@
             "description": "Four consecutive sword strikes, often followed by Shinobi Charm.",
             "telegraph": null,
             "counter": "Deflect or retreat.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "四连斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-throw-flip",
@@ -1285,7 +1657,10 @@
             "description": "Two shuriken throws followed by an airborne downward strike.",
             "telegraph": null,
             "counter": "Dodge diagonally forward through the flip strike to open up an opportunity to attack 3-4 times, or land two Mortal Draw hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "投掷手里剑 + 翻身",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "shuriken-slash",
@@ -1294,7 +1669,10 @@
             "description": "A quick shuriken throw immediately followed by a running slash.",
             "telegraph": null,
             "counter": "Sidestep the projectile, then deflect or retreat.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "手里剑 + 斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "firecracker",
@@ -1303,7 +1681,10 @@
             "description": "Black gunpowder explosion attack dealing significant damage.",
             "telegraph": "Black smoke.",
             "counter": "Run away when you see black smoke, or dodge in aggressively.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "爆竹",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "stomp-grab",
@@ -1312,7 +1693,10 @@
             "description": "Raises a foot then stomps down, pinning and stabbing the player. Deals massive damage, cannot be blocked, and gives no Perilous indicator.",
             "telegraph": null,
             "counter": null,
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "踩踏（投技）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }
@@ -1338,7 +1722,10 @@
             "description": "Strikes downward launching a force wave, followed by a second wave after a short delay.",
             "telegraph": "Sheathes his sword and readies a stance; a glint shows on the hilt.",
             "counter": "Deflect the first wave, then dodge the second.",
-            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage."
+            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage.",
+            "name_zh": "秘传·龙闪",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E9%BE%99%E9%97%AA"
           },
           {
             "id": "ashina-cross",
@@ -1347,7 +1734,10 @@
             "description": "Steps forward with two rapid slashes.",
             "telegraph": "Sheathes his sword; after a short delay there is a flash of light at his hand as he steps forward.",
             "counter": "Press deflect twice without pausing, or run far away to avoid it entirely.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "绝技·苇名十字斩",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E8%8B%87%E5%90%8D%E5%8D%81%E5%AD%97%E6%96%A9"
           },
           {
             "id": "ashina-cross-cancel",
@@ -1356,7 +1746,10 @@
             "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep. He also does this after the player repeatedly deflects his attacks.",
             "telegraph": null,
             "counter": "Deflect the initial hit, then jump and stomp.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "苇名十字斩（取消）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "ichimonji-double",
@@ -1365,7 +1758,10 @@
             "description": "Performs a double overhead strike.",
             "telegraph": "Raises his blade into a ready stance.",
             "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "一字斩·二连",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E4%B8%80%E5%AD%97%E6%96%A9%C2%B7%E4%BA%8C%E8%BF%9E"
           },
           {
             "id": "distance-slash",
@@ -1374,7 +1770,10 @@
             "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
             "telegraph": null,
             "counter": "Maintain enough distance to react in time.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "charged-horizontal-force-wave",
@@ -1383,7 +1782,10 @@
             "description": "Swings in a spinning motion, causing a large circular force wave.",
             "telegraph": "Sheathes his sword and charges the attack.",
             "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "蓄力横向剑气",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "three-to-four-hit-combo",
@@ -1392,7 +1794,10 @@
             "description": "A series of main slashes with delays between hits.",
             "telegraph": null,
             "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "三至四连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust",
@@ -1401,7 +1806,10 @@
             "description": "A telegraphed thrust attack.",
             "telegraph": null,
             "counter": "Mikiri Counter - easy to react to once telegraphed.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "long-range-wind-attack",
@@ -1410,7 +1818,10 @@
             "description": "A long-range wind-based attack.",
             "telegraph": null,
             "counter": "Dodge by running sideways to gain a couple of free hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离风压攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "close-range-full-screen-sweep",
@@ -1419,7 +1830,10 @@
             "description": "A close-range sweep that covers the full screen.",
             "telegraph": null,
             "counter": "Sprint backwards before it goes off.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "近距离全屏横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -1434,7 +1848,10 @@
             "description": "Strikes downward launching a force wave, followed by a second wave after a short delay.",
             "telegraph": "Sheathes his sword and readies a stance; a glint shows on the hilt.",
             "counter": "Deflect the first wave, then dodge the second.",
-            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage."
+            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage.",
+            "name_zh": "秘传·龙闪",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E9%BE%99%E9%97%AA"
           },
           {
             "id": "ashina-cross",
@@ -1443,7 +1860,10 @@
             "description": "Steps forward with two rapid slashes.",
             "telegraph": "Sheathes his sword; after a short delay there is a flash of light at his hand as he steps forward.",
             "counter": "Press deflect twice without pausing, or run far away to avoid it entirely.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "绝技·苇名十字斩",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E8%8B%87%E5%90%8D%E5%8D%81%E5%AD%97%E6%96%A9"
           },
           {
             "id": "ashina-cross-cancel",
@@ -1452,7 +1872,10 @@
             "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep. He also does this after the player repeatedly deflects his attacks.",
             "telegraph": null,
             "counter": "Deflect the initial hit, then jump and stomp.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "苇名十字斩（取消）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "ichimonji-double",
@@ -1461,7 +1884,10 @@
             "description": "Performs a double overhead strike.",
             "telegraph": "Raises his blade into a ready stance.",
             "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "一字斩·二连",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E4%B8%80%E5%AD%97%E6%96%A9%C2%B7%E4%BA%8C%E8%BF%9E"
           },
           {
             "id": "distance-slash",
@@ -1470,7 +1896,10 @@
             "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
             "telegraph": null,
             "counter": "Maintain enough distance to react in time.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "charged-horizontal-force-wave",
@@ -1479,7 +1908,10 @@
             "description": "Swings in a spinning motion, causing a large circular force wave.",
             "telegraph": "Sheathes his sword and charges the attack.",
             "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "蓄力横向剑气",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "three-to-four-hit-combo",
@@ -1488,7 +1920,10 @@
             "description": "A series of main slashes with delays between hits.",
             "telegraph": null,
             "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "三至四连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust",
@@ -1497,7 +1932,10 @@
             "description": "A telegraphed thrust attack.",
             "telegraph": null,
             "counter": "Mikiri Counter - easy to react to once telegraphed.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "long-range-wind-attack",
@@ -1506,7 +1944,10 @@
             "description": "A long-range wind-based attack.",
             "telegraph": null,
             "counter": "Dodge by running sideways to gain a couple of free hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离风压攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "close-range-full-screen-sweep",
@@ -1515,7 +1956,10 @@
             "description": "A close-range sweep that covers the full screen.",
             "telegraph": null,
             "counter": "Sprint backwards before it goes off.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "近距离全屏横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "charged-double-projected-force",
@@ -1524,7 +1968,10 @@
             "description": "Makes two slashes that each launch a force disc. Deflecting the discs does not affect his posture.",
             "telegraph": "Sheathes his sword and charges the attack.",
             "counter": "The discs deal damage through block if not deflected properly, but the attack is easy to dodge.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "蓄力双重剑气",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "leaping-slam",
@@ -1533,7 +1980,10 @@
             "description": "When far away or the player is using an item, he leaps and slams with his spear, followed by a sword strike or gunshots.",
             "telegraph": "Leaps into the air before slamming down with his spear.",
             "counter": "Deflect the slam, then counter-attack.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃砸击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "retreating-sweep",
@@ -1542,7 +1992,10 @@
             "description": "Leaps backward into the air and sweeps with his spear, often following several blocked player attacks. Comes out very quickly.",
             "telegraph": "Leaps backward into the air.",
             "counter": "Deflect, or quickly dodge forward for a free hit.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后撤横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "quad-shot",
@@ -1551,7 +2004,10 @@
             "description": "At a distance, fires several rapid pistol shots followed by a large thrust from the spear. The last bullet is slightly delayed.",
             "telegraph": "Pulls out a pistol.",
             "counter": "Learn to deflect the shots, then Mikiri counter the following thrust or jump-attack if it's a sweep. Simply blocking the bullets damages posture heavily.",
-            "common_mistakes": "Missing the slightly delayed last bullet, which can break your posture."
+            "common_mistakes": "Missing the slightly delayed last bullet, which can break your posture.",
+            "name_zh": "四连射击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       },
@@ -1566,7 +2022,10 @@
             "description": "Strikes downward launching a force wave, followed by a second wave after a short delay.",
             "telegraph": "Sheathes his sword and readies a stance; a glint shows on the hilt.",
             "counter": "Deflect the first wave, then dodge the second.",
-            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage."
+            "common_mistakes": "Blocking the waves instead of deflecting them - blocked waves still leak damage.",
+            "name_zh": "秘传·龙闪",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E9%BE%99%E9%97%AA"
           },
           {
             "id": "ashina-cross",
@@ -1575,7 +2034,10 @@
             "description": "Steps forward with two rapid slashes.",
             "telegraph": "Sheathes his sword; after a short delay there is a flash of light at his hand as he steps forward.",
             "counter": "Press deflect twice without pausing, or run far away to avoid it entirely.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "绝技·苇名十字斩",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E7%BB%9D%E6%8A%80%C2%B7%E8%8B%87%E5%90%8D%E5%8D%81%E5%AD%97%E6%96%A9"
           },
           {
             "id": "ashina-cross-cancel",
@@ -1584,7 +2046,10 @@
             "description": "If the player is close when he readies Ashina Cross, he cancels it into a quick sword smack followed by a perilous sweep. He also does this after the player repeatedly deflects his attacks.",
             "telegraph": null,
             "counter": "Deflect the initial hit, then jump and stomp.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "苇名十字斩（取消）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "ichimonji-double",
@@ -1593,7 +2058,10 @@
             "description": "Performs a double overhead strike.",
             "telegraph": "Raises his blade into a ready stance.",
             "counter": "Dodge or block; the attack can also be sidestepped. Deflecting triggers a stagger.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "一字斩·二连",
+            "name_zh_source": "wiki",
+            "name_zh_source_url": "https://wiki.biligame.com/sekiro/%E4%B8%80%E5%AD%97%E6%96%A9%C2%B7%E4%BA%8C%E8%BF%9E"
           },
           {
             "id": "distance-slash",
@@ -1602,7 +2070,10 @@
             "description": "If the player is far away or using an item, he quickly dashes in and slashes.",
             "telegraph": null,
             "counter": "Maintain enough distance to react in time.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离斩击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "charged-horizontal-force-wave",
@@ -1611,7 +2082,10 @@
             "description": "Swings in a spinning motion, causing a large circular force wave.",
             "telegraph": "Sheathes his sword and charges the attack.",
             "counter": "Wait, then deflect as soon as he begins moving his arm, or sprint and jump toward him, then jump again onto his head.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "蓄力横向剑气",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "three-to-four-hit-combo",
@@ -1620,7 +2094,10 @@
             "description": "A series of main slashes with delays between hits.",
             "telegraph": null,
             "counter": "Deflect each hit; once he finishes slashing he's open for a quick two hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "三至四连击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "thrust",
@@ -1629,7 +2106,10 @@
             "description": "A telegraphed thrust attack.",
             "telegraph": null,
             "counter": "Mikiri Counter - easy to react to once telegraphed.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "突刺",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "long-range-wind-attack",
@@ -1638,7 +2118,10 @@
             "description": "A long-range wind-based attack.",
             "telegraph": null,
             "counter": "Dodge by running sideways to gain a couple of free hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离风压攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "close-range-full-screen-sweep",
@@ -1647,7 +2130,10 @@
             "description": "A close-range sweep that covers the full screen.",
             "telegraph": null,
             "counter": "Sprint backwards before it goes off.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "近距离全屏横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "charged-double-projected-force",
@@ -1656,7 +2142,10 @@
             "description": "Makes two slashes that each launch a force disc. Deflecting the discs does not affect his posture.",
             "telegraph": "Sheathes his sword and charges the attack.",
             "counter": "The discs deal damage through block if not deflected properly, but the attack is easy to dodge.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "蓄力双重剑气",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "leaping-slam",
@@ -1665,7 +2154,10 @@
             "description": "When far away or the player is using an item, he leaps and slams with his spear, followed by a sword strike or gunshots.",
             "telegraph": "Leaps into the air before slamming down with his spear.",
             "counter": "Deflect the slam, then counter-attack.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "跳跃砸击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "retreating-sweep",
@@ -1674,7 +2166,10 @@
             "description": "Leaps backward into the air and sweeps with his spear, often following several blocked player attacks. Comes out very quickly.",
             "telegraph": "Leaps backward into the air.",
             "counter": "Deflect, or quickly dodge forward for a free hit.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "后撤横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "quad-shot",
@@ -1683,7 +2178,10 @@
             "description": "At a distance, fires several rapid pistol shots followed by a large thrust from the spear. The last bullet is slightly delayed.",
             "telegraph": "Pulls out a pistol.",
             "counter": "Learn to deflect the shots, then Mikiri counter the following thrust or jump-attack if it's a sweep. Simply blocking the bullets damages posture heavily.",
-            "common_mistakes": "Missing the slightly delayed last bullet, which can break your posture."
+            "common_mistakes": "Missing the slightly delayed last bullet, which can break your posture.",
+            "name_zh": "四连射击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-slash",
@@ -1692,7 +2190,10 @@
             "description": "Launches lightning at the player with a sword swing.",
             "telegraph": "Jumps into the air as lightning converges on him.",
             "counter": "Jump into the air and use Lightning Reversal, Mist Raven, or Sakura Dance to redirect the attack back at him and stun him.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "雷电斩",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-overhead",
@@ -1701,7 +2202,10 @@
             "description": "Large overhead attacks with added lightning damage.",
             "telegraph": null,
             "counter": "Can be deflected, though the timing is difficult.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "雷电强化下劈",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "lightning-spear-sweep",
@@ -1710,7 +2214,10 @@
             "description": "A large swing with the spear covered in lightning.",
             "telegraph": null,
             "counter": "Get close when he does this and jump to deflect it directly back at him for big vitality and posture damage, plus a flurry of free hits.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "雷枪大横扫",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           },
           {
             "id": "distance-slash-lightning",
@@ -1719,7 +2226,10 @@
             "description": "More of a distance slash than the vertical Phase 1 wind attack.",
             "telegraph": null,
             "counter": "Similar avoidance strategy to the wind attacks - dodge by running sideways.",
-            "common_mistakes": null
+            "common_mistakes": null,
+            "name_zh": "远距离斩击（雷电）",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null
           }
         ]
       }

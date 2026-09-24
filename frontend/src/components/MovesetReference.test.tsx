@@ -24,6 +24,9 @@ const boss: Boss = {
           telegraph: "A glint shows on the hilt.",
           counter: "Deflect the first wave.",
           common_mistakes: "Blocking the waves instead of deflecting them.",
+          name_zh: "秘传·龙闪",
+          name_zh_source: "wiki",
+          name_zh_source_url: "https://wiki.biligame.com/sekiro/dragon-flash",
         },
         {
           id: "thrust",
@@ -33,6 +36,9 @@ const boss: Boss = {
           telegraph: null,
           counter: null,
           common_mistakes: null,
+          name_zh: "突刺",
+          name_zh_source: "translation",
+          name_zh_source_url: null,
         },
       ],
     },
@@ -52,7 +58,9 @@ describe("MovesetReference", () => {
     render(<MovesetReference boss={boss} />);
 
     const thrust = screen.getByText("Thrust").closest("li") as HTMLElement;
-    expect(thrust.textContent).toBe("Thrust");
+    // Only the names: no description, telegraph, counter or common-mistake paragraphs.
+    expect(thrust.querySelectorAll("p")).toHaveLength(0);
+    expect(thrust.textContent).toBe("Thrust突刺译名");
   });
 
   it("links to the boss's data source", () => {
@@ -65,5 +73,20 @@ describe("MovesetReference", () => {
     render(<MovesetReference boss={{ ...boss, source_name: null, source_url: null }} />);
 
     expect(screen.queryByText(/source:/i)).not.toBeInTheDocument();
+  });
+
+  it("links Chinese names taken from a wiki to their source page", () => {
+    render(<MovesetReference boss={boss} />);
+
+    const link = screen.getByRole("link", { name: "秘传·龙闪" });
+    expect(link).toHaveAttribute("href", "https://wiki.biligame.com/sekiro/dragon-flash");
+  });
+
+  it("marks translated Chinese names as translations", () => {
+    render(<MovesetReference boss={boss} />);
+
+    expect(screen.getByText("突刺")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "突刺" })).not.toBeInTheDocument();
+    expect(screen.getByTitle(/not an official in-game name/)).toHaveTextContent("译名");
   });
 });

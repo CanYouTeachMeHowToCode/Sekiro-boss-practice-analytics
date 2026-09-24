@@ -48,6 +48,7 @@ const analytics: SekiroAnalytics = {
       phase_reached: 2,
       failure_move_id: "owl-teleport",
       failure_move_name: "Owl Teleport",
+      failure_move_name_zh: "枭之瞬移",
       failure_category: null,
     },
     {
@@ -59,6 +60,7 @@ const analytics: SekiroAnalytics = {
       phase_reached: 3,
       failure_move_id: null,
       failure_move_name: null,
+      failure_move_name_zh: null,
       failure_category: null,
     },
   ],

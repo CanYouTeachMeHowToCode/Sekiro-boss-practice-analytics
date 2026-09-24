@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { createAttempt } from "../api/attempts";
 import { ApiError } from "../api/client";
 import type { AttemptResult, Boss, CreateAttemptRequest } from "../types";
+import { moveLabel } from "../utils/moves";
 
 const OTHER = "__other__";
 const NOT_SURE = "__not_sure__";
@@ -106,7 +107,7 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
             <option value="">Select…</option>
             {movesForPhase.map((move) => (
               <option key={move.id} value={move.id}>
-                {move.name}
+                {moveLabel(move)}
               </option>
             ))}
             <option value={OTHER}>Other</option>

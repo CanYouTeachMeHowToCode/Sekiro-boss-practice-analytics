@@ -98,6 +98,7 @@ def test_recent_attempts_are_newest_first_with_names_and_capped_at_ten(client):
         "phase_reached": 2,
         "failure_move_id": "blood-scream",
         "failure_move_name": "Blood Scream",
+        "failure_move_name_zh": "血之咆哮",
         "failure_category": None,
     }
     assert [int(a["attempt_id"]) for a in recent] == sorted((int(a["attempt_id"]) for a in recent), reverse=True)

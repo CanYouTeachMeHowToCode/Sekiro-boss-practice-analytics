@@ -18,14 +18,14 @@ const boss: Boss = {
       phase_number: 1,
       name: "Phase 1",
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
       ],
     },
     {
       phase_number: 2,
       name: "Phase 2",
       moves: [
-        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, telegraph: null, counter: null, common_mistakes: null },
+        { id: "floating-passage", name: "Floating Passage", move_type: "combo", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null },
       ],
     },
   ],
