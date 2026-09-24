@@ -13,7 +13,7 @@ from app.db.base import Base
 from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove
 from scripts.reset_test_database import alembic_config
 
-APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts"}
+APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts", "users", "user_sessions"}
 
 
 def make_boss(session: Session, slug: str = "owl-father") -> Boss:

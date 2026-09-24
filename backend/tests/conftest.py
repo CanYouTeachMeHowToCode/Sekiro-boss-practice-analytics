@@ -49,7 +49,16 @@ def seeded_session(session):
 
 
 @pytest.fixture()
-def client(seeded_session):
+def anon_client(seeded_session):
+    """A client that is not logged in."""
     app.dependency_overrides[get_db] = lambda: seeded_session
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def client(anon_client):
+    """A client logged in as a freshly registered user; the session cookie is kept between requests."""
+    resp = anon_client.post("/api/auth/register", json={"username": "tester", "password": "correct-horse"})
+    assert resp.status_code == 201, resp.text
+    return anon_client

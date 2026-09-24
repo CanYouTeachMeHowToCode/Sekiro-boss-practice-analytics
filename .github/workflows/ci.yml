@@ -167,7 +167,15 @@ jobs:
           bosses=$(curl -sf http://localhost:8080/api/bosses | jq 'length')
           echo "bosses served: ${bosses}"
           test "${bosses}" -gt 0
-          curl -sf http://localhost:8080/api/sekiro/analytics | jq -e '.total_bosses == '"${bosses}"
+
+          # Analytics need a login: anonymous requests are refused, and a
+          # session cookie from registering works through nginx.
+          status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/sekiro/analytics)
+          test "${status}" = 401
+          curl -sf -c cookies.txt -H 'Content-Type: application/json' \
+            -d '{"username": "ci_smoke", "password": "ci-smoke-password"}' \
+            http://localhost:8080/api/auth/register > /dev/null
+          curl -sf -b cookies.txt http://localhost:8080/api/sekiro/analytics | jq -e '.total_bosses == '"${bosses}"
 
       - name: Show container logs
         if: failure()

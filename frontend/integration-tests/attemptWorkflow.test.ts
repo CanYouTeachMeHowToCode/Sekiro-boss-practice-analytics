@@ -25,6 +25,30 @@ const DATABASE_NAME = "sekiro_integration_test";
 
 let backendProcess: ChildProcess;
 
+// Node's fetch has no cookie jar. Browsers keep the session cookie automatically;
+// this keeps it for the real api/ layer the same way.
+const cookieJar = new Map<string, string>();
+
+function installCookieJar(): void {
+  const realFetch = globalThis.fetch;
+  vi.stubGlobal("fetch", async (input: RequestInfo | URL, init: RequestInit = {}) => {
+    const headers = new Headers(init.headers);
+    if (cookieJar.size > 0) {
+      headers.set("Cookie", [...cookieJar].map(([name, value]) => `${name}=${value}`).join("; "));
+    }
+    const res = await realFetch(input, { ...init, headers });
+    for (const cookie of res.headers.getSetCookie()) {
+      const [pair] = cookie.split(";");
+      const separator = pair.indexOf("=");
+      const name = pair.slice(0, separator).trim();
+      const value = pair.slice(separator + 1).trim().replace(/^"|"$/g, "");
+      if (!value || /max-age=0/i.test(cookie)) cookieJar.delete(name);
+      else cookieJar.set(name, value);
+    }
+    return res;
+  });
+}
+
 function readDotEnv(): Record<string, string> {
   const path = join(REPO_DIR, ".env");
   if (!existsSync(path)) return {};
@@ -92,6 +116,7 @@ beforeAll(async () => {
   backendProcess.stderr?.on("data", (chunk) => startupErrors.push(String(chunk)));
 
   vi.stubEnv("VITE_API_BASE_URL", API_BASE_URL);
+  installCookieJar();
 
   try {
     await waitForHealth(15000);
@@ -103,6 +128,7 @@ beforeAll(async () => {
 afterAll(() => {
   backendProcess?.kill();
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
 });
 
 describe("frontend calling the real backend", () => {
@@ -138,6 +164,21 @@ describe("frontend calling the real backend", () => {
     const { ApiError } = await import("../src/api/client");
 
     await expect(getBossById("nonexistent-boss")).rejects.toThrow(ApiError);
+  });
+
+  it("requires login for attempts, then registers and keeps the session", async () => {
+    const { getCurrentUser, register } = await import("../src/api/auth");
+    const { getBossAttempts } = await import("../src/api/attempts");
+    const { ApiError } = await import("../src/api/client");
+
+    expect(await getCurrentUser()).toBeNull();
+    await expect(getBossAttempts("genichiro-ashina")).rejects.toMatchObject({ status: 401 });
+    await expect(getBossAttempts("genichiro-ashina")).rejects.toThrow(ApiError);
+
+    const user = await register({ username: "Integration_Wolf", password: "kusabimaru" });
+
+    expect(user.username).toBe("integration_wolf");
+    expect(await getCurrentUser()).toEqual(user);
   });
 
   it("records an attempt end-to-end and reflects it in history and analytics", async () => {
@@ -212,5 +253,21 @@ describe("frontend calling the real backend", () => {
       failure_by_phase: { "1": 1 },
       failure_by_move: {},
     });
+  });
+
+  it("logs out and loses access to attempts again", async () => {
+    const { getCurrentUser, login, logout } = await import("../src/api/auth");
+    const { getBossAttempts } = await import("../src/api/attempts");
+
+    await logout();
+
+    expect(await getCurrentUser()).toBeNull();
+    await expect(getBossAttempts("genichiro-ashina")).rejects.toMatchObject({ status: 401 });
+
+    await expect(login({ username: "integration_wolf", password: "wrong-password" })).rejects.toMatchObject({
+      status: 401,
+    });
+    await login({ username: "integration_wolf", password: "kusabimaru" });
+    expect(await getBossAttempts("genichiro-ashina")).toHaveLength(2);
   });
 });

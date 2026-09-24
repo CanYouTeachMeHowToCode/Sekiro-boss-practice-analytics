@@ -282,7 +282,7 @@ V1 刻意使用 JSON 持久化，因为初始数据集很小，主要目标是�
 
    后端每次启动时都会执行数据库迁移，并从 `backend/seed/bosses.json` 同步 Boss 数据。
 
-3. 打开 http://localhost:8080。API 文档在 http://localhost:8000/docs。
+3. 打开 http://localhost:8080 并注册一个账号。不登录也可以浏览 Boss 的招式，但记录尝试和查看分析需要登录。API 文档在 http://localhost:8000/docs。
 
 在同一网络下用手机访问时，打开 `http://<电脑的局域网 IP>:8080`。Windows 上可以用 `ipconfig` 查看 IP，要看 Ethernet 或 Wi-Fi 网卡下面的地址，不是 `vEthernet (WSL)` 那一个。
 
