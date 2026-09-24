@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import RecordAttemptForm from "./RecordAttemptForm";
+import { withLanguage } from "../i18n/testLanguage";
 import * as attemptsApi from "../api/attempts";
 import { ApiError } from "../api/client";
 import type { Attempt, Boss } from "../types";
@@ -20,7 +21,7 @@ const boss: Boss = {
       name: "Phase 1",
       name_zh: null,
       moves: [
-        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: null, telegraph: null, counter: null, common_mistakes: null, name_zh: null, name_zh_source: null, name_zh_source_url: null, description_zh: null, telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
+        { id: "thrust-attack", name: "Thrust Attack", move_type: "thrust", description: "A quick lunge.", telegraph: null, counter: null, common_mistakes: null, name_zh: "突刺攻击", name_zh_source: "translation", name_zh_source_url: null, description_zh: "快速突进一刺。", telegraph_zh: null, counter_zh: null, common_mistakes_zh: null },
       ],
     },
     {
@@ -145,5 +146,41 @@ describe("RecordAttemptForm", () => {
     await user.click(screen.getByRole("button", { name: /save attempt/i }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Phase 5 does not exist");
+  });
+
+  it("describes each move on hover and shows the chosen move's description", async () => {
+    const user = userEvent.setup();
+    render(<RecordAttemptForm boss={boss} onSuccess={vi.fn()} onCancel={vi.fn()} />);
+
+    expect(screen.getByRole("option", { name: "Thrust Attack" })).toHaveAttribute("title", "A quick lunge.");
+    expect(screen.queryByText("A quick lunge.")).not.toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText(/what ended this attempt/i), "thrust-attack");
+
+    expect(screen.getByText("A quick lunge.")).toBeInTheDocument();
+    expect(screen.getByLabelText(/what ended this attempt/i)).toHaveAccessibleDescription("A quick lunge.");
+  });
+
+  it("shows no description for a move without one, or for Other", async () => {
+    const user = userEvent.setup();
+    render(<RecordAttemptForm boss={boss} onSuccess={vi.fn()} onCancel={vi.fn()} />);
+    const cause = screen.getByLabelText(/what ended this attempt/i);
+
+    await user.selectOptions(screen.getByLabelText(/phase reached/i), "2");
+    await user.selectOptions(cause, "floating-passage");
+    expect(screen.getByRole("option", { name: "Floating Passage" })).not.toHaveAttribute("title");
+    expect(document.querySelector(".move-description-hint")).toBeNull();
+
+    await user.selectOptions(cause, "__other__");
+    expect(document.querySelector(".move-description-hint")).toBeNull();
+  });
+
+  it("describes moves in Chinese in Chinese mode", async () => {
+    const user = userEvent.setup();
+    render(withLanguage(<RecordAttemptForm boss={boss} onSuccess={vi.fn()} onCancel={vi.fn()} />, "zh"));
+
+    expect(screen.getByRole("option", { name: "突刺攻击" })).toHaveAttribute("title", "快速突进一刺。");
+    await user.selectOptions(screen.getByLabelText("这次是被什么打败的？"), "thrust-attack");
+    expect(screen.getByText("快速突进一刺。")).toBeInTheDocument();
   });
 });

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { FormEvent } from "react";
 import { createAttempt } from "../api/attempts";
 import { ApiError } from "../api/client";
 import type { AttemptResult, Boss, CreateAttemptRequest } from "../types";
-import { bossName, moveName, phaseName } from "../i18n/content";
+import { bossName, moveName, moveText, phaseName } from "../i18n/content";
 import { useLanguage } from "../i18n/language";
 
 const OTHER = "__other__";
@@ -25,6 +25,9 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
   const [error, setError] = useState<string | null>(null);
 
   const movesForPhase = boss.phases.find((p) => p.phase_number === phaseReached)?.moves ?? [];
+  const selectedMove = movesForPhase.find((m) => m.id === failureChoice);
+  const selectedDescription = selectedMove ? moveText(selectedMove, "description", language) : null;
+  const descriptionId = useId();
 
   useEffect(() => {
     if (failureChoice === "" || failureChoice === OTHER || failureChoice === NOT_SURE) return;
@@ -106,10 +109,15 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
       {result === "failed" && (
         <label>
           {t("form.cause")}
-          <select value={failureChoice} onChange={(e) => setFailureChoice(e.target.value)}>
+          <select
+            value={failureChoice}
+            onChange={(e) => setFailureChoice(e.target.value)}
+            aria-describedby={selectedDescription ? descriptionId : undefined}
+          >
             <option value="">{t("form.select")}</option>
             {movesForPhase.map((move) => (
-              <option key={move.id} value={move.id}>
+              // Desktop browsers show the title as a tooltip while hovering an option.
+              <option key={move.id} value={move.id} title={moveText(move, "description", language) ?? undefined}>
                 {moveName(move, language)}
               </option>
             ))}
@@ -117,6 +125,13 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
             <option value={NOT_SURE}>{t("form.notSure")}</option>
           </select>
         </label>
+      )}
+
+      {/* Also shown for the chosen move, since phones have no hover. */}
+      {result === "failed" && selectedDescription && (
+        <p id={descriptionId} className="move-description-hint">
+          {selectedDescription}
+        </p>
       )}
 
       <label>
