@@ -62,7 +62,7 @@ V2 delivered the structured, multi-boss Sekiro analytics application:
 * four required CI jobs: backend, frontend, integration, docker
 * local deployment with Docker Compose
 
-Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) moved into V3 as Milestone 4.
+Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment) moved into V3 as Milestone 5.
 
 Released as `v2.0.0`.
 
@@ -74,7 +74,7 @@ Completed so far:
 * **Milestone 2 — User-Owned Attempts:** `attempts.user_id` foreign key. It is nullable for now: attempts from before accounts existed stay ownerless and hidden until `python -m scripts.claim_attempts <username>` assigns them.
 * **Milestone 3 — Per-User Analytics and Isolation:** attempt history, boss analytics, progression and the Sekiro dashboard only cover the logged-in user, with isolation tests at the API and service level.
 
-Next: Milestone 4 (public deployment), which also makes `attempts.user_id` NOT NULL.
+Next: Milestone 4 (content completion: the remaining main bosses and Chinese move names), then Milestone 5 (public deployment), which also makes `attempts.user_id` NOT NULL.
 
 ---
 
@@ -84,15 +84,19 @@ V3 answers:
 
 > **What should I practice next?**
 
-V3 scope is exactly three capabilities:
+V3 scope is:
 
 ```text
 User accounts
++
+Content completion (all main bosses, Chinese move names)
 +
 Public deployment
 +
 Rule-based practice recommendations
 ```
+
+Content completion was added after Milestones 1–3, so the public release covers every main boss and shows moves in Chinese as well as English. Move video or GIF references were considered and deferred (Milestone 8).
 
 Long-term tracking and practice goals are NOT part of V3. Long-term progression is already covered by V2's progression chart, recent vs. all-time comparisons and Sekiro dashboard. Practice goals were considered and dropped.
 
@@ -142,7 +146,7 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 
 * add `attempts.user_id` as a foreign key to `users`, through a reviewed Alembic migration
 * migrate existing attempts to the owner's account explicitly. Do not silently delete or orphan them.
-  * Done by making `attempts.user_id` nullable: pre-account attempts stay ownerless and hidden from everyone until `python -m scripts.claim_attempts <username>` assigns them. Milestone 4 makes the column NOT NULL.
+  * Done by making `attempts.user_id` nullable: pre-account attempts stay ownerless and hidden from everyone until `python -m scripts.claim_attempts <username>` assigns them. Milestone 5 makes the column NOT NULL.
 * record the current user on every new attempt
 * read attempt history for the current user only
 
@@ -152,11 +156,22 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 * add tests proving users cannot read or write each other's attempts, at both the API and service level
 * keep the V2 analytics definitions unchanged apart from the user scope
 
-### Milestone 4 — Public Deployment
+### Milestone 4 — Content Completion
 
-Moved from V2 Milestone 10. It comes after Milestones 1–3 because accounts are what make a public instance safe. See "Public Deployment" below for the work involved.
+Comes before public deployment so the public release is complete.
 
-### Milestone 5 — Practice Recommendations
+* add the remaining **main** bosses (mini-bosses stay out of scope), following the existing data rules: sourced from a wiki, boss-level `source_name` / `source_url`, `telegraph` and `common_mistakes` only when the source states them, reviewed by the user
+* add a Chinese name to every move:
+  * prefer the name used by a Chinese Sekiro wiki (option A), recorded with its source
+  * where no Chinese wiki name exists, provide a translation (option B), stored and shown as a translation, never presented as an official name
+  * the user reviews all Chinese names manually
+* keep boss data quality over quantity; do not create placeholder moves
+
+### Milestone 5 — Public Deployment
+
+Moved from V2 Milestone 10. It comes after the account milestones because accounts are what make a public instance safe, and after content completion so the public release is complete. See "Public Deployment" below for the work involved.
+
+### Milestone 6 — Practice Recommendations
 
 * rule-based and explainable, derived only from the user's attempt records
 * candidate signals include:
@@ -167,12 +182,20 @@ Moved from V2 Milestone 10. It comes after Milestones 1–3 because accounts are
 * failure counts for a move only count attempts that reached a phase containing that move, so dying earlier cannot make a move look "improved"
 * the exact rules are decided with the user before implementation
 
-### Milestone 6 — Integration Testing, CI and Release
+### Milestone 7 — Integration Testing, CI and Release
 
 * an end-to-end test: register → record attempts → analytics → recommendations
 * extend CI to cover authentication and user isolation
 * verify the production deployment workflow
 * release `v3.0.0`
+
+### Milestone 8 — Move Video References (Deferred)
+
+Short clips or GIFs showing each move, so players can identify it more easily.
+
+Deferred because of the effort (clips for every move), hosting size, and copyright: wiki-hosted GIFs must not be hotlinked or copied, and game footage belongs to FromSoftware. A lighter option to consider first is a timestamped YouTube link per move.
+
+Not required for `v3.0.0`.
 
 ## V3 Success Criteria
 
@@ -251,7 +274,7 @@ V2 should preserve that functionality while adding:
 * recent vs historical comparisons
 * overall Sekiro-level analytics
 * stronger integration testing
-* a reliable local deployment with Docker Compose (public hosting moved into V3 Milestone 4)
+* a reliable local deployment with Docker Compose (public hosting moved into V3 Milestone 5)
 
 ---
 
@@ -394,7 +417,7 @@ These belong to V3–V5 or should only be introduced when justified by an actual
 
 * Docker Compose, run locally
 
-V2 has no public hosting and no staging or production environments. Public deployment moved into V3 Milestone 4; see "Public Deployment (V3 Milestone 4)".
+V2 has no public hosting and no staging or production environments. Public deployment moved into V3 Milestone 5; see "Public Deployment (V3 Milestone 5)".
 
 ---
 
@@ -556,7 +579,7 @@ source_name
 source_url
 ```
 
-`name_zh` is the official Simplified Chinese name. Only boss names are localized; move names and the UI stay in English for now.
+`name_zh` is the official Simplified Chinese name. Boss names and (from V3 Milestone 4) move names have Chinese versions; the rest of the UI stays in English for now.
 
 `source_name` and `source_url` record where the boss's phase and move data came from. All moves of a boss share this source.
 
@@ -1480,14 +1503,14 @@ v2.0.0 (run locally with Docker Compose)
 
 ---
 
-# Public Deployment (V3 Milestone 4)
+# Public Deployment (V3 Milestone 5)
 
 V2 ran locally only. Public deployment was moved into V3 because:
 
 * V2 has no authentication, so a public instance would let anyone record attempts into the only attempt history
 * V3 Milestones 1–3 add user accounts and per-user data, which solves that problem directly
 
-Until Milestone 4 is done, a Cloudflare Tunnel to the local instance is acceptable for temporary remote access, such as from a phone away from home.
+Until Milestone 5 is done, a Cloudflare Tunnel to the local instance is acceptable for temporary remote access, such as from a phone away from home.
 
 The work involved:
 
@@ -1774,11 +1797,11 @@ A broken persistence or analytics change should normally be detected before merg
 
 ---
 
-## Milestone 10 — Stable Deployment (Moved to V3 Milestone 4)
+## Milestone 10 — Stable Deployment (Moved to V3 Milestone 5)
 
 ### Decision
 
-Public deployment moved into V3 as Milestone 4. See "Public Deployment (V3 Milestone 4)" for the reasons and the work involved.
+Public deployment moved into V3 as Milestone 5. See "Public Deployment (V3 Milestone 5)" for the reasons and the work involved.
 
 ### What V2 Still Includes
 
@@ -1821,7 +1844,7 @@ Recommended sequence:
 
 13. CI Hardening
 
-14. Stable Deployment (moved to V3 Milestone 4, see Milestone 10)
+14. Stable Deployment (moved to V3 Milestone 5, see Milestone 10)
 
 15. Release v2.0.0
 ```
@@ -1927,7 +1950,7 @@ These are NOT V3 requirements.
 When working in this repository:
 
 1. Treat V1 and V2 as completed.
-2. Treat V3 as the current active development scope, limited to accounts, public deployment and rule-based practice recommendations.
+2. Treat V3 as the current active development scope, limited to accounts, content completion, public deployment and rule-based practice recommendations.
 3. Preserve the lightweight manual attempt-recording workflow; accounts must not add fields to it.
 4. Do not add detailed manual combat telemetry.
 5. Continue supporting `Other` and `Not Sure`.
@@ -1945,7 +1968,7 @@ When working in this repository:
 17. Keep database access and analytics logic outside route handlers.
 18. Avoid unnecessary repository/factory/framework abstractions.
 19. Do not create large amounts of low-quality boss data.
-20. Do not invent Sekiro mechanics when uncertain, and keep game knowledge traceable to sources.
+20. Do not invent Sekiro mechanics when uncertain, and keep game knowledge traceable to sources. Chinese move names come from a Chinese wiki where one exists; otherwise they are marked as translations.
 21. Do not commit secrets, production credentials or private database URLs.
 22. Do not add OAuth, email infrastructure, roles, social features or practice goals in V3.
 23. Do not add video analysis (V4) or Black Myth: Wukong (V5).
@@ -1966,6 +1989,7 @@ If the feature does not clearly belong to:
 Accounts and Authentication
 User-Owned Attempts
 Per-User Analytics and Isolation
+Content Completion
 Public Deployment
 Practice Recommendations
 Testing / CI / Release

@@ -83,16 +83,18 @@ Released as `v2.0.0`.
 **Core question:**
 **What should I practice next?**
 
-V3 introduces individual player identity, public deployment and practice recommendations.
+V3 introduces individual player identity, complete boss content, public deployment and practice recommendations.
 
 Milestones:
 
 1. ✅ **Accounts and authentication:** register, log in, log out, with hashed passwords and session cookies
 2. ✅ **User-owned attempts:** every attempt belongs to a user; existing attempts move to the owner's account
 3. ✅ **Per-user analytics:** boss analytics, progression and the Sekiro dashboard show only the user's own data
-4. **Public deployment:** a stable URL with HTTPS, backups and deployment from `main`
-5. **Practice recommendations:** rule-based suggestions derived from the user's own attempts, each showing its evidence
-6. **Integration testing, CI and release**
+4. **Content completion:** every main boss, and a Chinese name for every move (from a Chinese wiki where one exists, otherwise marked as a translation)
+5. **Public deployment:** a stable URL with HTTPS, backups and deployment from `main`
+6. **Practice recommendations:** rule-based suggestions derived from the user's own attempts, each showing its evidence
+7. **Integration testing, CI and release**
+8. **Move video references (deferred):** short clips showing each move; not required for `v3.0.0`
 
 Example output:
 
