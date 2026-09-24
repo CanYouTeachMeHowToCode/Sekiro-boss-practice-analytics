@@ -66,6 +66,16 @@ Milestone 8 (search and filtering) was skipped. Milestone 10 (public deployment)
 
 Released as `v2.0.0`.
 
+## V3 — In Progress
+
+Completed so far:
+
+* **Milestone 1 — Accounts and Authentication:** `users` and `user_sessions` tables, argon2 password hashing, server-side sessions in an httpOnly SameSite=Lax cookie (only a SHA-256 hash of the token is stored), register / login / logout / me endpoints, login and register pages, and a welcome page with the boss list for visitors. Registration is open to everyone.
+* **Milestone 2 — User-Owned Attempts:** `attempts.user_id` foreign key. It is nullable for now: attempts from before accounts existed stay ownerless and hidden until `python -m scripts.claim_attempts <username>` assigns them.
+* **Milestone 3 — Per-User Analytics and Isolation:** attempt history, boss analytics, progression and the Sekiro dashboard only cover the logged-in user, with isolation tests at the API and service level.
+
+Next: Milestone 4 (public deployment), which also makes `attempts.user_id` NOT NULL.
+
 ---
 
 # Current Development Focus: V3 — Personalized Practice Coach
@@ -119,7 +129,7 @@ Do NOT introduce the following in V3 unless explicitly requested:
 
 Implement V3 incrementally. Each milestone should leave the project in a working state.
 
-### Milestone 1 — Accounts and Authentication
+### Milestone 1 — Accounts and Authentication (Completed)
 
 * add a `users` table through an Alembic migration
 * hash passwords with argon2
@@ -128,7 +138,7 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 * add a login / register page in the frontend
 * boss data remains browsable without logging in; recording attempts and viewing analytics require login
 
-### Milestone 2 — User-Owned Attempts
+### Milestone 2 — User-Owned Attempts (Completed)
 
 * add `attempts.user_id` as a foreign key to `users`, through a reviewed Alembic migration
 * migrate existing attempts to the owner's account explicitly. Do not silently delete or orphan them.
@@ -136,7 +146,7 @@ Implement V3 incrementally. Each milestone should leave the project in a working
 * record the current user on every new attempt
 * read attempt history for the current user only
 
-### Milestone 3 — Per-User Analytics and Isolation
+### Milestone 3 — Per-User Analytics and Isolation (Completed)
 
 * scope boss analytics, progression and the Sekiro dashboard to the current user
 * add tests proving users cannot read or write each other's attempts, at both the API and service level

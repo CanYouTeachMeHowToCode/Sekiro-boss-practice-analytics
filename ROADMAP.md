@@ -87,9 +87,9 @@ V3 introduces individual player identity, public deployment and practice recomme
 
 Milestones:
 
-1. **Accounts and authentication:** register, log in, log out, with hashed passwords and session cookies
-2. **User-owned attempts:** every attempt belongs to a user; existing attempts move to the owner's account
-3. **Per-user analytics:** boss analytics, progression and the Sekiro dashboard show only the user's own data
+1. ✅ **Accounts and authentication:** register, log in, log out, with hashed passwords and session cookies
+2. ✅ **User-owned attempts:** every attempt belongs to a user; existing attempts move to the owner's account
+3. ✅ **Per-user analytics:** boss analytics, progression and the Sekiro dashboard show only the user's own data
 4. **Public deployment:** a stable URL with HTTPS, backups and deployment from `main`
 5. **Practice recommendations:** rule-based suggestions derived from the user's own attempts, each showing its evidence
 6. **Integration testing, CI and release**
