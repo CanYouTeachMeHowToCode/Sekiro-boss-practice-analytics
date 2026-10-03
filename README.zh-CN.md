@@ -205,7 +205,7 @@ V3 把单用户的本地应用，变成可以供多名玩家使用、每人数�
 
 ## 未来方向
 
-完整计划见 [ROADMAP.md](ROADMAP.md)。简要来说：
+完整计划见 [ROADMAP.zh-CN.md](ROADMAP.zh-CN.md)（[English](ROADMAP.md)）。简要来说：
 
 ```text
 V1  是什么打败了我？         → 手动记录的尝试分析

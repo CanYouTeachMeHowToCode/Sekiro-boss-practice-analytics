@@ -1,5 +1,7 @@
 # Sekiro Boss Practice Analytics — Roadmap
 
+English | [简体中文](ROADMAP.zh-CN.md)
+
 This roadmap defines the planned evolution of **Sekiro Boss Practice Analytics**.
 
 The project began as a lightweight manual boss-attempt tracker, but development exposed an important constraint:
