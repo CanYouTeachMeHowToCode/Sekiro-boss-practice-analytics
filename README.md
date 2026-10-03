@@ -195,7 +195,7 @@ V3 turns the single-user local app into a foundation that several players can us
 * ✅ **Accounts and authentication:** registration, login and logout, argon2-hashed passwords, and server-side sessions in an httpOnly cookie. Boss data stays browsable without an account.
 * ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
 * ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
-* 🚧 **English / 中文 interface:** a language switch, with each language showing only its own text.
+* ✅ **English / 中文 interface:** a language switch, with each language showing only its own text. The choice is saved on the account, or in the browser for visitors. Most Chinese move names and descriptions are translations of the English source material.
 * **Existing content cleanup:** correcting the current boss data rather than adding more bosses from wikis.
 * **Release `v3.0.0`.**
 

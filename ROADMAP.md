@@ -173,11 +173,11 @@ A user must never read, modify, or influence another user's attempt analytics.
 
 ---
 
-## Milestone 4 — Bilingual Product Interface
+## Milestone 4 — Bilingual Product Interface ✅
 
 Add English / Chinese language support for the existing product.
 
-Requirements:
+Delivered:
 
 - language switch in the navigation
 - logged-in users store their language preference in their account
