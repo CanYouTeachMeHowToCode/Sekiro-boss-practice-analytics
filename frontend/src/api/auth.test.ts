@@ -19,11 +19,11 @@ describe("auth api", () => {
   });
 
   it("posts credentials to the login endpoint", async () => {
-    const fetchMock = mockFetch(200, { id: "1", username: "wolf" });
+    const fetchMock = mockFetch(200, { id: "1", username: "wolf", preferred_language: null });
 
     const user = await login({ username: "wolf", password: "kusabimaru" });
 
-    expect(user).toEqual({ id: "1", username: "wolf" });
+    expect(user).toEqual({ id: "1", username: "wolf", preferred_language: null });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/auth/login",
       expect.objectContaining({ method: "POST", body: JSON.stringify({ username: "wolf", password: "kusabimaru" }) })

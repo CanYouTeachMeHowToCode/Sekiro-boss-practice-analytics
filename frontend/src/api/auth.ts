@@ -13,6 +13,10 @@ export function logout(): Promise<void> {
   return apiRequest<void>("/auth/logout", { method: "POST" });
 }
 
+export function updatePreferredLanguage(language: "en" | "zh"): Promise<User> {
+  return apiRequest<User>("/auth/me", { method: "PATCH", body: JSON.stringify({ preferred_language: language }) });
+}
+
 /** The logged-in user, or null when there is no valid session. */
 export async function getCurrentUser(): Promise<User | null> {
   try {

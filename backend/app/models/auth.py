@@ -1,4 +1,5 @@
 import re
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -28,6 +29,14 @@ class LoginRequest(BaseModel):
     password: str = Field(max_length=128)
 
 
+Language = Literal["en", "zh"]
+
+
 class User(BaseModel):
     id: str
     username: str
+    preferred_language: Language | None = None
+
+
+class UpdateUserRequest(BaseModel):
+    preferred_language: Language

@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { useLanguage } from "../i18n/language";
 
 interface PasswordInputProps {
   value: string;
@@ -24,12 +25,14 @@ function EyeIcon({ crossed }: { crossed: boolean }) {
 
 /** A labelled password field with a button that shows or hides what was typed. */
 export default function PasswordInput({ value, onChange, autoComplete }: PasswordInputProps) {
+  const { t } = useLanguage();
   const id = useId();
   const [visible, setVisible] = useState(false);
+  const toggleLabel = visible ? t("password.hide") : t("password.show");
 
   return (
     <div className="form-field">
-      <label htmlFor={id}>Password</label>
+      <label htmlFor={id}>{t("auth.password")}</label>
       <div className="password-field">
         <input
           id={id}
@@ -47,9 +50,9 @@ export default function PasswordInput({ value, onChange, autoComplete }: Passwor
           type="button"
           className="password-toggle"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={toggleLabel}
           aria-pressed={visible}
-          title={visible ? "Hide password" : "Show password"}
+          title={toggleLabel}
         >
           {/* Crossed-out eye while the password is visible: the button hides it again. */}
           <EyeIcon crossed={visible} />

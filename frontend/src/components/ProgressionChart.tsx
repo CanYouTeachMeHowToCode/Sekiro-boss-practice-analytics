@@ -1,3 +1,4 @@
+import { formatPhase, useLanguage } from "../i18n/language";
 import type { Boss, ProgressionPoint } from "../types";
 
 const X_STEP = 28;
@@ -12,11 +13,13 @@ interface ProgressionChartProps {
 }
 
 export default function ProgressionChart({ boss, points }: ProgressionChartProps) {
+  const { language, t } = useLanguage();
+
   if (points.length === 0) {
     return (
       <section className="progression">
-        <h2>Progression</h2>
-        <p>Record an attempt to see your progression.</p>
+        <h2>{t("progression.heading")}</h2>
+        <p>{t("progression.empty")}</p>
       </section>
     );
   }
@@ -32,23 +35,29 @@ export default function ProgressionChart({ boss, points }: ProgressionChartProps
   const labelEvery = Math.ceil(points.length / MAX_X_LABELS);
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.attempt_number)},${y(p.phase_reached)}`).join(" ");
   const victories = points.filter((p) => p.result === "victory").length;
+  const pointLabel = (p: ProgressionPoint) =>
+    t("progression.point", {
+      n: p.attempt_number,
+      phase: formatPhase(p.phase_reached, language),
+      result: p.result === "victory" ? t("progression.victory") : t("progression.failed"),
+    });
 
   return (
     <section className="progression">
-      <h2>Progression</h2>
+      <h2>{t("progression.heading")}</h2>
       <div className="progression-scroll">
         <svg
           width={width}
           height={height}
           viewBox={`0 0 ${width} ${height}`}
           role="img"
-          aria-label={`Phase reached across ${points.length} attempts, ${victories} of them victories`}
+          aria-label={t("progression.summary", { count: points.length, victories })}
         >
           {phaseNumbers.map((phase) => (
             <g key={phase}>
               <line className="progression-grid" x1={MARGIN.left} x2={width - MARGIN.right} y1={y(phase)} y2={y(phase)} />
               <text className="progression-axis" x={MARGIN.left - 8} y={y(phase)} textAnchor="end" dominantBaseline="middle">
-                P{phase}
+                {t("progression.axisPhase", { n: phase })}
               </text>
             </g>
           ))}
@@ -73,9 +82,9 @@ export default function ProgressionChart({ boss, points }: ProgressionChartProps
               cx={x(p.attempt_number)}
               cy={y(p.phase_reached)}
               r={p.result === "victory" ? 7 : 5}
-              aria-label={`Attempt ${p.attempt_number}: Phase ${p.phase_reached}, ${p.result}`}
+              aria-label={pointLabel(p)}
             >
-              <title>{`Attempt ${p.attempt_number}: Phase ${p.phase_reached}, ${p.result}`}</title>
+              <title>{pointLabel(p)}</title>
             </circle>
           ))}
         </svg>

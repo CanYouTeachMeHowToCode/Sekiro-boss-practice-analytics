@@ -305,4 +305,21 @@ describe("frontend calling the real backend", () => {
     await login({ username: "integration_wolf", password: "kusabimaru" });
     expect(await getBossAttempts("genichiro-ashina")).toHaveLength(2);
   });
+
+  it("saves the interface language on the account and serves boss content in both languages", async () => {
+    const { getCurrentUser, updatePreferredLanguage } = await import("../src/api/auth");
+    const { getBossById } = await import("../src/api/bosses");
+
+    expect((await getCurrentUser())?.preferred_language).toBeNull();
+    await updatePreferredLanguage("zh");
+    expect((await getCurrentUser())?.preferred_language).toBe("zh");
+
+    const boss = await getBossById("genichiro-ashina");
+    const floatingPassage = boss.phases[0].moves.find((m) => m.id === "floating-passage");
+    expect(boss.location_zh).toBeTruthy();
+    expect(boss.phases[0].name_zh).toBe("第一阶段");
+    expect(floatingPassage?.name_zh).toBe("绝技·飞渡浮舟");
+    expect(floatingPassage?.description).toBeTruthy();
+    expect(floatingPassage?.description_zh).toBeTruthy();
+  });
 });

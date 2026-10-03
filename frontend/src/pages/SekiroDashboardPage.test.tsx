@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import SekiroDashboardPage from "./SekiroDashboardPage";
 import * as sekiroApi from "../api/sekiro";
 import type { BossComparisonRow, SekiroAnalytics } from "../types";
+import { withLanguage } from "../i18n/testLanguage";
 
 vi.mock("../api/sekiro");
 
@@ -43,22 +44,26 @@ const analytics: SekiroAnalytics = {
       attempt_id: "12",
       boss_id: "owl-father",
       boss_name: "Owl (Father)",
+      boss_name_zh: null,
       timestamp: "2026-09-22T23:00:00Z",
       result: "failed",
       phase_reached: 2,
       failure_move_id: "owl-teleport",
       failure_move_name: "Owl Teleport",
+      failure_move_name_zh: "枭之瞬移",
       failure_category: null,
     },
     {
       attempt_id: "11",
       boss_id: "genichiro-ashina",
       boss_name: "Genichiro Ashina",
+      boss_name_zh: null,
       timestamp: "2026-09-22T22:00:00Z",
       result: "victory",
       phase_reached: 3,
       failure_move_id: null,
       failure_move_name: null,
+      failure_move_name_zh: null,
       failure_category: null,
     },
   ],
@@ -109,9 +114,9 @@ describe("SekiroDashboardPage", () => {
       .map((r) => within(r).getAllByRole("cell").map((c) => c.textContent));
 
     expect(rows).toEqual([
-      ["Genichiro Ashina苇名弦一郎", "3", "Victory", "Yes", "Attempt #3"],
-      ["Owl (Father)义父", "3", "Phase 2 / 2", "No", "—"],
-      ["Guardian Ape狮子猿", "0", "—", "No", "—"],
+      ["Genichiro Ashina", "3", "Victory", "Yes", "Attempt #3"],
+      ["Owl (Father)", "3", "Phase 2 / 2", "No", "—"],
+      ["Guardian Ape", "0", "—", "No", "—"],
     ]);
     expect(within(table).getByRole("link", { name: "Guardian Ape" })).toHaveAttribute("href", "/bosses/guardian-ape");
   });
@@ -155,5 +160,23 @@ describe("SekiroDashboardPage", () => {
     renderPage();
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/failed to load/i);
+  });
+
+  it("shows the comparison in Chinese in Chinese mode", async () => {
+    vi.mocked(sekiroApi.getSekiroAnalytics).mockResolvedValue(analytics);
+    render(withLanguage(<MemoryRouter><SekiroDashboardPage /></MemoryRouter>, "zh"));
+
+    const table = await screen.findByRole("table");
+    const rows = within(table)
+      .getAllByRole("row")
+      .slice(1)
+      .map((r) => within(r).getAllByRole("cell").map((c) => c.textContent));
+
+    expect(screen.getByRole("heading", { name: "只狼练习总览" })).toBeInTheDocument();
+    expect(rows).toEqual([
+      ["苇名弦一郎", "3", "胜利", "是", "第 3 次"],
+      ["义父", "3", "第 2 / 2 阶段", "否", "—"],
+      ["狮子猿", "0", "—", "否", "—"],
+    ]);
   });
 });

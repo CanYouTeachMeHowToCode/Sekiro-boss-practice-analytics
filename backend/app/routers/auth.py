@@ -4,14 +4,14 @@ from sqlalchemy.orm import Session
 from app.auth import SESSION_COOKIE, clear_session_cookie, get_current_user, set_session_cookie
 from app.db import models
 from app.db.session import get_db
-from app.models.auth import LoginRequest, RegisterRequest, User
+from app.models.auth import LoginRequest, RegisterRequest, UpdateUserRequest, User
 from app.services import auth_service
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 def _to_response(user: models.User) -> User:
-    return User(id=str(user.id), username=user.username)
+    return User(id=str(user.id), username=user.username, preferred_language=user.preferred_language)
 
 
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
@@ -48,3 +48,10 @@ def logout(
 @router.get("/me", response_model=User)
 def me(user: models.User = Depends(get_current_user)):
     return _to_response(user)
+
+
+@router.patch("/me", response_model=User)
+def update_me(
+    req: UpdateUserRequest, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    return _to_response(auth_service.set_preferred_language(db, user, req.preferred_language))

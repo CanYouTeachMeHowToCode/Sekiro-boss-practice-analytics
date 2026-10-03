@@ -65,6 +65,12 @@ def authenticate(db: Session, username: str, password: str) -> User | None:
     return user
 
 
+def set_preferred_language(db: Session, user: User, language: str) -> User:
+    user.preferred_language = language
+    db.commit()
+    return user
+
+
 def create_session(db: Session, user: User) -> str:
     """Starts a session for the user and returns the raw token for the cookie."""
     db.execute(delete(UserSession).where(UserSession.user_id == user.id, UserSession.expires_at <= _now()))

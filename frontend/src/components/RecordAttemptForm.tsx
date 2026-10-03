@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { FormEvent } from "react";
 import { createAttempt } from "../api/attempts";
 import { ApiError } from "../api/client";
 import type { AttemptResult, Boss, CreateAttemptRequest } from "../types";
+import { bossName, moveName, moveText, phaseName } from "../i18n/content";
+import { useLanguage } from "../i18n/language";
 
 const OTHER = "__other__";
 const NOT_SURE = "__not_sure__";
@@ -14,6 +16,7 @@ interface RecordAttemptFormProps {
 }
 
 export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordAttemptFormProps) {
+  const { language, t } = useLanguage();
   const [result, setResult] = useState<AttemptResult>("failed");
   const [phaseReached, setPhaseReached] = useState<number>(boss.phases[0]?.phase_number ?? 1);
   const [failureChoice, setFailureChoice] = useState<string>("");
@@ -22,6 +25,9 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
   const [error, setError] = useState<string | null>(null);
 
   const movesForPhase = boss.phases.find((p) => p.phase_number === phaseReached)?.moves ?? [];
+  const selectedMove = movesForPhase.find((m) => m.id === failureChoice);
+  const selectedDescription = selectedMove ? moveText(selectedMove, "description", language) : null;
+  const descriptionId = useId();
 
   useEffect(() => {
     if (failureChoice === "" || failureChoice === OTHER || failureChoice === NOT_SURE) return;
@@ -54,16 +60,17 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
       onSuccess();
     } catch (err) {
       setSubmitting(false);
-      setError(err instanceof ApiError ? err.message : "Failed to save attempt.");
+      // Backend validation messages are English; Chinese mode shows a generic message instead.
+      setError(err instanceof ApiError && language === "en" ? err.message : t("form.saveError"));
     }
   }
 
   return (
     <form className="record-attempt-form" onSubmit={handleSubmit}>
-      <h3>Record Attempt — {boss.name}</h3>
+      <h3>{t("form.title", { boss: bossName(boss, language) })}</h3>
 
       <fieldset>
-        <legend>Result</legend>
+        <legend>{t("form.result")}</legend>
         <label>
           <input
             type="radio"
@@ -72,7 +79,7 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
             checked={result === "failed"}
             onChange={() => setResult("failed")}
           />
-          Failed
+          {t("form.failed")}
         </label>
         <label>
           <input
@@ -82,17 +89,17 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
             checked={result === "victory"}
             onChange={() => setResult("victory")}
           />
-          Victory
+          {t("form.victory")}
         </label>
       </fieldset>
 
       {result === "failed" && (
         <label>
-          Phase Reached
+          {t("form.phaseReached")}
           <select value={phaseReached} onChange={(e) => setPhaseReached(Number(e.target.value))}>
             {boss.phases.map((phase) => (
               <option key={phase.phase_number} value={phase.phase_number}>
-                {phase.name}
+                {phaseName(phase, language)}
               </option>
             ))}
           </select>
@@ -101,33 +108,50 @@ export default function RecordAttemptForm({ boss, onSuccess, onCancel }: RecordA
 
       {result === "failed" && (
         <label>
-          What ended this attempt?
-          <select value={failureChoice} onChange={(e) => setFailureChoice(e.target.value)}>
-            <option value="">Select…</option>
+          {t("form.cause")}
+          <select
+            value={failureChoice}
+            onChange={(e) => setFailureChoice(e.target.value)}
+            aria-describedby={selectedDescription ? descriptionId : undefined}
+          >
+            <option value="">{t("form.select")}</option>
             {movesForPhase.map((move) => (
-              <option key={move.id} value={move.id}>
-                {move.name}
+              // Desktop browsers show the title as a tooltip while hovering an option.
+              <option key={move.id} value={move.id} title={moveText(move, "description", language) ?? undefined}>
+                {moveName(move, language)}
               </option>
             ))}
-            <option value={OTHER}>Other</option>
-            <option value={NOT_SURE}>Not Sure</option>
+            <option value={OTHER}>{t("form.other")}</option>
+            <option value={NOT_SURE}>{t("form.notSure")}</option>
           </select>
         </label>
       )}
 
+      {/* Also shown for the chosen move, since phones have no hover. */}
+      {result === "failed" && selectedDescription && (
+        <p id={descriptionId} className="move-description-hint">
+          {selectedDescription}
+        </p>
+      )}
+
       <label>
-        Notes
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional" rows={2} />
+        {t("form.notes")}
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder={t("form.optional")}
+          rows={2}
+        />
       </label>
 
       {error && <p role="alert">{error}</p>}
 
       <div className="form-actions">
         <button type="button" className="btn" onClick={onCancel} disabled={submitting}>
-          Cancel
+          {t("cancel")}
         </button>
         <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? "Saving…" : "Save Attempt"}
+          {submitting ? t("form.saving") : t("form.save")}
         </button>
       </div>
     </form>

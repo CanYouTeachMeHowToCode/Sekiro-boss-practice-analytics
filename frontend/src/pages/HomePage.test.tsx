@@ -26,7 +26,7 @@ function renderHome(auth: Partial<AuthState>) {
 describe("HomePage and NavBar", () => {
   it("welcomes visitors with the boss list and login links", async () => {
     vi.mocked(bossesApi.getBosses).mockResolvedValue([
-      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle" },
+      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: null },
     ]);
 
     renderHome({ user: null });

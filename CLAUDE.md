@@ -125,10 +125,10 @@ Completed:
 1. Accounts and authentication
 2. User-owned attempts
 3. Per-user analytics and isolation
+4. Bilingual interface
 
 Remaining:
 
-4. Bilingual interface
 5. Existing-content cleanup
 6. V3 hardening and release
 
@@ -371,7 +371,7 @@ Do not change the mathematical definitions of V2 analytics solely because user i
 
 ---
 
-# 11. V3 Milestone 4 — Bilingual Interface
+# 11. V3 Milestone 4 — Bilingual Interface ✅
 
 Implement English / Chinese product support.
 
@@ -441,6 +441,20 @@ Floating Passage 浮舟渡
 ```
 
 unless there is a deliberate product reason.
+
+---
+
+## Delivered
+
+- language switch in the nav bar; `users.preferred_language` (set through `PATCH /api/auth/me`) for logged-in users, `localStorage` for visitors, and the browser language on a first visit
+- every interface string in `frontend/src/i18n/messages.ts`; the Chinese table must have exactly the same keys as the English one, enforced by the TypeScript type
+- Chinese boss names, locations, phase names, move names, descriptions, telegraphs, counters and common mistakes for the existing bosses
+- the seed rejects an English text field without its Chinese version, and a move without a Chinese name
+- `moves.name_zh_source` is `wiki` (with `name_zh_source_url`, checked by a database constraint) only when the full name appears on a Chinese wiki page; everything else is `translation`
+- Chinese move descriptions are translations of the sourced English text; the Chinese moveset shows one note saying so
+- move descriptions appear as a hover tooltip and under the move select when recording an attempt
+
+The user reviewed all Chinese content.
 
 ---
 

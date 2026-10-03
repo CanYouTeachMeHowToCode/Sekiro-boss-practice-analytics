@@ -10,7 +10,7 @@ describe("bosses api", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => [{ id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle" }],
+      json: async () => [{ id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: null }],
     });
     vi.stubGlobal("fetch", fetchMock);
 
@@ -29,6 +29,7 @@ describe("bosses api", () => {
         name: "Genichiro Ashina",
         game: "sekiro",
         location: "Ashina Castle",
+        location_zh: null,
         phases: [],
       }),
     });

@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/authContext";
+import { useLanguage } from "../i18n/language";
 
 export default function NavBar() {
   const { status, user, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -10,33 +12,43 @@ export default function NavBar() {
     navigate("/");
   }
 
+  const otherLanguage = language === "en" ? "zh" : "en";
+
   return (
     <header className="nav-bar">
-      <nav aria-label="Main">
+      <nav aria-label={t("nav.main")}>
         <Link to="/" className="nav-brand">
-          Sekiro Practice
+          {t("nav.brand")}
         </Link>
-        <Link to="/bosses">Bosses</Link>
+        <Link to="/bosses">{t("nav.bosses")}</Link>
       </nav>
-      {status === "ready" && (
-        <div className="nav-account">
-          {user ? (
+      <div className="nav-account">
+        <button
+          type="button"
+          className="language-toggle"
+          onClick={() => setLanguage(otherLanguage)}
+          aria-label={t("nav.switchLanguageLabel")}
+          lang={otherLanguage === "zh" ? "zh-Hans" : "en"}
+        >
+          {t("nav.switchLanguage")}
+        </button>
+        {status === "ready" &&
+          (user ? (
             <>
               <span className="nav-username">{user.username}</span>
               <button type="button" className="btn" onClick={handleLogout}>
-                Log Out
+                {t("nav.logOut")}
               </button>
             </>
           ) : (
             <>
-              <Link to="/login">Log In</Link>
+              <Link to="/login">{t("nav.logIn")}</Link>
               <Link to="/register" className="btn btn-primary">
-                Register
+                {t("nav.register")}
               </Link>
             </>
-          )}
-        </div>
-      )}
+          ))}
+      </div>
     </header>
   );
 }
