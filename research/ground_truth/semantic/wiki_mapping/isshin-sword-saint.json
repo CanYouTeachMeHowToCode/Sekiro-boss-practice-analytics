@@ -1,0 +1,392 @@
+{
+  "boss": "isshin-sword-saint",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Isshin,+the+Sword+Saint",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Isshin,_the_Sword_Saint",
+      "version": "revid 14130 (2024-10-22)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Product phase 1 is Genichiro, Way of Tomoe (added in V3 M5, review item 11, option A3: only moves both wikis agree on). Isshin's own phases are product phases 2-4.",
+    "Neither wiki says whether Isshin keeps his phase-1 sword moves in later phases; the product assumes he does."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "tomoe-mortal-blade-slash"
+      ],
+      "fextralife": [
+        "strategy text: big, black Mortal Blade swings he starts with and repeats"
+      ],
+      "fandom": [
+        "Empowered Mortal Draw"
+      ],
+      "relation": "same",
+      "notes": "Chinese name left as a translation: Fandom links the move to Empowered Mortal Draw (BWIKI: 秘传·不死斩), while BWIKI's Mortal Draw page (绝技·不死斩) compares it with Genichiro's slash.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "tomoe-deaths-thrust"
+      ],
+      "fextralife": [
+        "strategy text: he will lunge; Mikiri Counter it"
+      ],
+      "fandom": [
+        "Death's Thrust"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "tomoe-floating-passage",
+        "tomoe-perilous-attack-follow-up",
+        "tomoe-perilous-grab"
+      ],
+      "fextralife": [
+        "strategy text: very similar to his third phase"
+      ],
+      "fandom": [
+        "Floating Passage",
+        "Perilous Attack Follow Up",
+        "Perilous Grab"
+      ],
+      "relation": "partial",
+      "notes": "Fextralife only says the fight resembles Genichiro's third phase.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [
+        "strategy text: very similar to his third phase (which has lightning)"
+      ],
+      "fandom": [
+        "(says he abandons lightning attacks)"
+      ],
+      "relation": "conflict",
+      "notes": "Whether Way of Tomoe Genichiro uses lightning in this fight. Left out of the product.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Thrust",
+        "Perilous Sweep",
+        "Mortal Draw",
+        "Advance",
+        "Low Slash",
+        "Closing Tide",
+        "Iaijutsu",
+        "Two-hit Combo"
+      ],
+      "relation": "only_fandom",
+      "notes": "Way of Tomoe phase; not in the product because Fextralife does not confirm them.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "dragon-flash"
+      ],
+      "fextralife": [
+        "Dragon Flash"
+      ],
+      "fandom": [
+        "Dragon Flash (phase 1)"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "ashina-cross"
+      ],
+      "fextralife": [
+        "Ashina Cross"
+      ],
+      "fandom": [
+        "Ashina Cross"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "ashina-cross-cancel"
+      ],
+      "fextralife": [
+        "Ashina Cross Cancel"
+      ],
+      "fandom": [
+        "Ashina Cross Cancel"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "ichimonji-double"
+      ],
+      "fextralife": [
+        "Ichimonji Double"
+      ],
+      "fandom": [
+        "Ichimonji - Double"
+      ],
+      "relation": "partial",
+      "notes": "Follow-up after a deflect conflicts: Fextralife a vertical force wave, Fandom Dragon Flash.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "distance-slash"
+      ],
+      "fextralife": [
+        "Distance Slash"
+      ],
+      "fandom": [
+        "Cloud Walk",
+        "Pressure (phase 2)"
+      ],
+      "relation": "partial",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "charged-horizontal-force-wave"
+      ],
+      "fextralife": [
+        "Charged Attack, Horizontal Force Wave"
+      ],
+      "fandom": [
+        "Mangetsu"
+      ],
+      "relation": "partial",
+      "notes": "Fandom: spins the katana in a large radius; does not mention a force wave.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "three-to-four-hit-combo"
+      ],
+      "fextralife": [
+        "strategy text: three-to-four hit combo"
+      ],
+      "fandom": [
+        "Three-hit combo"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "thrust"
+      ],
+      "fextralife": [
+        "strategy text: thrust, easy Mikiri Counter"
+      ],
+      "fandom": [
+        "Perilous Thrust (phase 1)"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "close-range-full-screen-sweep"
+      ],
+      "fextralife": [
+        "strategy text: close range, full screen sweep"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "Possibly the same move as Charged Attack, Horizontal Force Wave (Fandom: Mangetsu), described twice by Fextralife.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "long-range-wind-attack"
+      ],
+      "fextralife": [
+        "strategy text: long range wind attack, vertical"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "Possibly Dragon Flash, described twice by Fextralife.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Thrust Combo",
+        "Perilous Sweep Combo",
+        "Anticipate",
+        "Iaijutsu"
+      ],
+      "relation": "only_fandom",
+      "notes": "Isshin phase 1.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "charged-double-projected-force"
+      ],
+      "fextralife": [
+        "Charge Attack, Double Projected Force"
+      ],
+      "fandom": [
+        "Dragon Flash (phase 3: two shockwaves)"
+      ],
+      "relation": "unclear",
+      "notes": "Fandom only describes a two-shockwave Dragon Flash, and in phase 3.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "leaping-slam"
+      ],
+      "fextralife": [
+        "Leaping Slam"
+      ],
+      "fandom": [
+        "Leaping Smash"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "retreating-sweep"
+      ],
+      "fextralife": [
+        "Retreating Sweep"
+      ],
+      "fandom": [
+        "Retreat"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "quad-shot"
+      ],
+      "fextralife": [
+        "Quad Shot"
+      ],
+      "fandom": [
+        "Gun Shot"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Thrust (spear)",
+        "Perilous Sweep (spear)",
+        "Floating Passage (spear)"
+      ],
+      "relation": "only_fandom",
+      "notes": "Isshin phase 2.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-spear-sweep"
+      ],
+      "fextralife": [
+        "strategy text: large swing with a lightning-covered spear"
+      ],
+      "fandom": [
+        "Lightning Cleave"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-slash"
+      ],
+      "fextralife": [
+        "Lightning Slash"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "Fextralife's table describes a sword swing; Fandom's only lightning attack (Lightning Cleave) uses the spear. Possibly the same move.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-overhead"
+      ],
+      "fextralife": [
+        "strategy text: lightning added to large overhead attacks"
+      ],
+      "fandom": [],
+      "relation": "only_fextralife",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "distance-slash-phase-3"
+      ],
+      "fextralife": [
+        "strategy text: distance slash similar to the phase-1 wind attack"
+      ],
+      "fandom": [],
+      "relation": "only_fextralife",
+      "notes": "Earlier product data called it a lightning variant; the source does not say so.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "boss": "true-corrupted-monk",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Corrupted+Monk",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/True_Monk",
+      "version": "revid 13805 (2023-12-11)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Fextralife covers both fights on one page, mostly in strategy text.",
+    "Phase 2 was corrected in V3 M5: it keeps every phase-1 move alongside the illusions (Fextralife: 'The rest of her moveset remains the same')."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "thrust-attack"
+      ],
+      "fextralife": [
+        "strategy text: same attacks as the Mibu Village fight"
+      ],
+      "fandom": [
+        "Perilous Thrust"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "sweep-attack"
+      ],
+      "fextralife": [
+        "strategy text: same attacks as the Mibu Village fight"
+      ],
+      "fandom": [
+        "Perilous Sweep Combo",
+        "Perilous Sweep Follow-up",
+        "Perilous Sweep Retreat",
+        "Three-Hit Combo"
+      ],
+      "relation": "split",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "jump-attack-sweep",
+        "jump-attack-overhead"
+      ],
+      "fextralife": [
+        "strategy text: same attacks as the Mibu Village fight"
+      ],
+      "fandom": [
+        "Helm Splitter"
+      ],
+      "relation": "split",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "upwards-slash"
+      ],
+      "fextralife": [
+        "strategy text: same attacks as the Mibu Village fight"
+      ],
+      "fandom": [
+        "Chase"
+      ],
+      "relation": "partial",
+      "notes": "Fandom does not say it breaks guard.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "mid-range-combo"
+      ],
+      "fextralife": [
+        "strategy text: same attacks as the Mibu Village fight"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "illusion-summoning"
+      ],
+      "fextralife": [
+        "strategy text: phase 2: three shadow illusions, each attacking three times"
+      ],
+      "fandom": [
+        "Illusory Forms"
+      ],
+      "relation": "partial",
+      "notes": "Count differs: Fextralife three shadows, Fandom two mirror images. The product no longer states a count.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "whirlwind-attack"
+      ],
+      "fextralife": [
+        "strategy text: phase 3: whirlwind attack"
+      ],
+      "fandom": [
+        "Whirlwind (phase 3)"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "centipede-toxic-goo"
+      ],
+      "fextralife": [
+        "strategy text: phase 3: centipede spews toxic goo, perilous, Terror"
+      ],
+      "fandom": [
+        "Dreadful Pile"
+      ],
+      "relation": "same",
+      "notes": "Fandom marks it a Terror attack rather than perilous.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "centipede-toxic-cloud"
+      ],
+      "fextralife": [
+        "strategy text: phase 3: toxic cloud, not perilous"
+      ],
+      "fandom": [],
+      "relation": "only_fextralife",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Six-Hit Combo",
+        "Overpowering Shove",
+        "Retreat"
+      ],
+      "relation": "only_fandom",
+      "notes": "Also in the Mibu Village fight on Fandom.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Tenacious Pursuit"
+      ],
+      "relation": "only_fandom",
+      "notes": "Only when Wolf stays on a tree branch too long.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Cleaving Hell",
+        "Perilous Sweep Chase",
+        "Air Blade",
+        "Raging Swing",
+        "Wild Smash"
+      ],
+      "relation": "only_fandom",
+      "notes": "Phase 3.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

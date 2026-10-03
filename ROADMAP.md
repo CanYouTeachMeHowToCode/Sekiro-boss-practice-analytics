@@ -223,6 +223,8 @@ do not force completeness
 
 It may remain explicitly uncertain or be deferred to V4 ground-truth research.
 
+This milestone also records a per-boss mapping between the product's moves and the Fextralife and Fandom entries (`research/ground_truth/semantic/wiki_mapping/`). It measures how far the two wikis disagree, which is a lower bound on the gap to ground truth, and it becomes the starting point for V4.
+
 ### Important Boundary
 
 V3 does **not** require:
@@ -378,6 +380,8 @@ Wiki and community documentation remain useful for:
 - discovery
 
 They are not treated as final completeness authorities.
+
+The project owner makes the final decision on what counts as ground truth. Tooling and assistants gather evidence and propose; they do not mark anything as verified on their own.
 
 ---
 

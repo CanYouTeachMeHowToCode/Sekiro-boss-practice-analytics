@@ -1,0 +1,148 @@
+{
+  "boss": "corrupted-monk",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Corrupted+Monk",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Corrupted_Monk",
+      "version": "revid 13806 (2023-12-11)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Fextralife's attack table is a placeholder with one real row; the product moves come from its strategy text."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "thrust-attack"
+      ],
+      "fextralife": [
+        "Thrust Attack"
+      ],
+      "fandom": [
+        "Perilous Thrust"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "whirlwind-attack"
+      ],
+      "fextralife": [
+        "strategy text: continuous spinning attack"
+      ],
+      "fandom": [
+        "Whirlwind"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "sweep-attack"
+      ],
+      "fextralife": [
+        "strategy text: perilous sweep"
+      ],
+      "fandom": [
+        "Perilous Sweep Combo",
+        "Perilous Sweep Follow-up",
+        "Perilous Sweep Retreat",
+        "Three-Hit Combo"
+      ],
+      "relation": "split",
+      "notes": "Fandom names four sequences that end in a Perilous Sweep.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "jump-attack-sweep",
+        "jump-attack-overhead"
+      ],
+      "fextralife": [
+        "strategy text: two jumping attacks, one sweep and one overhead"
+      ],
+      "fandom": [
+        "Helm Splitter"
+      ],
+      "relation": "split",
+      "notes": "Fandom: one move with two variants (spinning means an overhead smash, upright means a cleave).",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "upwards-slash"
+      ],
+      "fextralife": [
+        "strategy text: upwards slash that goes through defenses"
+      ],
+      "fandom": [
+        "Chase"
+      ],
+      "relation": "partial",
+      "notes": "Fandom does not say it breaks guard.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "mid-range-combo"
+      ],
+      "fextralife": [
+        "strategy text: one air hit and two ground hits at mid range"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "No clear Fandom counterpart.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Six-Hit Combo"
+      ],
+      "relation": "only_fandom",
+      "notes": "May end early with a Perilous Thrust.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Overpowering Shove"
+      ],
+      "relation": "only_fandom",
+      "notes": "Guard-breaking cleave after a shove.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Retreat"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

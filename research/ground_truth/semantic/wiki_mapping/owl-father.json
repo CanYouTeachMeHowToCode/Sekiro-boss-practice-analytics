@@ -1,0 +1,259 @@
+{
+  "boss": "owl-father",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Owl+(Father)",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Owl_(Father)",
+      "version": "revid 13719 (2022-01-01)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [],
+  "entries": [
+    {
+      "product_moves": [
+        "shadowfall"
+      ],
+      "fextralife": [
+        "Shadowfall"
+      ],
+      "fandom": [
+        "Shadowfall"
+      ],
+      "relation": "same",
+      "notes": "Both wikis identify it with the Mushin Shadowfall combat art.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "stomp-deathblow"
+      ],
+      "fextralife": [
+        "Stomp (deathblow)"
+      ],
+      "fandom": [
+        "Dominate"
+      ],
+      "relation": "same",
+      "notes": "Stomps a posture-broken Wolf and stabs; no Perilous indicator.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "double-shuriken-flip"
+      ],
+      "fextralife": [
+        "Double Shuriken + flip"
+      ],
+      "fandom": [
+        "Great Talon"
+      ],
+      "relation": "same",
+      "notes": "Two shuriken, then a somersault smash. Fandom: he skips the shuriken when Wolf heals nearby.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "large-overhead-slash"
+      ],
+      "fextralife": [
+        "Large Overhead Slash"
+      ],
+      "fandom": [
+        "Nimble Strike"
+      ],
+      "relation": "same",
+      "notes": "Both describe the switch to a turning slash if you dodge sideways. Fandom: starts with a forward roll.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "shuriken-slash"
+      ],
+      "fextralife": [
+        "Shuriken Slash"
+      ],
+      "fandom": [
+        "Overwhelming Slice"
+      ],
+      "relation": "same",
+      "notes": "Fandom: the slice breaks guard.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "backflip"
+      ],
+      "fextralife": [
+        "Backflip"
+      ],
+      "fandom": [
+        "Owl's Flight (phase 1)"
+      ],
+      "relation": "same",
+      "notes": "Posture damage only.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "backflip-shuriken"
+      ],
+      "fextralife": [
+        "Backflip + Shuriken"
+      ],
+      "fandom": [
+        "Owl's Flight (phase 2)"
+      ],
+      "relation": "same",
+      "notes": "Fandom: five shuriken in an arc.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "owl-teleport"
+      ],
+      "fextralife": [
+        "Owl Teleport"
+      ],
+      "fandom": [
+        "Phasing Strike"
+      ],
+      "relation": "same",
+      "notes": "Fandom: if deflected, follows with Perilous Sweep or Nimble Strike.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-sweep"
+      ],
+      "fextralife": [
+        "Perilous Sweep"
+      ],
+      "fandom": [
+        "Sweeping Talon"
+      ],
+      "relation": "same",
+      "notes": "Fandom: two quick dashes before the sweep.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "firecrackers"
+      ],
+      "fextralife": [
+        "Firecrackers"
+      ],
+      "fandom": [
+        "Empowered Firecrackers"
+      ],
+      "relation": "partial",
+      "notes": "Follow-ups conflict. Fextralife: Shuriken Throw, Shadowfall or Shuriken Slash. Fandom: tends to follow with Exploding Cut.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "double-slash-perilous-sweep"
+      ],
+      "fextralife": [
+        "Double Slash into Perilous Sweep"
+      ],
+      "fandom": [
+        "Dashing Talon"
+      ],
+      "relation": "partial",
+      "notes": "Hit count differs: Fextralife 2 slashes, Fandom up to 3, both ending in a Perilous Sweep.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "fire-owl-shadowfall"
+      ],
+      "fextralife": [
+        "Fire Owl + Shadowfall"
+      ],
+      "fandom": [
+        "Raging Fires"
+      ],
+      "relation": "partial",
+      "notes": "Fextralife: always followed by Shadowfall. Fandom: describes only the fire owl (which pierces the Loaded Umbrella).",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "five-slash-firecracker-combo"
+      ],
+      "fextralife": [
+        "5-slash Firecracker Combo"
+      ],
+      "fandom": [
+        "Talons",
+        "Exploding Cut"
+      ],
+      "relation": "split",
+      "notes": "Fextralife treats the sequence as one move; Fandom splits it into a two-cut opener and the exploding cut.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "shuriken-throw"
+      ],
+      "fextralife": [
+        "Zig-Zag",
+        "Shuriken Throw"
+      ],
+      "fandom": [
+        "Great Talon (side-step variant)"
+      ],
+      "relation": "split",
+      "notes": "Fextralife: zig-zag movement and a single shuriken as two entries. Fandom: three side-steps and one shuriken as a Great Talon variant. Zig-Zag was removed from the product in V3 M5 because it deals no damage.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "running-slash"
+      ],
+      "fextralife": [
+        "Running Slash"
+      ],
+      "fandom": [],
+      "relation": "unclear",
+      "notes": "No clear Fandom counterpart; possibly the opener of Dashing Talon or Talons.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "mikiri-counter"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Mikiri Counter"
+      ],
+      "relation": "only_fandom",
+      "notes": "Punishes the player's thrust attacks. Added to the product in V3 M5 with a move-level Fandom source.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

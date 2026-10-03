@@ -494,6 +494,21 @@ Do not bulk-add every remaining Sekiro boss from Wiki data solely to finish a ch
 
 ---
 
+## Progress
+
+The existing content was reviewed against both Fextralife and Fandom, and the user decided each item. Done on `dev`:
+
+- fixed: True Corrupted Monk phase 2 keeps her phase-1 moves; Guardian Ape gains the phase-2 Jumping Sweep; misattributed or misleading text corrected; Owl (Father)'s Shadowfall named as the combat art 秘传·巨型忍者落杀
+- the Isshin fight starts with a Genichiro, Way of Tomoe phase (only the moves both wikis agree on); Isshin's own phases are now 2-4, and existing Isshin attempts were moved up one phase by a migration
+- actions that cannot end an attempt were removed from the movesets (Owl's zig-zag, Guardian Ape's roar, Lady Butterfly's rafter jump, Great Shinobi Owl's Shinobi Charm)
+- both Owls gained Mikiri Counter, from Fandom, using the new move-level source fields
+- move types made consistent
+- the cross-wiki mapping for every boss is in `research/ground_truth/semantic/wiki_mapping/`; it records what both wikis say, including what the product does not use
+
+Still open: whether Lady Butterfly and Guardian Ape adopt Fandom's more specific move lists, or keep their current lists until V4 rebuilds them.
+
+---
+
 # 13. Wiki Data Policy
 
 Wiki sources are useful for:
@@ -674,6 +689,8 @@ Semantic Move
 
 No single source should automatically override all others.
 
+**The project owner decides what is ground truth.** Claude and any tooling gather evidence, compare sources and propose, stating their uncertainty. They never mark a semantic move, an engine mapping or a phase structure as verified on their own.
+
 ---
 
 # 20. Rulesets
@@ -748,6 +765,8 @@ annotations/
 scripts/
 → extraction / validation utilities
 ```
+
+`research/ground_truth/` already exists. V3 Milestone 5 added `semantic/wiki_mapping/`: one JSON file per boss that lines up product moves with Fextralife and Fandom entries, plus `scripts/wiki_mapping_report.py`, which rebuilds the readable report and checks that every product move is mapped exactly once. Use it as the starting candidate list for the semantic catalog and as the baseline for measuring the gap to engine-level ground truth.
 
 ---
 
@@ -1017,6 +1036,8 @@ multiple gameplay examples
 ```
 
 Do not automatically treat a Wiki description as `high`.
+
+Confidence values are proposals until the project owner confirms them.
 
 ---
 
@@ -1373,6 +1394,10 @@ If a semantic move needs to be removed:
 2. decide how those attempts should be preserved
 3. migrate deliberately
 4. only then remove or hide the move
+
+Sources are recorded per boss (`bosses.source_name`, `bosses.source_url`). When a move's data comes from a different page, set that move's own `source_name` and `source_url`; leave them null otherwise. The frontend shows a move-level source under the move.
+
+When the product's moves change, update `research/ground_truth/semantic/wiki_mapping/` and run `python research/ground_truth/scripts/wiki_mapping_report.py`.
 
 ---
 
