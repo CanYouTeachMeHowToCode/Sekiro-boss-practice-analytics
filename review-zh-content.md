@@ -5,6 +5,11 @@
 - **名称来源**：「官方」表示中文名完整出现在链接的中文 Wiki 页面上；「译名」表示由我翻译。
 - **说明文字**（描述 / 前摇 / 应对 / 常见失误）全部是我根据英文原文翻译的。
 
+## 已确定
+
+- 义父 Shadowfall → **巨型忍者落杀**（译名，不再对应官方流派招式）；描述里的引用也已同步。
+- 水生村的 Boss 名 → **破戒僧**；源之宫的保持 **宫内破戒僧**。
+
 ## 需要特别留意
 
 1. **我不确定官方中文译名的道具和术语**，请重点核对：
@@ -13,8 +18,6 @@
    - Shock → 感电；Terror → 怖；Healing Gourd → 伤药葫芦；Posture → 躯干；Deflect → 弹刀；Mikiri Counter → 识破
 2. **地点名**是我对照游戏地名翻译的，其中「天守阁瞭望台」「秘密通道」「通道」这几个后缀最不确定。
 3. **巴之雷·射击 / 斩击 / 砸击**：「巴之雷」取自中文社区叫法（萌娘百科），后缀是我加的，整体标为译名。
-4. **义父 Shadowfall → 秘传·巨型忍者落杀**：英文 Wiki 用同名流派招式命名，所以对应到官方名。如果你认为不是同一招，就改成译名。
-5. **破戒僧的 Boss 名**：目前是「破戒僧（幻影）」，BWIKI 写的是「幻影破戒僧」，没有改动，由你决定。
 
 ## 苇名弦一郎 — Genichiro Ashina
 
@@ -228,8 +231,8 @@
 | 描述 | Two shuriken throws followed by an aerial flip and downward sword strike. | 投掷两枚手里剑，然后空翻并向下挥刀。 |
 | 应对 | Deflect/block the shurikens and dodge sideways to avoid the flip, then counter. | 弹开或防御手里剑，再向侧面闪避躲开空翻斩，然后反击。 |
 
-### 4. Shadowfall → 秘传·巨型忍者落杀
-官方（[来源](https://wiki.biligame.com/sekiro/%E7%A7%98%E4%BC%A0%C2%B7%E5%B7%A8%E5%9E%8B%E5%BF%8D%E8%80%85%E8%90%BD%E6%9D%80)） ｜ 出现于：第一阶段、第二阶段
+### 4. Shadowfall → 巨型忍者落杀
+译名 ｜ 出现于：第一阶段、第二阶段
 
 | | 英文 | 中文 |
 |---|---|---|
@@ -276,7 +279,7 @@
 
 | | 英文 | 中文 |
 |---|---|---|
-| 描述 | Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash. | 扔出致盲的爆竹并引发爆炸；之后可能接投掷手里剑、秘传·巨型忍者落杀或手里剑 + 斩击。 |
+| 描述 | Throws blinding firecrackers followed by an explosion; can chain into Shuriken Throw, Shadowfall, or Shuriken Slash. | 扔出致盲的爆竹并引发爆炸；之后可能接投掷手里剑、巨型忍者落杀或手里剑 + 斩击。 |
 | 应对 | Dodge backwards to avoid. | 向后闪避躲开。 |
 | 常见失误 | Dodging too quickly after the throw lets his follow-up slash hit you. | 他扔出爆竹后闪避得太快，会被他接下来的斩击命中。 |
 
@@ -335,7 +338,7 @@
 
 | | 英文 | 中文 |
 |---|---|---|
-| 描述 | Summons his owl and throws an unblockable fire owl projectile, then follows up with Shadowfall. | 召唤出枭并扔出一只无法防御的火枭，然后接秘传·巨型忍者落杀。 |
+| 描述 | Summons his owl and throws an unblockable fire owl projectile, then follows up with Shadowfall. | 召唤出枭并扔出一只无法防御的火枭，然后接巨型忍者落杀。 |
 | 应对 | Jump over the fire owl and Mikiri the thrust. | 跳过火枭，然后识破那记突刺。 |
 
 ## 蝴蝶夫人 — Lady Butterfly
@@ -515,7 +518,7 @@
 | 前摇 | Puts its head back on its neck before screaming. | 咆哮前会把头放回脖子上。 |
 | 应对 | Any Loaded Umbrella-type prosthetic completely negates the scream; the Phoenix's Lilac Umbrella is recommended for NG+. | 任何机关伞类义手忍具都能完全抵挡这声咆哮；二周目以后推荐使用凤凰紫伞。 |
 
-## 破戒僧（幻影） — Corrupted Monk
+## 破戒僧 — Corrupted Monk
 
 **地点**：Ashina Depths - Mibu Village → 苇名之底 - 水生村
 
