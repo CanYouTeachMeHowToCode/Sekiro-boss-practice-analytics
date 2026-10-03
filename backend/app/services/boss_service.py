@@ -56,6 +56,8 @@ def get_boss(session: Session, boss_slug: str) -> Boss | None:
                         telegraph_zh=link.move.telegraph_zh,
                         counter_zh=link.move.counter_zh,
                         common_mistakes_zh=link.move.common_mistakes_zh,
+                        source_name=link.move.source_name,
+                        source_url=link.move.source_url,
                         name_zh_source=link.move.name_zh_source,
                         name_zh_source_url=link.move.name_zh_source_url,
                     )

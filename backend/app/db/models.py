@@ -76,6 +76,7 @@ class Move(Base):
         CheckConstraint(
             "(name_zh_source = 'wiki') = (name_zh_source_url IS NOT NULL)", name="ck_moves_name_zh_source_url"
         ),
+        CheckConstraint("(source_name IS NULL) = (source_url IS NULL)", name="ck_moves_source_complete"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -92,6 +93,10 @@ class Move(Base):
     telegraph_zh: Mapped[str | None] = mapped_column(Text)
     counter_zh: Mapped[str | None] = mapped_column(Text)
     common_mistakes_zh: Mapped[str | None] = mapped_column(Text)
+    # Only for a move whose data comes from a different page than its boss's;
+    # null means the move uses the boss's source_name / source_url.
+    source_name: Mapped[str | None] = mapped_column(String(200))
+    source_url: Mapped[str | None] = mapped_column(Text)
     # Chinese name: either the name used by a Chinese wiki ('wiki', with the page in
     # name_zh_source_url) or a translation ('translation'), never presented as official.
     name_zh: Mapped[str | None] = mapped_column(String(200))

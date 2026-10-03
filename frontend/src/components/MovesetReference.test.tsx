@@ -34,6 +34,8 @@ const boss: Boss = {
           telegraph_zh: "刀柄上闪过一道光。",
           counter_zh: "弹开第一道剑气。",
           common_mistakes_zh: "防御剑气而不是弹开。",
+          source_name: null,
+          source_url: null,
         },
         {
           id: "thrust",
@@ -50,6 +52,8 @@ const boss: Boss = {
           telegraph_zh: null,
           counter_zh: null,
           common_mistakes_zh: null,
+          source_name: null,
+          source_url: null,
         },
       ],
     },
@@ -115,5 +119,30 @@ describe("MovesetReference", () => {
     );
     expect(screen.getByText("突刺")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "突刺" })).not.toBeInTheDocument();
+  });
+
+  it("links a move's own source when it differs from the boss's", () => {
+    const withMoveSource: Boss = {
+      ...boss,
+      phases: [
+        {
+          ...boss.phases[0],
+          moves: [
+            {
+              ...boss.phases[0].moves[1],
+              source_name: "Fandom Sekiro Wiki",
+              source_url: "https://sekiro-shadows-die-twice.fandom.com/wiki/Example",
+            },
+          ],
+        },
+      ],
+    };
+    render(<MovesetReference boss={withMoveSource} />);
+
+    expect(screen.getByText("Source for this move:")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Fandom Sekiro Wiki" })).toHaveAttribute(
+      "href",
+      "https://sekiro-shadows-die-twice.fandom.com/wiki/Example"
+    );
   });
 });

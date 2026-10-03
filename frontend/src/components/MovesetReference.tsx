@@ -43,6 +43,14 @@ export default function MovesetReference({ boss }: { boss: Boss }) {
                   {telegraph && <p className="telegraph">{t("moveset.telegraph", { text: telegraph })}</p>}
                   {counter && <p className="counter">{t("moveset.counter", { text: counter })}</p>}
                   {mistakes && <p className="common-mistakes">{t("moveset.commonMistake", { text: mistakes })}</p>}
+                  {move.source_url && (
+                    <p className="moveset-source">
+                      {t("moveset.moveSource")}{" "}
+                      <a href={move.source_url} target="_blank" rel="noopener noreferrer">
+                        {move.source_name ?? move.source_url}
+                      </a>
+                    </p>
+                  )}
                 </li>
               );
             })}

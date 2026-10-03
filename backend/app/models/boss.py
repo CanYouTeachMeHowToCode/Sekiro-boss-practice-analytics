@@ -16,6 +16,9 @@ class BossMove(BaseModel):
     telegraph_zh: str | None = None
     counter_zh: str | None = None
     common_mistakes_zh: str | None = None
+    # Set only when this move's data comes from a different page than the boss's source.
+    source_name: str | None = None
+    source_url: str | None = None
     # "wiki": the name used by a Chinese wiki, see name_zh_source_url.
     # "translation": translated for this app; not an official name.
     name_zh_source: Literal["wiki", "translation"] | None = None

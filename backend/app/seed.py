@@ -30,6 +30,8 @@ MOVE_FIELDS = (
     "telegraph_zh",
     "counter_zh",
     "common_mistakes_zh",
+    "source_name",
+    "source_url",
 )
 
 # Every English text field that has a value needs its Chinese version.

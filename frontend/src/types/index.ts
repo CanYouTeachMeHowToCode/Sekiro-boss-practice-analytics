@@ -15,6 +15,9 @@ export interface BossMove {
   telegraph_zh: string | null;
   counter_zh: string | null;
   common_mistakes_zh: string | null;
+  /** Set only when this move's data comes from a different page than the boss's source. */
+  source_name: string | null;
+  source_url: string | null;
   /** Chinese name: from a Chinese wiki ("wiki", see name_zh_source_url) or a translation. */
   name_zh: string | null;
   name_zh_source: ChineseNameSource | null;

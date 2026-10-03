@@ -119,6 +119,7 @@ const en = {
   "moveset.counter": "Counter: {text}",
   "moveset.commonMistake": "Common mistake: {text}",
   "moveset.source": "Source:",
+  "moveset.moveSource": "Source for this move:",
   "moveset.translationNote": "",
   "moveset.wikiNameTitle": "Name used by a Chinese wiki",
 
@@ -263,6 +264,7 @@ const zh: Record<MessageKey, string> = {
   "moveset.counter": "应对：{text}",
   "moveset.commonMistake": "常见失误：{text}",
   "moveset.source": "来源：",
+  "moveset.moveSource": "本招式来源：",
   "moveset.translationNote": "中文招式名和说明大多由本站译自下方的英文资料；显示为链接的招式名取自中文 Wiki。",
   "moveset.wikiNameTitle": "名称取自中文 Wiki",
 
