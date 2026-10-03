@@ -181,61 +181,46 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** moved into V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
+* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts, and public hosting is now planned for V4, once boss content is backed by verified game data.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
+
+---
+
+## V3 — Multi-User Product Foundation
+
+### In Progress
+
+V3 turns the single-user local app into a foundation that several players can use, each with their own data.
+
+* ✅ **Accounts and authentication:** registration, login and logout, argon2-hashed passwords, and server-side sessions in an httpOnly cookie. Boss data stays browsable without an account.
+* ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
+* ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
+* 🚧 **English / 中文 interface:** a language switch, with each language showing only its own text.
+* **Existing content cleanup:** correcting the current boss data rather than adding more bosses from wikis.
+* **Release `v3.0.0`.**
+
+While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V4.
 
 ---
 
 ## Future Direction
 
-The longer-term roadmap is:
+The full plan is in [ROADMAP.md](ROADMAP.md). In short:
 
 ```text
-V1
-Manual boss-attempt tracking
-+
-basic failure analytics
-
-        ↓
-
-V2
-PostgreSQL
-+
-expanded Sekiro boss data
-+
-richer progression analytics
-
-        ↓
-
-V3
-User accounts
-+
-per-user attempt histories
-+
-evidence-based practice recommendations
-+
-public deployment
-
-        ↓
-
-V4
-Gameplay video analysis
-+
-automatic / semi-automatic move detection
-+
-detailed combat performance metrics
-
-        ↓
-
-V5
-Multi-game platform
-+
-Sekiro
-+
-Black Myth: Wukong
+V1  What killed me?                      → manual attempt analytics
+V2  Where am I improving or struggling?  → structured relational analytics
+V3  Can different players use it?        → multi-user product foundation
+V4  What moves actually exist?           → combat ground truth + public deployment
+V5  What happened in the fight?          → gameplay video analysis
+V6  Can this work across games?          → multi-game platform
 ```
 
-The long-term goal is to evolve Sekiro Boss Practice Analytics from a manual attempt tracker into a generalized boss-practice and gameplay-performance analytics platform.
+* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro. The app is then deployed publicly.
+* **V5** analyzes uploaded gameplay to detect boss moves and player responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
+* **V6** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
+
+The long-term goal is to turn gameplay footage into trustworthy, explainable boss-practice analytics with as little manual input as possible.
 
 ---
 
@@ -259,6 +244,13 @@ V1 intentionally uses JSON persistence because the initial dataset is small and 
 * **Frontend:** React + TypeScript
 * **Deployment:** Docker Compose (local)
 * **CI:** GitHub Actions
+
+### V3
+
+Everything in V2, plus:
+
+* **Authentication:** argon2 password hashing, server-side sessions in an httpOnly cookie
+* **Interface languages:** English and Chinese, with a small in-house translation dictionary
 
 ---
 
