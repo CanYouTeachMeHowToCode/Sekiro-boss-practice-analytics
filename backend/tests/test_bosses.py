@@ -90,7 +90,7 @@ def test_get_fifth_boss_has_a_single_phase(client):
     assert "whirlwind-attack" in move_ids
 
 
-def test_get_sixth_boss_has_a_gimmick_middle_phase(client):
+def test_get_sixth_boss_adds_illusions_in_the_middle_phase(client):
     resp = client.get("/api/bosses/true-corrupted-monk")
     assert resp.status_code == 200
     data = resp.json()
@@ -101,8 +101,8 @@ def test_get_sixth_boss_has_a_gimmick_middle_phase(client):
     phase_2_move_ids = {m["id"] for m in data["phases"][1]["moves"]}
     phase_3_move_ids = {m["id"] for m in data["phases"][2]["moves"]}
 
-    # Phase 2 is a short illusion-summoning gimmick, not an extension of Phase 1.
-    assert phase_2_move_ids == {"illusion-summoning"}
+    # Phase 2 keeps her Phase 1 moveset and adds the illusion summoning.
+    assert phase_2_move_ids == phase_1_move_ids | {"illusion-summoning"}
     # Phase 1 doesn't have the whirlwind attack yet; it's regained in Phase 3
     # along with the new centipede moves.
     assert "whirlwind-attack" not in phase_1_move_ids
