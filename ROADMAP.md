@@ -107,7 +107,7 @@ Released as `v2.0.0`.
 
 ---
 
-# V3 — Multi-User Product Foundation 🚧
+# V3 — Multi-User Product Foundation ✅
 
 ## Core Question
 
@@ -198,7 +198,7 @@ Do not describe translated terminology as official unless an authoritative sourc
 
 ---
 
-## Milestone 5 — Existing Content Cleanup
+## Milestone 5 — Existing Content Cleanup ✅
 
 Review the boss data already present in the application.
 
@@ -225,6 +225,8 @@ It may remain explicitly uncertain or be deferred to V4 ground-truth research.
 
 This milestone also records a per-boss mapping between the product's moves and the Fextralife and Fandom entries (`research/ground_truth/semantic/wiki_mapping/`). It measures how far the two wikis disagree, which is a lower bound on the gap to ground truth, and it becomes the starting point for V4.
 
+Delivered: obvious errors and misleading descriptions fixed, phase structures corrected (True Corrupted Monk; Genichiro, Way of Tomoe added to the Isshin fight), actions that cannot end an attempt removed from the movesets, move-level sources for moves taken from another page, and the mapping for all 8 bosses. Across 106 product moves, 52 match one-to-one between the two wikis.
+
 ### Important Boundary
 
 V3 does **not** require:
@@ -240,7 +242,7 @@ Those belong to V4.
 
 ---
 
-## Milestone 6 — V3 Hardening and Release
+## Milestone 6 — V3 Hardening and Release ✅
 
 Before release:
 
@@ -252,6 +254,7 @@ Before release:
 - Docker Compose build and smoke test pass
 - authentication isolation remains covered
 - bilingual behavior is tested
+- data survives a Docker Compose restart
 - documentation reflects the new roadmap
 
 The application remains reproducibly runnable locally with Docker Compose.
@@ -261,6 +264,8 @@ Release:
 ```text
 v3.0.0
 ```
+
+Released as `v3.0.0`.
 
 ---
 

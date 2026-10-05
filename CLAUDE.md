@@ -84,9 +84,9 @@ v2.0.0
 
 ---
 
-## V3 — In Progress
+## V3 — Completed
 
-V3 has been re-scoped.
+V3 was re-scoped during development.
 
 The old V3 goal was:
 
@@ -110,33 +110,38 @@ Therefore:
 
 Ground-truth completeness is now explicitly a V4 concern.
 
+Delivered:
+
+- accounts and authentication (argon2, server-side sessions in an httpOnly cookie)
+- user-owned attempts, with ownerless pre-account attempts kept until claimed
+- per-user analytics and isolation
+- English / 中文 interface
+- existing-content cleanup, plus a cross-wiki move mapping for every boss in `research/ground_truth/semantic/wiki_mapping/`
+- four required CI jobs, including a check that data survives a Docker restart
+
+Released as:
+
+```text
+v3.0.0
+```
+
 ---
 
 # 3. Current Development Focus
 
-## V3 — Multi-User Product Foundation
+## V4 — Combat Ground Truth Foundation
 
-V3 answers:
+V4 answers:
 
-> **Can different players reliably use the application with isolated personal data?**
+> **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
 
-Completed:
+Start with V4 Milestone 1 (research foundation) and Milestone 2 (Genichiro runtime pilot). See sections 18–36.
 
-1. Accounts and authentication
-2. User-owned attempts
-3. Per-user analytics and isolation
-4. Bilingual interface
+V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
 
-Remaining:
+Public deployment is V4 Milestone 9.
 
-5. Existing-content cleanup
-6. V3 hardening and release
-
-Public deployment has moved to V4.
-
-Practice recommendations have moved to V5.
-
-Full boss ground-truth completeness has moved to V4.
+Practice recommendations are part of V5.
 
 ---
 
@@ -458,7 +463,7 @@ The user reviewed all Chinese content.
 
 ---
 
-# 12. V3 Milestone 5 — Existing-Content Cleanup
+# 12. V3 Milestone 5 — Existing-Content Cleanup ✅
 
 This milestone has changed significantly from the old roadmap.
 
@@ -505,7 +510,7 @@ The existing content was reviewed against both Fextralife and Fandom, and the us
 - move types made consistent
 - the cross-wiki mapping for every boss is in `research/ground_truth/semantic/wiki_mapping/`; it records what both wikis say, including what the product does not use
 
-Still open: whether Lady Butterfly and Guardian Ape adopt Fandom's more specific move lists, or keep their current lists until V4 rebuilds them.
+Decided: Lady Butterfly and Guardian Ape keep their current move lists. Fandom's more specific lists are recorded in the mapping, and V4 rebuilds these movesets from engine evidence.
 
 ---
 
@@ -566,7 +571,7 @@ Engine completeness belongs to V4.
 
 ---
 
-# 15. V3 Milestone 6 — Hardening and Release
+# 15. V3 Milestone 6 — Hardening and Release ✅
 
 Before releasing V3:
 
@@ -580,6 +585,7 @@ Before releasing V3:
 - Docker smoke test passes
 - authentication isolation remains covered
 - bilingual behavior is tested
+- data survives a Docker Compose restart (checked by the `docker` CI job)
 
 The application remains locally deployable through Docker Compose.
 
@@ -1575,24 +1581,19 @@ Examples currently not justified by default:
 
 # 53. Current Priority Order
 
-Until V3 is released:
+V3 is released. Work through V4 in milestone order:
 
 ```text
-1. Bilingual interface
-2. Existing-content cleanup
-3. V3 tests / docs
-4. Release v3.0.0
+1. Research foundation (V4 Milestone 1)
+2. Genichiro runtime pilot (V4 Milestone 2)
+3. Static engine mapping (V4 Milestone 3)
+4. Genichiro semantic catalog (V4 Milestone 4)
+5. Completeness review (V4 Milestone 5)
 ```
 
-However, a small V4 research spike may run in parallel if necessary to resolve a specific uncertain move.
+The later V4 milestones (Resurrection, product integration, boss expansion, public deployment) follow once Genichiro's pipeline is proven.
 
-Such research must:
-
-- stay isolated from production schema
-- not destabilize V3
-- not require all-boss extraction
-- preferably begin with Genichiro
-- document evidence
+Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 7.
 
 ---
 

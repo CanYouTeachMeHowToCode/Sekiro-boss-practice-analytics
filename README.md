@@ -188,16 +188,16 @@ V2 runs locally with Docker Compose.
 
 ## V3 — Multi-User Product Foundation
 
-### In Progress
+### V3.0 — Completed
 
-V3 turns the single-user local app into a foundation that several players can use, each with their own data.
+V3 turned the single-user local app into a foundation that several players can use, each with their own data.
 
 * ✅ **Accounts and authentication:** registration, login and logout, argon2-hashed passwords, and server-side sessions in an httpOnly cookie. Boss data stays browsable without an account.
 * ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
 * ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
 * ✅ **English / 中文 interface:** a language switch, with each language showing only its own text. The choice is saved on the account, or in the browser for visitors. Most Chinese move names and descriptions are translations of the English source material.
-* **Existing content cleanup:** correcting the current boss data rather than adding more bosses from wikis.
-* **Release `v3.0.0`.**
+* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V4.
+* ✅ **Hardening:** the four required CI jobs also check that accounts and attempts survive a Docker restart.
 
 While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V4.
 
@@ -274,7 +274,7 @@ Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
 
    On every start the backend applies database migrations and loads the bosses from `backend/seed/bosses.json`.
 
-3. Open http://localhost:8080 and create an account. Boss movesets can be browsed without one; recording attempts and viewing analytics need a login. The API documentation is at http://localhost:8000/docs.
+3. Open http://localhost:8080 and create an account. Boss movesets can be browsed without one; recording attempts and viewing analytics need a login. Switch between English and 中文 in the top-right corner. The API documentation is at http://localhost:8000/docs.
 
 To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
 
