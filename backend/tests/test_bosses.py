@@ -90,7 +90,7 @@ def test_get_fifth_boss_has_a_single_phase(client):
     assert "whirlwind-attack" in move_ids
 
 
-def test_get_sixth_boss_has_a_gimmick_middle_phase(client):
+def test_get_sixth_boss_adds_illusions_in_the_middle_phase(client):
     resp = client.get("/api/bosses/true-corrupted-monk")
     assert resp.status_code == 200
     data = resp.json()
@@ -101,8 +101,8 @@ def test_get_sixth_boss_has_a_gimmick_middle_phase(client):
     phase_2_move_ids = {m["id"] for m in data["phases"][1]["moves"]}
     phase_3_move_ids = {m["id"] for m in data["phases"][2]["moves"]}
 
-    # Phase 2 is a short illusion-summoning gimmick, not an extension of Phase 1.
-    assert phase_2_move_ids == {"illusion-summoning"}
+    # Phase 2 keeps her Phase 1 moveset and adds the illusion summoning.
+    assert phase_2_move_ids == phase_1_move_ids | {"illusion-summoning"}
     # Phase 1 doesn't have the whirlwind attack yet; it's regained in Phase 3
     # along with the new centipede moves.
     assert "whirlwind-attack" not in phase_1_move_ids
@@ -127,21 +127,23 @@ def test_get_seventh_boss_replaces_backflip_with_the_poison_variant_in_phase_2(c
     assert phase_1_move_ids - {"backflip"} <= phase_2_move_ids
 
 
-def test_get_eighth_boss_accumulates_moves_across_all_three_phases(client):
+def test_get_eighth_boss_starts_with_genichiro_then_accumulates_isshin_moves(client):
     resp = client.get("/api/bosses/isshin-sword-saint")
     assert resp.status_code == 200
     data = resp.json()
     assert data["name"] == "Isshin, the Sword Saint"
-    assert len(data["phases"]) == 3
+    assert len(data["phases"]) == 4
 
-    phase_1_move_ids = {m["id"] for m in data["phases"][0]["moves"]}
-    phase_2_move_ids = {m["id"] for m in data["phases"][1]["moves"]}
-    phase_3_move_ids = {m["id"] for m in data["phases"][2]["moves"]}
+    tomoe, isshin_1, isshin_2, isshin_3 = ({m["id"] for m in p["moves"]} for p in data["phases"])
 
-    assert phase_1_move_ids <= phase_2_move_ids <= phase_3_move_ids
-    assert "quad-shot" in phase_2_move_ids
-    assert "lightning-slash" in phase_3_move_ids
-    assert "lightning-slash" not in phase_2_move_ids
+    # Phase 1 is Genichiro, Way of Tomoe; Isshin's own phases follow.
+    assert "Way of Tomoe" in data["phases"][0]["name"]
+    assert "tomoe-mortal-blade-slash" in tomoe
+    assert not tomoe & isshin_1
+    assert isshin_1 <= isshin_2 <= isshin_3
+    assert "quad-shot" in isshin_2
+    assert "lightning-slash" in isshin_3
+    assert "lightning-slash" not in isshin_2
 
 
 def test_get_boss_not_found(client):
@@ -161,10 +163,20 @@ def test_boss_detail_exposes_source_and_move_metadata(client):
     assert data["source_name"] == "Fextralife Sekiro Wiki"
     assert data["source_url"].endswith("/Isshin,+the+Sword+Saint")
 
-    dragon_flash = next(m for m in data["phases"][0]["moves"] if m["id"] == "dragon-flash")
+    dragon_flash = next(m for m in data["phases"][1]["moves"] if m["id"] == "dragon-flash")
     assert "glint" in dragon_flash["telegraph"]
     assert dragon_flash["common_mistakes"]
-    assert "source_url" not in dragon_flash
+    # Dragon Flash comes from the boss's own source, so it has no move-level source.
+    assert dragon_flash["source_name"] is None and dragon_flash["source_url"] is None
+
+
+def test_a_move_from_another_page_carries_its_own_source(client):
+    data = client.get("/api/bosses/owl-father").json()
+    mikiri = next(m for m in data["phases"][0]["moves"] if m["id"] == "mikiri-counter")
+
+    assert data["source_name"] == "Fextralife Sekiro Wiki"
+    assert mikiri["source_name"] == "Fandom Sekiro Wiki"
+    assert mikiri["source_url"].startswith("https://sekiro-shadows-die-twice.fandom.com/")
 
 
 def test_every_boss_has_a_source(client):

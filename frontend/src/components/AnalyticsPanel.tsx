@@ -1,3 +1,5 @@
+import { formatPhase, useLanguage } from "../i18n/language";
+import type { Translate } from "../i18n/language";
 import type { Boss, BossAnalytics, RecentAnalytics } from "../types";
 import { topKeys } from "../utils/analytics";
 import { getMoveName } from "../utils/moves";
@@ -7,70 +9,74 @@ interface AnalyticsPanelProps {
   analytics: BossAnalytics;
 }
 
-function describeTop(keys: string[], label: (key: string) => string, empty: string): string {
+function describeTop(keys: string[], label: (key: string) => string, empty: string, t: Translate): string {
   if (keys.length === 0) return empty;
-  const names = keys.map(label).join(", ");
-  return keys.length > 1 ? `${names} (tied)` : names;
+  const names = keys.map(label).join(t("listSeparator"));
+  return keys.length > 1 ? t("tied", { names }) : names;
 }
 
-function recentLabel(recent: RecentAnalytics): string {
+function recentLabel(recent: RecentAnalytics, t: Translate): string {
   return recent.total_attempts < recent.window_size
-    ? `Last ${recent.total_attempts} (all so far)`
-    : `Last ${recent.window_size}`;
+    ? t("analytics.lastAllSoFar", { n: recent.total_attempts })
+    : t("analytics.lastN", { n: recent.window_size });
 }
 
 export default function AnalyticsPanel({ boss, analytics }: AnalyticsPanelProps) {
+  const { language, t } = useLanguage();
+
   if (analytics.total_attempts === 0) {
     return (
       <section className="analytics-panel">
-        <h2>Your Analytics</h2>
-        <p>Record an attempt to start seeing analytics.</p>
+        <h2>{t("analytics.heading")}</h2>
+        <p>{t("analytics.empty")}</p>
       </section>
     );
   }
 
   const { recent } = analytics;
-  const recentHeader = recentLabel(recent);
-  const phaseLabel = (phase: string) => `Phase ${phase}`;
-  const moveLabel = (moveId: string) => getMoveName(boss, moveId) ?? moveId;
+  const recentHeader = recentLabel(recent, t);
+  const phaseLabel = (phase: string) => formatPhase(phase, language);
+  const moveLabel = (moveId: string) => getMoveName(boss, moveId, language) ?? moveId;
 
   const phaseRows = Object.keys(analytics.failure_by_phase).sort((a, b) => Number(a) - Number(b));
   const moveRows = Object.keys(analytics.failure_by_move).sort(
     (a, b) => analytics.failure_by_move[b] - analytics.failure_by_move[a]
   );
+  const notApplicable = t("analytics.notApplicable");
+  const notEnoughData = t("analytics.notEnoughData");
 
   return (
     <section className="analytics-panel">
-      <h2>Your Analytics</h2>
+      <h2>{t("analytics.heading")}</h2>
 
       <div className="analytics-summary">
         <div>
-          <h3>Main Bottleneck</h3>
+          <h3>{t("analytics.mainBottleneck")}</h3>
           <dl className="comparison">
-            <dt>All attempts</dt>
-            <dd>{describeTop(topKeys(analytics.failure_by_phase), phaseLabel, "N/A")}</dd>
+            <dt>{t("analytics.allAttempts")}</dt>
+            <dd>{describeTop(topKeys(analytics.failure_by_phase), phaseLabel, notApplicable, t)}</dd>
             <dt>{recentHeader}</dt>
-            <dd>{describeTop(topKeys(recent.failure_by_phase), phaseLabel, "N/A")}</dd>
+            <dd>{describeTop(topKeys(recent.failure_by_phase), phaseLabel, notApplicable, t)}</dd>
           </dl>
         </div>
         <div>
-          <h3>Most Common Failure</h3>
+          <h3>{t("analytics.mostCommonFailure")}</h3>
           <dl className="comparison">
-            <dt>All attempts</dt>
-            <dd>{describeTop(topKeys(analytics.failure_by_move), moveLabel, "Not enough data")}</dd>
+            <dt>{t("analytics.allAttempts")}</dt>
+            <dd>{describeTop(topKeys(analytics.failure_by_move), moveLabel, notEnoughData, t)}</dd>
             <dt>{recentHeader}</dt>
-            <dd>{describeTop(topKeys(recent.failure_by_move), moveLabel, "Not enough data")}</dd>
+            <dd>{describeTop(topKeys(recent.failure_by_move), moveLabel, notEnoughData, t)}</dd>
           </dl>
         </div>
       </div>
 
       {phaseRows.length > 0 && (
         <table className="failure-breakdown">
-          <caption>Failure Breakdown by Phase</caption>
+          <caption>{t("analytics.byPhase")}</caption>
           <thead>
             <tr>
-              <th scope="col">Phase</th>
-              <th scope="col">All attempts</th>
+              <th scope="col">{t("analytics.phase")}</th>
+              <th scope="col">{t("analytics.allAttempts")}</th>
               <th scope="col">{recentHeader}</th>
             </tr>
           </thead>
@@ -88,11 +94,11 @@ export default function AnalyticsPanel({ boss, analytics }: AnalyticsPanelProps)
 
       {moveRows.length > 0 && (
         <table className="failure-breakdown">
-          <caption>Failure Breakdown by Move</caption>
+          <caption>{t("analytics.byMove")}</caption>
           <thead>
             <tr>
-              <th scope="col">Move</th>
-              <th scope="col">All attempts</th>
+              <th scope="col">{t("analytics.move")}</th>
+              <th scope="col">{t("analytics.allAttempts")}</th>
               <th scope="col">{recentHeader}</th>
             </tr>
           </thead>

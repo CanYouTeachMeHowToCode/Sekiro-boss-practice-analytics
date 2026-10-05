@@ -1,0 +1,192 @@
+{
+  "boss": "great-shinobi-owl",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Great+Shinobi+Owl",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Great_Shinobi_-_Owl",
+      "version": "revid 14356 (2025-11-03)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [],
+  "entries": [
+    {
+      "product_moves": [
+        "shuriken-throw-flip"
+      ],
+      "fextralife": [
+        "Shuriken Throw & Flip"
+      ],
+      "fandom": [
+        "Great Talon"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "shuriken-slash"
+      ],
+      "fextralife": [
+        "Shuriken Slash"
+      ],
+      "fandom": [
+        "Overwhelming Slice"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "stomp-grab"
+      ],
+      "fextralife": [
+        "Stomp (grab)"
+      ],
+      "fandom": [
+        "Dominate"
+      ],
+      "relation": "same",
+      "notes": "No Perilous indicator.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "four-slash-combo"
+      ],
+      "fextralife": [
+        "4-slash Combo"
+      ],
+      "fandom": [
+        "Talons"
+      ],
+      "relation": "same",
+      "notes": "Fandom: two cuts, a spin, then two more.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "backflip"
+      ],
+      "fextralife": [
+        "Backflip"
+      ],
+      "fandom": [
+        "Owl's Flight"
+      ],
+      "relation": "same",
+      "notes": "Fandom: five shuriken in an arc.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "backflip-poison"
+      ],
+      "fextralife": [
+        "Backflip (phase 2, poison)"
+      ],
+      "fandom": [
+        "Owl's Flight - Poison"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "running-slash"
+      ],
+      "fextralife": [
+        "Running Slash"
+      ],
+      "fandom": [
+        "Dashing Talon"
+      ],
+      "relation": "partial",
+      "notes": "Fandom: up to three slashes.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "firecracker"
+      ],
+      "fextralife": [
+        "Firecracker"
+      ],
+      "fandom": [
+        "Exploding Cut",
+        "Firecracker Retreat"
+      ],
+      "relation": "split",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [
+        "Shinobi Charm"
+      ],
+      "fandom": [
+        "Healing Denial Bomb"
+      ],
+      "relation": "same",
+      "notes": "Blocks healing items; deals no damage. Removed from the product in V3 M5.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "mikiri-counter"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Mikiri Counter"
+      ],
+      "relation": "only_fandom",
+      "notes": "Punishes the player's thrust attacks. Added to the product in V3 M5 with a move-level Fandom source.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Sideway Chase"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Smoke And Mirror",
+        "Recover",
+        "Smoke Bomb"
+      ],
+      "relation": "only_fandom",
+      "notes": "Deal no damage.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

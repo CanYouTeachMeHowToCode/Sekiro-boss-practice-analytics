@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from app.db.models import User
 from app.db.session import get_db
 from app.main import app
 from app.seed import load_boss_data, sync_reference_data
@@ -49,7 +50,29 @@ def seeded_session(session):
 
 
 @pytest.fixture()
-def client(seeded_session):
+def make_user(seeded_session):
+    """Creates a user row directly, for service-level tests that don't go through the API."""
+
+    def make(username: str) -> User:
+        user = User(username=username, password_hash="not-a-real-hash")
+        seeded_session.add(user)
+        seeded_session.flush()
+        return user
+
+    return make
+
+
+@pytest.fixture()
+def anon_client(seeded_session):
+    """A client that is not logged in."""
     app.dependency_overrides[get_db] = lambda: seeded_session
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def client(anon_client):
+    """A client logged in as a freshly registered user; the session cookie is kept between requests."""
+    resp = anon_client.post("/api/auth/register", json={"username": "tester", "password": "correct-horse"})
+    assert resp.status_code == 201, resp.text
+    return anon_client

@@ -181,61 +181,46 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** is deferred until after V3: there is currently a single user, and without accounts a public instance would let anyone record attempts. V3 adds accounts, which removes that problem.
+* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts, and public hosting is now planned for V4, once boss content is backed by verified game data.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
+
+---
+
+## V3 — Multi-User Product Foundation
+
+### V3.0 — Completed
+
+V3 turned the single-user local app into a foundation that several players can use, each with their own data.
+
+* ✅ **Accounts and authentication:** registration, login and logout, argon2-hashed passwords, and server-side sessions in an httpOnly cookie. Boss data stays browsable without an account.
+* ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
+* ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
+* ✅ **English / 中文 interface:** a language switch, with each language showing only its own text. The choice is saved on the account, or in the browser for visitors. Most Chinese move names and descriptions are translations of the English source material.
+* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V4.
+* ✅ **Hardening:** the four required CI jobs also check that accounts and attempts survive a Docker restart.
+
+While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V4.
 
 ---
 
 ## Future Direction
 
-The longer-term roadmap is:
+The full plan is in [ROADMAP.md](ROADMAP.md). In short:
 
 ```text
-V1
-Manual boss-attempt tracking
-+
-basic failure analytics
-
-        ↓
-
-V2
-PostgreSQL
-+
-expanded Sekiro boss data
-+
-richer progression analytics
-
-        ↓
-
-V3
-User profiles
-+
-long-term personalized practice tracking
-+
-practice recommendations
-+
-public deployment
-
-        ↓
-
-V4
-Gameplay video analysis
-+
-automatic / semi-automatic move detection
-+
-detailed combat performance metrics
-
-        ↓
-
-V5
-Multi-game platform
-+
-Sekiro
-+
-Black Myth: Wukong
+V1  What killed me?                      → manual attempt analytics
+V2  Where am I improving or struggling?  → structured relational analytics
+V3  Can different players use it?        → multi-user product foundation
+V4  What moves actually exist?           → combat ground truth + public deployment
+V5  What happened in the fight?          → gameplay video analysis
+V6  Can this work across games?          → multi-game platform
 ```
 
-The long-term goal is to evolve Sekiro Boss Practice Analytics from a manual attempt tracker into a generalized boss-practice and gameplay-performance analytics platform.
+* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro. The app is then deployed publicly.
+* **V5** analyzes uploaded gameplay to detect boss moves and player responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
+* **V6** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
+
+The long-term goal is to turn gameplay footage into trustworthy, explainable boss-practice analytics with as little manual input as possible.
 
 ---
 
@@ -260,6 +245,13 @@ V1 intentionally uses JSON persistence because the initial dataset is small and 
 * **Deployment:** Docker Compose (local)
 * **CI:** GitHub Actions
 
+### V3
+
+Everything in V2, plus:
+
+* **Authentication:** argon2 password hashing, server-side sessions in an httpOnly cookie
+* **Interface languages:** English and Chinese, with a small in-house translation dictionary
+
 ---
 
 ## Running Locally
@@ -282,9 +274,17 @@ Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
 
    On every start the backend applies database migrations and loads the bosses from `backend/seed/bosses.json`.
 
-3. Open http://localhost:8080. The API documentation is at http://localhost:8000/docs.
+3. Open http://localhost:8080 and create an account. Boss movesets can be browsed without one; recording attempts and viewing analytics need a login. Switch between English and 中文 in the top-right corner. The API documentation is at http://localhost:8000/docs.
 
 To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
+
+Each account sees only its own attempts. Attempts recorded before accounts existed (V1 and V2) have no owner and are hidden until you assign them. After registering, run this once:
+
+```bash
+docker compose exec backend python -m scripts.claim_attempts <your-username>
+```
+
+It only assigns attempts that have no owner, so running it again does nothing.
 
 Attempt data is kept in the `postgres-data` Docker volume. `docker compose down` keeps it; `docker compose down -v` deletes it.
 

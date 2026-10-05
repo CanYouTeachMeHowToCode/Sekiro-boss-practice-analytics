@@ -23,11 +23,12 @@ def _to_schema(row: db.Attempt, boss_slug: str) -> Attempt:
     )
 
 
-def get_attempts(session: Session, boss_slug: str) -> list[Attempt]:
+def get_attempts(session: Session, user_id: int, boss_slug: str) -> list[Attempt]:
+    """One user's attempts against one boss. Other users' and ownerless attempts are never included."""
     rows = session.scalars(
         select(db.Attempt)
         .join(db.Boss)
-        .where(db.Boss.slug == boss_slug)
+        .where(db.Attempt.user_id == user_id, db.Boss.slug == boss_slug)
         .options(selectinload(db.Attempt.failure_move))
         # Newest first. id breaks ties between attempts created in the same transaction.
         .order_by(db.Attempt.created_at.desc(), db.Attempt.id.desc())
@@ -35,7 +36,7 @@ def get_attempts(session: Session, boss_slug: str) -> list[Attempt]:
     return [_to_schema(row, boss_slug) for row in rows]
 
 
-def create_attempt(session: Session, boss_slug: str, req: CreateAttemptRequest) -> Attempt:
+def create_attempt(session: Session, user_id: int, boss_slug: str, req: CreateAttemptRequest) -> Attempt:
     boss = boss_service.get_boss_row(session, boss_slug)
     if boss is None:
         raise AttemptValidationError(f"Boss '{boss_slug}' not found")
@@ -70,6 +71,7 @@ def create_attempt(session: Session, boss_slug: str, req: CreateAttemptRequest) 
 
     row = db.Attempt(
         boss=boss,
+        user_id=user_id,
         result=req.result.value,
         phase_reached=phase_reached,
         failure_move=failure_move,

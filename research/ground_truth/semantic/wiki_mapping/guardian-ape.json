@@ -1,0 +1,231 @@
+{
+  "boss": "guardian-ape",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Guardian+Ape",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Guardian_Ape",
+      "version": "revid 13796 (2023-12-05)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Fandom names about 22 moves; Fextralife's table groups them into about 8."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "hand-swipe-grab"
+      ],
+      "fextralife": [
+        "Grab: swipes the floor from left to right"
+      ],
+      "fandom": [
+        "Perilous Grab"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "body-slam-grab"
+      ],
+      "fextralife": [
+        "Grab: jumps and attempts to grab"
+      ],
+      "fandom": [
+        "Perilous Jumping Grab"
+      ],
+      "relation": "same",
+      "notes": "Counters differ: Fextralife suggests a double dodge; Fandom says running away is safer.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "poisonous-fart"
+      ],
+      "fextralife": [
+        "Poisonous farting"
+      ],
+      "fandom": [
+        "Fart"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "poisonous-poo-throw"
+      ],
+      "fextralife": [
+        "Poisonous poo"
+      ],
+      "fandom": [
+        "Dung Throw"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "rolling-body-slam"
+      ],
+      "fextralife": [
+        "strategy text: body slam, jumps on its back and thrashes"
+      ],
+      "fandom": [
+        "Tantrum"
+      ],
+      "relation": "same",
+      "notes": "Fandom: four hits.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "rapid-slamming"
+      ],
+      "fextralife": [
+        "Rapid slamming"
+      ],
+      "fandom": [
+        "Onslaught",
+        "Fake Out Combo",
+        "Feral Claws",
+        "Circling Slam",
+        "Prey",
+        "Rear Chaser",
+        "Rumble"
+      ],
+      "relation": "split",
+      "notes": "One product entry for the close-range combos that Fandom names separately.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [
+        "strategy text: jumps back and roars"
+      ],
+      "fandom": [
+        "Intimidate"
+      ],
+      "relation": "same",
+      "notes": "Reveals a grapple point. Removed from the product in V3 M5 because it deals no damage.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Recovering Roll"
+      ],
+      "relation": "only_fandom",
+      "notes": "Roars and rolls back after heavy damage; almost always followed by Perilous Jumping Grab.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "jumping-sweep"
+      ],
+      "fextralife": [
+        "Jumping sweep"
+      ],
+      "fandom": [
+        "Swan Dive"
+      ],
+      "relation": "same",
+      "notes": "Fandom marks it perilous; Fextralife does not.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Sweep (phase 2)"
+      ],
+      "relation": "only_fandom",
+      "notes": "Drags the blade along the ground.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "overhead-slam"
+      ],
+      "fextralife": [
+        "Overhead slam"
+      ],
+      "fandom": [
+        "Charged Overhead"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "blood-scream"
+      ],
+      "fextralife": [
+        "Scream"
+      ],
+      "fandom": [
+        "Death's Scream"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "wide-sword-swipes"
+      ],
+      "fextralife": [
+        "strategy text: sword swipes that cover a wide area"
+      ],
+      "fandom": [
+        "Blade Dance",
+        "Mad Swing",
+        "Roundabout"
+      ],
+      "relation": "split",
+      "notes": "One product entry for several sword combos that Fandom names separately.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "diving-lunge"
+      ],
+      "fextralife": [
+        "strategy text: lunges forward with a swipe while falling"
+      ],
+      "fandom": [
+        "Sliding Slash"
+      ],
+      "relation": "unclear",
+      "notes": "Closest Fandom entry, but not clearly the same move.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

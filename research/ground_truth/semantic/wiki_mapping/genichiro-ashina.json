@@ -1,0 +1,336 @@
+{
+  "boss": "genichiro-ashina",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fandom",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Genichiro+Ashina",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Genichiro_Ashina,_Second_Encounter",
+      "version": "revid 14138 (2024-10-22)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Phase structure conflict: Fextralife lists 2 phases (phase 1, then Way of Tomoe); Fandom lists 3. The product follows Fandom (3 phases), as decided by the user."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "perilous-attack-follow-up"
+      ],
+      "fextralife": [
+        "Leaping Slam into Thrust Attack"
+      ],
+      "fandom": [
+        "Perilous Attack Follow Up (phase 1)"
+      ],
+      "relation": "same",
+      "notes": "Overhead smash, then a Perilous Thrust. Fextralife does not mark it perilous.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-attack-follow-up-phase-2"
+      ],
+      "fextralife": [
+        "Leaping Slam into Sweep"
+      ],
+      "fandom": [
+        "Perilous Attack Follow Up (phase 2)"
+      ],
+      "relation": "partial",
+      "notes": "Fextralife lists the sweep variant in its phase 1 (which covers our phases 1-2); Fandom only from phase 2.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-attack-follow-up-phase-3"
+      ],
+      "fextralife": [
+        "Leaping Slam into Slash"
+      ],
+      "fandom": [
+        "Perilous Attack Follow Up (phase 3)"
+      ],
+      "relation": "partial",
+      "notes": "Way of Tomoe variant. Fextralife: ends in a horizontal slash (not a sweep). Fandom: thrust, sweep, or a quick upward cut followed by a delayed Perilous Thrust.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-grab"
+      ],
+      "fextralife": [
+        "Backhand Grab"
+      ],
+      "fandom": [
+        "Perilous Grab (phase 1)"
+      ],
+      "relation": "partial",
+      "notes": "Fextralife: a backhand after a single spin attack, not marked perilous. Fandom: sideways jumping slash, elbow jab, then a punch.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "closing-tide"
+      ],
+      "fextralife": [
+        "Bow into Rolling Slash"
+      ],
+      "fandom": [
+        "Closing Tide"
+      ],
+      "relation": "same",
+      "notes": "One or two arrows, then a rolling slash.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "floating-passage"
+      ],
+      "fextralife": [
+        "Floating Passage",
+        "Floating Passage Cancel"
+      ],
+      "fandom": [
+        "Floating Passage (phase 1)"
+      ],
+      "relation": "split",
+      "notes": "Fextralife lists the arrow-shot cancel as its own entry; Fandom folds it into Floating Passage.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "guard-breaking-shot"
+      ],
+      "fextralife": [
+        "Charged Shot"
+      ],
+      "fandom": [
+        "Guard Breaking Shot"
+      ],
+      "relation": "same",
+      "notes": "Both: used to punish healing.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "hawk-shot"
+      ],
+      "fextralife": [
+        "Multiple Arrow Jump"
+      ],
+      "fandom": [
+        "Hawk Shot"
+      ],
+      "relation": "same",
+      "notes": "Four arrows while airborne. Fandom: up to five in phase 2.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "two-hit-combo"
+      ],
+      "fextralife": [
+        "Slash into Back Kick"
+      ],
+      "fandom": [
+        "Two-hit Combo"
+      ],
+      "relation": "same",
+      "notes": "Spinning slash, then a kick.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "deaths-thrust"
+      ],
+      "fextralife": [
+        "Sword Dive Thrust Attack"
+      ],
+      "fandom": [
+        "Death's Thrust"
+      ],
+      "relation": "same",
+      "notes": "Fextralife: punishes healing, followed by Running Grab if deflected. Fandom: punishes item use, may follow with Perilous Grab.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-grab-phase-3"
+      ],
+      "fextralife": [
+        "Running Grab Attack"
+      ],
+      "fandom": [
+        "Perilous Grab (phase 3)"
+      ],
+      "relation": "same",
+      "notes": "Running grab, throw, stab.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-of-tomoe-slash"
+      ],
+      "fextralife": [
+        "Electric slash"
+      ],
+      "fandom": [
+        "Lightning of Tomoe Slash"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-of-tomoe-smash"
+      ],
+      "fextralife": [
+        "Electric slam"
+      ],
+      "fandom": [
+        "Lightning of Tomoe Smash"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-attack"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Attack"
+      ],
+      "relation": "only_fandom",
+      "notes": "Runs at Wolf and does a plunging attack.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-thrust"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Thrust"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-sweep"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Perilous Sweep"
+      ],
+      "relation": "only_fandom",
+      "notes": "Sweep followed by an arrow shot.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "advance"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Advance"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "chasing-slice"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Chasing Slice"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "iaijutsu"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Iaijutsu"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "receding-tide"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Receding Tide"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "floating-passage-phase-3"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Floating Passage (phase 3)"
+      ],
+      "relation": "only_fandom",
+      "notes": "Fextralife lists no Floating Passage for the Way of Tomoe phase.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "lightning-of-tomoe-shot"
+      ],
+      "fextralife": [],
+      "fandom": [
+        "Lightning of Tomoe Shot"
+      ],
+      "relation": "only_fandom",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

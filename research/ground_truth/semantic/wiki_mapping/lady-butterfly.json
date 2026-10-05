@@ -1,0 +1,174 @@
+{
+  "boss": "lady-butterfly",
+  "ruleset": "vanilla",
+  "reviewed": "2026-10-03",
+  "product_source": "fextralife",
+  "sources": {
+    "fextralife": {
+      "url": "https://sekiroshadowsdietwice.wiki.fextralife.com/Lady+Butterfly",
+      "version": "edited 2026-09-15",
+      "fetched": "2026-10-03"
+    },
+    "fandom": {
+      "url": "https://sekiro-shadows-die-twice.fandom.com/wiki/Lady_Butterfly",
+      "version": "revid 14270 (2025-02-01)",
+      "fetched": "2026-10-03"
+    }
+  },
+  "notes": [
+    "Fextralife's attack table has only 5 rows; several product moves were summarized from its strategy text. Fandom names about 14 distinct moves."
+  ],
+  "entries": [
+    {
+      "product_moves": [
+        "kunai-throw"
+      ],
+      "fextralife": [
+        "Kunai Throw"
+      ],
+      "fandom": [
+        "Kunai Throw"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-aerial-grab"
+      ],
+      "fextralife": [
+        "Perilous Attack - Above"
+      ],
+      "fandom": [
+        "Perilous Swoop"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "perilous-sweep"
+      ],
+      "fextralife": [
+        "Perilous Attack - Sweep"
+      ],
+      "fandom": [
+        "Perilous Sweep"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "illusions"
+      ],
+      "fextralife": [
+        "Illusions"
+      ],
+      "fandom": [
+        "Illusion Spell"
+      ],
+      "relation": "same",
+      "notes": "",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "phantom-kunai"
+      ],
+      "fextralife": [
+        "Phantom Kunai (infobox: Useful Tools)"
+      ],
+      "fandom": [
+        "Kunai Throw (phase 2: butterfly projectiles)"
+      ],
+      "relation": "partial",
+      "notes": "The user confirmed in the V3 M5 review that this is her move. Fextralife only mentions it in the infobox; Fandom describes her phase-2 kunai as magical butterfly projectiles.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "homing-butterflies"
+      ],
+      "fextralife": [
+        "strategy text: homing butterflies"
+      ],
+      "fandom": [
+        "Illusion Spell (butterflies)",
+        "Waltz (phase 2)"
+      ],
+      "relation": "partial",
+      "notes": "Fandom treats the homing butterflies as part of Illusion Spell and the phase-2 Waltz rather than a separate move.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "ground-combos"
+      ],
+      "fextralife": [
+        "strategy text: ground combos, dash attacks, ground stomp attacks"
+      ],
+      "fandom": [
+        "Flourishing Slashes",
+        "Whirlwind Kick",
+        "Counter"
+      ],
+      "relation": "split",
+      "notes": "The product groups several moves that Fandom names separately.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [
+        "aerial-attacks-enhanced"
+      ],
+      "fextralife": [
+        "strategy text: aerial attacks"
+      ],
+      "fandom": [
+        "Drop Kick",
+        "Prowl",
+        "Waltz"
+      ],
+      "relation": "split",
+      "notes": "The product groups several aerial moves that Fandom names separately.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [
+        "Jump into the Rafters"
+      ],
+      "fandom": [
+        "Wire Leap",
+        "Wire Hop",
+        "Kunai Throw to Wire transition"
+      ],
+      "relation": "partial",
+      "notes": "Movement onto the wires. Removed from the product in V3 M5 because it deals no damage.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    },
+    {
+      "product_moves": [],
+      "fextralife": [],
+      "fandom": [
+        "Frenzied Flurry"
+      ],
+      "relation": "only_fandom",
+      "notes": "Her most dangerous phase-2 combo: many slashes ending in a Perilous Sweep. Not in the product.",
+      "v4_status": "unverified",
+      "engine_evidence": null
+    }
+  ]
+}

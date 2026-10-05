@@ -13,7 +13,7 @@ from app.db.base import Base
 from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove
 from scripts.reset_test_database import alembic_config
 
-APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts"}
+APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts", "users", "user_sessions"}
 
 
 def make_boss(session: Session, slug: str = "owl-father") -> Boss:
@@ -48,6 +48,71 @@ def test_migration_can_downgrade_and_upgrade_again(engine, database_url):
     assert not APP_TABLES & set(inspect(engine).get_table_names())
     command.upgrade(config, "head")
     assert APP_TABLES <= set(inspect(engine).get_table_names())
+
+
+def test_adding_attempt_owners_keeps_existing_attempts_as_ownerless(engine, database_url):
+    """Upgrading a database that already has V2 attempts must not drop or reassign them."""
+    config = alembic_config(database_url)
+    command.downgrade(config, "980c7a879ddb")  # the revision before attempts.user_id
+    try:
+        with engine.begin() as conn:
+            game_id = conn.scalar(text("INSERT INTO games (slug, name) VALUES ('mig', 'Mig') RETURNING id"))
+            boss_id = conn.scalar(
+                text("INSERT INTO bosses (game_id, slug, name, location) VALUES (:g, 'mig-boss', 'M', 'L') RETURNING id"),
+                {"g": game_id},
+            )
+            conn.execute(
+                text("INSERT INTO attempts (boss_id, result, phase_reached) VALUES (:b, 'failed', 1)"), {"b": boss_id}
+            )
+
+        command.upgrade(config, "head")
+
+        with engine.connect() as conn:
+            rows = conn.execute(text("SELECT user_id FROM attempts WHERE boss_id = :b"), {"b": boss_id}).all()
+        assert rows == [(None,)]
+    finally:
+        command.upgrade(config, "head")
+        with engine.begin() as conn:
+            conn.execute(text("DELETE FROM attempts WHERE boss_id IN (SELECT id FROM bosses WHERE slug = 'mig-boss')"))
+            conn.execute(text("DELETE FROM bosses WHERE slug = 'mig-boss'"))
+            conn.execute(text("DELETE FROM games WHERE slug = 'mig'"))
+
+
+def test_way_of_tomoe_migration_moves_isshin_attempts_up_one_phase(engine, database_url):
+    config = alembic_config(database_url)
+    command.downgrade(config, "6849ddf003e3")  # the revision before the shift
+    try:
+        with engine.begin() as conn:
+            game_id = conn.scalar(text("INSERT INTO games (slug, name) VALUES ('mig', 'Mig') RETURNING id"))
+            ids = {}
+            for slug in ("isshin-sword-saint", "mig-other-boss"):
+                ids[slug] = conn.scalar(
+                    text("INSERT INTO bosses (game_id, slug, name, location) VALUES (:g, :s, 'B', 'L') RETURNING id"),
+                    {"g": game_id, "s": slug},
+                )
+                conn.execute(
+                    text("INSERT INTO attempts (boss_id, result, phase_reached) VALUES (:b, 'failed', 2)"),
+                    {"b": ids[slug]},
+                )
+
+        command.upgrade(config, "head")
+
+        with engine.connect() as conn:
+            phases = dict(conn.execute(text("SELECT b.slug, a.phase_reached FROM attempts a JOIN bosses b ON b.id = a.boss_id")).all())
+        assert phases == {"isshin-sword-saint": 3, "mig-other-boss": 2}
+    finally:
+        command.upgrade(config, "head")
+        with engine.begin() as conn:
+            conn.execute(text("DELETE FROM attempts WHERE boss_id IN (SELECT id FROM bosses WHERE game_id IN (SELECT id FROM games WHERE slug = 'mig'))"))
+            conn.execute(text("DELETE FROM bosses WHERE game_id IN (SELECT id FROM games WHERE slug = 'mig')"))
+            conn.execute(text("DELETE FROM games WHERE slug = 'mig'"))
+
+
+def test_move_source_name_and_url_go_together(session):
+    boss = make_boss(session)
+    session.add(Move(boss=boss, slug="half-source", name="X", move_type="thrust", source_name="Somewhere"))
+    with pytest.raises(IntegrityError):
+        session.flush()
 
 
 def test_move_is_stored_once_and_shared_across_phases(session):
