@@ -151,6 +151,7 @@ jobs:
 
       - name: Wait for the backend to become healthy
         run: |
+          cat > wait-for-backend.sh <<'EOF'
           for i in $(seq 1 60); do
             if curl -sf http://localhost:8000/health > /dev/null; then
               echo "backend healthy after ${i} tries"
@@ -160,6 +161,8 @@ jobs:
           done
           echo "backend did not become healthy" >&2
           exit 1
+          EOF
+          bash wait-for-backend.sh
 
       - name: Smoke test through nginx
         run: |
@@ -176,6 +179,25 @@ jobs:
             -d '{"username": "ci_smoke", "password": "ci-smoke-password"}' \
             http://localhost:8080/api/auth/register > /dev/null
           curl -sf -b cookies.txt http://localhost:8080/api/sekiro/analytics | jq -e '.total_bosses == '"${bosses}"
+
+          # An attempt for the persistence check below.
+          curl -sf -b cookies.txt -H 'Content-Type: application/json' \
+            -d '{"result": "failed", "phase_reached": 1, "failure_move_id": null, "failure_category": "not_sure", "notes": "persistence check"}' \
+            http://localhost:8080/api/bosses/genichiro-ashina/attempts > /dev/null
+
+      # Stopping the stack without -v must keep accounts and attempts in the
+      # postgres-data volume (V3 success criteria: restart, data persists).
+      - name: Restart the stack and check the data persisted
+        run: |
+          docker compose down
+          docker compose up -d
+          bash wait-for-backend.sh
+
+          curl -sf -c cookies-after.txt -H 'Content-Type: application/json' \
+            -d '{"username": "ci_smoke", "password": "ci-smoke-password"}' \
+            http://localhost:8080/api/auth/login > /dev/null
+          curl -sf -b cookies-after.txt http://localhost:8080/api/bosses/genichiro-ashina/attempts \
+            | jq -e 'length == 1 and .[0].notes == "persistence check"'
 
       - name: Show container logs
         if: failure()
