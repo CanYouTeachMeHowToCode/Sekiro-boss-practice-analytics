@@ -10,6 +10,17 @@ It is kept separate from the production application: nothing here is read by the
 - Every observation carries its ruleset (`vanilla`, `resurrection`).
 - Do not commit proprietary game assets: game binaries, extracted archives, animation bundles, models or textures. Commit scripts, metadata, mappings, identifiers, hashes and annotations only.
 
+## Third-party tools
+
+The research relies on these community tools. They are run locally and are **not** included in this repository; get them from their own pages.
+
+| Tool | Author | Used for | License / terms |
+|---|---|---|---|
+| [Sekiro-Debug-Patch](https://github.com/yuiamoroll/Sekiro-Debug-Patch) | yuiamoroll (overlay with help from Enlisted; sub-option patches found by Pav) | Enables Sekiro's developer debug menu, whose overlay shows the boss's current animation ID during recorded fights | No license file. The README describes it as a modder's resource that may be used freely, and asks to be contacted before it is packaged with another mod that is sold. Do not redistribute it from this repository. |
+| [DS Anim Studio](https://github.com/Meowmaritus/DSAnimStudio) | Meowmaritus | Opening and inspecting character animation files (TAE events, AtkParam references, animation previews) | GPL-3.0 |
+
+Every recording and extracted dataset records the tool versions it was made with, for example the Sekiro-Debug-Patch commit (latest is `88d51093de`, 2021-11-06, as there are no tagged releases) and the DS Anim Studio version (2.4.1 at the start of V4).
+
 ## Contents
 
 | Path | What it holds |

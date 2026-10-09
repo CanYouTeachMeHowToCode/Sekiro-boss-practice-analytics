@@ -79,7 +79,11 @@ PR 和 release 的说明文字都已经写好，在对话记录里。
 
 1. 从 `dev` 创建分支 `feature/ground-truth-genichiro`。
 2. 补齐研究目录：`rulesets/`、`characters/`、`engine/`、`observations/`、`annotations/`。
-3. 写 `rulesets/vanilla.json`，记录游戏版本。
+3. 写 `rulesets/vanilla.json`，记录游戏版本，以及用到的工具版本：
+   - [Sekiro-Debug-Patch](https://github.com/yuiamoroll/Sekiro-Debug-Patch) 的 commit；
+   - DS Anim Studio 的版本号。
+
+   工具的作者、许可证和使用约定见 `README.md` 的 "Third-party tools" 一节。这些工具都不提交到本仓库。
 4. 新建本地配置文件 `research/ground_truth/local.config`，里面写解包目录和录像目录的路径。这个文件加入 `.gitignore`，不提交。
 5. `.gitignore` 里排除游戏原始文件（hkx、tae、anibnd 等）和录像文件。
 6. 为研究脚本单独建一个 Python 环境，和后端的环境分开，然后安装 ffmpeg、OpenCV、numpy。**安装前会先征得你的同意。**
