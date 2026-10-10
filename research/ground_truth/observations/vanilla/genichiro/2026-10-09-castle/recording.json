@@ -2,8 +2,8 @@
   "recording": "2026-10-09-castle",
   "ruleset": "vanilla",
   "resurrection_mod": "off (confirmed by the project owner)",
-  "game_version": null,
-  "game_version_note": "not recorded yet",
+  "game_version": "1.06",
+  "game_version_note": "the latest version, reported by the project owner",
   "encounter": "Genichiro Ashina, top of Ashina Castle, all three phases in one recording",
   "video": {
     "file_name": "开发者菜单弦一郎三个阶段招式.mp4",
@@ -18,7 +18,7 @@
   },
   "overlay": {
     "tool": "Sekiro-Debug-Patch",
-    "build": "not confirmed (latest commit is 88d51093de, 2021-11-06)",
+    "build": "the latest version, reported by the project owner; the exact build was not noted (the latest commit on GitHub is 88d51093de, 2021-11-06)",
     "shown": "target character ID line and the 'Active Anime' list (1-5 lines of a000_DDDDDD (t.tt) [cur/tot])"
   },
   "extraction": {
@@ -33,10 +33,10 @@
     {"frames": [16571, 19493], "time_s": [276.21, 324.91], "character": null, "note": "phase transition, no overlay lines"},
     {"frames": [19494, 24719], "time_s": [324.93, 412.02], "character": "c7110_0001"}
   ],
-  "phases_proposed": {
-    "status": "proposed by Claude, not confirmed by the project owner",
+  "phases": {
+    "status": "confirmed by the project owner on 2026-10-10",
     "1": {"frames": [0, 10787], "time_s": [0.0, 179.80], "ends_with": "a000_012100 -> a000_012110 (first deathblow, 175.68-179.80 s)"},
     "2": {"frames": [10788, 16570], "time_s": [179.81, 276.19], "ends_with": "a000_013500 -> a000_013510 (second deathblow, 271.82-276.19 s)"},
-    "3": {"frames": [19494, 24719], "time_s": [324.93, 412.02], "ends_with": "the recording ends during a000_405001"}
+    "3": {"frames": [19494, 24719], "time_s": [324.93, 412.02], "ends_with": "the player died (reported by the project owner); the recording ends during a000_405001"}
   }
 }

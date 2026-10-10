@@ -1,4 +1,4 @@
-anim,phase_proposed,character,start_frame,end_frame,start_time,end_time,frames_shown,lines,on_line1,t_first,t_last,starts_after_restart
+anim,phase,character,start_frame,end_frame,start_time,end_time,frames_shown,lines,on_line1,t_first,t_last,starts_after_restart
 a000_405003,1,c7100_0000,32,44,0.533,0.733,13,1,1,0.75,0.95,0
 a000_405010,1,c7100_0000,32,56,0.533,0.933,25,12,1,0.12,0.50,0
 a000_405010,1,c7100_0000,57,78,0.95,1.3,22,1,1,0.00,0.35,1

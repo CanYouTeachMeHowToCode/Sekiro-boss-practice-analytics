@@ -28,10 +28,11 @@ Every recording and extracted dataset records the tool versions it was made with
 | `genichiro-plan.md` | Step-by-step plan (in Chinese) for capturing every vanilla Genichiro move with verified accuracy: static animation set, overlay extraction, recording protocol, coverage review, semantic catalog. |
 | `semantic/wiki_mapping/` | Per-boss mapping between product moves, Fextralife entries and Fandom entries, made during V3 M5. It is the starting candidate list for the V4 semantic catalog and the baseline for measuring the gap to engine-level ground truth. |
 | `scripts/wiki_mapping_report.py` | Rebuilds `semantic/wiki_mapping/README.md` from the JSON files, and checks that every product move is mapped exactly once (`--check`). |
+| `rulesets/` | One file per ruleset with the game version and the tool versions used to observe it (`vanilla.json`). |
 | `local.config.example` | Template for `local.config` (gitignored), which holds this machine's game and recording folders. |
 | `engine/` | Animation IDs listed in each character's TAE file (`c7100_tae_ids.txt`, `c7110_tae_ids.txt`), extracted with `scripts/engine/`. |
 | `scripts/engine/` | Read-only extraction from the game's `.anibnd.dcx` files: BND4 file list, single-file extraction, TAE animation IDs. |
 | `scripts/overlay/` | Reads the dev-menu overlay from a recording (character ID, every "Active Anime" line, animation time), builds per-animation occurrences, and makes the review sheets used to check them by eye. Run order is in its README. |
 | `observations/<ruleset>/<boss>/<recording>/` | Verified observations from one recording, with its hash, tool versions, corrections and open questions. The recording itself stays local. |
 
-The remaining folders from the roadmap (`rulesets/`, `characters/`, `annotations/`) are added when V4 work needs them.
+The remaining folders from the roadmap (`characters/`, `annotations/`) are added when V4 work needs them.

@@ -1,0 +1,11 @@
+{
+  "ruleset": "vanilla",
+  "game": "Sekiro: Shadows Die Twice",
+  "game_version": "1.06",
+  "mods": "none for gameplay. Resurrection is installed on the research machine but was off for every vanilla recording.",
+  "tools": {
+    "Sekiro-Debug-Patch": "latest version, exact build not noted (the latest commit on GitHub is 88d51093de, 2021-11-06)",
+    "DS Anim Studio": "2.4.1"
+  },
+  "recorded_by": "the project owner"
+}

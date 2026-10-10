@@ -3,7 +3,7 @@
 Usage: python -I export_observation.py <data_dir> <out_dir> <phase_bounds_json>
 phase_bounds_json: frame ranges (end exclusive), e.g. '{"1": [0, 10788], "2": [10788, 16571], "3": [19494, 24720]}'.
 Writes frames.csv (one row per video frame: character ID and the five 'Active Anime' lines as ID@time),
-occurrences.csv (with the proposed phase), and copies ids.csv, corrections.csv, char_corrections.csv and
+occurrences.csv (with the phase), and copies ids.csv, corrections.csv, char_corrections.csv and
 restart_review.csv.
 """
 import csv
@@ -38,15 +38,15 @@ def phase(f):
 
 occ = list(csv.DictReader(open(data / "occurrences.csv", encoding="utf-8")))
 with open(out / "occurrences.csv", "w", newline="", encoding="utf-8") as fh:
-    fields = ["anim", "phase_proposed", "character", "start_frame", "end_frame", "start_time", "end_time",
+    fields = ["anim", "phase", "character", "start_frame", "end_frame", "start_time", "end_time",
               "frames_shown", "lines", "on_line1", "t_first", "t_last", "starts_after_restart"]
     w = csv.DictWriter(fh, fieldnames=fields)
     w.writeheader()
     for o in occ:
         f = int(o["start_frame"])
         o["t_first"], o["t_last"] = f"{float(o['t_first']):.2f}", f"{float(o['t_last']):.2f}"
-        w.writerow({**{k: o[k] for k in fields if k in o}, "phase_proposed": phase(f), "character": char[f]})
+        w.writerow({**{k: o[k] for k in fields if k in o}, "phase": phase(f), "character": char[f]})
 for name in ("ids.csv", "corrections.csv", "char_corrections.csv", "restart_review.csv"):
     shutil.copy(data / name, out / name)
 print("frames:", len(occ_frames), "occurrences:", len(occ))
-print("character per proposed phase:", {k: sorted({char[f] for f in range(a, b)} - {""}) for k, (a, b) in bounds.items()})
+print("character per phase:", {k: sorted({char[f] for f in range(a, b)} - {""}) for k, (a, b) in bounds.items()})

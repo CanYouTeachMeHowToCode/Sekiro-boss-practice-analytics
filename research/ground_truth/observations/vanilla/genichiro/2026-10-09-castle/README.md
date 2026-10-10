@@ -1,24 +1,24 @@
 # Genichiro, Ashina Castle: dev-menu recording of 2026-10-09
 
 - Ruleset: vanilla. Resurrection was off (confirmed by the project owner).
-- Game version: not recorded yet.
-- Encounter: Genichiro Ashina at the top of Ashina Castle. All three phases are in one recording: 412 s, 2560×1440, 60 fps.
+- Game version: 1.06, the latest. Sekiro-Debug-Patch: the latest version; the exact build was not noted.
+- Encounter: Genichiro Ashina at the top of Ashina Castle. All three phases are in one recording: 412 s, 2560×1440, 60 fps. The player died in phase 3.
 - The recording itself stays local. `recording.json` holds its SHA-256, size and format.
 
 **Status.**
 
 - Every animation ID read from the recording has been verified. See [Verification](#verification).
-- The phase boundaries and the meaning of the overlay lines are proposals.
-- Nothing here is ground truth until the project owner confirms it.
+- The project owner confirmed the phase boundaries on 2026-10-10.
+- Which animations make up which semantic move is not decided here. That is plan step 7, and the project owner confirms it.
 
 ## Files
 
 | File | Content |
 |---|---|
-| `recording.json` | Video hash and format, tool and library versions, the character ID on screen, and the proposed phases. |
+| `recording.json` | Video hash and format, tool and library versions, the character ID on screen, and the phases. |
 | `frames.csv` | One row per video frame: the character ID, then the five "Active Anime" lines written as `ID@time` (for example `003068@0.25`). An empty cell means that line is not on screen. |
-| `occurrences.csv` | 732 occurrences. One occurrence is one play of one animation. Each row gives its proposed phase, first and last frame, which lines showed it, and its first and last animation time. |
-| `ids.csv` | One row per animation ID (85). Each row says whether the ID is in the c7100 or c7110 TAE, how often it occurred in each proposed phase, and which lines showed it. |
+| `occurrences.csv` | 732 occurrences. One occurrence is one play of one animation. Each row gives its phase, first and last frame, which lines showed it, and its first and last animation time. |
+| `ids.csv` | One row per animation ID (85). Each row says whether the ID is in the c7100 or c7110 TAE, how often it occurred in each phase, and which lines showed it. |
 | `corrections.csv` | Animation-ID reads corrected by eye. |
 | `char_corrections.csv` | Character-ID reads corrected by eye. |
 | `restart_review.csv` | Every candidate for "the same animation started again", each checked by eye and marked `restart` or `no_restart`. |
@@ -77,14 +77,16 @@ The scripts are in `research/ground_truth/scripts/overlay/`, and their run order
 - **Character ID.** Six frames under the first deathblow's glow were corrected by eye.
 - **Coverage of the recording.** The overlay is missing only at 0–0.52 s and during the phase transition (276.2–324.9 s), never during combat.
 
-## Results (proposed, for the project owner to confirm)
+## Results
+
+The project owner confirmed these phase boundaries on 2026-10-10.
 
 | Phase | Frames | Time (s) | Character | Ends with | Occurrences | Distinct IDs |
 |---|---|---|---|---|---|---|
 | 1 | 0–10787 | 0.00–179.80 | c7100_0000 | `012100` → `012110` (first deathblow) | 351 | 48 |
 | 2 | 10788–16570 | 179.81–276.19 | c7100_0000 | `013500` → `013510` (second deathblow) | 231 | 52 |
 | – | 16571–19493 | 276.21–324.91 | – | transition, no overlay | – | – |
-| 3 | 19494–24719 | 324.93–412.02 | c7110_0001 | the recording ends during `405001` | 150 | 47 |
+| 3 | 19494–24719 | 324.93–412.02 | c7110_0001 | the player died; the recording ends during `405001` | 150 | 47 |
 
 - **Distinct IDs.** The recording shows 85 distinct IDs.
   - Every ID seen in phases 1–2 is in the c7100 TAE.
@@ -103,12 +105,15 @@ The scripts are in `research/ground_truth/scripts/overlay/`, and their run order
   - Full reuse: `003092` reuses 8603, `008505` reuses 8504, and `009600` reuses 9700.
   - Animation-only reuse: `003101`–`003103` reuse 3100, and `008050` and `008140` reuse 8010.
 
-## Open questions for the project owner
+## Answered by the project owner (2026-10-10)
 
-1. Are the phase boundaries right? The proposal is that phase 1 ends with the first deathblow, phase 2 ends with the second, and phase 3 is `c7110_0001`.
-2. The recording ends at 412.0 s during `405001`. Was phase 3 finished?
-3. Which game version was this?
-4. Which Sekiro-Debug-Patch build was used?
+1. The phase boundaries are right.
+   - Phase 1 ends with the first deathblow.
+   - Phase 2 ends with the second.
+   - Phase 3 is `c7110_0001`.
+2. Phase 3 was not finished: the player died. The owner judges the data from this recording to be enough.
+3. The game version is 1.06, the latest.
+4. Sekiro-Debug-Patch was the latest version. The exact build was not noted.
 
 ## Limitations
 
