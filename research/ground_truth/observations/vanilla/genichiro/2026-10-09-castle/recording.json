@@ -1,0 +1,42 @@
+{
+  "recording": "2026-10-09-castle",
+  "ruleset": "vanilla",
+  "resurrection_mod": "off (confirmed by the project owner)",
+  "game_version": null,
+  "game_version_note": "not recorded yet",
+  "encounter": "Genichiro Ashina, top of Ashina Castle, all three phases in one recording",
+  "video": {
+    "file_name": "开发者菜单弦一郎三个阶段招式.mp4",
+    "kept": "locally only, never committed",
+    "sha256": "b7715326820219f300aa9cb63392cc99165b2c8087d8af6a8ecb46c73e560a70",
+    "bytes": 1180795299,
+    "width": 2560,
+    "height": 1440,
+    "fps": 59.995,
+    "frames": 24720,
+    "duration_s": 412.03
+  },
+  "overlay": {
+    "tool": "Sekiro-Debug-Patch",
+    "build": "not confirmed (latest commit is 88d51093de, 2021-11-06)",
+    "shown": "target character ID line and the 'Active Anime' list (1-5 lines of a000_DDDDDD (t.tt) [cur/tot])"
+  },
+  "extraction": {
+    "scripts": "research/ground_truth/scripts/overlay",
+    "python": "3.10.5",
+    "opencv-python-headless": "5.0.0",
+    "numpy": "2.2.6",
+    "id_whitelist": "research/ground_truth/engine/c7100_tae_ids.txt + c7110_tae_ids.txt (196 IDs)"
+  },
+  "character_on_screen": [
+    {"frames": [0, 16570], "time_s": [0.0, 276.19], "character": "c7100_0000"},
+    {"frames": [16571, 19493], "time_s": [276.21, 324.91], "character": null, "note": "phase transition, no overlay lines"},
+    {"frames": [19494, 24719], "time_s": [324.93, 412.02], "character": "c7110_0001"}
+  ],
+  "phases_proposed": {
+    "status": "proposed by Claude, not confirmed by the project owner",
+    "1": {"frames": [0, 10787], "time_s": [0.0, 179.80], "ends_with": "a000_012100 -> a000_012110 (first deathblow, 175.68-179.80 s)"},
+    "2": {"frames": [10788, 16570], "time_s": [179.81, 276.19], "ends_with": "a000_013500 -> a000_013510 (second deathblow, 271.82-276.19 s)"},
+    "3": {"frames": [19494, 24719], "time_s": [324.93, 412.02], "ends_with": "the recording ends during a000_405001"}
+  }
+}

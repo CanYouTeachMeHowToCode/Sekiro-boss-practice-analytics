@@ -1,0 +1,6 @@
+; Copy to local.config (gitignored) and fill in the paths for this machine.
+[paths]
+; Sekiro install folder. Read only: scripts load oo2core_6_win64.dll from it to decompress KRAK files.
+game_dir = D:\SteamLibrary\steamapps\common\Sekiro
+; Where the dev-menu recordings are kept. Recordings are never committed.
+recordings_dir = C:\path\to\recordings
