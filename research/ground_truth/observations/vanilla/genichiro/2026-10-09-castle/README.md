@@ -19,6 +19,7 @@
 | `frames.csv` | One row per video frame: the character ID, then the five "Active Anime" lines written as `ID@time` (for example `003068@0.25`). An empty cell means that line is not on screen. |
 | `occurrences.csv` | 732 occurrences. One occurrence is one play of one animation. Each row gives its phase, first and last frame, which lines showed it, and its first and last animation time. |
 | `ids.csv` | One row per animation ID (85). Each row says whether the ID is in the c7100 or c7110 TAE, how often it occurred in each phase, and which lines showed it. |
+| `coverage.csv` | One row for each of the 196 IDs in the c7100 and c7110 TAE files. Each row says which TAE has the ID, how often it occurred in each phase, and whether it was seen as c7100 (phases 1–2) or as c7110 (phase 3). |
 | `corrections.csv` | Animation-ID reads corrected by eye. |
 | `char_corrections.csv` | Character-ID reads corrected by eye. |
 | `restart_review.csv` | Every candidate for "the same animation started again", each checked by eye and marked `restart` or `no_restart`. |
