@@ -30,9 +30,11 @@ Every recording and extracted dataset records the tool versions it was made with
 | `scripts/wiki_mapping_report.py` | Rebuilds `semantic/wiki_mapping/README.md` from the JSON files, and checks that every product move is mapped exactly once (`--check`). |
 | `rulesets/` | One file per ruleset with the game version and the tool versions used to observe it (`vanilla.json`). |
 | `local.config.example` | Template for `local.config` (gitignored), which holds this machine's game and recording folders. |
-| `engine/` | Animation IDs listed in each character's TAE file (`c7100_tae_ids.txt`, `c7110_tae_ids.txt`), extracted with `scripts/engine/`. |
-| `scripts/engine/` | Read-only extraction from the game's `.anibnd.dcx` files: BND4 file list, single-file extraction, TAE animation IDs. |
+| `engine/` | Animation IDs listed in each character's TAE file (`c7100_tae_ids.txt`, `c7110_tae_ids.txt`), extracted with `scripts/engine/`; the castle Genichiro AI results (`genichiro_castle_ai_reachability.csv`, flowcharts in `genichiro_castle_ai.md`). |
+| `characters/genichiro.json` | Every placed Genichiro in the game and its encounter (proposed): map, entity, AI script, NpcParam, health bar name. |
+| `scripts/ai/` | Battle AI analysis: Lua 5.0 decompiler, requested-animation extraction, castle reachability, encounter finder, flowcharts. See its README. |
+| `scripts/engine/` | Read-only extraction from the game's DCX/BND4 archives: file list, single-file extraction, TAE animation IDs, full TAE event dump (`tae_dump.py`, needs DS Anim Studio's template). |
 | `scripts/overlay/` | Reads the dev-menu overlay from a recording (character ID, every "Active Anime" line, animation time), builds per-animation occurrences, and makes the review sheets used to check them by eye. Run order is in its README. |
 | `observations/<ruleset>/<boss>/<recording>/` | Verified observations from one recording, with its hash, tool versions, corrections and open questions. The recording itself stays local. |
 
-The remaining folders from the roadmap (`characters/`, `annotations/`) are added when V4 work needs them.
+The remaining folder from the roadmap (`annotations/`) is added when V4 work needs it.

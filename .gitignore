@@ -229,3 +229,12 @@ research/ground_truth/local.config
 *.mov
 *.npy
 *.npz
+# Ground truth research: game scripts, params and AI decompilations stay local
+*.lua
+*.luabnd
+*.emevd
+*.msb
+*.parambnd
+*_battle.txt
+*_logic.txt
+*_tae.json
