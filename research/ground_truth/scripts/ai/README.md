@@ -57,6 +57,7 @@ python -I research/ground_truth/scripts/ai/ai_flowchart.py <work>/710000_battle.
 | `ai_moves.py` | For each function of a battle goal, lists the animation IDs it requests (`AddSubGoal`), and whether Activate / Kengeki_Activate ever weights it or something calls it. Also lists the IDs that appear only as cooldown keys. |
 | `reachability.py` | The castle result table. The castle-specific rules it applies on top of `ai_moves.py`, each read from the decompiled script, are listed in its docstring. |
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
+| `memory_bosses.py` | Lists every boss that drops a Memory: Memory item → item lot → defeat flag (common event 300) → the event that tests the boss → map part → model, AI. Writes `characters/memory_bosses.csv`. |
 | `ai_flowchart.py` | Draws one battle goal as Mermaid flowcharts and Markdown trees. |
 | `params.py`, `emevd.py` | Minimal readers for PARAM tables and event scripts (EMEVD). |
 

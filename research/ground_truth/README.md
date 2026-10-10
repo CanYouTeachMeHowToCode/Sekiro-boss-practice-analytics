@@ -31,6 +31,7 @@ Every recording and extracted dataset records the tool versions it was made with
 | `rulesets/` | One file per ruleset with the game version and the tool versions used to observe it (`vanilla.json`). |
 | `local.config.example` | Template for `local.config` (gitignored), which holds this machine's game and recording folders. |
 | `engine/` | Animation IDs listed in each character's TAE file (`c7100_tae_ids.txt`, `c7110_tae_ids.txt`), extracted with `scripts/engine/`; the castle Genichiro AI results (`genichiro_castle_ai_reachability.csv`, flowcharts in `genichiro_castle_ai.md`). |
+| `characters/README.md`, `characters/memory_bosses.csv` | Every vanilla boss that drops a Memory (17), with its map, character models (cNNNN), AI scripts, defeat flag and the evidence chain. The README has diagrams and the table, in Chinese. |
 | `characters/genichiro.json` | Every placed Genichiro in the game and its encounter (proposed): map, entity, AI script, NpcParam, health bar name. |
 | `scripts/ai/` | Battle AI analysis: Lua 5.0 decompiler, requested-animation extraction, castle reachability, encounter finder, flowcharts. See its README. |
 | `scripts/engine/` | Read-only extraction from the game's DCX/BND4 archives: file list, single-file extraction, TAE animation IDs, full TAE event dump (`tae_dump.py`, needs DS Anim Studio's template). |
