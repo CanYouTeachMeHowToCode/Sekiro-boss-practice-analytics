@@ -139,7 +139,9 @@ Start with V4 Milestone 1 (research foundation) and Milestone 2 (Genichiro runti
 
 V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
 
-Public deployment is V4 Milestone 9.
+Public deployment is V4 Milestone 7.
+
+V4 covers vanilla Sekiro only. All Resurrection mod work is deferred until after `v4.0.0` (section 35).
 
 Practice recommendations are part of V5.
 
@@ -701,14 +703,15 @@ No single source should automatically override all others.
 
 # 20. Rulesets
 
-V4 must introduce the concept of a combat ruleset.
+Every dataset carries its combat ruleset.
 
-At minimum:
+V4 covers only:
 
 ```text
 Vanilla Sekiro
-Resurrection Mod
 ```
+
+The Resurrection mod is a separate ruleset. Its work is deferred until after `v4.0.0` (section 35), but the ruleset label stays on every dataset so it can be added later without reworking vanilla data.
 
 Version metadata should be preserved where possible.
 
@@ -751,7 +754,7 @@ Example responsibilities:
 
 ```text
 rulesets/
-→ Vanilla / Resurrection version metadata
+→ ruleset version metadata (vanilla in V4)
 
 characters/
 → product boss ↔ character ID mappings
@@ -806,7 +809,7 @@ Raw extracted game assets should remain local and gitignored.
 
 Create:
 
-- ruleset metadata
+- vanilla ruleset metadata (Resurrection metadata is deferred with the rest of the Resurrection work)
 - research folder structure
 - ground-truth schema drafts
 - local asset paths through configuration
@@ -821,7 +824,7 @@ Do not modify the production DB merely to anticipate later needs.
 
 Use Genichiro as the first vertical slice.
 
-Start with Vanilla unless explicitly choosing Resurrection first for a specific experiment.
+Vanilla only.
 
 Objectives:
 
@@ -874,7 +877,7 @@ Runtime instrumentation should shrink the static reverse-engineering search spac
 
 # 26. V4 Milestone 3 — Static Engine Mapping
 
-After obtaining runtime identifiers, trace them into engine/mod data.
+After obtaining runtime identifiers, trace them into engine data.
 
 Possible chain:
 
@@ -893,7 +896,6 @@ AtkParam / Bullet / SpEffect
 Use:
 
 - Debug Menu / developer runtime information
-- Resurrection override files
 - targeted original-game extraction
 - DSAnimStudio or equivalent animation inspection
 - TAE extraction
@@ -905,7 +907,9 @@ Do not introduce tooling simply because it exists.
 
 ---
 
-# 27. Resurrection Analysis Strategy
+# 27. Resurrection Analysis Strategy (Deferred)
+
+Deferred until after `v4.0.0`, together with section 35. Kept here for when that work starts.
 
 Treat Resurrection as:
 
@@ -1083,27 +1087,7 @@ Do not claim absolute mathematical completeness unless evidence supports it.
 
 ---
 
-# 32. V4 Milestone 6 — Resurrection Ground Truth
-
-After the Vanilla pipeline is understood, build the Resurrection mapping.
-
-Classify differences as:
-
-```text
-unchanged
-modified
-new_in_resurrection
-vanilla_only
-same_semantic_move_different_engine_sequence
-```
-
-Every gameplay/video observation must carry its ruleset.
-
-This becomes essential for future CV training.
-
----
-
-# 33. V4 Milestone 7 — Product Integration
+# 32. V4 Milestone 6 — Product Integration
 
 Only after the research schema stabilizes:
 
@@ -1129,33 +1113,7 @@ Let the actual research data determine the relational model.
 
 ---
 
-# 34. V4 Milestone 8 — Boss Expansion
-
-After Genichiro is complete enough to validate the pipeline, expand boss-by-boss.
-
-Do not immediately process every boss in parallel.
-
-Prefer representative progression:
-
-```text
-Genichiro
-↓
-another humanoid boss
-↓
-beast boss
-↓
-projectile/special-effect-heavy boss
-↓
-late-game complex boss
-```
-
-Reuse tooling aggressively.
-
-The ground-truth pipeline should become more automated with each boss.
-
----
-
-# 35. V4 Milestone 9 — Public Deployment
+# 33. V4 Milestone 7 — Public Deployment
 
 Public deployment is intentionally deferred until V4.
 
@@ -1187,6 +1145,56 @@ Do not introduce Kubernetes by default.
 
 ---
 
+# 34. V4 Milestone 8 — Boss Expansion
+
+Starts after `v4.0.0` (section 36).
+
+After Genichiro is complete enough to validate the pipeline, expand boss-by-boss.
+
+Do not immediately process every boss in parallel.
+
+Prefer representative progression:
+
+```text
+Genichiro
+↓
+another humanoid boss
+↓
+beast boss
+↓
+projectile/special-effect-heavy boss
+↓
+late-game complex boss
+```
+
+Reuse tooling aggressively.
+
+The ground-truth pipeline should become more automated with each boss.
+
+---
+
+# 35. Deferred — Resurrection Ground Truth
+
+Not part of V4's vanilla milestones. It starts after `v4.0.0`; whether in a v4.x release or after V5 is the project owner's decision.
+
+Once the vanilla pipeline is understood, build the Resurrection mapping.
+
+Classify differences as:
+
+```text
+unchanged
+modified
+new_in_resurrection
+vanilla_only
+same_semantic_move_different_engine_sequence
+```
+
+Every gameplay/video observation must carry its ruleset.
+
+This becomes essential for future CV training.
+
+---
+
 # 36. V4 Release Boundary
 
 Do not block `v4.0.0` on ground-truth completeness for every Sekiro boss.
@@ -1210,6 +1218,8 @@ v4.2.x
 ```
 
 This avoids turning “all bosses complete” into an unbounded release blocker.
+
+Resurrection is not part of `v4.0.0` (section 35).
 
 ---
 
@@ -1591,9 +1601,16 @@ V3 is released. Work through V4 in milestone order:
 5. Completeness review (V4 Milestone 5)
 ```
 
-The later V4 milestones (Resurrection, product integration, boss expansion, public deployment) follow once Genichiro's pipeline is proven.
+Then, to complete `v4.0.0`:
 
-Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 7.
+```text
+6. Product integration (V4 Milestone 6)
+7. Public deployment (V4 Milestone 7)
+```
+
+Boss expansion (V4 Milestone 8) follows in v4.1.x. Resurrection is deferred until after `v4.0.0` (section 35).
+
+Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 6.
 
 ---
 

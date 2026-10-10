@@ -405,6 +405,8 @@ Wiki 和社区资料仍然适用于：
 
 不要在没有明确标注的情况下混用原版和 Resurrection 的观测数据。
 
+V4 只做原版。Resurrection 的工作推迟到 `v4.0.0` 之后（见下文“推迟：Resurrection 映射”）。但每份数据仍然保留规则集标签，以后可以直接加上 Resurrection，不用返工原版数据。
+
 ---
 
 ## 2. 角色身份
@@ -689,37 +691,7 @@ unknown（未知）
 
 ---
 
-# V4 Milestone 6 — Resurrection 映射
-
-在弄清原版苇名弦一郎之后，再分析 Resurrection 版本。
-
-把 Resurrection 作为一个独立的规则集。
-
-利用模组的覆盖文件作为差异线索：
-
-```text
-原版
-   ↓
-对比
-   ↓
-Resurrection 覆盖文件
-```
-
-把招式/动作归类为：
-
-```text
-unchanged（未改变）
-modified（有修改）
-new_in_resurrection（Resurrection 新增）
-vanilla_only（仅原版）
-shared_semantic_move_with_different_engine_sequence（语义招式相同，但引擎动作序列不同）
-```
-
-不要在没有规则集标签的情况下，把 Resurrection 的训练样例和原版样例混在一起。
-
----
-
-# V4 Milestone 7 — 产品集成
+# V4 Milestone 6 — 产品集成
 
 当真实数据的结构足够稳定后：
 
@@ -745,7 +717,39 @@ move_engine_actions
 
 ---
 
+# V4 Milestone 7 — 公网部署
+
+公网部署从 V3 移到了这里。
+
+只有在以下条件满足后才进行部署：
+
+- 认证稳定
+- 个人数据隔离经过测试
+- 双语界面可用
+- 应用能清楚区分经过验证和不确定的战斗内容
+- 至少集成了一个完整的真实数据纵向样例
+- 数据库迁移策略稳定
+- 确认已经没有未归属的旧尝试后，把 `attempts.user_id` 改为 NOT NULL
+
+生产环境需要考虑：
+
+- HTTPS
+- 生产环境的 PostgreSQL
+- 环境变量中的密钥
+- 数据库备份
+- 迁移的执行
+- 安全的 cookie
+- 从 `main` 部署
+- 恢复流程
+- 与实际托管环境相适应的可观测性
+
+不要引入所选部署平台并不需要的基础设施。
+
+---
+
 # V4 Milestone 8 — 逐个扩展 Boss
+
+在 `v4.0.0` 之后开始（见下文的发布策略）。
 
 在苇名弦一郎的流程被验证可行之后，再系统地扩展。
 
@@ -777,33 +781,35 @@ move_engine_actions
 
 ---
 
-# V4 Milestone 9 — 公网部署
+# 推迟：Resurrection 映射
 
-公网部署从 V3 移到了这里。
+不属于 V4 的原版里程碑，在 `v4.0.0` 之后才开始。具体放在某个 v4.x 版本还是 V5 之后，由项目负责人决定。
 
-只有在以下条件满足后才进行部署：
+在弄清原版苇名弦一郎之后，再分析 Resurrection 版本。
 
-- 认证稳定
-- 个人数据隔离经过测试
-- 双语界面可用
-- 应用能清楚区分经过验证和不确定的战斗内容
-- 至少集成了一个完整的真实数据纵向样例
-- 数据库迁移策略稳定
-- 确认已经没有未归属的旧尝试后，把 `attempts.user_id` 改为 NOT NULL
+把 Resurrection 作为一个独立的规则集。
 
-生产环境需要考虑：
+利用模组的覆盖文件作为差异线索：
 
-- HTTPS
-- 生产环境的 PostgreSQL
-- 环境变量中的密钥
-- 数据库备份
-- 迁移的执行
-- 安全的 cookie
-- 从 `main` 部署
-- 恢复流程
-- 与实际托管环境相适应的可观测性
+```text
+原版
+   ↓
+对比
+   ↓
+Resurrection 覆盖文件
+```
 
-不要引入所选部署平台并不需要的基础设施。
+把招式/动作归类为：
+
+```text
+unchanged（未改变）
+modified（有修改）
+new_in_resurrection（Resurrection 新增）
+vanilla_only（仅原版）
+shared_semantic_move_with_different_engine_sequence（语义招式相同，但引擎动作序列不同）
+```
+
+不要在没有规则集标签的情况下，把 Resurrection 的训练样例和原版样例混在一起。
 
 ---
 
@@ -837,6 +843,8 @@ v4.3
 每个版本可以加入更多经过验证的 Boss。
 
 这样可以避免"真实数据的完整性"变成一个没有边界的发布障碍。
+
+Resurrection 不属于 `v4.0.0`（见“推迟：Resurrection 映射”）。
 
 ---
 

@@ -407,6 +407,8 @@ Rulesets must include version metadata where possible.
 
 Do not mix Vanilla and Resurrection observations without explicitly labeling them.
 
+V4 covers Sekiro Vanilla only. Resurrection work is deferred until after `v4.0.0` (see "Deferred — Resurrection Mapping" below), but every dataset keeps its ruleset label so Resurrection can be added later.
+
 ---
 
 ## 2. Character Identity
@@ -693,37 +695,7 @@ The objective is to make unexplained combat-relevant actions approach zero for t
 
 ---
 
-# V4 Milestone 6 — Resurrection Mapping
-
-After Vanilla Genichiro is understood, analyze the Resurrection variant.
-
-Treat Resurrection as a separate ruleset.
-
-Use the mod override files as a differential clue:
-
-```text
-Vanilla
-   ↓
-Compare
-   ↓
-Resurrection Override
-```
-
-Classify moves/actions as:
-
-```text
-unchanged
-modified
-new_in_resurrection
-vanilla_only
-shared_semantic_move_with_different_engine_sequence
-```
-
-Do not mix Resurrection training examples with Vanilla examples without ruleset labels.
-
----
-
-# V4 Milestone 7 — Product Integration
+# V4 Milestone 6 — Product Integration
 
 Once the ground-truth schema is stable enough:
 
@@ -749,7 +721,39 @@ Do not introduce them until actual research demonstrates the required cardinalit
 
 ---
 
+# V4 Milestone 7 — Public Deployment
+
+Public deployment moves here from V3.
+
+Deployment should happen only after:
+
+- authentication is stable
+- personal data isolation is tested
+- bilingual UI works
+- the application clearly distinguishes verified vs. uncertain combat content
+- at least one complete ground-truth vertical slice is integrated
+- database migration strategy is stable
+- `attempts.user_id` is made NOT NULL, after confirming no ownerless pre-account attempts remain
+
+Production concerns include:
+
+- HTTPS
+- production PostgreSQL
+- environment secrets
+- database backups
+- migration execution
+- secure cookies
+- deployment from `main`
+- recovery procedures
+- observability appropriate to the actual hosting environment
+
+Do not introduce infrastructure that is not required by the selected deployment platform.
+
+---
+
 # V4 Milestone 8 — Expand Boss-by-Boss
+
+Starts after `v4.0.0` (see the release strategy below).
 
 After the Genichiro pipeline is proven, expand systematically.
 
@@ -781,33 +785,35 @@ Do not return to Wiki-only bulk content expansion.
 
 ---
 
-# V4 Milestone 9 — Public Deployment
+# Deferred — Resurrection Mapping
 
-Public deployment moves here from V3.
+Not part of V4's vanilla milestones. It starts after `v4.0.0`; whether in a v4.x release or after V5 is the project owner's decision.
 
-Deployment should happen only after:
+Once Vanilla Genichiro is understood, analyze the Resurrection variant.
 
-- authentication is stable
-- personal data isolation is tested
-- bilingual UI works
-- the application clearly distinguishes verified vs. uncertain combat content
-- at least one complete ground-truth vertical slice is integrated
-- database migration strategy is stable
-- `attempts.user_id` is made NOT NULL, after confirming no ownerless pre-account attempts remain
+Treat Resurrection as a separate ruleset.
 
-Production concerns include:
+Use the mod override files as a differential clue:
 
-- HTTPS
-- production PostgreSQL
-- environment secrets
-- database backups
-- migration execution
-- secure cookies
-- deployment from `main`
-- recovery procedures
-- observability appropriate to the actual hosting environment
+```text
+Vanilla
+   ↓
+Compare
+   ↓
+Resurrection Override
+```
 
-Do not introduce infrastructure that is not required by the selected deployment platform.
+Classify moves/actions as:
+
+```text
+unchanged
+modified
+new_in_resurrection
+vanilla_only
+shared_semantic_move_with_different_engine_sequence
+```
+
+Do not mix Resurrection training examples with Vanilla examples without ruleset labels.
 
 ---
 
@@ -841,6 +847,8 @@ v4.3
 Each release can add additional verified bosses.
 
 This prevents ground-truth completeness from becoming an unbounded release blocker.
+
+Resurrection is not part of `v4.0.0` (see "Deferred — Resurrection Mapping").
 
 ---
 
