@@ -8,7 +8,7 @@ Run every script with `python -I` in the research environment. Paths to the game
 
 | File | What it holds |
 |---|---|
-| `characters/genichiro.json` | Every placed Genichiro (c7100 / c7110) in the game. For each placement: map, entity ID, AI script, NpcParam, the boss SpEffects that the AI checks, its health bar (event file, name ID, English and Chinese name), and the encounter this suggests. The encounter labels are proposals until the project owner confirms them. |
+| `characters/genichiro.json` | Every placed Genichiro (c7100 / c7110) in the game. For each placement: map, entity ID, AI script, NpcParam, the boss SpEffects that the AI checks, its health bar (event file, name ID, English and Chinese name), and its encounter. The project owner confirmed the encounters on 2026-10-11. |
 | `engine/genichiro_castle_ai_reachability.csv` | One row per TAE entry of c7100 (compared with castle phases 1–2) and c7110 (castle phase 3). Columns: category (`attack` / `bullet` / `other`), recorded occurrences per phase, whether the castle AI can request it in each phase and through which functions, why not when it cannot, and which other Genichiro AI requests it. |
 | `engine/genichiro_castle_ai.md` | Flowcharts of the castle AI: the move-selection ladder, adjustments, the choice after a deflect, interrupt reactions, and the animations each option plays. |
 

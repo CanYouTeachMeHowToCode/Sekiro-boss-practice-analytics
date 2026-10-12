@@ -11,7 +11,8 @@ For each NpcParam row, the script lists which of the "boss has SpEffect X" check
 (found in <decompiled_ai_dir>/*_battle.txt) are present in that row.
 Part layout (Sekiro MSB, enemy part): position at +0x20, entity ID at +0x23C, think/NPC param at +0x298/+0x29C,
 measured on m11_01 and checked here against the param tables.
-The encounter label of each placement is Claude's reading of this evidence (status: proposed).
+The project owner confirmed every encounter label on 2026-10-11, after checking the unpacked maps. A new placement
+that is not in LABELS is written as 未识别 and still needs review.
 """
 import json
 import os
@@ -143,12 +144,12 @@ for f in sorted(os.listdir(GAME / "event")):
 for p in parts:
     p["boss_bars"] = [{"event_file": ef, "name_id": nid, "name": names.get(nid, {})} for ef, nid in sorted(bars.get(p["entity"], ()))]
     label, evidence = LABELS.get(p["entity"], ("未识别", ""))
-    p["encounter_proposed"] = label
+    p["encounter"] = label
     p["evidence"] = evidence
 
-json.dump({"status": "encounter labels proposed by Claude; the project owner confirms", "ruleset": "vanilla",
+json.dump({"status": "encounter labels confirmed by the project owner on 2026-10-11 (checked against the unpacked maps)", "ruleset": "vanilla",
            "game_version": "1.06", "placements": parts}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 sys.stdout.reconfigure(encoding="utf-8")
 for p in parts:
     print(p["map"], p["part"], p["entity"], "AI", p["ai_battle_goal"], "npc", p["npc_param"], p["boss_spEffects_checked_by_ai"],
-          [(b["name_id"], b["name"].get("zhocn")) for b in p["boss_bars"]], "->", p["encounter_proposed"])
+          [(b["name_id"], b["name"].get("zhocn")) for b in p["boss_bars"]], "->", p["encounter"])
