@@ -18,7 +18,8 @@ dropped and conditions on 200050 are always true.
 
 An entry is a move candidate when its chain contains an attack or projectile animation; the rest (guards,
 deflects, steps) are listed as not moves. Families, wiki candidates and triggers are proposals written from the
-evidence named in each row. The project owner confirms every name, grouping and variant.
+evidence named in each row. The project owner confirms every name, grouping and variant, in the 审核 and 理由 columns
+of the .md; those are read back and kept when the catalog is regenerated.
 """
 import csv
 import json
@@ -268,7 +269,6 @@ for (char, chain), e in entries.items():
         "wiki_candidate": wiki[0], "wiki_basis": wiki[1],
         "owner_labels": "；".join(f"{a} {OWNER[(char, a)]}" for a in anims if (char, a) in OWNER),
         "notes": note,
-        "owner_review": "待审核",
     })
 
 rows.sort(key=lambda r: (r["character"], r["kind"], min(int(x.split("(")[0]) for x in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split())))
@@ -289,9 +289,47 @@ for r in rows:
                      for x in shared[(r["character"], a.split("(")[0])] if x != r["entry"]})
     r["shares_animations_with"] = " ".join(others)
 
+# ---------------------------------------------------------------- the owner's review
+# The owner reviews in the .md: the 审核 cell holds ☐ (not reviewed), ✅ (approved) or ❌ (rejected), and 理由 the reason.
+# On regeneration those cells are read back and kept. They are matched through the previous CSV by
+# (character, ai_options), not by entry number, so they stay with the right entry if entries are added or removed.
+REVIEW_HEAD = "| 条目 | 审核 | 理由 |"
+
+
+def review_status(mark):
+    if "❌" in mark or "不通过" in mark:
+        return "不通过"
+    if "✅" in mark or "通过" in mark:
+        return "通过"
+    return "待审核"
+
+
+def previous_reviews():
+    if not (Path(out_csv).exists() and Path(out_md).exists()):
+        return {}
+    text = open(out_md, encoding="utf-8").read()
+    if REVIEW_HEAD not in text:
+        return {}
+    key = {r["entry"]: (r["character"], r["ai_options"]) for r in csv.DictReader(open(out_csv, encoding="utf-8"))}
+    out = {}
+    for line in text.splitlines():
+        m = re.match(r"^\| (P\d+(?:-N)?-\d+) \|([^|]*)\|([^|]*)\|", line)
+        if m and m.group(1) in key:
+            mark, reason = m.group(2).strip(), m.group(3).strip()
+            out[key[m.group(1)]] = (mark or "☐", "" if reason in ("", "—") else reason)
+    return out
+
+
+reviews = previous_reviews()
+for r in rows:
+    mark, reason = reviews.get((r["character"], r["ai_options"]), ("☐", ""))
+    r["review_mark"] = mark
+    r["owner_review"] = review_status(mark)
+    r["owner_reason"] = reason
+
 FIELDS = ["entry", "character", "phases", "kind", "ai_options", "chain", "trigger", "attack_anims", "bullet_anims",
           "other_anims", "recorded", "first_seen", "evidence", "family_proposed", "variant_proposed", "family_basis",
-          "wiki_candidate", "wiki_basis", "owner_labels", "shares_animations_with", "notes", "owner_review"]
+          "wiki_candidate", "wiki_basis", "owner_labels", "shares_animations_with", "notes", "owner_review", "owner_reason"]
 with open(out_csv, "w", newline="", encoding="utf-8") as fh:
     w = csv.DictWriter(fh, fieldnames=FIELDS)
     w.writeheader()
@@ -308,6 +346,16 @@ md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
       "- 招式族、变体、wiki 候选和触发条件都是建议,依据写在后面。标\"已确认\"的是你确认过的,其余等你审核。",
       "- 动画链里的条件按天守阁的情况化简过:天守阁的弦一郎带特效 200050,没有 3711500(剑圣战巴流的不死斩标记)。",
       "- 括号里的\"击\"是 TAE 里攻击判定的个数。权重和条件的细节见 `engine/genichiro_castle_ai.md`。",
+      "",
+      "## 怎么审核", "",
+      "每张表的第 2、3 列是审核栏,直接在这个文件里改:",
+      "",
+      "1. 把\"审核\"栏的 ☐ 改成 ✅(通过)或 ❌(不通过)。",
+      "2. 不通过时,在\"理由\"栏写具体理由。部分同意(比如名称对、分组不对)也标 ❌,把哪里不对写在理由里。",
+      "3. 理由里不要用竖线 `|`,它会打断表格。",
+      "",
+      "改完保存,告诉 Claude 就行。以后重新生成这份目录时,你的审核结果会保留下来,也会写进 `genichiro_catalog.csv` "
+      "的 `owner_review` 和 `owner_reason` 两列。",
       "",
       "## 证据等级", "",
       "| 等级 | 含义 |", "|---|---|",
@@ -326,6 +374,9 @@ for ev in ("已运行观察", "部分运行观察", "仅静态证据"):
 md.append(f"| 招式候选合计 | {sum(1 for r in moves if r['character'] == 'c7100')} | {sum(1 for r in moves if r['character'] == 'c7110')} |")
 md.append(f"| 不算招式 | {sum(1 for r in rows if r['character'] == 'c7100' and r['kind'] == 'not_move')} "
           f"| {sum(1 for r in rows if r['character'] == 'c7110' and r['kind'] == 'not_move')} |")
+for st, mark in (("通过", "✅"), ("不通过", "❌"), ("待审核", "☐")):
+    md.append(f"| 审核 {mark} {st} | {sum(1 for r in rows if r['character'] == 'c7100' and r['owner_review'] == st)} "
+              f"| {sum(1 for r in rows if r['character'] == 'c7110' and r['owner_review'] == st)} |")
 md.append("")
 
 
@@ -334,8 +385,8 @@ def cell(x):
 
 
 def table(rs):
-    out = ["| 条目 | 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 |",
-           "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rs:
         fam = " / ".join(x for x in (r["family_proposed"], r["variant_proposed"]) if x)
         if r["family_basis"]:
@@ -343,7 +394,7 @@ def table(rs):
         wiki = r["wiki_candidate"] + (f"(依据:{r['wiki_basis']})" if r["wiki_basis"] else "")
         ab = " ".join(x for x in (r["attack_anims"], ("飞行物 " + r["bullet_anims"]) if r["bullet_anims"] else "") if x)
         chain = r["chain"] + (f"({r['notes']})" if r["notes"] else "")
-        out.append(f"| {r['entry']} | {r['phases']} | {cell(chain)} | {cell(r['trigger'])} | {cell(ab)} | {cell(r['recorded'])} "
+        out.append(f"| {r['entry']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {cell(chain)} | {cell(r['trigger'])} | {cell(ab)} | {cell(r['recorded'])} "
                    f"| {cell(r['first_seen'])} | {cell(r['evidence'])} | {cell(fam)} | {cell(wiki)} | {cell(r['owner_labels'])} "
                    f"| {cell(r['shares_animations_with'])} |")
     return out
@@ -357,10 +408,11 @@ for char, title in (("c7100", "一、二阶段(c7100,AI 710000)"), ("c7110", "�
     md += table([r for r in moves if r["character"] == char and r not in fp]) + [""]
 md += ["## 不算招式(建议)", "",
        "这些选项请求的动画里没有攻击判定或飞行物,比如他弹开你、后跳、侧移。全集里其余的编号(受击、忍杀、移动、过场等)在 M5 分类。", "",
-       "| 条目 | 阶段 | AI 选项 | 动画 | 触发 |", "|---|---|---|---|---|"]
+       REVIEW_HEAD + " 阶段 | AI 选项 | 动画 | 触发 |", "|---|---|---|---|---|---|---|"]
 for r in rows:
     if r["kind"] == "not_move":
-        md.append(f"| {r['entry']} | {r['phases']} | {cell(r['ai_options'])} | {cell(r['other_anims'])} | {cell(r['trigger'])} |")
+        md.append(f"| {r['entry']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {cell(r['ai_options'])} "
+                  f"| {cell(r['other_anims'])} | {cell(r['trigger'])} |")
 md.append("")
 open(out_md, "w", encoding="utf-8").write("\n".join(md))
 
