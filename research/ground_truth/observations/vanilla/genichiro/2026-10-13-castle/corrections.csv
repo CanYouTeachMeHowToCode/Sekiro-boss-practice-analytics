@@ -1,0 +1,16 @@
+line,frame,read,corrected,evidence
+1,2546,a000_003023,a000_003028,visual check of line-1 run #63: the overlay shows a000_003028; the read is an isolated 003023 amid 003028
+1,6876,a000_003010,a000_008010,visual check of line-1 run #151: the overlay shows a000_008010; the read is an isolated 003010 amid 008010
+1,6877,a000_003010,a000_008010,visual check of line-1 run #151: the overlay shows a000_008010; the read is an isolated 003010 amid 008010
+1,15409,a000_003013,a000_003018,visual check of line-1 run #270: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,17893,a000_003013,a000_003018,visual check of line-1 run #304: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,17913,a000_003013,a000_003018,visual check of line-1 run #306: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,17914,a000_003013,a000_003018,visual check of line-1 run #306: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,17916,a000_003013,a000_003018,visual check of line-1 run #308: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,17925,a000_003013,a000_003018,visual check of line-1 run #310: the overlay shows a000_003018; the read is an isolated 003013 amid 003018
+1,23184,a000_003010,a000_008010,visual check of line-1 run #393: the overlay shows a000_008010; the read is an isolated 003010 amid 008010
+1,23185,a000_003010,a000_008010,visual check of line-1 run #393: the overlay shows a000_008010; the read is an isolated 003010 amid 008010
+2,9039,a000_003063,a000_003068,visual check U122: overlay line 2 shows a000_003068 ([5-7/81])
+2,9040,a000_003063,a000_003068,visual check U122: overlay line 2 shows a000_003068 ([5-7/81])
+2,9041,a000_003063,a000_003068,visual check U122: overlay line 2 shows a000_003068 ([5-7/81])
+2,9044,a000_003063,a000_003068,visual check U123: overlay line 2 shows a000_003068 ([5-7/81])

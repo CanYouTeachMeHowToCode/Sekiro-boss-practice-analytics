@@ -1,0 +1,3 @@
+frame_from,frame_to,read,corrected,evidence
+3878,3880,c7110_0001,c7100_0000,"visual check: the first deathblow's glow covers the line, which shows c7100_0000"
+25869,25870,c7100_0000,c7110_0001,"visual check: the final deathblow's glow covers the line, which shows c7110_0001"

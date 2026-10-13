@@ -8,8 +8,8 @@ Usage:
 
 Also reads, from research/ground_truth:
     engine/genichiro_castle_ai_reachability.csv                  which AI options the castle fight uses, per animation
-    observations/vanilla/genichiro/2026-10-09-castle/coverage.csv     recorded occurrences per phase
-    observations/vanilla/genichiro/2026-10-09-castle/occurrences.csv  first time each animation was seen
+    observations/vanilla/genichiro/*-castle/occurrences.csv     every castle recording: occurrences per phase (summed)
+                                                                and the first time each animation was seen
 
 An AI option (ActNN, KengekiNN, a request inside Interrupt, Parry, Damaged) usually requests one complete move
 chain. Options that request the same chain become one entry. The chain text comes from ai_flowchart.py, with the
@@ -34,7 +34,7 @@ sys.path.insert(0, str(HERE))
 import ai_flowchart as af  # noqa: E402
 
 ai_dir, tae_dir, out_csv, out_md = sys.argv[1:5]
-REC = GT / "observations/vanilla/genichiro/2026-10-09-castle"
+RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle") if (p / "occurrences.csv").exists())
 CASTLE = {"710000": ("c7100", ("1", "2")), "711000": ("c7110", ("3",))}
 
 # What makes the AI pick each option, read from the decompiled scripts (see engine/genichiro_castle_ai.md).
@@ -202,12 +202,14 @@ for r in reach:
         anim = int(r["anim"][5:])
         options[(ai, f"Interrupt:{anim}" if fn == "Interrupt" else fn)].add(anim)
 
-first_seen = {}
-for r in csv.DictReader(open(REC / "occurrences.csv", encoding="utf-8")):
-    key = (r["character"][:5], int(r["anim"][5:]))
-    t = float(r["start_time"])
-    if key not in first_seen or t < first_seen[key]:
-        first_seen[key] = t
+counts = defaultdict(int)          # (character, animation) -> occurrences over all castle recordings
+first_seen = {}                    # (character, animation) -> (recording date, start time) of the earliest occurrence
+for rec_dir in RECS:
+    for r in csv.DictReader(open(rec_dir / "occurrences.csv", encoding="utf-8")):
+        key = (r["character"][:5], int(r["anim"][5:]))
+        counts[key] += 1
+        if key not in first_seen:  # recordings in date order, occurrences in time order
+            first_seen[key] = (rec_dir.name[:10], float(r["start_time"]))
 
 hits = {}
 for c in ("c7100", "c7110"):
@@ -259,7 +261,7 @@ for (char, chain), e in entries.items():
     cats = {a: info[(char, a)]["category"] for a in anims}
     combat = [a for a in anims if cats[a] in ("attack", "bullet")]
     phase_cols = ("1", "2") if char == "c7100" else ("3",)
-    rec = {a: sum(int(info[(char, a)][f"recorded_phase{p}"] or 0) for p in phase_cols) for a in anims}
+    rec = {a: counts[(char, a)] for a in anims}
     seen = [a for a in combat if rec[a]]
     if not combat:
         evidence = ""
@@ -287,7 +289,8 @@ for (char, chain), e in entries.items():
         "bullet_anims": " ".join(str(a) for a in anims if cats[a] == "bullet"),
         "other_anims": " ".join(str(a) for a in anims if cats[a] == "other"),
         "recorded": " ".join(f"{a}:{rec[a]}" for a in combat),
-        "first_seen": " ".join(f"{a}@{mmss(first_seen[(char, a)])}" for a in combat if rec[a] and (char, a) in first_seen),
+        "first_seen": " ".join(f"{a}@{first_seen[(char, a)][0][5:]} {mmss(first_seen[(char, a)][1])}" for a in combat
+                              if rec[a] and (char, a) in first_seen),
         "evidence": evidence,
         "family_proposed": fam[0], "variant_proposed": fam[1], "family_basis": fam[2],
         "wiki_candidate": wiki[0], "wiki_basis": wiki[1],
@@ -363,7 +366,9 @@ with open(out_csv, "w", newline="", encoding="utf-8") as fh:
 # ---------------------------------------------------------------- review sheet
 moves = [r for r in rows if r["kind"] == "move"]
 md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
-      "由 `scripts/ai/catalog.py` 从天守阁战斗 AI、TAE 和 2026-10-09 的录像生成,数据在 `genichiro_catalog.csv`。",
+      "由 `scripts/ai/catalog.py` 从天守阁战斗 AI、TAE 和天守阁录像(" + "、".join(p.name[:10] for p in RECS) + ")生成,数据在 `genichiro_catalog.csv`。",
+      "",
+      "- \"录到次数\"是所有录像的合计;\"最早录到\"是第一次录到它的录像日期和录像内时间。",
       "",
       "- 一行是 AI 能请求的一整串动画(一个或几个 AI 选项),通常就是玩家眼中的一招。"
       "同一个动画可能出现在几行里,比如 3067 既是飞渡浮舟第一套在三阶段的结尾,也能单独出,见\"共用动画\"。",
@@ -415,7 +420,7 @@ def cell(x):
 
 
 def table(rs):
-    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 | 说明 |",
+    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 最早录到 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 | 说明 |",
            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rs:
         fam = " / ".join(x for x in (r["family_proposed"], r["variant_proposed"]) if x)
