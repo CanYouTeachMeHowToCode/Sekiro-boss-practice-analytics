@@ -8,6 +8,7 @@ Run every script with `python -I` in the research environment. Paths to the game
 
 | File | What it holds |
 |---|---|
+| `characters/genichiro_models.json` | The six Genichiro-family model IDs and what each is: combat model, cutscene model, cutscene prop or unused shell, with the evidence. Confirmed by the project owner on 2026-10-12. |
 | `characters/genichiro.json` | Every placed Genichiro (c7100 / c7110) in the game. For each placement: map, entity ID, AI script, NpcParam, the boss SpEffects that the AI checks, its health bar (event file, name ID, English and Chinese name), and its encounter. The project owner confirmed the encounters on 2026-10-11. |
 | `engine/genichiro_castle_ai_reachability.csv` | One row per TAE entry of c7100 (compared with castle phases 1–2) and c7110 (castle phase 3). Columns: category (`attack` / `bullet` / `other`), recorded occurrences per phase, whether the castle AI can request it in each phase and through which functions, why not when it cannot, and which other Genichiro AI requests it. |
 | `engine/genichiro_castle_ai.md` | Flowcharts of the castle AI: the move-selection ladder, adjustments, the choice after a deflect, interrupt reactions, and the animations each option plays. |
@@ -32,6 +33,7 @@ chr/c7100|c7110.anibnd.dcx      engine/bnd_extract.py  -> <c>.tae
   + DS Anim Studio template     engine/tae_dump.py     -> <c>_tae.json       (local only)
 observations/.../coverage.csv   ai/reachability.py     -> engine/genichiro_castle_ai_reachability.csv
 maps, params, events, text      ai/encounters.py       -> characters/genichiro.json
+chr, maps, cutscenes, events    ai/genichiro_models.py -> characters/genichiro_models.json
                                 ai/ai_flowchart.py     -> engine/genichiro_castle_ai.md (with a hand-written head)
 the above + occurrences.csv     ai/catalog.py          -> semantic/genichiro_catalog.csv, .md
 ```
@@ -48,6 +50,7 @@ python -I research/ground_truth/scripts/engine/tae_dump.py <work>/c7100.tae <DS 
     (repeat for c7110)
 python -I research/ground_truth/scripts/ai/reachability.py <work> <work> research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle/coverage.csv research/ground_truth/engine/genichiro_castle_ai_reachability.csv
 python -I research/ground_truth/scripts/ai/encounters.py <work> research/ground_truth/characters/genichiro.json
+python -I research/ground_truth/scripts/ai/genichiro_models.py research/ground_truth/characters/genichiro_models.json
 python -I research/ground_truth/scripts/ai/ai_flowchart.py <work>/710000_battle.txt "AI 710000(c7100)"
 python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/ground_truth/semantic/genichiro_catalog.csv research/ground_truth/semantic/genichiro_catalog.md
 ```
@@ -61,6 +64,7 @@ python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/gro
 | `reachability.py` | The castle result table. The castle-specific rules it applies on top of `ai_moves.py`, each read from the decompiled script, are listed in its docstring. |
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
+| `genichiro_models.py` | Identifies the six Genichiro-family model IDs from their archives (FLVER materials and bones, TAE entries, animations), map placements, cutscene references and the events that play those cutscenes. Writes `characters/genichiro_models.json`. |
 | `memory_bosses.py` | Lists every boss that drops a Memory: Memory item → item lot → defeat flag (common event 300) → the event that tests the boss → map part → model, AI. Writes `characters/memory_bosses.csv`. |
 | `ai_flowchart.py` | Draws one battle goal as Mermaid flowcharts and Markdown trees. |
 | `params.py`, `emevd.py` | Minimal readers for PARAM tables and event scripts (EMEVD). |
