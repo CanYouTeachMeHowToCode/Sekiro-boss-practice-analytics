@@ -181,7 +181,7 @@
 
 ---
 
-## 第 7 步：全集分类与差距报告（V4 M5）
+## 第 7 步：全集分类与差距报告（V4 M5）✅
 
 **Claude**
 
@@ -204,12 +204,13 @@
 
 **完成标准**：满足开头"完成"定义的四条。
 
-**状态（2026-10-13）**：
+**状态（2026-10-13）**：**已完成**，你在 2026-10-13 确认。
 
+- 天守阁 AI 会出的 83 个攻击和飞行物编号全部经你审核通过。
 - 全部 353 个编号已分类（`engine/genichiro_castle_tae_classes.csv`、`semantic/genichiro_classification.md`，在 `feature/ground-truth-genichiro` 分支）。
 - 带攻击判定或飞行物的 124 个编号里没有 `unknown`。
 - 按你的决定，审核表只含天守阁 AI 会出的 83 个攻击和飞行物编号；其余 270 个的分类草稿在 `deferred/`。
-- 差距报告草稿是 `semantic/genichiro_gap_report.md`。
+- 差距报告草稿是 `semantic/genichiro_gap_report.md`，作为第 8 步修正产品招式的输入。
 
 ---
 
