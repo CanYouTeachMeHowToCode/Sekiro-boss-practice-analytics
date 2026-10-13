@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from overlay_extract import CELL_Y0, CELL_Y1, ID_DIGITS, ID_PITCH, ID_X0, LABELED, PREFIX_X0, PREFIX_X1
+from overlay_extract import CELL_Y0, CELL_Y1, ID_DIGITS, ID_PITCH, ID_X0, PREFIX_X0, PREFIX_X1, labeled
 
 TIME_X = (199, 221, 235)          # "(u.th)" digit cells inside the line crop
 data = Path(sys.argv[1])
@@ -51,7 +51,7 @@ prefix_T = z(z(np.stack([lines[n, CELL_Y0:CELL_Y1, PREFIX_X0:PREFIX_X1] for n in
 
 # 2. character templates from the hand-labeled frames (+-10 frames each) and the pixels where they differ
 char_samples = {}
-for t, _, c in LABELED:
+for t, _, c in labeled(data):
     f0 = int(round(t * fps))
     char_samples.setdefault(c, []).extend(chars[f0 - 10: f0 + 11])
 char_names = sorted(char_samples)

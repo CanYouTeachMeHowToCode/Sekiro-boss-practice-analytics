@@ -26,12 +26,18 @@ PREFIX_X0, PREFIX_X1 = 28, 92      # "a000_" inside the line crop
 CHAR_Y0, CHAR_Y1, CHAR_X0, CHAR_X1 = 86, 106, 125, 400
 COUNTER_X0 = 262
 
-# Frames whose overlay was read by eye (time in seconds, animation ID digits, character ID).
+# Frames whose overlay was read by eye (time in seconds, animation ID digits, character ID), for the 2026-10-09
+# recording. Another recording supplies its own in <out_dir>/labeled.json as [[time_s, "DDDDDD", "cNNNN_NNNN"], ...].
 LABELED = [
     (2, "003014", "c7100_0000"), (30, "008400", "c7100_0000"), (90, "405003", "c7100_0000"),
     (150, "008010", "c7100_0000"), (210, "003092", "c7100_0000"), (260, "003067", "c7100_0000"),
     (340, "008500", "c7110_0001"), (370, "003019", "c7110_0001"), (400, "008210", "c7110_0001"),
 ]
+
+
+def labeled(out_dir):
+    p = Path(out_dir) / "labeled.json"
+    return [tuple(x) for x in json.load(open(p, encoding="utf-8"))] if p.exists() else LABELED
 
 
 def text_mask(img):
@@ -53,7 +59,7 @@ def build_templates(video, out_dir):
     cap = cv2.VideoCapture(video)
     samples = {str(d): [] for d in range(10)}
     prefixes, chars = [], {}
-    for t, digits, char in LABELED:
+    for t, digits, char in labeled(out_dir):
         f = frame_at(cap, t)
         line = text_mask(f[LINE_Y0:LINE_Y1, LINE_X0:LINE_X1])
         for k, cell in enumerate(id_cells(line)):

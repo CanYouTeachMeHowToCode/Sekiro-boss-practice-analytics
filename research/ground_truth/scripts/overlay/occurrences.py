@@ -9,6 +9,7 @@ Usage: python -I occurrences.py <data_dir> <sheet_png> [W DROP] [--auto]
 Writes occ_frames.csv (frame, line1..line5 'ID@time') and occurrences.csv, and a sheet of restart points.
 """
 import csv
+import json
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -17,8 +18,8 @@ import cv2
 import numpy as np
 
 GAP, W, DROP = 2, int(sys.argv[3]) if len(sys.argv) > 3 else 6, float(sys.argv[4]) if len(sys.argv) > 4 else 0.15
-FPS = 59.995
 data, sheet = Path(sys.argv[1]), sys.argv[2]
+FPS = json.load(open(data / "video.json"))["fps"] if (data / "video.json").exists() else 59.995
 r1 = list(csv.DictReader(open(data / "frames4.csv", encoding="utf-8")))
 N = len(r1)
 shown = {1: [(r["anim"], float(r["anim_time"])) if r["line"] == "1" else None for r in r1]}

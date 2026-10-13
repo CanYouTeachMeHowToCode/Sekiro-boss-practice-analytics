@@ -7,6 +7,7 @@ threshold (frames4.csv thr for line 1). Each line is then re-read at its own per
 Writes time2_line{k}.npy (N,) with nan where the line is absent, and prints a monotonicity check.
 """
 import csv
+import json
 import sys
 from pathlib import Path
 
@@ -83,7 +84,9 @@ for k in range(1, 6):
     np.save(data / f"time2_margin_line{k}.npy", m)
     if k == 1:
         anim = [r["anim"] for r in r4]
-        for lo, hi in [(0, 16571), (19494, N)]:
+        seg_file = data / "segments.json"         # frame ranges with the character line on screen, end exclusive
+        segments = json.load(open(seg_file)) if seg_file.exists() else [(0, 16571), (19494, N)]  # default: 2026-10-09
+        for lo, hi in segments:
             same = [i for i in range(lo + 1, hi) if pres[i] and pres[i - 1] and anim[i] == anim[i - 1]]
             dt = np.array([t[i] - t[i - 1] for i in same])
             ok = ((dt >= -0.001) & (dt <= 0.051)).sum()

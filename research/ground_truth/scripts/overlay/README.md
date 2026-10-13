@@ -14,6 +14,8 @@ These scripts read the Sekiro-Debug-Patch overlay from a recording, then build p
 - Before step 1, prepare the work directory:
   1. Copy `research/ground_truth/engine/c7100_tae_ids.txt` and `c7110_tae_ids.txt` into it.
   2. Write their sorted union as `whitelist_c7100_c7110.txt`.
+  3. For any recording other than the first (2026-10-09), read about ten frames by eye and write them as `labeled.json`: `[[time_s, "DDDDDD", "cNNNN_NNNN"], ...]`, covering all ten digits and both characters. Steps 1 and 4 use them for the digit and character templates; without the file they use the first recording's frames.
+  4. Once the character line has been read, write `segments.json`: the frame ranges with the character on screen, end exclusive, for example `[[0, 10165], [11304, 27001]]`. Only a self-check in step 9 uses it.
 
 ## Run order
 
@@ -31,6 +33,7 @@ These scripts read the Sekiro-Debug-Patch overlay from a recording, then build p
 | 10 | `occurrences.py <work> <sheet.png> [W DROP] [--auto]` | `corrections.csv`, `restart_review.csv` | `occ_frames.csv`, `occurrences.csv`, restart review sheets |
 | 11 | `summarize.py <work> <phase_bounds_json>` | `occurrences.csv`, TAE ID lists | `ids.csv` |
 | 12 | `export_observation.py <work> <out_dir> <phase_bounds_json>` | all of the above, plus `char_corrections.csv` | the committed files under `observations/…` |
+| 13 | `coverage.py <out_dir> <c7100_tae_ids.txt> <c7110_tae_ids.txt>` | `ids.csv` | `coverage.csv` (one row per TAE ID) |
 
 ## Review tools
 
