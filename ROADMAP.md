@@ -756,11 +756,13 @@ Do not introduce them until actual research demonstrates the required cardinalit
 
 ---
 
-# V4 Milestone 7 — Expand Boss-by-Boss
+# Deferred — Boss Expansion
 
-Starts after `v4.0.0` (see the release strategy below).
+Not part of V4 (owner decision, 2026-10-13). It starts after the V5 end-to-end flow works for Genichiro and is publicly deployed (V5 Milestone 4); when exactly is the project owner's decision.
 
-After the Genichiro pipeline is proven, expand systematically.
+Each new boss then goes through the whole pipeline once: the ground truth and the data that V5's recognition needs. Expanding earlier would mean redoing those bosses once V5 shows what it needs.
+
+Expand systematically.
 
 Prioritize bosses that exercise different combat structures, for example:
 
@@ -784,6 +786,8 @@ semantic mapping
 controlled gameplay validation
 ↓
 completeness review
+↓
+reference clips and labels for recognition (V5)
 ```
 
 Do not return to Wiki-only bulk content expansion.
@@ -840,18 +844,7 @@ production integration
 
 Public deployment is not part of V4. It waits for the V5 end-to-end flow, where a user uploads a recording and sees which moves caused their failures (V5 Milestone 4).
 
-Then expand verified coverage incrementally:
-
-```text
-v4.1
-v4.2
-v4.3
-...
-```
-
-Each release can add additional verified bosses.
-
-This prevents ground-truth completeness from becoming an unbounded release blocker.
+Boss expansion is not part of V4 either. It follows the Genichiro end-to-end flow (see "Deferred — Boss Expansion"), so ground-truth completeness for other bosses never blocks a release.
 
 Resurrection is not part of `v4.0.0` (see "Deferred — Resurrection Mapping").
 

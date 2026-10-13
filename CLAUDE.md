@@ -143,6 +143,8 @@ Public deployment is part of V5: it waits until a user can upload a recording an
 
 V4 covers vanilla Sekiro only. All Resurrection mod work is deferred until after `v4.0.0` (section 35).
 
+Boss expansion is deferred until the Genichiro end-to-end flow works in V5 (section 34): the first goal is a user uploading a Genichiro recording and getting the moves behind their failures.
+
 Practice recommendations are part of V5.
 
 ---
@@ -1161,11 +1163,13 @@ Do not introduce Kubernetes by default.
 
 ---
 
-# 34. V4 Milestone 7 — Boss Expansion
+# 34. Deferred — Boss Expansion
 
-Starts after `v4.0.0` (section 36).
+Not part of V4 (owner decision, 2026-10-13). It starts after the V5 end-to-end flow works for Genichiro and is publicly deployed (section 33); when exactly is the project owner's decision.
 
-After Genichiro is complete enough to validate the pipeline, expand boss-by-boss.
+Each new boss then goes through the whole pipeline once: the ground truth (V4 tooling) and the data that V5's recognition needs, such as reference clips and labels. Expanding earlier would mean redoing those bosses once V5 shows what it needs.
+
+Expand boss-by-boss.
 
 Do not immediately process every boss in parallel.
 
@@ -1227,15 +1231,7 @@ verified production integration
 
 Public deployment is not part of `v4.0.0`; it comes in V5 (section 33).
 
-Then expand boss coverage through:
-
-```text
-v4.1.x
-v4.2.x
-...
-```
-
-This avoids turning “all bosses complete” into an unbounded release blocker.
+Boss expansion is not part of V4 either. It follows the Genichiro end-to-end flow (section 34), so ground-truth completeness for other bosses never blocks a release.
 
 Resurrection is not part of `v4.0.0` (section 35).
 
@@ -1628,7 +1624,7 @@ Then, to complete `v4.0.0`:
 5. Product integration (V4 Milestone 6)
 ```
 
-Boss expansion (V4 Milestone 7) follows in v4.1.x. Public deployment comes in V5, after the upload → failure report flow works (section 33). Resurrection is deferred until after `v4.0.0` (section 35).
+Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Public deployment comes in V5, after the upload → failure report flow works (section 33). Resurrection is deferred until after `v4.0.0` (section 35).
 
 Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 6.
 
