@@ -139,7 +139,7 @@ V4 Milestone 1 is done, and Milestone 2 has proven the runtime bridge for castle
 
 V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
 
-Public deployment is V4 Milestone 7.
+Public deployment is part of V5: it waits until a user can upload a recording and see which moves caused their failures (section 33).
 
 V4 covers vanilla Sekiro only. All Resurrection mod work is deferred until after `v4.0.0` (section 35).
 
@@ -1105,6 +1105,7 @@ Only after the research schema stabilizes:
 - improve phase mappings
 - sync verified semantic content
 - preserve attempt foreign-key integrity
+- make `attempts.user_id` NOT NULL through a migration. V3 left it nullable so attempts recorded before accounts existed could stay ownerless until claimed with `python -m scripts.claim_attempts <username>`. The migration should fail loudly if any ownerless attempts remain.
 - consider adding ruleset support
 - consider adding engine-action mappings
 
@@ -1123,19 +1124,20 @@ Let the actual research data determine the relational model.
 
 ---
 
-# 33. V4 Milestone 7 — Public Deployment
+# 33. Public Deployment (V5)
 
-Public deployment is intentionally deferred until V4.
+Public deployment moved from V4 to V5 (owner decision, 2026-10-12). The public product starts with the end-to-end flow: a user uploads a recording and sees their failures and the moves that caused them. It comes right after the video upload and failure report (section 38).
 
 Before deployment ensure:
 
+- the upload → failure report flow works and has passed reliability validation
 - authentication works reliably
-- user isolation is tested
+- user isolation is tested, uploaded recordings included
 - bilingual UI works
 - database migrations are reproducible
 - verified content is distinguishable from uncertain content
-- at least one ground-truth vertical slice is integrated
-- `attempts.user_id` is made NOT NULL through a migration. V3 left it nullable so attempts recorded before accounts existed could stay ownerless until claimed with `python -m scripts.claim_attempts <username>`. The migration should fail loudly if any ownerless attempts remain.
+
+Rehearse with a private deployment once the upload work begins. A small invite-only deployment is fine if outside feedback is needed sooner.
 
 Production concerns may include:
 
@@ -1148,6 +1150,10 @@ Production concerns may include:
 - deployment workflow
 - logging
 - recovery
+- object storage for uploaded recordings
+- background processing for video analysis, and its cost
+- upload size limits
+- retention and privacy rules for users' recordings
 
 Choose infrastructure based on actual hosting requirements.
 
@@ -1155,7 +1161,7 @@ Do not introduce Kubernetes by default.
 
 ---
 
-# 34. V4 Milestone 8 — Boss Expansion
+# 34. V4 Milestone 7 — Boss Expansion
 
 Starts after `v4.0.0` (section 36).
 
@@ -1214,10 +1220,12 @@ Recommended `v4.0.0` target:
 ```text
 Genichiro ground-truth pipeline proven
 +
-verified production integration
+castle Genichiro move catalog confirmed by the project owner
 +
-stable public deployment
+verified production integration
 ```
+
+Public deployment is not part of `v4.0.0`; it comes in V5 (section 33).
 
 Then expand boss coverage through:
 
@@ -1271,10 +1279,11 @@ Use:
     → look back → identify the move → merge one failure → failure report)
 2. Reliability validation on independent recordings
 3. Video upload and failure report (failure counts per move)
-4. Whole-fight move detection (short clips first, then temporal segmentation)
-5. Player-response detection
-6. True per-move analytics
-7. Recommendations
+4. Public deployment (section 33)
+5. Whole-fight move detection (short clips first, then temporal segmentation)
+6. Player-response detection
+7. True per-move analytics
+8. Recommendations
 ```
 
 At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
@@ -1616,11 +1625,10 @@ V3 is released. V4 order:
 Then, to complete `v4.0.0`:
 
 ```text
-6. Product integration (V4 Milestone 6)
-7. Public deployment (V4 Milestone 7)
+5. Product integration (V4 Milestone 6)
 ```
 
-Boss expansion (V4 Milestone 8) follows in v4.1.x. Resurrection is deferred until after `v4.0.0` (section 35).
+Boss expansion (V4 Milestone 7) follows in v4.1.x. Public deployment comes in V5, after the upload → failure report flow works (section 33). Resurrection is deferred until after `v4.0.0` (section 35).
 
 Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 6.
 

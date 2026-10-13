@@ -739,6 +739,7 @@ Once the ground-truth schema is stable enough:
 - expose provenance where useful
 - optionally expose verification status internally
 - preserve existing attempt references safely
+- make `attempts.user_id` NOT NULL through a migration, after confirming no ownerless pre-account attempts remain
 
 Only now should production schema changes for engine-action mappings be considered.
 
@@ -755,37 +756,7 @@ Do not introduce them until actual research demonstrates the required cardinalit
 
 ---
 
-# V4 Milestone 7 — Public Deployment
-
-Public deployment moves here from V3.
-
-Deployment should happen only after:
-
-- authentication is stable
-- personal data isolation is tested
-- bilingual UI works
-- the application clearly distinguishes verified vs. uncertain combat content
-- at least one complete ground-truth vertical slice is integrated
-- database migration strategy is stable
-- `attempts.user_id` is made NOT NULL, after confirming no ownerless pre-account attempts remain
-
-Production concerns include:
-
-- HTTPS
-- production PostgreSQL
-- environment secrets
-- database backups
-- migration execution
-- secure cookies
-- deployment from `main`
-- recovery procedures
-- observability appropriate to the actual hosting environment
-
-Do not introduce infrastructure that is not required by the selected deployment platform.
-
----
-
-# V4 Milestone 8 — Expand Boss-by-Boss
+# V4 Milestone 7 — Expand Boss-by-Boss
 
 Starts after `v4.0.0` (see the release strategy below).
 
@@ -862,12 +833,12 @@ v4.0.0
 =
 ground-truth pipeline proven
 +
-Genichiro complete vertical slice
+castle Genichiro move catalog confirmed by the project owner
 +
 production integration
-+
-public deployment
 ```
+
+Public deployment is not part of V4. It waits for the V5 end-to-end flow, where a user uploads a recording and sees which moves caused their failures (V5 Milestone 4).
 
 Then expand verified coverage incrementally:
 
@@ -978,7 +949,42 @@ PostgreSQL should store metadata and references.
 
 ---
 
-## V5 Milestone 4 — Automatic Move Detection
+## V5 Milestone 4 — Public Deployment
+
+Public deployment moves here from V4. The public product starts with the end-to-end flow: a user uploads a recording and sees their failures and the moves that caused them.
+
+Deploy only after:
+
+- the upload → failure report flow works and has passed reliability validation (Milestones 1–3)
+- authentication is stable
+- personal data isolation is tested, uploaded recordings included
+- bilingual UI works
+- the application clearly distinguishes verified vs. uncertain combat content
+- database migration strategy is stable
+
+Rehearse first: once Milestone 3 work begins, deploy privately so hosting problems surface early. A small invite-only deployment is fine if outside feedback is needed sooner.
+
+Production concerns include:
+
+- HTTPS
+- production PostgreSQL
+- environment secrets
+- database backups
+- migration execution
+- secure cookies
+- deployment from `main`
+- recovery procedures
+- observability appropriate to the actual hosting environment
+- object storage for uploaded recordings
+- background processing for video analysis, and its cost
+- upload size limits
+- retention and privacy rules for users' recordings
+
+Choose hosting from these actual requirements. Do not introduce infrastructure that is not required by the selected deployment platform.
+
+---
+
+## V5 Milestone 5 — Automatic Move Detection
 
 Detect every boss move in a fight, not only the ones before a failure. Move occurrences are the denominator that true per-move rates need.
 
@@ -1001,7 +1007,7 @@ Expand coverage from what the system could not attribute in users' recordings: a
 
 ---
 
-## V5 Milestone 5 — Player Response Detection
+## V5 Milestone 6 — Player Response Detection
 
 Detect or infer responses such as:
 
@@ -1018,7 +1024,7 @@ Only calculate metrics supported by observed events.
 
 ---
 
-## V5 Milestone 6 — True Per-Move Analytics
+## V5 Milestone 7 — True Per-Move Analytics
 
 Once move occurrences and outcomes are observable:
 
@@ -1036,7 +1042,7 @@ This is fundamentally different from V1–V3 failure-count analytics.
 
 ---
 
-## V5 Milestone 7 — Practice Recommendations
+## V5 Milestone 8 — Practice Recommendations
 
 Practice recommendations move here from the old V3 roadmap.
 
@@ -1126,11 +1132,11 @@ Can different players reliably use it?
 
 V4
 What moves actually exist?
-→ Combat ground truth + public product
+→ Combat ground truth
 
 V5
 What happened in the fight automatically?
-→ Video / CV gameplay analysis
+→ Video / CV gameplay analysis + public product
 
 V6
 Can this work across games?
