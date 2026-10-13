@@ -36,7 +36,7 @@ maps, params, events, text      ai/encounters.py       -> characters/genichiro.j
 chr, maps, cutscenes, events    ai/genichiro_models.py -> characters/genichiro_models.json
                                 ai/ai_flowchart.py     -> engine/genichiro_castle_ai.md (with a hand-written head)
 the above + occurrences.csv     ai/catalog.py          -> semantic/genichiro_catalog.csv, .md
-catalog + reachability + TAE   ai/classify.py         -> engine/genichiro_castle_tae_classes.csv, semantic/genichiro_classification.md, genichiro_gap_report.md
+catalog + reachability + TAE   ai/classify.py         -> engine/genichiro_castle_tae_classes.csv, semantic/genichiro_classification.md, genichiro_gap_report.md, deferred/
 ```
 
 Example, with `<work>` outside the repository:
@@ -54,7 +54,7 @@ python -I research/ground_truth/scripts/ai/encounters.py <work> research/ground_
 python -I research/ground_truth/scripts/ai/genichiro_models.py research/ground_truth/characters/genichiro_models.json
 python -I research/ground_truth/scripts/ai/ai_flowchart.py <work>/710000_battle.txt "AI 710000(c7100)"
 python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/ground_truth/semantic/genichiro_catalog.csv research/ground_truth/semantic/genichiro_catalog.md
-python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_truth/engine/genichiro_castle_tae_classes.csv research/ground_truth/semantic/genichiro_classification.md research/ground_truth/semantic/genichiro_gap_report.md
+python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_truth/engine/genichiro_castle_tae_classes.csv research/ground_truth/semantic/genichiro_classification.md research/ground_truth/semantic/genichiro_gap_report.md research/ground_truth/deferred
 ```
 
 ## Scripts
@@ -67,7 +67,7 @@ python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_tr
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
 | `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default) and `classification` (with a confidence filter). Open it in VS Code with Simple Browser. |
-| `classify.py` | Sorts every TAE entry into the completeness classes (CLAUDE.md section 31), with a confidence and the evidence; writes `engine/genichiro_castle_tae_classes.csv`, the review sheet `semantic/genichiro_classification.md` and the gap report `semantic/genichiro_gap_report.md`. |
+| `classify.py` | Sorts every TAE entry into the completeness classes (CLAUDE.md section 31), with a confidence and the evidence. The entries the owner reviews (castle AI can request them, attack or projectile) go to `engine/genichiro_castle_tae_classes.csv` and the review sheet `semantic/genichiro_classification.md`; the others to `deferred/`. Also writes the gap report `semantic/genichiro_gap_report.md`. |
 | `genichiro_models.py` | Identifies the six Genichiro-family model IDs from their archives (FLVER materials and bones, TAE entries, animations), map placements, cutscene references and the events that play those cutscenes. Writes `characters/genichiro_models.json`. |
 | `memory_bosses.py` | Lists every boss that drops a Memory: Memory item → item lot → defeat flag (common event 300) → the event that tests the boss → map part → model, AI. Writes `characters/memory_bosses.csv`. |
 | `ai_flowchart.py` | Draws one battle goal as Mermaid flowcharts and Markdown trees. |

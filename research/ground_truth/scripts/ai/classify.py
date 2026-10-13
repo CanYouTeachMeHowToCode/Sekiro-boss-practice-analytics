@@ -1,9 +1,12 @@
 """Classify every TAE entry of castle Genichiro (c7100, c7110) for the completeness review (V4 M5), and draft the gap
 report against the product's moves.
 
-Usage: python -I classify.py <tae_dir> <out.csv> <out_review.md> <out_gap.md>
+Usage: python -I classify.py <tae_dir> <out.csv> <out_review.md> <out_gap.md> <deferred_dir>
 
-    tae_dir   tae_dump.py output: c7100_tae.json, c7110_tae.json
+    tae_dir       tae_dump.py output: c7100_tae.json, c7110_tae.json
+    out.csv       the entries the owner reviews: those the castle AI can request that have an attack or projectile event
+    deferred_dir  every other entry (genichiro_castle_tae_deferred.csv / .md): classified as a draft, not reviewed
+                  (owner decision, 2026-10-13); revisited when a test shows an attack that is not in the catalog
 
 Also reads, from research/ground_truth:
     engine/genichiro_castle_ai_reachability.csv          castle AI requests and why not
@@ -20,7 +23,7 @@ each row and a confidence:
     高  the owner confirmed it, or the AI and the recordings agree;
     中  a consistent pattern in the recordings (what comes right before or after it);
     低  only the ID block it belongs to, or the animation it reuses.
-The owner reviews every row in the 审核 / 理由 columns of the review sheet; those cells are read back on regeneration.
+The owner reviews the rows of the review sheet in its 审核 / 理由 columns; those cells are read back on regeneration.
 """
 import csv
 import json
@@ -31,7 +34,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 GT = HERE.parent.parent
-tae_dir, out_csv, out_md, out_gap = sys.argv[1:5]
+tae_dir, out_csv, out_md, out_gap, deferred_dir = sys.argv[1:6]
+DEFER = Path(deferred_dir)
 
 reach = {(r["character"], int(r["anim"][5:])): r
          for r in csv.DictReader(open(GT / "engine/genichiro_castle_ai_reachability.csv", encoding="utf-8"))}
@@ -150,11 +154,19 @@ for r in rows:
 
 FIELDS = ["key", "character", "anim", "tae_category", "castle_ai", "castle_ai_paths", "recorded", "catalog_entries",
           "class", "confidence", "basis", "note", "owner_review", "owner_reason"]
+review_rows = [r for r in rows if r["class"] == "mapped_to_semantic_move"]   # castle AI requests them; attack or projectile
+deferred = [r for r in rows if r["class"] != "mapped_to_semantic_move"]
 with open(out_csv, "w", newline="", encoding="utf-8") as fh:
     w = csv.DictWriter(fh, fieldnames=FIELDS)
     w.writeheader()
-    for r in rows:
+    for r in review_rows:
         w.writerow({k: r[k] for k in FIELDS})
+DEFER.mkdir(parents=True, exist_ok=True)
+with open(DEFER / "genichiro_castle_tae_deferred.csv", "w", newline="", encoding="utf-8") as fh:
+    w = csv.DictWriter(fh, fieldnames=FIELDS[:-2])
+    w.writeheader()
+    for r in deferred:
+        w.writerow({k: r[k] for k in FIELDS[:-2]})
 
 # ---------------------------------------------------------------- review sheet
 CLASS_ZH = {"mapped_to_semantic_move": "属于招式", "duplicate_or_shared": "被借用的源动画", "unused_or_unreachable": "天守阁 AI 不会出",
@@ -168,42 +180,58 @@ def cell(x):
 
 
 combat = [r for r in rows if r["tae_category"] in ("attack", "bullet")]
-md = ["# 天守阁弦一郎 TAE 全集分类(草稿,待你审核)", "",
+conf = Counter(r["confidence"] for r in rows)
+TABLE_HEAD = " 类别 | 天守阁 AI | 两次录像出现 | 目录条目 | 置信度 | 依据 | 备注 |"
+
+
+def stats(where):
+    out = ["| 分类 | c7100 | c7110 | 其中带攻击或飞行物 | 在哪里 |", "|---|---|---|---|---|"]
+    for cls in ORDER:
+        rc = [r for r in rows if r["class"] == cls]
+        out.append(f"| {CLASS_ZH[cls]}(`{cls}`) | {sum(1 for r in rc if r['character'] == 'c7100')} | "
+                   f"{sum(1 for r in rc if r['character'] == 'c7110')} | {sum(1 for r in rc if r['tae_category'] in ('attack', 'bullet'))} "
+                   f"| {where[cls == 'mapped_to_semantic_move']} |")
+    out.append(f"| 合计 | {sum(1 for r in rows if r['character'] == 'c7100')} | {sum(1 for r in rows if r['character'] == 'c7110')} | {len(combat)} | |")
+    return out
+
+
+md = ["# 天守阁弦一郎:天守阁 AI 会出的攻击动画(待你审核)", "",
       "由 `scripts/ai/classify.py` 生成,数据在 `engine/genichiro_castle_tae_classes.csv`。对应计划第 7 步(V4 M5)。", "",
-      "- c7100(一、二阶段)和 c7110(三阶段)的每个 TAE 编号一行,共 %d 行。" % len(rows),
-      "- **只有带攻击判定或飞行物的编号才可能伤到玩家。** 这类编号共 %d 个,每个要么属于你审核通过的招式目录,要么有 AI 证据说明天守阁不会出。"
-      "其中分到 unknown 的:%d 个。" % (len(combat), sum(1 for r in combat if r["class"] == "unknown")),
-      "- 其余编号没有攻击判定和飞行物,按证据分类,并标出置信度:", "",
-      "| 置信度 | 含义 |", "|---|---|",
-      "| 高 | 你已确认,或 AI 和录像一致 |",
-      "| 中 | 两次录像里有稳定的规律(前后接什么) |",
-      "| 低 | 只凭编号段,或它借用的动画 |", "",
+      "- c7100(一、二阶段)和 c7110(三阶段)共 %d 个 TAE 编号,全部分了类。" % len(rows),
+      "- **按你 2026-10-13 的决定,只审核天守阁 AI 会出、带攻击判定或飞行物的编号**,共 %d 个,都属于招式目录里你审核通过的条目。" % len(review_rows),
+      "- 其余 %d 个编号的分类草稿暂存在 `deferred/`,不审核。以后实际测试中出现目录里没有的攻击动画,再从那里查它的分类和依据补进来。"
+      "带攻击判定或飞行物的编号里分到 unknown 的:%d 个。" % (len(deferred), sum(1 for r in combat if r["class"] == "unknown")), "",
       "## 怎么审核", "",
       "用鼠标审核:在终端运行 `python -I research/ground_truth/scripts/ai/catalog_review.py 8765 classification`,"
-      "然后在 VS Code 里 Ctrl+Shift+P → Simple Browser: Show,打开 http://127.0.0.1:8765。页面上可以按置信度筛选。", "",
-      "也可以直接改这个文件:把\"审核\"栏的 ☐ 改成 ✅ 或 ❌,不通过时写理由。", "",
-      "建议重点看置信度为\"中\"\"低\"的行,可以在 DS Anim Studio 里打开对应编号看一眼。重新生成时你的审核会保留。", "",
-      "## 统计", "",
-      "| 分类 | c7100 | c7110 | 其中带攻击或飞行物 |", "|---|---|---|---|"]
-for cls in ORDER:
-    rc = [r for r in rows if r["class"] == cls]
-    md.append(f"| {CLASS_ZH[cls]}(`{cls}`) | {sum(1 for r in rc if r['character'] == 'c7100')} | "
-              f"{sum(1 for r in rc if r['character'] == 'c7110')} | {sum(1 for r in rc if r['tae_category'] in ('attack', 'bullet'))} |")
-md.append(f"| 合计 | {sum(1 for r in rows if r['character'] == 'c7100')} | {sum(1 for r in rows if r['character'] == 'c7110')} | {len(combat)} |")
-conf = Counter(r["confidence"] for r in rows)
-md += ["", f"置信度:高 {conf['高']},中 {conf['中']},低 {conf['低']}。", ""]
-for cls in ORDER:
-    rc = [r for r in rows if r["class"] == cls]
-    if not rc:
-        continue
-    md += [f"## {CLASS_ZH[cls]}(`{cls}`,{len(rc)} 个)", "",
-           REVIEW_HEAD + " 类别 | 天守阁 AI | 两次录像出现 | 目录条目 | 置信度 | 依据 | 备注 |",
-           "|---|---|---|---|---|---|---|---|---|---|"]
+      "然后在 VS Code 里 Ctrl+Shift+P → Simple Browser: Show,打开 http://127.0.0.1:8765。", "",
+      "也可以直接改这个文件:把\"审核\"栏的 ☐ 改成 ✅ 或 ❌,不通过时写理由。重新生成时你的审核会保留。", "",
+      "## 统计", ""] + stats({True: "本表", False: "`deferred/`"}) + [""]
+for ch, title in (("c7100", "一、二阶段(c7100)"), ("c7110", "三阶段(c7110)")):
+    rc = [r for r in review_rows if r["character"] == ch]
+    md += [f"## {title}:{len(rc)} 个", "", REVIEW_HEAD + TABLE_HEAD, "|---|---|---|---|---|---|---|---|---|---|"]
     for r in rc:
         md.append(f"| {r['key']} | {r['review_mark']} | {r['owner_reason']} | {r['tae_category']} | {r['castle_ai']} | {r['recorded']} "
                   f"| {cell(r['catalog_entries'])} | {r['confidence']} | {cell(r['basis'])} | {cell(r['note'])} |")
     md.append("")
 open(out_md, "w", encoding="utf-8").write("\n".join(md))
+
+dmd = ["# 天守阁弦一郎:暂存的 TAE 编号分类(不审核)", "",
+       "由 `scripts/ai/classify.py` 生成,数据在同目录的 `genichiro_castle_tae_deferred.csv`。", "",
+       "按你 2026-10-13 的决定,这里的 %d 个编号只做了分类草稿,不审核:" % len(deferred), "",
+       "- 天守阁 AI 不会出的攻击和飞行物,以及被借用的源动画;",
+       "- 所有没有攻击判定和飞行物的动画(受击、拼刀反应、移动、忍杀、死亡、演出等),它们不会伤到玩家。", "",
+       "以后实际测试或新录像里出现招式目录里没有的攻击动画时,先在这里查它的分类和依据,再补进招式目录。", "",
+       "置信度:高 = 你已确认,或 AI 和录像一致;中 = 两次录像里有稳定的规律;低 = 只凭编号段,或它借用的动画。", ""] +       stats({True: "审核表 `semantic/genichiro_classification.md`", False: "本文件"}) + [""]
+for cls in ORDER:
+    rc = [r for r in deferred if r["class"] == cls]
+    if not rc:
+        continue
+    dmd += [f"## {CLASS_ZH[cls]}(`{cls}`,{len(rc)} 个)", "", "| 编号 |" + TABLE_HEAD, "|---|---|---|---|---|---|---|---|"]
+    for r in rc:
+        dmd.append(f"| {r['key']} | {r['tae_category']} | {r['castle_ai']} | {r['recorded']} | {cell(r['catalog_entries'])} "
+                   f"| {r['confidence']} | {cell(r['basis'])} | {cell(r['note'])} |")
+    dmd.append("")
+open(DEFER / "genichiro_castle_tae_deferred.md", "w", encoding="utf-8").write("\n".join(dmd))
 
 # ---------------------------------------------------------------- gap report against the product's moves
 wiki = json.load(open(GT / "semantic/wiki_mapping/genichiro-ashina.json", encoding="utf-8"))
@@ -237,4 +265,5 @@ print(len(rows), "TAE entries;", len(combat), "with attack/projectile;", sum(1 f
 for cls in ORDER:
     print(f"  {cls:25s}", sum(1 for r in rows if r["class"] == cls))
 print("confidence:", dict(conf))
+print("review sheet:", len(review_rows), "rows; deferred:", len(deferred))
 print("product moves linked:", sum(1 for line in gap if line.startswith("| `") and "还没有对应" not in line), "/", len(wiki["entries"]), "; catalog moves not linked:", len(rest))
