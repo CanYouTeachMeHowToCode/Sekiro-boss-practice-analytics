@@ -64,6 +64,7 @@ python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/gro
 | `reachability.py` | The castle result table. The castle-specific rules it applies on top of `ai_moves.py`, each read from the decompiled script, are listed in its docstring. |
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
+| `catalog_review.py` | A local review page for the catalog (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per entry, written straight into the 审核 / 理由 cells of `genichiro_catalog.md` and the review columns of the CSV. Open it in VS Code with Simple Browser. |
 | `genichiro_models.py` | Identifies the six Genichiro-family model IDs from their archives (FLVER materials and bones, TAE entries, animations), map placements, cutscene references and the events that play those cutscenes. Writes `characters/genichiro_models.json`. |
 | `memory_bosses.py` | Lists every boss that drops a Memory: Memory item → item lot → defeat flag (common event 300) → the event that tests the boss → map part → model, AI. Writes `characters/memory_bosses.csv`. |
 | `ai_flowchart.py` | Draws one battle goal as Mermaid flowcharts and Markdown trees. |
