@@ -1,7 +1,7 @@
 # Genichiro, Ashina Castle: second dev-menu recording (2026-10-13)
 
-- Ruleset: vanilla, assuming Resurrection was off as in the first recording; **to be confirmed by the project owner**.
-- Game version: 1.06, assumed unchanged; to be confirmed.
+- Ruleset: vanilla. Resurrection was off (confirmed by the project owner).
+- Game version: 1.06 (confirmed by the project owner).
 - Encounter: Genichiro Ashina at the top of Ashina Castle. All three phases are in one recording: 450 s, 2560×1440, 60 fps.
   - Phases 1–2 were short, 169 s together.
   - Phase 3 is about 262 s long, three times as long as in the first recording.
@@ -12,7 +12,7 @@
 **Status.**
 
 - Every animation ID read from the recording has been verified. See [Verification](#verification).
-- The phase boundaries are Claude's proposal and wait for the project owner. See [Results](#results).
+- The project owner confirmed the phase boundaries on 2026-10-13. See [Results](#results).
 
 ## Files
 
@@ -20,7 +20,7 @@ The files have the same format as in `../2026-10-09-castle/`, whose README descr
 
 | File | Content |
 |---|---|
-| `recording.json` | Video hash and format, tool versions, the character ID on screen, and the proposed phases. |
+| `recording.json` | Video hash and format, tool versions, the character ID on screen, and the phases. |
 | `frames.csv` | One row per video frame: the character ID and the five "Active Anime" lines as `ID@time`. |
 | `occurrences.csv` | 705 occurrences, with phase, frames, lines and animation times. |
 | `ids.csv` | One row per animation ID seen (84). |
@@ -61,7 +61,7 @@ The pipeline is the one used for the first recording, with three settings now re
 
 ## Results
 
-Proposed phases (to be confirmed by the project owner):
+The project owner confirmed these phase boundaries on 2026-10-13.
 
 | Phase | Frames | Time (s) | Character | Ends with | Occurrences | Distinct IDs |
 |---|---|---|---|---|---|---|
@@ -93,7 +93,8 @@ Proposed phases (to be confirmed by the project owner):
   - This agrees with the AI: only the phase-3 AI answers SpEffect 5030 with `3080`.
 - **Act01 was not seen.** `3000` started once in phase 1 (5.8 s) and four times in phase 3, but never continued to `3001`/`3010`. No `3010` occurs; the two second-pass `003010` reads were `008010`.
 
-## Open questions for the project owner
+## Answered by the project owner (2026-10-13)
 
-1. Are the phase boundaries right (first deathblow at 63.1–66.7 s, second at 164.6–169.4 s)?
-2. Was Resurrection off, and is the game still version 1.06?
+1. The phase boundaries are right: phase 1 ends with the first deathblow (63.1–66.7 s), phase 2 with the second (164.6–169.4 s).
+2. Resurrection was off.
+3. The game is version 1.06.

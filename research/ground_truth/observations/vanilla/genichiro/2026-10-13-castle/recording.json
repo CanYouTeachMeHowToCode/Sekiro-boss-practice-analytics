@@ -2,9 +2,9 @@
   "recording": "2026-10-13-castle",
   "recorded_on": "file written 2026-10-13 01:32 local time; the second round of recordings (plan step 6)",
   "ruleset": "vanilla",
-  "resurrection_mod": "not yet confirmed for this recording (the first recording had it off)",
+  "resurrection_mod": "off (confirmed by the project owner on 2026-10-13)",
   "game_version": "1.06",
-  "game_version_note": "assumed unchanged from the first recording; to be confirmed by the project owner",
+  "game_version_note": "confirmed by the project owner on 2026-10-13",
   "encounter": "Genichiro Ashina, top of Ashina Castle, all three phases in one recording; the player won",
   "video": {
     "file_name": "弦一郎录像2.mp4",
@@ -37,7 +37,7 @@
     {"frames": [11193, 27000], "time_s": [186.56, 450.02], "character": "c7110_0001", "note": "the 'Active Anime' lines return at frame 11304 (188.40 s)"}
   ],
   "phases": {
-    "status": "proposed by Claude, to be confirmed by the project owner",
+    "status": "confirmed by the project owner on 2026-10-13",
     "1": {"frames": [0, 4003], "time_s": [0.0, 66.72], "ends_with": "a000_013100 -> a000_013110 (first deathblow, 63.09-66.72 s)"},
     "2": {"frames": [4004, 10164], "time_s": [66.74, 169.41], "ends_with": "a000_012000 (second deathblow, 164.64-169.41 s)"},
     "3": {"frames": [11193, 27000], "time_s": [186.56, 450.02], "ends_with": "the final deathblow a000_012000 -> a000_020200 -> a000_013700 (428.89-442.65 s); a000_010001 (the defeated boss) until the end"},
