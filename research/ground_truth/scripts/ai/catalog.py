@@ -1,0 +1,370 @@
+"""Draft the castle Genichiro move catalog: one entry per animation chain the castle battle AI can request.
+
+Usage:
+    python -I catalog.py <decompiled_ai_dir> <tae_dir> <out.csv> <out.md>
+
+    decompiled_ai_dir  lua50_decompile.py output: 710000_battle.txt, 711000_battle.txt
+    tae_dir            tae_dump.py output: c7100_tae.json, c7110_tae.json
+
+Also reads, from research/ground_truth:
+    engine/genichiro_castle_ai_reachability.csv                  which AI options the castle fight uses, per animation
+    observations/vanilla/genichiro/2026-10-09-castle/coverage.csv     recorded occurrences per phase
+    observations/vanilla/genichiro/2026-10-09-castle/occurrences.csv  first time each animation was seen
+
+An AI option (ActNN, KengekiNN, a request inside Interrupt, Parry, Damaged) usually requests one complete move
+chain. Options that request the same chain become one entry. The chain text comes from ai_flowchart.py, with the
+castle's fixed facts applied: the boss has SpEffect 200050 and never 3711500, so branches that need 3711500 are
+dropped and conditions on 200050 are always true.
+
+An entry is a move candidate when its chain contains an attack or projectile animation; the rest (guards,
+deflects, steps) are listed as not moves. Families, wiki candidates and triggers are proposals written from the
+evidence named in each row. The project owner confirms every name, grouping and variant.
+"""
+import csv
+import json
+import re
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+GT = HERE.parent.parent
+sys.path.insert(0, str(HERE))
+import ai_flowchart as af  # noqa: E402
+
+ai_dir, tae_dir, out_csv, out_md = sys.argv[1:5]
+REC = GT / "observations/vanilla/genichiro/2026-10-09-castle"
+CASTLE = {"710000": ("c7100", ("1", "2")), "711000": ("c7110", ("3",))}
+
+# What makes the AI pick each option, read from the decompiled scripts (see engine/genichiro_castle_ai.md).
+# "计数" is the AI's clash counter (counter 0): +1 per clash at close range, cleared by his big moves and deathblows.
+TRIGGERS = {
+    ("710000", "Act01"): "主动选招:3–5 米(权重 5,约 7%);你冲刺时任何距离(5)",
+    ("710000", "Act02"): "主动选招:3–5 米(10);你冲刺时(5);他出 3063/3068 后 10 秒内不选",
+    ("710000", "Act03"): "主动选招:≤ 3 米(15);你冲刺时(5);7 秒冷却",
+    ("710000", "Act06"): "主动选招:3–5 米(30)",
+    ("710000", "Act09"): "主动选招:3–7 米、体干剩余 ≤ 360、你没在冲刺;3–5 米约 80%;冷却 30 秒,与 3092、3028 共用",
+    ("710000", "Act10"): "主动选招:≥ 5 米(300);你冲刺时(30)",
+    ("710000", "Act11"): "主动选招:≤ 5 米(15);你冲刺时(5)",
+    ("710000", "Act15"): "主动选招:开场第一招(600);≥ 7 米(600);你冲刺时不选",
+    ("710000", "Act16"): "你倒地时(玩家特效 109031/110125)且 ≤ 5 米(100)",
+    ("710000", "Act22"): "你在他身后时(权重 1,约 1%)",
+    ("710000", "Act24"): "主动选招:≤ 3 米(30);3044 只在他体干剩余 ≤ 70% 时接",
+    ("710000", "Act31"): "主动选招:≤ 3 米(30);你冲刺时不选",
+    ("710000", "Act34"): "主动选招:5–7 米(100,约 12–20%)",
+    ("710000", "Act48"): "主动选招:只在你冲刺时(30)",
+    ("710000", "Damaged"): "被你打中时:15% 后跳 5201,另 15% 出 3009",
+    ("710000", "Kengeki01"): "拼刀后:计数 < 2 时(他被弹开,< 2.5 米;或他弱弹开你),与 3055 轮流",
+    ("710000", "Kengeki02"): "他强弹开你之后(100);3044 只在他体干剩余 ≤ 70% 时接",
+    ("710000", "Kengeki03"): "拼刀后:计数 ≥ 2(他被弹开)或 ≥ 3(他弱弹开你)(60)",
+    ("710000", "Kengeki04"): "拼刀后:他被弹开、< 2.5 米、计数 < 2,与 3050 轮流",
+    ("710000", "Kengeki10"): "他强弹开你之后(200211)(50)",
+    ("710000", "Kengeki14"): "他弱弹开你之后、计数 < 3(50)",
+    ("710000", "Kengeki15"): "拼刀后:计数 ≥ 2、你弹开他、< 2.5 米(30,约 11–12%)",
+    ("710000", "Kengeki17"): "他强弹开你之后(200210)(100)",
+    ("710000", "Kengeki30"): "拼刀后:计数 ≥ 2、你弹开他(200200)(5,约 2%)",
+    ("710000", "Kengeki31"): "他强弹开你之后(50,约 14–20%);计数 ≥ 3 后他弱弹开你(15)",
+    ("710000", "Kengeki32"): "拼刀后:计数 ≥ 2,与 Kengeki33 轮流",
+    ("710000", "Kengeki33"): "拼刀后:计数 ≥ 2,与 Kengeki32 轮流",
+    ("710000", "Kengeki38"): "拼刀后:计数 ≥ 2(30–100);他强弹开你之后(50)",
+    ("710000", "Kengeki39"): "拼刀后:计数 ≥ 2、你弹开他(30)",
+    ("710000", "Kengeki40"): "任何拼刀后:他 HP ≤ 75% 且共用冷却已过(50)",
+    ("710000", "Kengeki43"): "拼刀后:计数 ≥ 2(10–50)",
+    ("710000", "Interrupt:3017"): "仅二阶段:3040 播到约 3.3 秒、或 3092 播到约 2.7 秒时,你在 4.1 米外",
+    ("710000", "Interrupt:3023"): "你使用道具时;或他的 3044 命中后 50%(特效 3710050)",
+    ("710000", "Interrupt:3092"): "你弹开 3063 或 3068 的第二刀(他带 3710032 时被弹开)",
+    ("710000", "Parry"): "你攻击时他弹开你:第一刀 3100,1 秒内的下一刀 3101",
+    ("710000", "ShootReaction"): "被你的飞行物打中时",
+    ("711000", "Act01"): "主动选招:≤ 5 米(5);开场(1);你冲刺时(5)",
+    ("711000", "Act02"): "主动选招:≤ 3 米(10);你冲刺时(5)",
+    ("711000", "Act03"): "主动选招:≤ 3 米(5);你冲刺时(5);7 秒冷却",
+    ("711000", "Act06"): "主动选招:3–7 米(5)",
+    ("711000", "Act09"): "主动选招:5–7 米(30)、3–5 米(15)、≤ 3 米且体干剩余 ≤ 75%(300);你没在冲刺;冷却 20 秒,与 3092、3028 共用",
+    ("711000", "Act10"): "主动选招:5–7 米(10);你冲刺时(30)",
+    ("711000", "Act13"): "你在他身后时(100);3039 只在 15 秒冷却已过时接",
+    ("711000", "Act15"): "主动选招:7–10 米(5,约 8–14%);你冲刺时不选",
+    ("711000", "Act17"): "主动选招:≤ 3 米(30);15 秒冷却",
+    ("711000", "Act18"): "主动选招:3–10 米(30);你倒地时几乎必出;15 秒冷却",
+    ("711000", "Act19"): "主动选招:≤ 5 米(20–30);你冲刺且 ≤ 4 米(30);15 秒冷却",
+    ("711000", "Act20"): "开场第一招(几乎必出);≥ 7 米(30);你冲刺时不选",
+    ("711000", "Act22"): "你在他身后时(100,约一半)",
+    ("711000", "Act48"): "主动选招:只在你冲刺时(30,约 40%)",
+    ("711000", "Kengeki01"): "拼刀后:计数 < 2 时你弹开他;或他弱弹开你(50)",
+    ("711000", "Kengeki02"): "拼刀后:计数 ≥ 2、你弹开他(10)",
+    ("711000", "Kengeki04"): "拼刀类型 200206、弱弹计数 ≤ 4(100)",
+    ("711000", "Kengeki14"): "拼刀类型 200206、弱弹计数 ≤ 4(50)",
+    ("711000", "Kengeki15"): "拼刀后:计数 ≥ 2(10–30)",
+    ("711000", "Kengeki17"): "他强弹开你之后(200210)(100)",
+    ("711000", "Kengeki20"): "拼刀后(10–50);他两侧没有空间时不选",
+    ("711000", "Kengeki30"): "拼刀后:计数 ≥ 2(5–45);弱弹计数 > 4 时(500)",
+    ("711000", "Kengeki31"): "他强弹开你之后(50,约 25–50%);计数 ≥ 2 后的拼刀(5–15)",
+    ("711000", "Kengeki32"): "拼刀后:计数 ≥ 2,与 Kengeki33 轮流(20–500)",
+    ("711000", "Kengeki33"): "拼刀后:计数 ≥ 2,与 Kengeki32 轮流(20–500)",
+    ("711000", "Kengeki35"): "拼刀类型 200206、弱弹计数 > 4(100)",
+    ("711000", "Kengeki38"): "拼刀后:计数 ≥ 2(5–30);他强弹开你之后(50)",
+    ("711000", "Kengeki39"): "拼刀后:计数 ≥ 2、他弱弹开你(10)",
+    ("711000", "Kengeki40"): "任何拼刀后:他 HP ≤ 75% 且共用冷却已过(50)",
+    ("711000", "Kengeki43"): "拼刀后:计数 ≥ 2、他弱弹开你(10)",
+    ("711000", "Kengeki44"): "拼刀后:计数 ≥ 2、他弱弹开你(10)",
+    ("711000", "Kengeki45"): "你弹开他、距离 ≥ 2.5 米(60);15 秒冷却",
+    ("711000", "Kengeki46"): "拼刀后的多种情况(60–100);15 秒冷却",
+    ("711000", "Interrupt:3008"): "你在 12.5 米内使用道具;或 3040 播到约 3.3 秒时你在 5.5–11 米",
+    ("711000", "Interrupt:3009"): "触发特效 3711000(社区名:冲刺八艘飞突刺命中)",
+    ("711000", "Interrupt:3018"): "3040 播到约 3.3 秒时你在 11 米外",
+    ("711000", "Interrupt:3080"): "他出 8604 时(飞渡浮舟最后一下被完美弹开),100%",
+    ("711000", "Interrupt:3092"): "你弹开 3063 或 3068 的第二刀(他带 3710032 时被弹开)",
+    ("711000", "Parry"): "你攻击时他弹开你:第一刀 3100,1 秒内的下一刀 3101",
+    ("711000", "ShootReaction"): "被你的飞行物打中时",
+}
+
+# Family proposals: (family, variant, basis). "已确认" in the basis means the owner confirmed it.
+FAMILY = {
+    ("710000", "Act09"): ("飞渡浮舟", "第一套", "已确认(2026-10-12)"),
+    ("711000", "Act09"): ("飞渡浮舟", "第一套(三阶段接 3067)", "已确认(2026-10-12)"),
+    ("710000", "Kengeki31"): ("飞渡浮舟", "第二套的起手", "已确认:3068 + 3092 是第二套"),
+    ("711000", "Kengeki31"): ("飞渡浮舟", "第二套的起手", "已确认:3068 + 3092 是第二套"),
+    ("710000", "Interrupt:3092"): ("飞渡浮舟", "第二套", "已确认:3068 + 3092 是第二套"),
+    ("711000", "Interrupt:3092"): ("飞渡浮舟", "第二套", "已确认:3068 + 3092 是第二套"),
+    ("710000", "Kengeki40"): ("飞渡浮舟", "第三套", "已确认:3028 是完整的一套"),
+    ("711000", "Kengeki40"): ("飞渡浮舟", "第三套", "已确认:3028 是完整的一套"),
+    ("710000", "Kengeki30"): ("飞渡浮舟(建议)", "第二套的另一种起手", "3063 的两刀和 3068 完全相同,也加 3710032,弹开第二刀同样接 3092"),
+    ("711000", "Kengeki30"): ("飞渡浮舟(建议)", "第二套的另一种起手", "3063 的两刀和 3068 完全相同,也加 3710032,弹开第二刀同样接 3092"),
+    ("710000", "Interrupt:3017"): ("飞渡浮舟(建议)", "第一套的射箭取消分支", "只在二阶段 3040 快结束、你在 4.1 米外时出;对应 Fextralife 的 Floating Passage Cancel;3017 是不是射箭待你确认"),
+    ("711000", "Interrupt:3080"): ("飞渡浮舟", "三阶段完美弹完之后的突刺", "已确认:8604 之后三阶段固定出突刺"),
+    ("710000", "Kengeki38"): ("危攻击后续追击(建议)", "", "3030 起手,一阶段接 3025(你标为危·突刺),二阶段 75% 接 3067(危·下段);两个 wiki 都写一阶段突刺、二阶段扫腿"),
+    ("711000", "Kengeki38"): ("危攻击后续追击(建议)", "三阶段", "3030 起手后三选一(3067、3025、3032),对应 Fandom 写的三阶段三种结尾"),
+    ("711000", "Act18"): ("巴之雷(建议)", "", "你说 3043 是三阶段的打雷招式"),
+    ("711000", "Kengeki32"): ("巴之雷(建议)", "拼刀后", "以 3043 结尾;你说 3043 是三阶段的打雷招式"),
+}
+
+# Product moves (semantic/wiki_mapping/genichiro-ashina.json) that an entry may correspond to, with the basis.
+WIKI = {
+    ("710000", "Act09"): ("floating-passage", "你确认的飞渡浮舟第一套"),
+    ("711000", "Act09"): ("floating-passage-phase-3", "你确认的飞渡浮舟第一套,三阶段"),
+    ("710000", "Kengeki31"): ("floating-passage", "你确认的飞渡浮舟第二套"),
+    ("711000", "Kengeki31"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套,三阶段"),
+    ("710000", "Interrupt:3092"): ("floating-passage", "你确认的飞渡浮舟第二套"),
+    ("711000", "Interrupt:3092"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套,三阶段"),
+    ("710000", "Kengeki40"): ("floating-passage", "你确认的飞渡浮舟第三套"),
+    ("711000", "Kengeki40"): ("floating-passage-phase-3", "你确认的飞渡浮舟第三套,三阶段"),
+    ("710000", "Interrupt:3017"): ("floating-passage(Fextralife 的 Floating Passage Cancel)", "触发条件和射箭取消一致"),
+    ("710000", "Kengeki38"): ("perilous-attack-follow-up、perilous-attack-follow-up-phase-2", "按阶段换结尾,和 wiki 一致"),
+    ("711000", "Kengeki38"): ("perilous-attack-follow-up-phase-3", "三种结尾,和 Fandom 一致"),
+    ("710000", "Interrupt:3023"): ("guard-breaking-shot", "wiki:用来惩罚喝药;这里由你使用道具触发,3023 是飞行物"),
+    ("711000", "Interrupt:3008"): ("deaths-thrust", "wiki:用来惩罚喝药/用道具;这里由你使用道具触发"),
+    ("711000", "Act20"): ("deaths-thrust", "和用道具时触发的是同一个动画 3008"),
+    ("710000", "Act11"): ("perilous-grab", "3020 你标为危·抓投"),
+    ("710000", "Kengeki43"): ("perilous-thrust", "3062 你标为危·突刺;但 3025 也是危·突刺,需要你区分"),
+    ("711000", "Act18"): ("lightning-of-tomoe-slash / -smash / -shot", "3043 是打雷招式,具体是哪一个待你确认"),
+}
+
+# Owner labels (2026-10-10 perilous labels for c7100; 2026-10-12 confirmations).
+OWNER = {
+    ("c7100", 3007): "下段(非危)", ("c7100", 3020): "危·抓投", ("c7100", 3021): "危·下段",
+    ("c7100", 3022): "危(类型未定)", ("c7100", 3025): "危·突刺", ("c7100", 3027): "不确定",
+    ("c7100", 3032): "下段(非危)", ("c7100", 3048): "下段(非危)", ("c7100", 3062): "危·突刺",
+    ("c7100", 3067): "危·下段", ("c7100", 3080): "危·突刺",
+}
+for c in ("c7100", "c7110"):
+    for a, lab in ((3040, "飞渡浮舟·第一套"), (3041, "飞渡浮舟·第一套"), (3068, "飞渡浮舟·第二套"),
+                   (3092, "飞渡浮舟·第二套"), (3028, "飞渡浮舟·第三套")):
+        OWNER[(c, a)] = "；".join(x for x in (OWNER.get((c, a)), lab) if x)
+OWNER[("c7110", 3080)] = "飞渡浮舟完美弹完后的突刺(三阶段)"
+
+CASTLE_FACTS = [  # applied to the chain text: castle Genichiro has 200050 and never 3711500
+    (re.compile(r"\[Boss有特效3711500(?: 且 计时器8已到)?: \d+ ｜ 否则: ([^\[\]]+)\]"), r"\1"),
+    (re.compile(r" 且 非 Boss有特效3711500"), ""),
+    (re.compile(r" 且 Boss有特效200050"), ""),
+]
+
+# ---------------------------------------------------------------- inputs
+reach = list(csv.DictReader(open(GT / "engine/genichiro_castle_ai_reachability.csv", encoding="utf-8")))
+info = {(r["character"], int(r["anim"][5:])): r for r in reach}
+options = defaultdict(set)        # (ai, option) -> animation IDs it requests at the castle
+for r in reach:
+    for p in filter(None, r["castle_ai_paths"].split("; ")):
+        ai, fn = p.split(":")
+        anim = int(r["anim"][5:])
+        options[(ai, f"Interrupt:{anim}" if fn == "Interrupt" else fn)].add(anim)
+
+first_seen = {}
+for r in csv.DictReader(open(REC / "occurrences.csv", encoding="utf-8")):
+    key = (r["character"][:5], int(r["anim"][5:]))
+    t = float(r["start_time"])
+    if key not in first_seen or t < first_seen[key]:
+        first_seen[key] = t
+
+hits = {}
+for c in ("c7100", "c7110"):
+    tae = json.load(open(f"{tae_dir}/{c}_tae.json", encoding="utf-8"))["animations"]
+    by = {a["id"]: a for a in tae}
+    for a in tae:
+        src = a
+        while src["kind"] == "import_other_anim":
+            src = by[src["imports_from"]]
+        hits[(c, a["id_int"])] = sum(1 for e in src["events"] if e["type"] == 1)
+
+# ---------------------------------------------------------------- entries
+entries = {}
+for ai, (char, phases) in CASTLE.items():
+    funcs = af.split_functions(open(f"{ai_dir}/{ai}_battle.txt", encoding="utf-8").read())
+    for (a, opt), anims in sorted(options.items()):
+        if a != ai:
+            continue
+        if opt.startswith("Interrupt:"):
+            chain = opt.split(":")[1]
+        else:
+            lines = funcs["Goal." + opt]
+            chain = af.inline(af.parse_function(lines), af.reg_names(lines), af.num_regs(lines))
+            for pat, rep in CASTLE_FACTS:
+                chain = pat.sub(rep, chain)
+        e = entries.setdefault((char, chain), {"character": char, "ai": ai, "chain": chain, "options": [], "anims": set()})
+        e["options"].append(opt)
+        e["anims"] |= anims
+
+
+def mmss(t):
+    return f"{int(t // 60)}:{t % 60:04.1f}"
+
+
+rows = []
+for (char, chain), e in entries.items():
+    ai = e["ai"]
+    anims = sorted(e["anims"])
+    cats = {a: info[(char, a)]["category"] for a in anims}
+    combat = [a for a in anims if cats[a] in ("attack", "bullet")]
+    phase_cols = ("1", "2") if char == "c7100" else ("3",)
+    rec = {a: sum(int(info[(char, a)][f"recorded_phase{p}"] or 0) for p in phase_cols) for a in anims}
+    seen = [a for a in combat if rec[a]]
+    if not combat:
+        evidence = ""
+    elif len(seen) == len(combat):
+        evidence = "已运行观察"
+    elif seen:
+        evidence = "部分运行观察"
+    else:
+        evidence = "仅静态证据"
+    if char == "c7100":
+        only2 = [a for a in anims if info[(char, a)]["castle_ai_phase1"] == "no"]
+        ph = "2" if len(only2) == len(anims) else "1、2"
+        note = f"{'、'.join(map(str, only2))} 仅二阶段" if only2 and ph != "2" else ""
+    else:
+        ph, note = "3", ""
+    keys = [(ai, o) for o in e["options"]]
+    fam = next((FAMILY[k] for k in keys if k in FAMILY), ("", "", ""))
+    wiki = next((WIKI[k] for k in keys if k in WIKI), ("", ""))
+    rows.append({
+        "character": char, "phases": ph, "kind": "move" if combat else "not_move",
+        "ai_options": "、".join(f"{ai}:{o}" for o in e["options"]),
+        "chain": chain,
+        "trigger": "；".join(dict.fromkeys(TRIGGERS.get(k, "") for k in keys if TRIGGERS.get(k))),
+        "attack_anims": " ".join(f"{a}({hits[(char, a)]}击)" for a in anims if cats[a] == "attack"),
+        "bullet_anims": " ".join(str(a) for a in anims if cats[a] == "bullet"),
+        "other_anims": " ".join(str(a) for a in anims if cats[a] == "other"),
+        "recorded": " ".join(f"{a}:{rec[a]}" for a in combat),
+        "first_seen": " ".join(f"{a}@{mmss(first_seen[(char, a)])}" for a in combat if rec[a] and (char, a) in first_seen),
+        "evidence": evidence,
+        "family_proposed": fam[0], "variant_proposed": fam[1], "family_basis": fam[2],
+        "wiki_candidate": wiki[0], "wiki_basis": wiki[1],
+        "owner_labels": "；".join(f"{a} {OWNER[(char, a)]}" for a in anims if (char, a) in OWNER),
+        "notes": note,
+        "owner_review": "待审核",
+    })
+
+rows.sort(key=lambda r: (r["character"], r["kind"], min(int(x.split("(")[0]) for x in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split())))
+counter = defaultdict(int)
+for r in rows:
+    pre = "P12" if r["character"] == "c7100" else "P3"
+    if r["kind"] == "not_move":
+        pre += "-N"
+    counter[pre] += 1
+    r["entry"] = f"{pre}-{counter[pre]:02d}"
+
+shared = defaultdict(list)    # attack/bullet animation -> entries that contain it
+for r in rows:
+    for a in (r["attack_anims"] + " " + r["bullet_anims"]).split():
+        shared[(r["character"], a.split("(")[0])].append(r["entry"])
+for r in rows:
+    others = sorted({x for a in (r["attack_anims"] + " " + r["bullet_anims"]).split()
+                     for x in shared[(r["character"], a.split("(")[0])] if x != r["entry"]})
+    r["shares_animations_with"] = " ".join(others)
+
+FIELDS = ["entry", "character", "phases", "kind", "ai_options", "chain", "trigger", "attack_anims", "bullet_anims",
+          "other_anims", "recorded", "first_seen", "evidence", "family_proposed", "variant_proposed", "family_basis",
+          "wiki_candidate", "wiki_basis", "owner_labels", "shares_animations_with", "notes", "owner_review"]
+with open(out_csv, "w", newline="", encoding="utf-8") as fh:
+    w = csv.DictWriter(fh, fieldnames=FIELDS)
+    w.writeheader()
+    for r in rows:
+        w.writerow({k: r[k] for k in FIELDS})
+
+# ---------------------------------------------------------------- review sheet
+moves = [r for r in rows if r["kind"] == "move"]
+md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
+      "由 `scripts/ai/catalog.py` 从天守阁战斗 AI、TAE 和 2026-10-09 的录像生成,数据在 `genichiro_catalog.csv`。",
+      "",
+      "- 一行是 AI 能请求的一整串动画(一个或几个 AI 选项),通常就是玩家眼中的一招。"
+      "同一个动画可能出现在几行里,比如 3067 既是飞渡浮舟第一套在三阶段的结尾,也能单独出,见\"共用动画\"。",
+      "- 招式族、变体、wiki 候选和触发条件都是建议,依据写在后面。标\"已确认\"的是你确认过的,其余等你审核。",
+      "- 动画链里的条件按天守阁的情况化简过:天守阁的弦一郎带特效 200050,没有 3711500(剑圣战巴流的不死斩标记)。",
+      "- 括号里的\"击\"是 TAE 里攻击判定的个数。权重和条件的细节见 `engine/genichiro_castle_ai.md`。",
+      "",
+      "## 证据等级", "",
+      "| 等级 | 含义 |", "|---|---|",
+      "| 已运行观察 | 这串里所有攻击和飞行物动画,都在录像的对应阶段出现过 |",
+      "| 部分运行观察 | 只录到其中一部分 |",
+      "| 仅静态证据 | 一个都没录到,只有 AI 和 TAE 的证据 |",
+      "",
+      "证据按动画计算:一个动画在对应阶段录到过就算,不区分是哪个 AI 选项请求的。"
+      "比如三阶段录到的那次 3067 来自危攻击后续追击,飞渡浮舟第一套本身还没录到。",
+      "",
+      "## 统计", "",
+      "| | 一、二阶段 c7100 | 三阶段 c7110 |", "|---|---|---|"]
+for ev in ("已运行观察", "部分运行观察", "仅静态证据"):
+    md.append(f"| {ev} | {sum(1 for r in moves if r['character'] == 'c7100' and r['evidence'] == ev)} "
+              f"| {sum(1 for r in moves if r['character'] == 'c7110' and r['evidence'] == ev)} |")
+md.append(f"| 招式候选合计 | {sum(1 for r in moves if r['character'] == 'c7100')} | {sum(1 for r in moves if r['character'] == 'c7110')} |")
+md.append(f"| 不算招式 | {sum(1 for r in rows if r['character'] == 'c7100' and r['kind'] == 'not_move')} "
+          f"| {sum(1 for r in rows if r['character'] == 'c7110' and r['kind'] == 'not_move')} |")
+md.append("")
+
+
+def cell(x):
+    return (x or "—").replace("|", "｜")
+
+
+def table(rs):
+    out = ["| 条目 | 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in rs:
+        fam = " / ".join(x for x in (r["family_proposed"], r["variant_proposed"]) if x)
+        if r["family_basis"]:
+            fam += f"(依据:{r['family_basis']})"
+        wiki = r["wiki_candidate"] + (f"(依据:{r['wiki_basis']})" if r["wiki_basis"] else "")
+        ab = " ".join(x for x in (r["attack_anims"], ("飞行物 " + r["bullet_anims"]) if r["bullet_anims"] else "") if x)
+        chain = r["chain"] + (f"({r['notes']})" if r["notes"] else "")
+        out.append(f"| {r['entry']} | {r['phases']} | {cell(chain)} | {cell(r['trigger'])} | {cell(ab)} | {cell(r['recorded'])} "
+                   f"| {cell(r['first_seen'])} | {cell(r['evidence'])} | {cell(fam)} | {cell(wiki)} | {cell(r['owner_labels'])} "
+                   f"| {cell(r['shares_animations_with'])} |")
+    return out
+
+
+fp = [r for r in moves if r["family_proposed"].startswith("飞渡浮舟")]
+md += ["## 飞渡浮舟一族", "", "你确认了三套:3040 + 3041、3068 + 3092、3028。下面还包括建议归入这一族的分支。", ""]
+md += table(fp) + [""]
+for char, title in (("c7100", "一、二阶段(c7100,AI 710000)"), ("c7110", "三阶段(c7110,AI 711000)")):
+    md += [f"## 其他招式候选:{title}", ""]
+    md += table([r for r in moves if r["character"] == char and r not in fp]) + [""]
+md += ["## 不算招式(建议)", "",
+       "这些选项请求的动画里没有攻击判定或飞行物,比如他弹开你、后跳、侧移。全集里其余的编号(受击、忍杀、移动、过场等)在 M5 分类。", "",
+       "| 条目 | 阶段 | AI 选项 | 动画 | 触发 |", "|---|---|---|---|---|"]
+for r in rows:
+    if r["kind"] == "not_move":
+        md.append(f"| {r['entry']} | {r['phases']} | {cell(r['ai_options'])} | {cell(r['other_anims'])} | {cell(r['trigger'])} |")
+md.append("")
+open(out_md, "w", encoding="utf-8").write("\n".join(md))
+
+sys.stdout.reconfigure(encoding="utf-8")
+print(len(rows), "entries:", len(moves), "move candidates,", len(rows) - len(moves), "not moves")
+for r in rows:
+    print(r["entry"], r["phases"], r["evidence"] or "-", r["ai_options"], "|", r["chain"][:70], "|", r["family_proposed"])
