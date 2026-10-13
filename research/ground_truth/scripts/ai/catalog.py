@@ -128,9 +128,9 @@ FAMILY = {
     ("711000", "Interrupt:3092"): ("飞渡浮舟", "第二套", "已确认:3068 + 3092 是第二套"),
     ("710000", "Kengeki40"): ("飞渡浮舟", "第三套", "已确认:3028 是完整的一套"),
     ("711000", "Kengeki40"): ("飞渡浮舟", "第三套", "已确认:3028 是完整的一套"),
-    ("710000", "Kengeki30"): ("飞渡浮舟(建议)", "第二套的另一种起手", "3063 的两刀和 3068 完全相同,也加 3710032,弹开第二刀同样接 3092"),
-    ("711000", "Kengeki30"): ("飞渡浮舟(建议)", "第二套的另一种起手", "3063 的两刀和 3068 完全相同,也加 3710032,弹开第二刀同样接 3092"),
-    ("710000", "Interrupt:3017"): ("飞渡浮舟(建议)", "第一套的射箭取消分支", "只在二阶段 3040 快结束、你在 4.1 米外时出;对应 Fextralife 的 Floating Passage Cancel;3017 是不是射箭待你确认"),
+    ("710000", "Kengeki30"): ("飞渡浮舟", "第二套的另一种起手", "已确认(2026-10-13):3063 也是飞渡浮舟的起手;两刀和 3068 完全相同,弹开第二刀同样接 3092"),
+    ("711000", "Kengeki30"): ("飞渡浮舟", "第二套的另一种起手", "已确认(2026-10-13):3063 也是飞渡浮舟的起手;两刀和 3068 完全相同,弹开第二刀同样接 3092"),
+    ("710000", "Interrupt:3017"): ("射箭", "飞渡浮舟第一套中途的射箭取消(二阶段,你在 4.1 米外)", "已确认(2026-10-13):3017 属于射箭招式族,不是飞渡浮舟"),
     ("711000", "Interrupt:3080"): ("飞渡浮舟", "三阶段完美弹完之后的突刺", "已确认:8604 之后三阶段固定出突刺"),
     ("710000", "Kengeki38"): ("危攻击后续追击(建议)", "", "3030 起手,一阶段接 3025(你标为危·突刺),二阶段 75% 接 3067(危·下段);两个 wiki 都写一阶段突刺、二阶段扫腿"),
     ("711000", "Kengeki38"): ("危攻击后续追击(建议)", "三阶段", "3030 起手后三选一(3067、3025、3032),对应 Fandom 写的三阶段三种结尾"),
@@ -148,7 +148,9 @@ WIKI = {
     ("711000", "Interrupt:3092"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套,三阶段"),
     ("710000", "Kengeki40"): ("floating-passage", "你确认的飞渡浮舟第三套"),
     ("711000", "Kengeki40"): ("floating-passage-phase-3", "你确认的飞渡浮舟第三套,三阶段"),
-    ("710000", "Interrupt:3017"): ("floating-passage(Fextralife 的 Floating Passage Cancel)", "触发条件和射箭取消一致"),
+    ("710000", "Interrupt:3017"): ("Fextralife 的 Floating Passage Cancel", "触发条件和射箭取消一致;你确认它属于射箭招式族"),
+    ("710000", "Kengeki30"): ("floating-passage", "你确认的飞渡浮舟第二套起手"),
+    ("711000", "Kengeki30"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套起手,三阶段"),
     ("710000", "Kengeki38"): ("perilous-attack-follow-up、perilous-attack-follow-up-phase-2", "按阶段换结尾,和 wiki 一致"),
     ("711000", "Kengeki38"): ("perilous-attack-follow-up-phase-3", "三种结尾,和 Fandom 一致"),
     ("710000", "Interrupt:3023"): ("guard-breaking-shot", "wiki:用来惩罚喝药;这里由你使用道具触发,3023 是飞行物"),
@@ -162,7 +164,7 @@ WIKI = {
 # Owner labels (2026-10-10 perilous labels for c7100; 2026-10-12 confirmations).
 OWNER = {
     ("c7100", 3007): "下段(非危)", ("c7100", 3020): "危·抓投", ("c7100", 3021): "危·下段",
-    ("c7100", 3022): "危(类型未定)", ("c7100", 3025): "危·突刺", ("c7100", 3027): "不确定",
+    ("c7100", 3022): "危·突刺(你倒地时出,很难识破,只能侧闪)", ("c7100", 3025): "危·突刺", ("c7100", 3027): "不确定",
     ("c7100", 3032): "下段(非危)", ("c7100", 3048): "下段(非危)", ("c7100", 3062): "危·突刺",
     ("c7100", 3067): "危·下段", ("c7100", 3080): "危·突刺",
 }
@@ -171,6 +173,18 @@ for c in ("c7100", "c7110"):
                    (3092, "飞渡浮舟·第二套"), (3028, "飞渡浮舟·第三套")):
         OWNER[(c, a)] = "；".join(x for x in (OWNER.get((c, a)), lab) if x)
 OWNER[("c7110", 3080)] = "飞渡浮舟完美弹完后的突刺(三阶段)"
+OWNER.update({("c7110", 3009): "危·投技", ("c7110", 3039): "危·雷电", ("c7110", 3042): "危·雷电",
+              ("c7110", 3062): "危·突刺"})  # owner, 2026-10-13
+
+# Notes the owner asked for while reviewing (2026-10-13), with the evidence checked in the decompiled AI.
+NOTES = {
+    ("710000", "Act01"): "两条分支都在天守阁 AI 710000 里(心中的弦一郎 710300 完全相同),一、二阶段 30% 走 3002 → 3003,70% 走 3010 → 3025。"
+                         "每一段都要你还在距离内才接下一段:走 3002 那条,3001 和 3002 都要约 3.4 米内;走 3010 那条,3001 要 3.5 米内,3010 要 5 米内。3010 从没录到,这条分支待录像确认。",
+    ("711000", "Act01"): "两条分支都在天守阁 AI 711000 里(心中的弦一郎 711300 相同,只多一个计数),三阶段 70% 走 3002 → 3003,30% 走 3010 → 3025。"
+                         "每一段都要你还在距离内才接下一段:走 3002 那条,3001 和 3002 都要约 3.4 米内;走 3010 那条,3001 要 3.5 米内,3010 要 5 米内。3002、3003、3010 都没录到,待录像确认。",
+    ("710000", "Act34"): "在天守阁 AI 710000 里:注册为第 34 个选项,5–7 米时权重 100,只有序章(带 200051)会清零;心中的弦一郎 710300 里也有同样的 Act34。"
+                         "15 秒内出过 3007 时权重降为 1。从没录到,待录像确认。",
+}
 
 CASTLE_FACTS = [  # applied to the chain text: castle Genichiro has 200050 and never 3711500
     (re.compile(r"\[Boss有特效3711500(?: 且 计时器8已到)?: \d+ ｜ 否则: ([^\[\]]+)\]"), r"\1"),
@@ -203,7 +217,17 @@ for c in ("c7100", "c7110"):
         src = a
         while src["kind"] == "import_other_anim":
             src = by[src["imports_from"]]
-        hits[(c, a["id_int"])] = sum(1 for e in src["events"] if e["type"] == 1)
+        # distinct attack windows: overlapping or touching windows are one hit; judge -1 is an empty event
+        wins = sorted((e["start_frame_30"], e["end_frame_30"]) for e in src["events"]
+                      if e["type"] == 1 and e["params"].get("BehaviorJudgeID", 0) >= 0)
+        n, end = 0, None
+        for st, en in wins:
+            if end is None or st > end:
+                n += 1
+                end = en
+            else:
+                end = max(end, en)
+        hits[(c, a["id_int"])] = n
 
 # ---------------------------------------------------------------- entries
 entries = {}
@@ -268,7 +292,7 @@ for (char, chain), e in entries.items():
         "family_proposed": fam[0], "variant_proposed": fam[1], "family_basis": fam[2],
         "wiki_candidate": wiki[0], "wiki_basis": wiki[1],
         "owner_labels": "；".join(f"{a} {OWNER[(char, a)]}" for a in anims if (char, a) in OWNER),
-        "notes": note,
+        "notes": "；".join(x for x in [note] + [NOTES[k] for k in keys if k in NOTES] if x),
     })
 
 rows.sort(key=lambda r: (r["character"], r["kind"], min(int(x.split("(")[0]) for x in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split())))
@@ -345,7 +369,9 @@ md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
       "同一个动画可能出现在几行里,比如 3067 既是飞渡浮舟第一套在三阶段的结尾,也能单独出,见\"共用动画\"。",
       "- 招式族、变体、wiki 候选和触发条件都是建议,依据写在后面。标\"已确认\"的是你确认过的,其余等你审核。",
       "- 动画链里的条件按天守阁的情况化简过:天守阁的弦一郎带特效 200050,没有 3711500(剑圣战巴流的不死斩标记)。",
-      "- 括号里的\"击\"是 TAE 里攻击判定的个数。权重和条件的细节见 `engine/genichiro_castle_ai.md`。",
+      "- 括号里的\"击\"是 TAE 里独立的攻击窗口个数:重叠或相连的攻击判定算一击,判定 ID 为 -1 的空事件不算。"
+      "权重和条件的细节见 `engine/genichiro_castle_ai.md`。",
+      "- 主动选招还有一个冷却:同一招 15 秒内出过,它的权重降为 1(公用 AI 函数 SetCoolTime)。",
       "",
       "## 怎么审核", "",
       "用鼠标审核:在终端运行 `python -I research/ground_truth/scripts/ai/catalog_review.py`,"
@@ -389,18 +415,18 @@ def cell(x):
 
 
 def table(rs):
-    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 |",
-           "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 第一轮录像 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 | 说明 |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rs:
         fam = " / ".join(x for x in (r["family_proposed"], r["variant_proposed"]) if x)
         if r["family_basis"]:
             fam += f"(依据:{r['family_basis']})"
         wiki = r["wiki_candidate"] + (f"(依据:{r['wiki_basis']})" if r["wiki_basis"] else "")
         ab = " ".join(x for x in (r["attack_anims"], ("飞行物 " + r["bullet_anims"]) if r["bullet_anims"] else "") if x)
-        chain = r["chain"] + (f"({r['notes']})" if r["notes"] else "")
+        chain = r["chain"]
         out.append(f"| {r['entry']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {cell(chain)} | {cell(r['trigger'])} | {cell(ab)} | {cell(r['recorded'])} "
                    f"| {cell(r['first_seen'])} | {cell(r['evidence'])} | {cell(fam)} | {cell(wiki)} | {cell(r['owner_labels'])} "
-                   f"| {cell(r['shares_animations_with'])} |")
+                   f"| {cell(r['shares_animations_with'])} | {cell(r['notes'])} |")
     return out
 
 

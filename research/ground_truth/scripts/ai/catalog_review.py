@@ -164,7 +164,7 @@ function card(r) {
   if (st === '通过') c.classList.add('ok'); if (st === '不通过') c.classList.add('bad');
   const info = el('div');
   const head = el('div'); head.append(el('span', 'id', r.entry), el('span', 'ph', `阶段 ${r.phases}` + (r.evidence ? ` · ${r.evidence}` : '')));
-  info.append(head, el('div', 'chain', r.chain + (r.notes ? `(${r.notes})` : '')));
+  info.append(head, el('div', 'chain', r.chain));
   const dl = el('dl');
   const add = (k, v) => { if (v) { dl.append(el('dt', '', k), el('dd', '', v)); } };
   add('触发', r.trigger);
@@ -173,7 +173,7 @@ function card(r) {
   const fam = [r.family_proposed, r.variant_proposed].filter(Boolean).join(' / ');
   add('建议的招式族', fam ? fam + (r.family_basis ? `(依据:${r.family_basis})` : '') : '');
   add('wiki 候选', r.wiki_candidate ? r.wiki_candidate + (r.wiki_basis ? `(依据:${r.wiki_basis})` : '') : '');
-  add('你的标注', r.owner_labels); add('共用动画', r.shares_animations_with); add('AI 选项', r.ai_options);
+  add('你的标注', r.owner_labels); add('共用动画', r.shares_animations_with); add('说明', r.notes); add('AI 选项', r.ai_options);
   info.append(dl);
   const rv = el('div', 'review');
   const btns = el('div', 'btns');
