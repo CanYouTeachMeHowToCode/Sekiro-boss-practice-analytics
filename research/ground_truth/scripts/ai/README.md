@@ -37,6 +37,7 @@ chr, maps, cutscenes, events    ai/genichiro_models.py -> characters/genichiro_m
                                 ai/ai_flowchart.py     -> engine/genichiro_castle_ai.md (with a hand-written head)
 the above + occurrences.csv     ai/catalog.py          -> semantic/genichiro_catalog.csv, .md
 catalog + reachability + TAE   ai/classify.py         -> engine/genichiro_castle_tae_classes.csv, semantic/genichiro_classification.md, genichiro_gap_report.md, deferred/
+catalog + wiki mapping + seed  ai/decisions.py        -> semantic/genichiro_product_decisions.csv, .md
 ```
 
 Example, with `<work>` outside the repository:
@@ -55,6 +56,7 @@ python -I research/ground_truth/scripts/ai/genichiro_models.py research/ground_t
 python -I research/ground_truth/scripts/ai/ai_flowchart.py <work>/710000_battle.txt "AI 710000(c7100)"
 python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/ground_truth/semantic/genichiro_catalog.csv research/ground_truth/semantic/genichiro_catalog.md
 python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_truth/engine/genichiro_castle_tae_classes.csv research/ground_truth/semantic/genichiro_classification.md research/ground_truth/semantic/genichiro_gap_report.md research/ground_truth/deferred
+python -I research/ground_truth/scripts/ai/decisions.py research/ground_truth/semantic/genichiro_product_decisions.csv research/ground_truth/semantic/genichiro_product_decisions.md
 ```
 
 ## Scripts
@@ -66,8 +68,9 @@ python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_tr
 | `reachability.py` | The castle result table. The castle-specific rules it applies on top of `ai_moves.py`, each read from the decompiled script, are listed in its docstring. |
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
-| `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default) and `classification` (with a confidence filter). Open it in VS Code with Simple Browser. |
+| `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default), `classification` (with a confidence filter) and `decisions` (with a strength-of-evidence filter). Open it in VS Code with Simple Browser. |
 | `classify.py` | Sorts every TAE entry into the completeness classes (CLAUDE.md section 31), with a confidence and the evidence. The entries the owner reviews (castle AI can request them, attack or projectile) go to `engine/genichiro_castle_tae_classes.csv` and the review sheet `semantic/genichiro_classification.md`; the others to `deferred/`. Also writes the gap report `semantic/genichiro_gap_report.md`. |
+| `decisions.py` | Plan step 8 (V4 M6): the decision table from the approved catalog to the product's Genichiro moves. Section A: each of the 22 product moves with its candidate catalog entries, a strength (强 / 中 / 弱) and the evidence, written in the script. Section B: the catalog moves no product move covers yet, grouped by identical attack and projectile animations. Checks that every catalog move lands in a row; keeps the owner's review on regeneration. |
 | `genichiro_models.py` | Identifies the six Genichiro-family model IDs from their archives (FLVER materials and bones, TAE entries, animations), map placements, cutscene references and the events that play those cutscenes. Writes `characters/genichiro_models.json`. |
 | `memory_bosses.py` | Lists every boss that drops a Memory: Memory item → item lot → defeat flag (common event 300) → the event that tests the boss → map part → model, AI. Writes `characters/memory_bosses.csv`. |
 | `ai_flowchart.py` | Draws one battle goal as Mermaid flowcharts and Markdown trees. |

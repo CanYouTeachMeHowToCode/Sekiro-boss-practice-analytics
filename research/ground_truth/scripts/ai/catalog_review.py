@@ -6,6 +6,8 @@ Sheets:
     catalog          semantic/genichiro_catalog.md and .csv (the move catalog, plan step 5)
     classification   semantic/genichiro_classification.md and engine/genichiro_castle_tae_classes.csv (every TAE
                      entry, plan step 7); the page can also filter by confidence
+    decisions        semantic/genichiro_product_decisions.md and .csv (catalog → product moves, plan step 8); the page
+                     can also filter by strength of evidence
 
 Then open http://127.0.0.1:<port> — in VS Code: Command Palette → "Simple Browser: Show".
 Every click is written straight into the sheet's .md (the 审核 and 理由 cells of that row, and the review counts when
@@ -56,12 +58,29 @@ def classification_view(r):
             "tag": r["confidence"]}
 
 
+def decisions_view(r):
+    if r["section"] == "A":
+        title, group = f"{r['key']} {r['product_name_zh']}", (0, "A. 产品现有的招式")
+        sub = f"`{r['product_slug']}` · 产品阶段 {r['phases']}" + (f" · 依据{r['strength']}" if r["strength"] else "")
+    else:
+        title, group = f"{r['key']} {r['catalog_entries']}", (1, "B. 目录里还没对上产品的招式")
+        sub = f"阶段 {r['phases']} · {r['evidence']}"
+    fields = [("建议", r["proposal"]), ("依据", r["basis"]), ("目录条目", r["catalog_entries"] if r["section"] == "A" else ""),
+              ("动画", r["anims"]), ("两次录像出现", r["recorded"]), ("证据", r["evidence"] if r["section"] == "A" else ""),
+              ("你的标注", r["owner_labels"]), ("wiki", r["wiki"]), ("英文名", r["product_name"]), ("触发", r["trigger"])]
+    return {"title": title, "sub": sub, "mono": r["chains"], "fields": [[k, v] for k, v in fields if v], "group": group,
+            "tag": r["strength"]}
+
+
 SHEETS = {
     "catalog": {"md": GT / "semantic/genichiro_catalog.md", "csv": GT / "semantic/genichiro_catalog.csv", "key": "entry",
                 "title": "天守阁弦一郎招式目录 · 审核", "view": catalog_view, "tags": []},
     "classification": {"md": GT / "semantic/genichiro_classification.md", "csv": GT / "engine/genichiro_castle_tae_classes.csv",
                        "key": "key", "title": "天守阁弦一郎 TAE 全集分类 · 审核", "view": classification_view,
                        "tags": ["高", "中", "低"]},
+    "decisions": {"md": GT / "semantic/genichiro_product_decisions.md", "csv": GT / "semantic/genichiro_product_decisions.csv",
+                  "key": "key", "title": "第 8 步决策表:招式目录 → 产品招式", "view": decisions_view,
+                  "tags": ["强", "中", "弱"], "tag_label": "依据强弱"},
 }
 SHEET = SHEETS[sys.argv[2] if len(sys.argv) > 2 else "catalog"]
 MD, CSV, KEY = SHEET["md"], SHEET["csv"], SHEET["key"]
@@ -194,6 +213,7 @@ textarea { font:inherit; width:100%; min-height:64px; resize:vertical; border:1p
 <script>
 const rows = JSON.parse(document.getElementById('data').textContent);
 const TAGS = __TAGS__;
+const TAG_LABEL = __TAGLABEL__;
 const FILTERS = ['全部', '待审核', '通过', '不通过'];
 let filter = '待审核', tag = '全部';
 const status = (m) => m.includes('❌') ? '不通过' : (m.includes('✅') ? '通过' : '待审核');
@@ -209,7 +229,7 @@ function filters() {
   const btn = (label, active, on) => { const b = el('button', '', label); b.setAttribute('aria-pressed', String(active)); b.onclick = on; return b; };
   const items = FILTERS.map((f) => btn(f, f === filter, () => { filter = f; render(); }));
   if (TAGS.length) {
-    items.push(el('span', 'lab', '置信度'));
+    items.push(el('span', 'lab', TAG_LABEL));
     ['全部', ...TAGS].forEach((t) => items.push(btn(t, t === tag, () => { tag = t; render(); })));
   }
   box.replaceChildren(...items);
@@ -293,7 +313,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, "not found", "text/plain; charset=utf-8")
         data = json.dumps(view_rows(), ensure_ascii=False).replace("</", "<\\/")
         page = (PAGE.replace("__TITLE__", SHEET["title"]).replace("__MDNAME__", str(MD.relative_to(GT)).replace("\\", "/"))
-                .replace("__TAGS__", json.dumps(SHEET["tags"], ensure_ascii=False)).replace("__DATA__", data))
+                .replace("__TAGS__", json.dumps(SHEET["tags"], ensure_ascii=False))
+                .replace("__TAGLABEL__", json.dumps(SHEET.get("tag_label", "置信度"), ensure_ascii=False)).replace("__DATA__", data))
         self._send(200, page, "text/html; charset=utf-8")
 
     def do_POST(self):
