@@ -588,6 +588,11 @@ Runtime Identifier
 
 for several representative attacks.
 
+Once this bridge is proven, further recording is targeted. It fills gaps in the semantic catalog (Milestone 4), rather than trying to capture every animation in the game files:
+
+- moves with only static or ambiguous evidence
+- moves the product will support that have no reference clip yet
+
 ---
 
 # V4 Milestone 3 — Static Engine Mapping
@@ -632,7 +637,34 @@ manually inspect thousands of animations
 
 # V4 Milestone 4 — Genichiro Semantic Move Catalog
 
-Create a reviewed mapping between engine actions and semantic moves.
+Create a reviewed catalog of the boss's semantic moves and the engine actions behind them.
+
+A semantic move is an action that can hit the player, cause a mistake, break the player's posture or kill. Guards, deflects, steps, dashes and hit reactions are engine actions but not moves. An animation can also be only part of a move.
+
+Start the draft as soon as runtime identifiers exist, from the evidence already gathered:
+
+- the battle AI: each AI option usually requests one complete move chain, with its branches and trigger conditions
+- TAE: attack, projectile and effect events
+- runtime recordings
+- wiki names, as candidates
+- animation previews
+
+Group variants under a move family. For example, Genichiro's three Floating Passage variants form one family.
+
+Every entry carries an evidence status:
+
+```text
+runtime observed
+static evidence only
+to confirm
+```
+
+The project owner confirms every name, grouping and variant.
+
+Outputs:
+
+- a reviewable move ↔ animation table
+- time-labelled reference clips for the moves the product will support
 
 Each mapping should retain evidence.
 
@@ -680,6 +712,8 @@ duplicate_or_shared
 unused_or_unreachable
 unknown
 ```
+
+Guards, deflects, steps and dashes are `non_combat`. An animation that is only part of a move maps to that move.
 
 Every runtime-observed combat action should map to:
 
@@ -878,7 +912,53 @@ Practice Suggestions
 
 ---
 
-## V5 Milestone 1 — Video Upload and Storage
+## V5 Milestone 1 — Failure Attribution Prototype
+
+The first V5 goal is narrow: in the player's own recordings, find each failure and the boss move that caused it.
+
+```text
+detect damage taken / posture broken / death
+        ↓
+look back at the preceding boss actions
+        ↓
+identify the boss move (V4 catalog)
+        ↓
+merge events that belong to one failure
+        ↓
+failure record: time, clip, move
+```
+
+Work on local recordings first:
+
+- label a small set of recordings by hand as the answer set: move start/end, phase, ruleset, failure events; keep uncertain labels
+- at first the system proposes move candidates and a person confirms them; automate as accuracy allows
+- player HP, posture and death can be read from the game HUD
+
+The annotation tooling should be useful even if automatic recognition never becomes perfect.
+
+Recordings made for V4 carry the dev-menu animation labels, so they double as labelled reference data. Mask the overlay region when training or evaluating, so a model cannot read the label.
+
+Output: one recording → one failure report a person can check.
+
+---
+
+## V5 Milestone 2 — Reliability Validation
+
+Check the prototype on independent fight recordings:
+
+- missed failures
+- misidentified moves
+- one failure counted twice
+
+Keep results the system cannot confirm as uncertain.
+
+Measure precision and recall, for failure detection and for move identification.
+
+---
+
+## V5 Milestone 3 — Video Upload and Failure Report
+
+Once attribution is reliable, let users upload recordings.
 
 Add:
 
@@ -888,51 +968,19 @@ Add:
 - processing status
 - storage lifecycle
 
+Show the failure times, their clips, the moves, and the number of failures per move.
+
+These are failure counts, not success rates: how often each move occurred is not known yet.
+
 Video blobs do not need to live inside PostgreSQL.
 
 PostgreSQL should store metadata and references.
 
 ---
 
-## V5 Milestone 2 — Annotation Pipeline
-
-Before automatic ML detection:
-
-- build manual annotation tooling
-- use V4 ground-truth IDs
-- label move start/end timestamps
-- label phase
-- label ruleset
-- preserve uncertain labels
-
-The annotation tool should be useful even if ML never works perfectly.
-
----
-
-## V5 Milestone 3 — Semi-Automatic Move Recognition
-
-Start with assistance rather than full automation.
-
-Example:
-
-```text
-System:
-"This looks like Floating Passage."
-
-[Confirm]
-[Choose Different Move]
-```
-
-Measure:
-
-- annotation speed improvement
-- precision
-- recall
-- confidence calibration
-
----
-
 ## V5 Milestone 4 — Automatic Move Detection
+
+Detect every boss move in a fight, not only the ones before a failure. Move occurrences are the denominator that true per-move rates need.
 
 Progress from:
 
@@ -949,7 +997,7 @@ full fight
 → move classification
 ```
 
-Do not require whole-fight understanding as the first ML milestone.
+Expand coverage from what the system could not attribute in users' recordings: add samples, then the other Genichiro encounters (prologue, the Sword Saint fight's Way of Tomoe phase, Inner Genichiro).
 
 ---
 

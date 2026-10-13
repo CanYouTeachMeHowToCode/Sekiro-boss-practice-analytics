@@ -135,7 +135,7 @@ V4 answers:
 
 > **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
 
-Start with V4 Milestone 1 (research foundation) and Milestone 2 (Genichiro runtime pilot). See sections 18–36.
+V4 Milestone 1 is done, and Milestone 2 has proven the runtime bridge for castle Genichiro. Current work is the Genichiro semantic catalog (Milestone 4, section 29); further recording only fills gaps in that catalog. The step-by-step plan is `research/ground_truth/genichiro-plan.md`. `v4.0.0` covers castle Genichiro, all three phases. See sections 18–36.
 
 V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
 
@@ -845,6 +845,8 @@ for a small number of representative attacks.
 
 Do not attempt full game extraction before proving this bridge works.
 
+Once the bridge is proven, recording is targeted at gaps in the semantic catalog (section 29): moves with only static or ambiguous evidence, and moves the product will support that lack a reference clip. Do not try to record every animation in the game files.
+
 ---
 
 # 25. V4 Runtime-First Principle
@@ -982,6 +984,14 @@ Preserve this uncertainty until actual data confirms the schema.
 ---
 
 # 29. V4 Milestone 4 — Genichiro Semantic Catalog
+
+The catalog lists every action that can hit the player, cause a mistake, break the player's posture or kill. Guards, deflects, steps, dashes and hit reactions are engine actions, not moves. An animation can be only part of a move.
+
+Build the draft from the battle AI (each AI option usually requests one complete move chain, with branches and trigger conditions), TAE, runtime recordings, wiki names as candidates, and animation previews. Group variants under a move family: Genichiro's three Floating Passage variants are one family.
+
+Every entry carries an evidence status: `runtime observed`, `static evidence only` or `to confirm`. The project owner confirms every name, grouping and variant.
+
+Outputs: a reviewable move ↔ animation table, and time-labelled reference clips for the moves the product will support.
 
 For each semantic move, gather evidence such as:
 
@@ -1256,15 +1266,18 @@ Do not jump directly to full automatic fight understanding.
 Use:
 
 ```text
-1. Video upload
-2. Manual annotation
-3. Semi-automatic annotation
-4. Short-clip move classification
-5. Temporal move detection
-6. Player-response detection
-7. Automatic fight report
-8. Recommendations
+1. Failure attribution prototype on local recordings
+   (hand-labelled answer set; detect damage / posture break / death
+    → look back → identify the move → merge one failure → failure report)
+2. Reliability validation on independent recordings
+3. Video upload and failure report (failure counts per move)
+4. Whole-fight move detection (short clips first, then temporal segmentation)
+5. Player-response detection
+6. True per-move analytics
+7. Recommendations
 ```
+
+At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
 
 Every stage should produce useful intermediate tooling.
 
@@ -1591,14 +1604,13 @@ Examples currently not justified by default:
 
 # 53. Current Priority Order
 
-V3 is released. Work through V4 in milestone order:
+V3 is released. V4 order:
 
 ```text
-1. Research foundation (V4 Milestone 1)
-2. Genichiro runtime pilot (V4 Milestone 2)
-3. Static engine mapping (V4 Milestone 3)
-4. Genichiro semantic catalog (V4 Milestone 4)
-5. Completeness review (V4 Milestone 5)
+1. Research foundation (V4 Milestone 1) — done
+2. Genichiro runtime pilot (V4 Milestone 2) — bridge proven; further recording only fills catalog gaps
+3. Genichiro semantic catalog (V4 Milestone 4) — current, using static engine mapping (V4 Milestone 3) as needed
+4. Completeness review (V4 Milestone 5)
 ```
 
 Then, to complete `v4.0.0`:
