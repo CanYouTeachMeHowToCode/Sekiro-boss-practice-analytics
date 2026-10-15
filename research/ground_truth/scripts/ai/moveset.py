@@ -9,8 +9,8 @@ and backend/seed/bosses.json for the current product moves.
 
 RESOLVE below turns the decision table into product moves: every decision row goes to exactly one product move (a
 row the owner merged goes to the move it was merged into), and the script checks that every catalog move ends up in
-at least one product move. Names come from the owner's 招式名称 cells ("中文 / English"); NAME_FIX lists the corrections
-proposed for obvious typos, each waiting for the owner. Nothing here changes the product; plan step 8 does that.
+at least one product move. Names come from the owner's 招式名称 cells ("中文 / English"), or stay as they are when the
+cell is empty. Nothing here changes the product; plan step 8 does that.
 """
 import csv
 import json
@@ -66,16 +66,6 @@ RESOLVE = {
 # ending depends on the phase, and the product keeps one move per phase (the owner's names say 一阶段 / 二阶段).
 PHASES = {"perilous-attack-follow-up": ["1"], "perilous-attack-follow-up-phase-2": ["2"]}
 REMOVED = {"iaijutsu": ("receding-tide", "A19 你判为和 A20 重复:居合斩是退潮的后半段,并入退潮")}
-# Proposed corrections of obvious typos in the owner's names; each needs the owner's OK.
-NAME_FIX = {
-    "perilous-attack-follow-up-phase-2": (None, "Phase 2 Perilous Attack Follow Up (Thrust/Sweep)",
-                                          "英文写成了 Phase 1,末尾多一个括号"),
-    "perilous-attack-follow-up-phase-3": ("三阶段跳劈后续（突刺危/下段危/上挑）", "Phase 3 Perilous Attack Follow Up (Thrust/Sweep/Upward Slash)",
-                                          "中文多一个空格;英文末尾多一个括号,而且第三种结尾中文是“上挑”,英文却是 Leaping Slam"),
-    "perilous-sweep": (None, "Perilous Sweep (Follow-up Shot Available)", "英文末尾多一个括号"),
-    "hawk-shot": (None, "Hawk Shot (Step-back/4 Arrow Shot)", "英文用了全角括号"),
-    "receding-tide": (None, "Receding Tide (Bow into Iaijutsu)", "Laijutsu 应为 Iaijutsu"),
-}
 NOTES = {
     "perilous-grab": "加上应对方法:1. 完美弹反 2. 向后垫步躲开(你在 A04 写的)",
     "floating-passage": "描述里写明:二阶段打到一半、你在 4.1 米外时改射一箭(射箭取消 3017)",
@@ -103,9 +93,6 @@ for slug, keys in RESOLVE.items():
     cur = current.get(slug)
     if not name_zh and cur:
         name_zh, name_en = cur["name_zh"], cur["name"]
-    fix = NAME_FIX.get(slug)
-    if fix:
-        name_zh, name_en = fix[0] or name_zh, fix[1] or name_en
     changes = []
     if not cur:
         changes.append("新增")
@@ -125,7 +112,7 @@ for slug, keys in RESOLVE.items():
     rows.append({"slug": slug, "name_zh": name_zh, "name_en": name_en, "phases": "、".join(phases),
                  "catalog_entries": " ".join(entries), "decision_rows": " ".join(keys),
                  "evidence": ev.pop() if len(ev) == 1 else "部分运行观察", "change": "；".join(changes) or "不变",
-                 "name_fix": fix[2] if fix else "", "note": NOTES.get(slug, "")})
+                 "note": NOTES.get(slug, "")})
 
 assert set(seen) == set(dec), set(dec) - set(seen)
 assert {e for r in rows for e in r["catalog_entries"].split()} == set(cat)
@@ -152,13 +139,7 @@ for r in rows:
               f"| {r['decision_rows']} | {r['evidence']} | {r['note'] or '—'} |")
 md += ["", "## 删掉的招式", "", "| slug | 并入 | 原因 |", "|---|---|---|"]
 md += [f"| `{s}` | `{to}` | {why} |" for s, (to, why) in REMOVED.items()]
-md += ["", "已有练习记录指向这些招式的,迁移到并入的招式(CLAUDE.md 第 45 节)。数据库对招式删除有约束,有记录指向时删不掉,所以迁移必须在删除之前。", "",
-       "## 名字里的笔误(待你确认)", "", "上面的表已经按建议改了;你不同意的话告诉我。", "", "| slug | 你写的 | 建议改成 | 原因 |", "|---|---|---|---|"]
-for r in rows:
-    if r["name_fix"]:
-        orig = dec[RESOLVE[r["slug"]][0]]["owner_name"]
-        md.append(f"| `{r['slug']}` | {orig} | {r['name_zh']} / {r['name_en']} | {r['name_fix']} |")
-md.append("")
+md += ["", "已有练习记录指向这些招式的,迁移到并入的招式(CLAUDE.md 第 45 节)。数据库对招式删除有约束,有记录指向时删不掉,所以迁移必须在删除之前。", ""]
 with open(out_md, "w", encoding="utf-8", newline="") as fh:
     fh.write("\r\n".join(md))
 

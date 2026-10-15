@@ -44,15 +44,3 @@
 | `iaijutsu` | `receding-tide` | A19 你判为和 A20 重复:居合斩是退潮的后半段,并入退潮 |
 
 已有练习记录指向这些招式的,迁移到并入的招式(CLAUDE.md 第 45 节)。数据库对招式删除有约束,有记录指向时删不掉,所以迁移必须在删除之前。
-
-## 名字里的笔误(待你确认)
-
-上面的表已经按建议改了;你不同意的话告诉我。
-
-| slug | 你写的 | 建议改成 | 原因 |
-|---|---|---|---|
-| `perilous-attack-follow-up-phase-2` | 二阶段跳劈后续危（突刺/下段）/ Phase 1 Perilous Attack Follow Up (Thrust/Sweep)) | 二阶段跳劈后续危（突刺/下段） / Phase 2 Perilous Attack Follow Up (Thrust/Sweep) | 英文写成了 Phase 1,末尾多一个括号 |
-| `perilous-attack-follow-up-phase-3` | 三阶段跳劈后续 （突刺危/下段危/上挑） / Phase 3 Perilous Attack Follow Up (Thrust/Sweep/Leaping Slam)) | 三阶段跳劈后续（突刺危/下段危/上挑） / Phase 3 Perilous Attack Follow Up (Thrust/Sweep/Upward Slash) | 中文多一个空格;英文末尾多一个括号,而且第三种结尾中文是“上挑”,英文却是 Leaping Slam |
-| `hawk-shot` | 鹰射（后撤/四连射击）/ Hawk Shot （Step-back/4 Arrow Shot) | 鹰射（后撤/四连射击） / Hawk Shot (Step-back/4 Arrow Shot) | 英文用了全角括号 |
-| `perilous-sweep` | 危·下段横扫（后可接射击）/ Perilous Sweep (Follow-up shot available)) | 危·下段横扫（后可接射击） / Perilous Sweep (Follow-up Shot Available) | 英文末尾多一个括号 |
-| `receding-tide` | 退潮（射箭+居合斩）/ Receding Tide (Bow into Laijutsu) | 退潮（射箭+居合斩） / Receding Tide (Bow into Iaijutsu) | Laijutsu 应为 Iaijutsu |
