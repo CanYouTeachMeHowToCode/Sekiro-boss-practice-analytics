@@ -161,6 +161,7 @@ WIKI = {
     ("711000", "Interrupt:3008"): ("deaths-thrust", "wiki:用来惩罚喝药/用道具;这里由你使用道具触发"),
     ("711000", "Act20"): ("deaths-thrust", "和用道具时触发的是同一个动画 3008"),
     ("710000", "Act11"): ("perilous-grab", "3020 你标为危·抓投"),
+    ("710000", "Act31"): ("two-hit-combo", "你确认(2026-10-15):3003 → 3045 就是横砍踢击 / Slash into Back Kick"),
     ("710000", "Kengeki43"): ("perilous-thrust", "3062 你标为危·突刺;但 3025 也是危·突刺,需要你区分"),
     ("711000", "Act18"): ("lightning-of-tomoe-slash / -smash / -shot", "3043 是打雷招式,具体是哪一个待你确认"),
 }
@@ -179,6 +180,7 @@ for c in ("c7100", "c7110"):
 OWNER[("c7110", 3080)] = "飞渡浮舟或 3032 被完美弹开后的突刺(三阶段;2026-10-15 加上 3032)"
 OWNER.update({("c7110", 3009): "危·投技", ("c7110", 3039): "危·雷电", ("c7110", 3042): "危·雷电",
               ("c7110", 3062): "危·突刺"})  # owner, 2026-10-13
+OWNER[("c7100", 3045)] = "踢一脚(横砍踢击 3003 → 3045 的第二段;2026-10-15)"
 
 # Notes the owner asked for while reviewing (2026-10-13), with the evidence checked in the decompiled AI.
 NOTES = {

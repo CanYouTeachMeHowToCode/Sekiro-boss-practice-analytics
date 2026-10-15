@@ -58,7 +58,9 @@ LINKS = {
     "floating-passage": ([], "强", FP_FAMILY + "。射箭取消 3017(floating-passage-cancel)你确认是飞渡浮舟的衍生,建议单独作为产品招式,见 B13;想并进这一招的话在理由里写"),
     "guard-breaking-shot": (["P12-19"], "中", "两个 wiki 都说用来惩罚喝药;3023 是飞行物,你使用道具时触发"),
     "hawk-shot": (["P12-23"], "中", "3044 一个动画里发射 4 次飞行物,和\"空中连射四箭\"一致;前面先后跳 5201"),
-    "two-hit-combo": ([], "", "没有依据:\"转身斩再踢一脚\"你在录像里还没认出来,目录里 2 击的动画(3004、3006、3010、3029)也看不出哪个带踢"),
+    "two-hit-combo": (["P12-02"], "强",
+        "你确认(2026-10-15):就是 3003 → 3045 这个连招,3003 转身横斩,3045 踢一脚。TAE 里 3045 打中那一刻的音效挂在 4 号挂点"
+        "(3003 挥刀用 7、10 号);第二次录像 0:07.6 起有一次完整的 3003 → 3045"),
     "deaths-thrust": (["P3-06"], "中", "三阶段开场第一招(几乎必出),和\"总是用它开始第三阶段\"一致;你使用道具时也触发,和 Fandom\"惩罚使用道具\"一致"),
     "perilous-grab-phase-3": (["P3-07"], "强", "你把三阶段 3009 标为危·投技;它在 3008 命中后触发(特效 3711000),和 wiki\"死亡突刺之后可能接危·投技\"一致"),
     "lightning-of-tomoe-slash": (["P3-21", "P3-22", "P3-14"], "中",
@@ -161,16 +163,39 @@ for i, slug in enumerate(wiki, 1):
                  "wiki": "Fextralife:" + ("、".join(wiki[slug]["fextralife"]) or "—") + ";Fandom:" + "、".join(wiki[slug]["fandom"]),
                  "character": "c7110" if all(by_entry[e]["character"] == "c7110" for e in ents) and ents else "c7100"})
 
+# The owner's review and names, kept across regeneration. Rows are matched by what they are (A: the product move,
+# B: its catalog entries), and a B row keeps its number for as long as its entries stay the same, so a row that goes
+# away leaves a gap instead of shifting the rows after it.
+reviews, b_keys = {}, {}
+if Path(out_md).exists():
+    text = open(out_md, encoding="utf-8").read()
+    has_name = "| 招式名称 |" in text
+    for line in text.splitlines():
+        m = re.match(r"^\| ([AB]\d{2}) \|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|", line)
+        if not m:
+            continue
+        name = m.group(4).strip() if has_name else ""
+        if m.group(1).startswith("A"):
+            ident = ("A", re.search(r"`([^`]+)`", m.group(5) if has_name else m.group(4)).group(1))
+        else:
+            ident = ("B", (m.group(5) if has_name else m.group(4)).strip())
+            b_keys[ident[1]] = m.group(1)
+        reviews[ident] = (m.group(2).strip() or "☐", m.group(3).strip(), "" if name == "—" else name)
+
 covered = {e for e, links in a_of.items() if any(s in ("强", "中") for _, _, s in links)}
 groups = defaultdict(list)
 for r in catalog:
     groups[tokens(r)].append(r["entry"])
-j = 0
+j = max([int(k[1:]) for k in b_keys.values()] + [0])
 for key in sorted(groups, key=lambda k: [int(re.search(r"\d+", t).group()) for t in k]):
     ents = [e for e in groups[key] if e not in covered]
     if not ents:
         continue
-    j += 1
+    if " ".join(ents) in b_keys:
+        bkey = b_keys[" ".join(ents)]
+    else:
+        j += 1
+        bkey = f"B{j:02d}"
     twins = [e for e in groups[key] if e in covered]
     weak = sorted({(k, s) for e in ents for k, s, st in a_of.get(e, []) if st == "弱"})
     if any(e in OWN for e in ents):
@@ -184,7 +209,7 @@ for key in sorted(groups, key=lambda k: [int(re.search(r"\d+", t).group()) for t
         proposal = "新增,但暂缺视觉样例:录到或用 DS Anim Studio 预览确认之后再进产品"
     else:
         proposal = "新增为产品招式(需要中英文名,可以写在理由里)"
-    rows.append({"key": f"B{j:02d}", "section": "B", "product_slug": "", "product_name": "", "product_name_zh": "", "name_source": "",
+    rows.append({"key": bkey, "section": "B", "product_slug": "", "product_name": "", "product_name_zh": "", "name_source": "",
                  "phases": phases(ents), "catalog_entries": " ".join(ents),
                  "chains": "；".join(f"{e}: {by_entry[e]['chain']}" for e in ents), "anims": " ".join(t.replace(" ", ":") for t in key),
                  "recorded": recorded(ents), "evidence": evidence(ents), "owner_labels": labels(ents), "strength": "",
@@ -199,18 +224,14 @@ def name_editable(r):
     return r["name_source"] != "wiki"
 
 
-# the owner's review and names, kept across regeneration
-reviews = {}
-if Path(out_md).exists():
-    text = open(out_md, encoding="utf-8").read()
-    has_name = "| 招式名称 |" in text
-    for line in text.splitlines():
-        m = re.match(r"^\| ([AB]\d{2}) \|([^|]*)\|([^|]*)\|([^|]*)\|", line)
-        if m:
-            name = m.group(4).strip() if has_name else ""
-            reviews[m.group(1)] = (m.group(2).strip() or "☐", m.group(3).strip(), "" if name == "—" else name)
+rows.sort(key=lambda r: (r["section"], int(r["key"][1:])))
+idents = {(r["section"], r["product_slug"] if r["section"] == "A" else r["catalog_entries"]) for r in rows}
+for ident, (mark, reason, name) in reviews.items():
+    if ident not in idents and (mark != "☐" or reason or name):
+        print(f"warning: the owner's review of {ident} has no row any more: {mark} {reason} {name}")
 for r in rows:
-    r["review_mark"], r["owner_reason"], r["owner_name"] = reviews.get(r["key"], ("☐", "", ""))
+    ident = (r["section"], r["product_slug"] if r["section"] == "A" else r["catalog_entries"])
+    r["review_mark"], r["owner_reason"], r["owner_name"] = reviews.get(ident, ("☐", "", ""))
     if not name_editable(r):
         r["owner_name"] = ""
     r["owner_review"] = "不通过" if "❌" in r["review_mark"] else ("通过" if "✅" in r["review_mark"] else "待审核")
@@ -237,6 +258,7 @@ md = ["# 第 8 步决策表:招式目录 → 产品里的弦一郎招式(待你�
       f"- **A 部分({len(A)} 行)**:产品里现有的 {len(A)} 个弦一郎招式,每个列出目录里的候选条目、依据和建议。",
       f"- **B 部分({len(B)} 行)**:目录里还没有以中等以上依据对上产品招式的招式。攻击和飞行物动画相同的条目合成一行"
       "(一二阶段和三阶段动画相同的也合在一起)。A 部分只有弱依据的候选,在 B 部分也有一行,方便你不同意 A 时直接新增。",
+      "- 编号固定:一行去掉以后编号留空,后面的行不改号(比如 B02 已经并进 A09)。",
       "- 依据强弱:强 = 你的标注或确认直接对上;中 = AI 结构和 wiki 描述一致;弱 = 只凭击数、距离或描述推测,需要你看动画确认。",
       "- 两次录像出现:每个动画在两次录像里一共出现几次(一二阶段和三阶段分开算)。",
       "- 你的标注:你在招式目录里给动画的标注,按动画编号列出,不管是在哪个条目里标的。", "",
