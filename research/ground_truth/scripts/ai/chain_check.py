@@ -166,6 +166,12 @@ INTERRUPTS = {
     ("c7110", "3080"): (set(), {"8604", "8704"}, ""),
 }
 PARRY = {"3100", "3101", "3102", "3103"}
+# Off-screen triggers the owner confirmed from the recordings (2026-10-15): (recording, time) -> what happened.
+CONFIRMED = {
+    ("2026-10-09-castle", "1:02.9"): "你喝药或使用道具(你确认)",
+    ("2026-10-09-castle", "1:59.9"): "你喝药或使用道具(你确认)",
+    ("2026-10-13-castle", "2:05.3"): "你喝药或使用道具(你确认)",
+}
 
 
 def clash(a, between):
@@ -238,6 +244,8 @@ for rec in RECS:
                     chain = "被打断"
                 else:
                     chain = "中途停下"
+        if verdict == "打断衔接(触发看不到)" and (rec.name, mmss(o["st"])) in CONFIRMED:
+            verdict, detail = "打断衔接(你确认)", CONFIRMED[(rec.name, mmss(o["st"]))]
         rows.append({"recording": rec.name, "time": mmss(o["st"]), "phase": ph, "character": ch, "prev": a, "anim": b,
                      "gap_s": f"{o['st'] - prev['et']:+.2f}", "between": " ".join(between), "verdict": verdict,
                      "chain": chain, "detail": detail, "entries": " ".join(sorted(entries))})
@@ -284,7 +292,7 @@ md = ["# 用录像核对 AI 推出的招式链", "",
       "## 结果", "",
       f"共 {len(trans)} 次衔接(另有 {len(rows) - len(trans)} 个阶段开始)。", "",
       "| 结论 | 次数 |", "|---|---|"]
-for v in ["链内衔接", "打断衔接", "打断衔接(触发看不到)", "拼刀后选招", "主动选招", "弹刀", "被打中后", "对不上"]:
+for v in ["链内衔接", "打断衔接", "打断衔接(你确认)", "打断衔接(触发看不到)", "拼刀后选招", "主动选招", "弹刀", "被打中后", "对不上"]:
     md.append(f"| {v} | {by_verdict.get(v, 0)} |")
 md += ["", "换新选项时上一条链的情况:", "", "| 上一条链 | 次数 |", "|---|---|"]
 for v in ["打完了", "被打断", "中途停下"]:
@@ -293,9 +301,9 @@ for v in ["打完了", "被打断", "中途停下"]:
 bad = [r for r in trans if r["verdict"] == "对不上"]
 md += ["", f"### 对不上({len(bad)} 次)", ""]
 md += ([HEAD, SEP] + [line(r) for r in bad]) if bad else ["没有。每一次衔接都能用某条 AI 链、某个选项的起手或某个打断解释。"]
-hidden = [r for r in trans if r["verdict"] == "打断衔接(触发看不到)"]
-md += ["", f"### 打断衔接,但触发在录像里看不到({len(hidden)} 次)", "",
-       "这些打断的触发之一是你使用道具,开发者菜单的叠加层不显示玩家的动作。可以在录像里看这个时间点你有没有喝药或用道具。", ""]
+hidden = [r for r in trans if r["verdict"] in ("打断衔接(触发看不到)", "打断衔接(你确认)")]
+md += ["", f"### 打断衔接,触发在录像里看不到({len(hidden)} 次)", "",
+       "这些打断的触发之一是你使用道具,开发者菜单的叠加层不显示玩家的动作。标着\"你确认\"的,是你看过录像确认的(2026-10-15)。", ""]
 md += [HEAD, SEP] + [line(r) for r in hidden]
 stop = [r for r in trans if r["chain"] == "中途停下"]
 md += ["", f"### 链中途停下,看不到原因({len(stop)} 次)", "",
@@ -320,10 +328,9 @@ md += ["", "### 8604 / 8704 前后的攻击:3080 的触发", "",
 for rec, t, ph, rid, before, after in reactions:
     md.append(f"| {rec[:10]} {t} | {ph} | {rid} | " + (" ".join(f"{x['id']} ({mmss(x['st'])})" for x in before) or "—") + " | "
               + (" ".join(f"{x['id']} ({mmss(x['st'])})" for x in after) or "—") + " |")
-md += ["", "**待你确认**:目录 P3-30 写的是“他出 8604 时(飞渡浮舟最后一下被完美弹开)”。按 AI、TAE 和录像,3080 在三阶段跟在 8604 和 8704 之后,"
-       "而这两次 8604 / 8704 都是你弹开 3032 之后出现的(3032 是三阶段危攻击后续追击 P3-17 的第三种结尾);"
-       "飞渡浮舟之后的 3080 在录像里还没有出现过。这和 Fandom 对第三种结尾的描述“上挑,被弹开后接延迟危·突刺”一致。"
-       "如果你同意,3080 除了属于三阶段飞渡浮舟(决策表 A21),也属于 A03 的第三种结尾。我没有改目录和决策表。", ""]
+md += ["", "**你确认(2026-10-15)**:完美弹开 3032 之后他会接 3080,不完美弹开不会。录像里三阶段的两次 8604 / 8704 都在你弹开 3032 之后"
+       "(3032 是三阶段危攻击后续追击 P3-17 的第三种结尾),和 Fandom 对第三种结尾的描述“上挑,被弹开后接延迟危·突刺”一致;"
+       "完美弹开飞渡浮舟之后的 3080 在录像里还没有出现过。已写进目录 P3-17、P3-30 的触发和说明,决策表 A03 加上了 P3-30(A21 不变)。", ""]
 intr = [r for r in trans if r["verdict"] == "打断衔接"]
 md += ["", f"### 看得到触发的打断衔接({len(intr)} 次)", "", HEAD, SEP] + [line(r) for r in intr]
 md += ["", "### 两次录像都没录到的链内衔接", "",
