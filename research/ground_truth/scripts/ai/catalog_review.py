@@ -7,7 +7,8 @@ Sheets:
     classification   semantic/genichiro_classification.md and engine/genichiro_castle_tae_classes.csv (every TAE
                      entry, plan step 7); the page can also filter by confidence
     decisions        semantic/genichiro_product_decisions.md and .csv (catalog → product moves, plan step 8); the page
-                     can also filter by strength of evidence
+                     can also filter by strength of evidence, and has a name box (招式名称) on every row whose
+                     Chinese name has no wiki source
 
 Then open http://127.0.0.1:<port> — in VS Code: Command Palette → "Simple Browser: Show".
 Every click is written straight into the sheet's .md (the 审核 and 理由 cells of that row, and the review counts when
@@ -80,10 +81,14 @@ SHEETS = {
                        "tags": ["高", "中", "低"]},
     "decisions": {"md": GT / "semantic/genichiro_product_decisions.md", "csv": GT / "semantic/genichiro_product_decisions.csv",
                   "key": "key", "title": "第 8 步决策表:招式目录 → 产品招式", "view": decisions_view,
-                  "tags": ["强", "中", "弱"], "tag_label": "依据强弱"},
+                  "tags": ["强", "中", "弱"], "tag_label": "依据强弱",
+                  "name": {"col": 4, "csv": "owner_name", "label": "招式名称", "editable": lambda r: r["name_source"] != "wiki",
+                           "placeholder": lambda r: (f"留空 = 用现在的名字:{r['product_name_zh']} / {r['product_name']}"
+                                                     if r["section"] == "A" else "中文名 / English name(新增时必填)")}},
 }
 SHEET = SHEETS[sys.argv[2] if len(sys.argv) > 2 else "catalog"]
 MD, CSV, KEY = SHEET["md"], SHEET["csv"], SHEET["key"]
+NAME = SHEET.get("name")     # an optional third editable cell (column NAME["col"] of the .md, NAME["csv"] of the .csv)
 
 
 def read_lines(path):
@@ -105,9 +110,10 @@ def load():
     for line in read_lines(MD):
         parts = line.rstrip("\r\n").split("|")
         if len(parts) > 4 and parts[1].strip() in keys:
-            marks[parts[1].strip()] = (parts[2].strip() or "☐", parts[3].strip())
+            name = parts[NAME["col"]].strip() if NAME and len(parts) > NAME["col"] + 1 else ""
+            marks[parts[1].strip()] = (parts[2].strip() or "☐", parts[3].strip(), "" if name == "—" else name)
     for r in rows:
-        r["mark"], r["reason"] = marks.get(r[KEY], ("☐", ""))
+        r["mark"], r["reason"], r["name"] = marks.get(r[KEY], ("☐", "", ""))
     return rows
 
 
@@ -119,11 +125,15 @@ def status(mark):
     return "待审核"
 
 
-def save(key, mark, reason):
+def save(key, mark, reason, name=None):
     reason = " ".join(reason.replace("|", "｜").split())
     rows = load()
     if key not in {r[KEY] for r in rows}:
         raise ValueError(f"unknown row {key}")
+    if name is not None:
+        name = " ".join(name.replace("|", "｜").split())
+        if not (NAME and NAME["editable"](next(r for r in rows if r[KEY] == key))):
+            raise ValueError(f"row {key} has no name to fill")
     for r in rows:
         if r[KEY] == key:
             r["mark"], r["reason"] = mark, reason
@@ -136,6 +146,8 @@ def save(key, mark, reason):
         parts = line.rstrip("\r\n").split("|")
         if len(parts) > 4 and parts[1].strip() == key:
             parts[2], parts[3] = f" {mark} ", f" {reason} "
+            if name is not None:
+                parts[NAME["col"]] = f" {name} "
             line = "|".join(parts) + end
         for m, s in MARKS.items():
             if line.startswith(f"| 审核 {m} {s} |"):
@@ -146,6 +158,8 @@ def save(key, mark, reason):
     for r in table:
         if r[KEY] == key:
             r["owner_review"], r["owner_reason"] = status(mark), reason
+            if name is not None:
+                r[NAME["csv"]] = name
     buf = io.StringIO()
     w = csv.DictWriter(buf, fieldnames=list(table[0]), lineterminator="\r\n")
     w.writeheader()
@@ -158,7 +172,9 @@ def view_rows():
     out = []
     for r in load():
         v = SHEET["view"](r)
-        v.update({"key": r[KEY], "mark": r["mark"], "reason": r["reason"]})
+        v.update({"key": r[KEY], "mark": r["mark"], "reason": r["reason"], "name": r["name"], "name_field": None})
+        if NAME and NAME["editable"](r):
+            v["name_field"] = {"label": NAME["label"], "placeholder": NAME["placeholder"](r)}
         out.append(v)
     out.sort(key=lambda v: v["group"][0])   # stable: keeps the sheet's order inside each group
     for v in out:
@@ -196,6 +212,8 @@ dt { color:var(--muted); } dd { margin:0; overflow-wrap:anywhere; }
 .btns button.on.ok { background:var(--okbg); border-color:var(--ok); color:var(--ok); font-weight:600; }
 .btns button.on.bad { background:var(--badbg); border-color:var(--bad); color:var(--bad); font-weight:600; }
 .btns button.reset { flex:0 0 40px; color:var(--muted); }
+.namebox label { display:block; font-size:12px; color:var(--muted); margin-bottom:2px; }
+.namebox input { font:inherit; width:100%; border:1px solid var(--line); border-radius:6px; padding:5px 6px; background:var(--bg); color:var(--fg); }
 textarea { font:inherit; width:100%; min-height:64px; resize:vertical; border:1px solid var(--line); border-radius:6px; padding:6px; background:var(--bg); color:var(--fg); }
 .saved { font-size:12px; color:var(--muted); min-height:18px; }
 .hint { color:var(--muted); font-size:13px; }
@@ -237,7 +255,7 @@ function filters() {
 async function post(r, note) {
   note.textContent = '保存中…';
   try {
-    const res = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: r.key, mark: r.mark, reason: r.reason }) });
+    const res = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: r.key, mark: r.mark, reason: r.reason, name: r.name_field ? r.name : null }) });
     const j = await res.json();
     note.textContent = j.ok ? '已保存' : ('保存失败:' + j.error);
   } catch (e) { note.textContent = '保存失败:服务没在运行?'; }
@@ -276,7 +294,19 @@ function card(r) {
   ta.oninput = () => { clearTimeout(t); t = setTimeout(saveReason, 1000); };
   ta.onblur = () => { clearTimeout(t); saveReason(); };
   btns.append(ok, bad, reset);
-  rv.append(btns, ta, note);
+  rv.append(btns);
+  if (r.name_field) {
+    const box = el('div', 'namebox'), inp = el('input');
+    const lab = el('label', '', r.name_field.label);
+    inp.placeholder = r.name_field.placeholder; inp.value = r.name;
+    let tn = null;
+    const saveName = () => { if (inp.value !== r.name) { r.name = inp.value; r.reason = ta.value; post(r, note); } };
+    inp.oninput = () => { clearTimeout(tn); tn = setTimeout(saveName, 1000); };
+    inp.onblur = () => { clearTimeout(tn); saveName(); };
+    box.append(lab, inp);
+    rv.append(box);
+  }
+  rv.append(ta, note);
   c.append(info, rv);
   return c;
 }
@@ -325,7 +355,8 @@ class Handler(BaseHTTPRequestHandler):
             mark = body.get("mark", "☐")
             if mark not in MARKS:
                 raise ValueError(f"bad mark {mark}")
-            counts = save(str(body["key"]), mark, str(body.get("reason", "")))
+            name = body.get("name")
+            counts = save(str(body["key"]), mark, str(body.get("reason", "")), None if name is None else str(name))
             self._send(200, json.dumps({"ok": True, "counts": counts}, ensure_ascii=False), "application/json")
         except Exception as ex:  # noqa: BLE001
             self._send(400, json.dumps({"ok": False, "error": str(ex)}, ensure_ascii=False), "application/json")

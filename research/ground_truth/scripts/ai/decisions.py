@@ -14,7 +14,8 @@ Two sections:
        Weak A candidates also get a B row, so the owner can still add them if the A link is rejected.
 The candidates are written out below with their evidence; none of them is ground truth until the owner approves.
 Every row waits for the owner: ✅ accepts the proposal, ❌ with a reason gives the owner's own decision (merge, rename,
-remove, a name for a new move...). The owner's cells are read back on regeneration.
+remove...). Every move whose Chinese name has no wiki source (all of B, and the A moves named by translation) has a
+招式名称 cell for the owner's own name. The owner's cells are read back on regeneration.
 """
 import csv
 import json
@@ -35,7 +36,8 @@ seed = next(b for b in json.load(open(REPO / "backend/seed/bosses.json", encodin
 product = {}
 for p in seed["phases"]:
     for m in p["moves"]:
-        product.setdefault(m["id"], {"name": m["name"], "name_zh": m["name_zh"], "phases": []})["phases"].append(p["phase_number"])
+        product.setdefault(m["id"], {"name": m["name"], "name_zh": m["name_zh"], "name_zh_source": m["name_zh_source"],
+                                     "phases": []})["phases"].append(p["phase_number"])
 
 # Candidate catalog entries for each product move: (entries, strength, basis).
 # 强 = the owner's own label or confirmation names the move; 中 = the AI structure matches the wiki description;
@@ -148,6 +150,7 @@ for i, slug in enumerate(wiki, 1):
         if evidence(ents) != "已运行观察":
             proposal += ";其中有的还没录到"
     rows.append({"key": key, "section": "A", "product_slug": slug, "product_name": pm["name"], "product_name_zh": pm["name_zh"],
+                 "name_source": pm["name_zh_source"],
                  "phases": "、".join(map(str, pm["phases"])), "catalog_entries": " ".join(ents),
                  "chains": "；".join(f"{e}: {by_entry[e]['chain']}" for e in ents), "anims": anims(ents),
                  "recorded": recorded(ents), "evidence": evidence(ents) if ents else "", "owner_labels": labels(ents),
@@ -178,7 +181,7 @@ for key in sorted(groups, key=lambda k: [int(re.search(r"\d+", t).group()) for t
         proposal = "新增,但暂缺视觉样例:录到或用 DS Anim Studio 预览确认之后再进产品"
     else:
         proposal = "新增为产品招式(需要中英文名,可以写在理由里)"
-    rows.append({"key": f"B{j:02d}", "section": "B", "product_slug": "", "product_name": "", "product_name_zh": "",
+    rows.append({"key": f"B{j:02d}", "section": "B", "product_slug": "", "product_name": "", "product_name_zh": "", "name_source": "",
                  "phases": phases(ents), "catalog_entries": " ".join(ents),
                  "chains": "；".join(f"{e}: {by_entry[e]['chain']}" for e in ents), "anims": " ".join(t.replace(" ", ":") for t in key),
                  "recorded": recorded(ents), "evidence": evidence(ents), "owner_labels": labels(ents), "strength": "",
@@ -188,20 +191,30 @@ for key in sorted(groups, key=lambda k: [int(re.search(r"\d+", t).group()) for t
 # every catalog move is somewhere
 assert {e for r in rows for e in r["catalog_entries"].split()} == set(by_entry)
 
-# the owner's review, kept across regeneration
+def name_editable(r):
+    """The owner names every move whose Chinese name has no wiki source: all of B, and the A moves named by translation."""
+    return r["name_source"] != "wiki"
+
+
+# the owner's review and names, kept across regeneration
 reviews = {}
 if Path(out_md).exists():
-    for line in open(out_md, encoding="utf-8"):
-        m = re.match(r"^\| ([AB]\d{2}) \|([^|]*)\|([^|]*)\|", line)
+    text = open(out_md, encoding="utf-8").read()
+    has_name = "| 招式名称 |" in text
+    for line in text.splitlines():
+        m = re.match(r"^\| ([AB]\d{2}) \|([^|]*)\|([^|]*)\|([^|]*)\|", line)
         if m:
-            reviews[m.group(1)] = (m.group(2).strip() or "☐", m.group(3).strip())
+            name = m.group(4).strip() if has_name else ""
+            reviews[m.group(1)] = (m.group(2).strip() or "☐", m.group(3).strip(), "" if name == "—" else name)
 for r in rows:
-    r["review_mark"], r["owner_reason"] = reviews.get(r["key"], ("☐", ""))
+    r["review_mark"], r["owner_reason"], r["owner_name"] = reviews.get(r["key"], ("☐", "", ""))
+    if not name_editable(r):
+        r["owner_name"] = ""
     r["owner_review"] = "不通过" if "❌" in r["review_mark"] else ("通过" if "✅" in r["review_mark"] else "待审核")
 
-FIELDS = ["key", "section", "product_slug", "product_name", "product_name_zh", "phases", "catalog_entries", "chains", "anims",
+FIELDS = ["key", "section", "product_slug", "product_name", "product_name_zh", "name_source", "phases", "catalog_entries", "chains", "anims",
           "recorded", "evidence", "owner_labels", "strength", "basis", "trigger", "proposal", "wiki", "character",
-          "owner_review", "owner_reason"]
+          "owner_review", "owner_reason", "owner_name"]
 with open(out_csv, "w", newline="", encoding="utf-8") as fh:
     w = csv.DictWriter(fh, fieldnames=FIELDS, lineterminator="\r\n")
     w.writeheader()
@@ -227,21 +240,24 @@ md = ["# 第 8 步决策表:招式目录 → 产品里的弦一郎招式(待你�
       "## 怎么决定", "",
       "用鼠标:在终端运行 `python -I research/ground_truth/scripts/ai/catalog_review.py 8765 decisions`,"
       "然后在 VS Code 里 Ctrl+Shift+P → Simple Browser: Show,打开 http://127.0.0.1:8765。", "",
-      "- ✅ = 同意这一行的建议。同意新增时,可以在理由栏写上你想用的中英文名;不写的话,第 8 步实现时再一起起名。",
+      "- ✅ = 同意这一行的建议。",
       "- ❌ = 不同意,在理由栏写你的决定,比如\"只算 P12-10\"\"合并到 A05\"\"对应 B07\"\"删除\"\"改名为……\"。", "",
+      "**招式名称**:只有飞渡浮舟的中文名有 wiki 原文(biligame wiki),这两行不用填。其余产品招式的英文名是 Fandom 或 Fextralife 的社区叫法,"
+      "中文名是翻译;想换名字就填,留空 = 用现在的名字。B 部分要新增的招式需要你起名。格式:`中文名 / English name`。", "",
       "删除或合并产品招式时,已有的练习记录会迁移到对应的新招式,不会丢。第 8 步实现时我会先统计每个招式被多少条记录引用,迁移方案再给你看。", "",
       f"## A. 产品现有的招式({len(A)} 个)", "",
-      REVIEW_HEAD + " 产品招式 | 产品阶段 | 候选目录条目 | 动画 | 两次录像出现 | 证据 | 依据强弱 | 依据 | 建议 |",
-      "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+      REVIEW_HEAD + " 招式名称 | 产品招式 | 产品阶段 | 候选目录条目 | 动画 | 两次录像出现 | 证据 | 依据强弱 | 依据 | 建议 |",
+      "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
 for r in A:
-    md.append(f"| {r['key']} | {r['review_mark']} | {r['owner_reason']} | `{r['product_slug']}` {r['product_name_zh']} | {r['phases']} "
+    md.append(f"| {r['key']} | {r['review_mark']} | {r['owner_reason']} | {r['owner_name'] if name_editable(r) else '—'} "
+              f"| `{r['product_slug']}` {r['product_name_zh']} | {r['phases']} "
               f"| {cell(r['catalog_entries'])} | {cell(r['anims'])} | {cell(r['recorded'])} | {cell(r['evidence'])} | {cell(r['strength'])} "
               f"| {cell(r['basis'])} | {cell(r['proposal'])} |")
 md += ["", f"## B. 目录里还没对上产品的招式({len(B)} 行)", "",
-       REVIEW_HEAD + " 目录条目 | 阶段 | 动画(击数) | 两次录像出现 | 证据 | 你的标注 | 触发 | 建议 |",
-       "|---|---|---|---|---|---|---|---|---|---|---|"]
+       REVIEW_HEAD + " 招式名称 | 目录条目 | 阶段 | 动画(击数) | 两次录像出现 | 证据 | 你的标注 | 触发 | 建议 |",
+       "|---|---|---|---|---|---|---|---|---|---|---|---|"]
 for r in B:
-    md.append(f"| {r['key']} | {r['review_mark']} | {r['owner_reason']} | {r['catalog_entries']} | {r['phases']} | {cell(r['anims'])} "
+    md.append(f"| {r['key']} | {r['review_mark']} | {r['owner_reason']} | {r['owner_name']} | {r['catalog_entries']} | {r['phases']} | {cell(r['anims'])} "
               f"| {cell(r['recorded'])} | {cell(r['evidence'])} | {cell(r['owner_labels'])} | {cell(r['trigger'])} | {cell(r['proposal'])} |")
 md.append("")
 with open(out_md, "w", encoding="utf-8", newline="") as fh:
