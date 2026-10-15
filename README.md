@@ -181,7 +181,7 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts, and public hosting is now planned for V4, once boss content is backed by verified game data.
+* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts. Public hosting is now planned for V5, once a player can upload a recording and see which moves caused their failures.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
 
 ---
@@ -211,13 +211,13 @@ The full plan is in [ROADMAP.md](ROADMAP.md). In short:
 V1  What killed me?                      → manual attempt analytics
 V2  Where am I improving or struggling?  → structured relational analytics
 V3  Can different players use it?        → multi-user product foundation
-V4  What moves actually exist?           → combat ground truth + public deployment
-V5  What happened in the fight?          → gameplay video analysis
+V4  What moves actually exist?           → combat ground truth
+V5  What happened in the fight?          → gameplay video analysis + public deployment
 V6  Can this work across games?          → multi-game platform
 ```
 
-* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro. The app is then deployed publicly.
-* **V5** analyzes uploaded gameplay to detect boss moves and player responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
+* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro.
+* **V5** analyzes uploaded gameplay, starting with the failures in a recording and the moves that caused them; the app is deployed publicly once that works. It then detects every boss move and the player's responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
 * **V6** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
 
 The long-term goal is to turn gameplay footage into trustworthy, explainable boss-practice analytics with as little manual input as possible.

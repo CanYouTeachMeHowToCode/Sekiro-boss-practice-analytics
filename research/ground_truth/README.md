@@ -26,7 +26,8 @@ Every recording and extracted dataset records the tool versions it was made with
 | Path | What it holds |
 |---|---|
 | `genichiro-plan.md` | Step-by-step plan (in Chinese) for capturing every vanilla Genichiro move with verified accuracy: static animation set, overlay extraction, recording protocol, coverage review, semantic catalog. |
-| `semantic/genichiro_catalog.csv`, `semantic/genichiro_catalog.md` | Draft move catalog for castle Genichiro (V4 M4): every animation chain the castle AI can request, with triggers, evidence status and proposed move families. The `.md` is the review sheet, in Chinese; nothing in it is confirmed until the owner reviews it. |
+| `genichiro-recording-round2.md` | Guide (in Chinese) for the second round of castle Genichiro recordings: for each move the castle AI can use but the first recording missed, the AI condition and the way to play that should bring it out. |
+| `semantic/genichiro_catalog.csv`, `semantic/genichiro_catalog.md` | Move catalog for castle Genichiro (V4 M4): every animation chain the castle AI can request, with triggers, evidence status, move families and the owner's labels. The `.md` is the review sheet, in Chinese; the owner approved every entry. |
 | `semantic/wiki_mapping/` | Per-boss mapping between product moves, Fextralife entries and Fandom entries, made during V3 M5. It is the starting candidate list for the V4 semantic catalog and the baseline for measuring the gap to engine-level ground truth. |
 | `scripts/wiki_mapping_report.py` | Rebuilds `semantic/wiki_mapping/README.md` from the JSON files, and checks that every product move is mapped exactly once (`--check`). |
 | `rulesets/` | One file per ruleset with the game version and the tool versions used to observe it (`vanilla.json`). |
