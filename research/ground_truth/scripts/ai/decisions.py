@@ -55,7 +55,7 @@ LINKS = {
     "closing-tide": (["P12-10", "P12-09", "P12-11", "P12-12"], "中",
         "Fandom:一阶段总是第一招。P12-10(3014 → 3015)就是开场第一招(权重 600),先射一箭再出攻击 3015。另外三条也是射箭后接同一个 3015"
         "(3013 一箭;3018、3036 一个动画两箭),是不是都算涨潮,需要你确认;不算的写在理由里,我移到 B 部分"),
-    "floating-passage": ([], "强", FP_FAMILY + "。3017(Fextralife 的 Floating Passage Cancel)你确认属于射箭招式族,不在这里,见 B 部分"),
+    "floating-passage": ([], "强", FP_FAMILY + "。射箭取消 3017(floating-passage-cancel)你确认是飞渡浮舟的衍生,建议单独作为产品招式,见 B13;想并进这一招的话在理由里写"),
     "guard-breaking-shot": (["P12-19"], "中", "两个 wiki 都说用来惩罚喝药;3023 是飞行物,你使用道具时触发"),
     "hawk-shot": (["P12-23"], "中", "3044 一个动画里发射 4 次飞行物,和\"空中连射四箭\"一致;前面先后跳 5201"),
     "two-hit-combo": ([], "", "没有依据:\"转身斩再踢一脚\"你在录像里还没认出来,目录里 2 击的动画(3004、3006、3010、3029)也看不出哪个带踢"),
@@ -77,18 +77,20 @@ LINKS = {
     "floating-passage-phase-3": ([], "强", FP_FAMILY + ",三阶段;加上完美弹开最后一下之后的突刺 3080"),
     "lightning-of-tomoe-shot": (["P3-19", "P3-08"], "中", "3039 是三阶段唯一的雷电飞行物,你标为危·雷电;P3-19 单独出,P3-08 是 3012 之后接 3039"),
 }
+# Catalog moves outside the product's moves with a proposal of their own (kept out of the family rows above).
+OWN = {
+    "P12-14": "新增为产品招式 floating-passage-cancel:你确认 3017 是飞渡浮舟的衍生(2026-10-15),对应 Fextralife 单列的 Floating Passage Cancel。"
+              "二阶段第一套 3040 或第二套 3092 打完第 4 刀时你在 4.1 米外,停掉剩下的刀,改射一箭",
+    "P3-13": "和 B13 同理,是三阶段飞渡浮舟第一套的射箭取消:3040 打完第 4 刀时你在 11 米外,改出 3018(一次两箭);"
+             "5.5–11 米时改出死亡突刺 3008(见 A10)。建议和 B13 算同一个 floating-passage-cancel(按阶段),你定",
+}
 FAMILY = {"floating-passage": "c7100", "floating-passage-phase-3": "c7110"}
 for slug, ch in FAMILY.items():
-    LINKS[slug] = ([r["entry"] for r in catalog if r["family_proposed"].startswith("飞渡浮舟") and r["character"] == ch],) + LINKS[slug][1:]
+    LINKS[slug] = ([r["entry"] for r in catalog if r["family_proposed"].startswith("飞渡浮舟") and r["character"] == ch
+                    and r["entry"] not in OWN],) + LINKS[slug][1:]
 assert set(LINKS) == set(product) == set(wiki), set(LINKS) ^ set(product)
 assert all(e in by_entry for ents, _, _ in LINKS.values() for e in ents)
 
-# Catalog moves outside the product's moves with a proposal of their own.
-OWN = {
-    "P12-14": "新增为一个射箭招式(Fextralife 单列的 Floating Passage Cancel),或者并入别的射箭招式:你确认 3017 属于射箭招式族。"
-              "二阶段 3040 或 3092 打到一半、你在 4.1 米外时出",
-    "P3-13": "和 3017 同理:三阶段 3040 打到一半、你在 11 米外时改出 3018。可以和 P12-14 合成同一个射箭招式",
-}
 REVIEW_HEAD = "| 编号 | 审核 | 理由 |"
 
 

@@ -8,10 +8,10 @@
 |---|---|---|---|---|
 | `perilous-attack-follow-up` | Leaping Slam into Thrust Attack | Perilous Attack Follow Up (phase 1) | P12-20 | 按阶段换结尾,和 wiki 一致 |
 | `perilous-attack-follow-up-phase-2` | Leaping Slam into Sweep | Perilous Attack Follow Up (phase 2) | P12-20 | 按阶段换结尾,和 wiki 一致 |
-| `perilous-attack-follow-up-phase-3` | Leaping Slam into Slash | Perilous Attack Follow Up (phase 3) | P3-17 | 三种结尾,和 Fandom 一致 |
+| `perilous-attack-follow-up-phase-3` | Leaping Slam into Slash | Perilous Attack Follow Up (phase 3) | P3-17 P3-30 | 三种结尾,和 Fandom 一致；你确认:完美弹开飞渡浮舟的最后一下或 3032(危攻击后续追击的第三种结尾)之后都接 3080(2026-10-15) |
 | `perilous-grab` | Backhand Grab | Perilous Grab (phase 1) | P12-17 | 3020 你标为危·抓投 |
 | `closing-tide` | Bow into Rolling Slash | Closing Tide | 还没有对应 | — |
-| `floating-passage` | Floating Passage、Floating Passage Cancel | Floating Passage (phase 1) | P12-14 P12-21 P12-22 P12-27 P12-29 P12-32 | 你确认的飞渡浮舟第一套；你确认的飞渡浮舟第三套；你确认的飞渡浮舟第二套；你确认的飞渡浮舟第二套起手；触发条件和射箭取消一致;你确认它属于射箭招式族 |
+| `floating-passage` | Floating Passage、Floating Passage Cancel | Floating Passage (phase 1) | P12-14 P12-21 P12-22 P12-27 P12-29 P12-32 | 你确认的飞渡浮舟第一套；你确认的飞渡浮舟第三套；你确认的飞渡浮舟第二套；你确认的飞渡浮舟第二套起手；触发条件和射箭取消一致;你确认它是飞渡浮舟的衍生 floating-passage-cancel(2026-10-15) |
 | `guard-breaking-shot` | Charged Shot | Guard Breaking Shot | P12-19 | wiki:用来惩罚喝药;这里由你使用道具触发,3023 是飞行物 |
 | `hawk-shot` | Multiple Arrow Jump | Hawk Shot | 还没有对应 | — |
 | `two-hit-combo` | Slash into Back Kick | Two-hit Combo | 还没有对应 | — |
@@ -26,10 +26,10 @@
 | `chasing-slice` | — | Chasing Slice | 还没有对应 | — |
 | `iaijutsu` | — | Iaijutsu | 还没有对应 | — |
 | `receding-tide` | — | Receding Tide | 还没有对应 | — |
-| `floating-passage-phase-3` | — | Floating Passage (phase 3) | P3-18 P3-20 P3-26 P3-28 P3-31 | 你确认的飞渡浮舟第一套,三阶段；你确认的飞渡浮舟第三套,三阶段；你确认的飞渡浮舟第二套,三阶段；你确认的飞渡浮舟第二套起手,三阶段 |
+| `floating-passage-phase-3` | — | Floating Passage (phase 3) | P3-18 P3-20 P3-26 P3-28 P3-30 P3-31 | 你确认:完美弹开飞渡浮舟的最后一下或 3032(危攻击后续追击的第三种结尾)之后都接 3080(2026-10-15)；你确认的飞渡浮舟第一套,三阶段；你确认的飞渡浮舟第三套,三阶段；你确认的飞渡浮舟第二套,三阶段；你确认的飞渡浮舟第二套起手,三阶段 |
 | `lightning-of-tomoe-shot` | — | Lightning of Tomoe Shot | P3-22 | 3043 是打雷招式,具体是哪一个待你确认 |
 
-## 目录里还没有对上产品招式的条目(45 个)
+## 目录里还没有对上产品招式的条目(44 个)
 
 这些招式在 AI 里存在、并经你审核通过,但还没有证据说明它们对应产品里的哪一招,或者产品里根本没有。
 
@@ -79,4 +79,3 @@
 | P3-25 | 3 | 3062 | — | 3062 危·突刺 |
 | P3-27 | 3 | 3067 | — | — |
 | P3-29 | 3 | 3076 | — | — |
-| P3-30 | 3 | 3080 | 飞渡浮舟 | 3080 飞渡浮舟完美弹完后的突刺(三阶段) |
