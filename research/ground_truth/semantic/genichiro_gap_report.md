@@ -11,14 +11,14 @@
 | `perilous-attack-follow-up-phase-3` | Leaping Slam into Slash | Perilous Attack Follow Up (phase 3) | P3-17 P3-30 | 三种结尾,和 Fandom 一致；你确认:完美弹开飞渡浮舟的最后一下或 3032(危攻击后续追击的第三种结尾)之后都接 3080(2026-10-15) |
 | `perilous-grab` | Backhand Grab | Perilous Grab (phase 1) | P12-17 | 3020 你标为危·抓投 |
 | `closing-tide` | Bow into Rolling Slash | Closing Tide | 还没有对应 | — |
-| `floating-passage` | Floating Passage、Floating Passage Cancel | Floating Passage (phase 1) | P12-14 P12-21 P12-22 P12-27 P12-29 P12-32 | 你确认的飞渡浮舟第一套；你确认的飞渡浮舟第三套；你确认的飞渡浮舟第二套；你确认的飞渡浮舟第二套起手；触发条件和射箭取消一致;你确认它是飞渡浮舟的衍生 floating-passage-cancel(2026-10-15) |
+| `floating-passage` | Floating Passage、Floating Passage Cancel | Floating Passage (phase 1) | P12-14 P12-21 P12-22 P12-27 P12-29 P12-32 | 你确认(2026-10-15):射箭取消并进飞渡浮舟,一二阶段射一箭；你确认的飞渡浮舟第一套；你确认的飞渡浮舟第三套；你确认的飞渡浮舟第二套；你确认的飞渡浮舟第二套起手 |
 | `guard-breaking-shot` | Charged Shot | Guard Breaking Shot | P12-19 | wiki:用来惩罚喝药;这里由你使用道具触发,3023 是飞行物 |
 | `hawk-shot` | Multiple Arrow Jump | Hawk Shot | 还没有对应 | — |
 | `two-hit-combo` | Slash into Back Kick | Two-hit Combo | P12-02 | 你确认(2026-10-15):3003 → 3045 就是横砍踢击 / Slash into Back Kick |
 | `deaths-thrust` | Sword Dive Thrust Attack | Death's Thrust | P3-06 | 和用道具时触发的是同一个动画 3008 |
 | `perilous-grab-phase-3` | Running Grab Attack | Perilous Grab (phase 3) | 还没有对应 | — |
-| `lightning-of-tomoe-slash` | Electric slash | Lightning of Tomoe Slash | P3-22 | 3043 是打雷招式,具体是哪一个待你确认 |
-| `lightning-of-tomoe-smash` | Electric slam | Lightning of Tomoe Smash | P3-22 | 3043 是打雷招式,具体是哪一个待你确认 |
+| `lightning-of-tomoe-slash` | Electric slash | Lightning of Tomoe Slash | P3-14 P3-21 P3-22 | 你确认(2026-10-15):3042 是巴之雷·斩击；你确认(2026-10-15):3043 是巴之雷·砸击；你确认(2026-10-15):3043 是巴之雷·砸击;这里是 3018 之后接 3043 |
+| `lightning-of-tomoe-smash` | Electric slam | Lightning of Tomoe Smash | P3-14 P3-21 P3-22 | 你确认(2026-10-15):3042 是巴之雷·斩击；你确认(2026-10-15):3043 是巴之雷·砸击；你确认(2026-10-15):3043 是巴之雷·砸击;这里是 3018 之后接 3043 |
 | `perilous-attack` | — | Perilous Attack | 还没有对应 | — |
 | `perilous-thrust` | — | Perilous Thrust | P12-26 | 3062 你标为危·突刺;但 3025 也是危·突刺,需要你区分 |
 | `perilous-sweep` | — | Perilous Sweep | 还没有对应 | — |
@@ -26,16 +26,16 @@
 | `chasing-slice` | — | Chasing Slice | 还没有对应 | — |
 | `iaijutsu` | — | Iaijutsu | 还没有对应 | — |
 | `receding-tide` | — | Receding Tide | 还没有对应 | — |
-| `floating-passage-phase-3` | — | Floating Passage (phase 3) | P3-18 P3-20 P3-26 P3-28 P3-30 P3-31 | 你确认:完美弹开飞渡浮舟的最后一下或 3032(危攻击后续追击的第三种结尾)之后都接 3080(2026-10-15)；你确认的飞渡浮舟第一套,三阶段；你确认的飞渡浮舟第三套,三阶段；你确认的飞渡浮舟第二套,三阶段；你确认的飞渡浮舟第二套起手,三阶段 |
-| `lightning-of-tomoe-shot` | — | Lightning of Tomoe Shot | P3-22 | 3043 是打雷招式,具体是哪一个待你确认 |
+| `floating-passage-phase-3` | — | Floating Passage (phase 3) | P3-13 P3-18 P3-20 P3-26 P3-28 P3-30 P3-31 | 你确认(2026-10-15):三阶段的射箭取消并进三阶段飞渡浮舟,射两箭；你确认:完美弹开飞渡浮舟的最后一下或 3032(危攻击后续追击的第三种结尾)之后都接 3080(2026-10-15)；你确认的飞渡浮舟第一套,三阶段；你确认的飞渡浮舟第三套,三阶段；你确认的飞渡浮舟第二套,三阶段；你确认的飞渡浮舟第二套起手,三阶段 |
+| `lightning-of-tomoe-shot` | — | Lightning of Tomoe Shot | P3-14 P3-21 P3-22 | 你确认(2026-10-15):3042 是巴之雷·斩击；你确认(2026-10-15):3043 是巴之雷·砸击；你确认(2026-10-15):3043 是巴之雷·砸击;这里是 3018 之后接 3043 |
 
-## 目录里还没有对上产品招式的条目(43 个)
+## 目录里还没有对上产品招式的条目(40 个)
 
 这些招式在 AI 里存在、并经你审核通过,但还没有证据说明它们对应产品里的哪一招,或者产品里根本没有。
 
 | 条目 | 阶段 | 动画链 | 招式族 | 你的标注 |
 |---|---|---|---|---|
-| P12-01 | 1、2 | [随机1-100 ≤ 30: 3000 → 3001 → 3002 → 3003 ｜ 否则: 3000 → 3001 → 3010 → 3025] | — | 3025 危·突刺 |
+| P12-01 | 1、2 | [随机1-100 ≤ 30: 3000 → 3001 → 3002 → 3003 ｜ 否则: 3000 → 3001 → 3010 → 3025] | — | 3002 肘击(2026-10-15)；3025 危·突刺 |
 | P12-03 | 1、2 | 3004 | — | — |
 | P12-04 | 1、2 | 3005 | — | — |
 | P12-05 | 1、2 | 3006 | — | — |
@@ -67,12 +67,9 @@
 | P3-10 | 3 | 3014 → 3015 | — | — |
 | P3-11 | 3 | 3034 → 3036 → 3015 | — | — |
 | P3-12 | 3 | 3016 | — | — |
-| P3-13 | 3 | 3018 | — | — |
-| P3-14 | 3 | 3018 → 3043 | 巴之雷(建议) | — |
 | P3-15 | 3 | 3018 → [随机1-100 ≤ 50: 3019 → 3029 ｜ 否则: 3019] | — | — |
 | P3-16 | 3 | 3031 → [随机1-100 ≤ 50: 3019 → 3029 ｜ 否则: 3036] | — | — |
 | P3-19 | 3 | 3039 | — | 3039 危·雷电 |
-| P3-21 | 3 | 3042 | — | 3042 危·雷电 |
 | P3-23 | 3 | 3050 | — | — |
 | P3-24 | 3 | 3055 | — | — |
 | P3-25 | 3 | 3062 | — | 3062 危·突刺 |

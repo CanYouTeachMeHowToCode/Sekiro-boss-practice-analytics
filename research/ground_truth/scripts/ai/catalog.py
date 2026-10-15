@@ -150,7 +150,6 @@ WIKI = {
     ("711000", "Interrupt:3092"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套,三阶段"),
     ("710000", "Kengeki40"): ("floating-passage", "你确认的飞渡浮舟第三套"),
     ("711000", "Kengeki40"): ("floating-passage-phase-3", "你确认的飞渡浮舟第三套,三阶段"),
-    ("710000", "Interrupt:3017"): ("Fextralife 的 Floating Passage Cancel", "触发条件和射箭取消一致;你确认它是飞渡浮舟的衍生 floating-passage-cancel(2026-10-15)"),
     ("710000", "Kengeki30"): ("floating-passage", "你确认的飞渡浮舟第二套起手"),
     ("711000", "Kengeki30"): ("floating-passage-phase-3", "你确认的飞渡浮舟第二套起手,三阶段"),
     ("710000", "Kengeki38"): ("perilous-attack-follow-up、perilous-attack-follow-up-phase-2", "按阶段换结尾,和 wiki 一致"),
@@ -163,7 +162,12 @@ WIKI = {
     ("710000", "Act11"): ("perilous-grab", "3020 你标为危·抓投"),
     ("710000", "Act31"): ("two-hit-combo", "你确认(2026-10-15):3003 → 3045 就是横砍踢击 / Slash into Back Kick"),
     ("710000", "Kengeki43"): ("perilous-thrust", "3062 你标为危·突刺;但 3025 也是危·突刺,需要你区分"),
-    ("711000", "Act18"): ("lightning-of-tomoe-slash / -smash / -shot", "3043 是打雷招式,具体是哪一个待你确认"),
+    ("711000", "Act18"): ("lightning-of-tomoe-smash", "你确认(2026-10-15):3043 是巴之雷·砸击"),
+    ("711000", "Kengeki32"): ("lightning-of-tomoe-smash", "你确认(2026-10-15):3043 是巴之雷·砸击;这里是 3018 之后接 3043"),
+    ("711000", "Act19"): ("lightning-of-tomoe-slash", "你确认(2026-10-15):3042 是巴之雷·斩击"),
+    ("711000", "Kengeki45"): ("lightning-of-tomoe-slash", "你确认(2026-10-15):3042 是巴之雷·斩击"),
+    ("710000", "Interrupt:3017"): ("floating-passage", "你确认(2026-10-15):射箭取消并进飞渡浮舟,一二阶段射一箭"),
+    ("711000", "Interrupt:3018"): ("floating-passage-phase-3", "你确认(2026-10-15):三阶段的射箭取消并进三阶段飞渡浮舟,射两箭"),
 }
 
 # Owner labels (2026-10-10 perilous labels for c7100; 2026-10-12 confirmations).
@@ -178,7 +182,7 @@ for c in ("c7100", "c7110"):
                    (3092, "飞渡浮舟·第二套"), (3028, "飞渡浮舟·第三套")):
         OWNER[(c, a)] = "；".join(x for x in (OWNER.get((c, a)), lab) if x)
 OWNER[("c7110", 3080)] = "飞渡浮舟或 3032 被完美弹开后的突刺(三阶段;2026-10-15 加上 3032)"
-OWNER.update({("c7110", 3009): "危·投技", ("c7110", 3039): "危·雷电", ("c7110", 3042): "危·雷电",
+OWNER.update({("c7110", 3009): "危·投技", ("c7110", 3039): "危·雷电", ("c7110", 3042): "危·雷电;巴之雷·斩击(2026-10-15)", ("c7110", 3043): "巴之雷·砸击(2026-10-15)",
               ("c7110", 3062): "危·突刺"})  # owner, 2026-10-13
 OWNER[("c7100", 3045)] = "踢一脚(横砍踢击 3003 → 3045 的第二段;2026-10-15)"
 OWNER[("c7100", 3002)] = "肘击(2026-10-15)"
