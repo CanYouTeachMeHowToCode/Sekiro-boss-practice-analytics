@@ -1,0 +1,472 @@
+{
+ "status": "roles confirmed by the project owner on 2026-10-12 (models viewed in DS Anim Studio)",
+ "ruleset": "vanilla",
+ "game_version": "1.06",
+ "models": [
+  {
+   "model": "c7100",
+   "role": "战斗模型:苇名弦一郎(着甲),天守阁一、二阶段、序章、心中的弦一郎第一段",
+   "archives": {
+    "chrbnd": {
+     "c7100.flver": {
+      "bytes": 8389088,
+      "sha256": "860dc930b507baa6"
+     },
+     "c7100.hkx": {
+      "bytes": 71752,
+      "sha256": "80def5b73202aa63"
+     },
+     "c7100_c.hkx": {
+      "bytes": 655208,
+      "sha256": "71e69cec0d9f5ec3"
+     },
+     "c7100_c.clm2": {
+      "bytes": 2040,
+      "sha256": "335c37524400983a"
+     }
+    },
+    "anibnd": {
+     "skeleton.hkx": {
+      "bytes": 11920,
+      "sha256": "678a0cb1ea53f8b8"
+     },
+     "c7100.tae": {
+      "bytes": 640384,
+      "sha256": "cd96b19fa0974cec"
+     },
+     "load_c0000_c7100.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c14"
+     },
+     "c7100.compendium": {
+      "bytes": 9560,
+      "sha256": "6598f1bd30dd9e40"
+     }
+    },
+    "behbnd": {
+     "c7100.hkx": {
+      "bytes": 21768,
+      "sha256": "5d838ae328e0b3a8"
+     },
+     "c9997.hkx": {
+      "bytes": 399324,
+      "sha256": "24d774f54c25c39b"
+     }
+    },
+    "texbnd": {}
+   },
+   "tae_entries": 189,
+   "animations": 153,
+   "behavior_script_sha256": "4221fdf19a42f78f",
+   "model_summary": {
+    "materials": 27,
+    "bones": 367,
+    "meshes": 28,
+    "display_mask_materials": [
+     "#00#MI_c7109_wearrow_00"
+    ]
+   },
+   "behavior_script_same_as": [
+    "c7103",
+    "c7110"
+   ],
+   "placed_in_maps": [
+    "m11_00_00_00 (1 parts)",
+    "m11_01_00_00 (2 parts)",
+    "m11_02_00_00 (1 parts)"
+   ],
+   "cutscenes": []
+  },
+  {
+   "model": "c7101",
+   "role": "过场模型:着甲的苇名弦一郎(带面部表情骨骼),没有战斗动作",
+   "archives": {
+    "chrbnd": {
+     "c7101.flver": {
+      "bytes": 8241328,
+      "sha256": "37045815b5554d66"
+     },
+     "c7101_c.hkx": {
+      "bytes": 669592,
+      "sha256": "afaabaabe4ec9b87"
+     },
+     "c7101_c.clm2": {
+      "bytes": 2032,
+      "sha256": "e7486cd84bb38018"
+     }
+    },
+    "anibnd": {
+     "skeleton.hkx": {
+      "bytes": 14992,
+      "sha256": "bdbbd147868fde6c"
+     },
+     "c7101.tae": {
+      "bytes": 288,
+      "sha256": "598c2bde45572a21"
+     },
+     "c7101.compendium": {
+      "bytes": 9000,
+      "sha256": "3efe6c9649992eb0"
+     }
+    },
+    "behbnd": {
+     "c7101.hkx": {
+      "bytes": 11048,
+      "sha256": "977fa070b99e5e97"
+     },
+     "c9997.hkx": {
+      "bytes": 108888,
+      "sha256": "4b4e2e6969eba8db"
+     }
+    },
+    "texbnd": {}
+   },
+   "tae_entries": 0,
+   "animations": 0,
+   "behavior_script_sha256": null,
+   "model_summary": {
+    "materials": 27,
+    "bones": 515,
+    "meshes": 28,
+    "display_mask_materials": [
+     "#00#MI_c7109_wearrow_00",
+     "#10#",
+     "#10#_cloth",
+     "#11#",
+     "#12#"
+    ]
+   },
+   "bones_not_in_c7100": {
+    "count": 161,
+    "names": [
+     "Blink_Lower_L",
+     "Blink_Lower_R",
+     "Blink_Upper_L",
+     "Blink_Upper_R",
+     "Cheek_High_L",
+     "Cheek_High_R",
+     "Cheek_Low_L",
+     "Cheek_Low_R",
+     "Collidable_Pelvis001",
+     "Ctr_Eye",
+     "Ctr_EyeLower_L",
+     "Ctr_EyeLower_R",
+     "Ctr_Eyelid",
+     "Ctr_Eyelid_L",
+     "Ctr_Eyelid_R",
+     "Ctr_Forehead_L_01",
+     "Ctr_Forehead_L_03",
+     "Ctr_Forehead_R_01",
+     "Ctr_Forehead_R_03",
+     "Ctr_Jaw",
+     "Ctr_Mouth_D",
+     "Ctr_Mouth_DL",
+     "Ctr_Mouth_DR",
+     "Ctr_Mouth_L",
+     "Ctr_Mouth_R",
+     "Ctr_Mouth_U",
+     "Ctr_Mouth_UL",
+     "Ctr_Mouth_UR",
+     "Ctr_Nose_L",
+     "Ctr_Nose_R",
+     "Eyeball_L",
+     "Eyeball_R",
+     "Eyebrow_Center_L",
+     "Eyebrow_Center_R",
+     "Eyebrow_Inner_L",
+     "Eyebrow_Inner_R",
+     "Eyebrow_Outer_L",
+     "Eyebrow_Outer_R",
+     "FC_Fibers15",
+     "Face Root"
+    ]
+   },
+   "bones_shared_with_c7100": 354,
+   "placed_in_maps": [],
+   "cutscenes": [
+    {
+     "cutscene": "s11_01_0000",
+     "reference": "animation track only",
+     "played_by_events": []
+    },
+    {
+     "cutscene": "s11_01_0010",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115810"
+     ]
+    },
+    {
+     "cutscene": "s11_01_0011",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115810"
+     ]
+    },
+    {
+     "cutscene": "s11_01_0020",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115820"
+     ]
+    },
+    {
+     "cutscene": "s11_02_0000",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_02_00_00:11125800"
+     ]
+    },
+    {
+     "cutscene": "s11_02_0001",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_02_00_00:11125800"
+     ]
+    },
+    {
+     "cutscene": "s11_02_0010",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_02_00_00:11125810"
+     ]
+    }
+   ]
+  },
+  {
+   "model": "c7102",
+   "role": "过场道具:弦一郎的铠甲、头盔和披风,没有找到哪个过场引用它",
+   "archives": {
+    "chrbnd": {
+     "c7102.flver": {
+      "bytes": 1519760,
+      "sha256": "7846773e35e8e98f"
+     }
+    }
+   },
+   "behavior_script_sha256": null,
+   "model_summary": {
+    "materials": 7,
+    "bones": 7,
+    "meshes": 7,
+    "display_mask_materials": []
+   },
+   "bones_not_in_c7100": {
+    "count": 6,
+    "names": [
+     "armor_cutscene001",
+     "armor_cutscene002",
+     "armor_cutscene003",
+     "armor_cutscene004",
+     "helment_cutscene",
+     "manto_cutscene"
+    ]
+   },
+   "bones_shared_with_c7100": 1,
+   "placed_in_maps": [],
+   "cutscenes": []
+  },
+  {
+   "model": "c7103",
+   "role": "空壳:没有模型和动画,行为文件是复制品,哪里都没有引用,很可能废弃",
+   "archives": {
+    "anibnd": {
+     "c7103.tae": {
+      "bytes": 288,
+      "sha256": "d01d19de20c6f6e4"
+     }
+    },
+    "behbnd": {
+     "c7103.hkx": {
+      "bytes": 11048,
+      "sha256": "2be63409bdbca707"
+     },
+     "c9997.hkx": {
+      "bytes": 108888,
+      "sha256": "4b4e2e6969eba8db"
+     }
+    }
+   },
+   "tae_entries": 0,
+   "animations": 0,
+   "behavior_script_sha256": "4221fdf19a42f78f",
+   "behavior_script_same_as": [
+    "c7100",
+    "c7110"
+   ],
+   "placed_in_maps": [],
+   "cutscenes": []
+  },
+  {
+   "model": "c7110",
+   "role": "战斗模型:巴流 苇名弦一郎,天守阁三阶段、剑圣战第一阶段、心中的弦一郎第二段",
+   "archives": {
+    "chrbnd": {
+     "c7110.flver": {
+      "bytes": 6372320,
+      "sha256": "5e1d5763c59cd94d"
+     },
+     "c7110.hkx": {
+      "bytes": 74104,
+      "sha256": "770437315eab5572"
+     },
+     "c7110_c.hkx": {
+      "bytes": 861016,
+      "sha256": "088bfe757b8c254d"
+     },
+     "c7110_c.clm2": {
+      "bytes": 544,
+      "sha256": "499e8f5cb61df052"
+     }
+    },
+    "anibnd": {
+     "skeleton.hkx": {
+      "bytes": 14224,
+      "sha256": "cf4d013c1ed3cfdc"
+     },
+     "c7110.tae": {
+      "bytes": 594976,
+      "sha256": "bade3deac41ce9bb"
+     },
+     "load_c0000_c7110.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c14"
+     },
+     "c7110.compendium": {
+      "bytes": 9552,
+      "sha256": "e3a561a62bff0b84"
+     }
+    },
+    "behbnd": {
+     "c7110.hkx": {
+      "bytes": 21768,
+      "sha256": "008411c20c68ea03"
+     },
+     "c9997.hkx": {
+      "bytes": 367244,
+      "sha256": "3216eb24608fb626"
+     }
+    },
+    "texbnd": {}
+   },
+   "tae_entries": 164,
+   "animations": 130,
+   "behavior_script_sha256": "4221fdf19a42f78f",
+   "model_summary": {
+    "materials": 27,
+    "bones": 500,
+    "meshes": 28,
+    "display_mask_materials": [
+     "#00#MI_c7109_wearrow_00",
+     "#01#MI_c7110_wesword00_00",
+     "#01#MI_c7110_wesword00_01",
+     "#02#MI_c7110_wesheath01_00",
+     "#02#MI_c7110_wesword01_00"
+    ]
+   },
+   "behavior_script_same_as": [
+    "c7100",
+    "c7103"
+   ],
+   "placed_in_maps": [
+    "m11_01_00_00 (2 parts)",
+    "m11_02_00_00 (1 parts)"
+   ],
+   "cutscenes": []
+  },
+  {
+   "model": "c7111",
+   "role": "过场模型:巴流 苇名弦一郎,没有战斗动作",
+   "archives": {
+    "chrbnd": {
+     "c7111.flver": {
+      "bytes": 6878912,
+      "sha256": "7e31594b3527a034"
+     },
+     "c7111_c.hkx": {
+      "bytes": 1652200,
+      "sha256": "10997d5dd2a7f93e"
+     },
+     "c7111_c.clm2": {
+      "bytes": 576,
+      "sha256": "909d7474b950917e"
+     }
+    },
+    "anibnd": {
+     "skeleton.hkx": {
+      "bytes": 14224,
+      "sha256": "ae9bd072137784c6"
+     },
+     "c7111.compendium": {
+      "bytes": 9000,
+      "sha256": "3efe6c9649992eb0"
+     }
+    }
+   },
+   "tae_entries": null,
+   "animations": 0,
+   "behavior_script_sha256": null,
+   "model_summary": {
+    "materials": 27,
+    "bones": 501,
+    "meshes": 28,
+    "display_mask_materials": [
+     "#00#MI_c7109_wearrow_00",
+     "#01#MI_c7110_wesword00_00",
+     "#01#MI_c7110_wesword00_01",
+     "#02#MI_c7110_wesheath01_00",
+     "#02#MI_c7110_wesword01_00",
+     "#11#_eyelash001"
+    ]
+   },
+   "bones_not_in_c7110": {
+    "count": 4,
+    "names": [
+     "Collidable_Ctrl_L_Thigh001",
+     "Collidable_Ctrl_R_Thigh001",
+     "c7100_head_20180502_005",
+     "c7111_nail"
+    ]
+   },
+   "bones_shared_with_c7110": 497,
+   "placed_in_maps": [],
+   "cutscenes": [
+    {
+     "cutscene": "s11_01_0020",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115820"
+     ]
+    },
+    {
+     "cutscene": "s11_01_0030",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115800"
+     ]
+    },
+    {
+     "cutscene": "s11_01_0031",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_01_00_00:11115800"
+     ]
+    },
+    {
+     "cutscene": "s11_02_0030",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_02_00_00:11125840"
+     ]
+    },
+    {
+     "cutscene": "s11_02_0040",
+     "reference": "layout",
+     "played_by_events": [
+      "m11_02_00_00:11125830"
+     ]
+    }
+   ]
+  }
+ ]
+}
