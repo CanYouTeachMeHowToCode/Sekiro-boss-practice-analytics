@@ -1,0 +1,14 @@
+key,time_s,proposed,verdict,correct_move,merge_prev,note,updated
+damage@5.0,5.034,deflect-counter-slash,correct,,,,2026-10-16T18:10:57
+damage@39.3,39.306,floating-passage,correct,,,,2026-10-16T18:11:09
+damage@45.1,45.073,hawk-shot,correct,,,,2026-10-16T18:11:18
+damage@51.3,51.274,horizontal-slash,wrong,counter-slash,,,2026-10-16T18:11:41
+damage@107.8,107.750,deflect-counter-slash,correct,,,,2026-10-16T18:11:57
+damage@110.8,110.750,hawk-shot,correct,,,,2026-10-16T18:12:04
+damage@116.0,115.951,two-hit-combo,correct,,,,2026-10-16T18:12:20
+death@130.4,130.386,counter-slash,unsure,,,这个更像强弹反斩，不过动作基本一模一样,2026-10-16T18:14:23
+damage@161.8,161.824,hawk-shot,correct,,,,2026-10-16T18:14:05
+damage@198.3,198.263,hawk-shot,correct,,,,2026-10-16T18:14:38
+damage@213.4,213.399,lightning-of-tomoe-shot,correct,,,,2026-10-16T18:14:42
+death@229.9,229.935,lightning-of-tomoe-smash,wrong,floating-passage-phase-3,,,2026-10-16T18:14:55
+damage@263.6,263.573,floating-passage-phase-3,correct,,,,2026-10-16T18:15:04
