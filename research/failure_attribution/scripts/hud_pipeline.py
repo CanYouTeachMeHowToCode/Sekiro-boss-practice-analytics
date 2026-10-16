@@ -19,7 +19,7 @@ import cv2
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import HERE, recordings, report, video_path, work_dir  # noqa: E402
+from common import HERE, observation_dir, recordings, report, video_path, work_dir  # noqa: E402
 from overlay_mask import mask_overlay  # noqa: E402
 
 OFFSETS = (-1.0, -0.5, -0.15, 0.15, 0.5, 1.0)
@@ -78,7 +78,10 @@ def main():
         if "--recache" in sys.argv or not (work / "boss_feats_small14.npy").exists():
             run("boss_features.py", rec_id)
         report(work, "moves")
-        run("failure_answers.py" if rec.get("overlay") else "move_match.py", *([rec_id] if rec.get("overlay") else ["predict", rec_id]))
+        if observation_dir(rec):                   # a dev-menu recording whose overlay has been read
+            run("failure_answers.py", rec_id)
+        else:
+            run("move_match.py", "predict", rec_id)
         thumbnails(video, work)
         report(work, "done", 1.0)
 

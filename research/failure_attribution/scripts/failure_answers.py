@@ -36,7 +36,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import GT, recordings, work_dir  # noqa: E402
+from common import GT, observation_dir, recordings, work_dir  # noqa: E402
 
 HIT_LOOKBACK, WINDOW_SLACK, BULLET_FLIGHT = 0.1, 0.1, 1.5
 BREAK_WITH, PUNISH_WINDOW = 0.3, 2.0
@@ -268,10 +268,10 @@ def build(rec_id, rec):
 
 def main():
     recs = recordings()
-    ids = [i for i, r in recs.items() if r.get("overlay")] if sys.argv[1] == "all" else [sys.argv[1]]
+    ids = [i for i, r in recs.items() if observation_dir(r)] if sys.argv[1] == "all" else [sys.argv[1]]
     for rec_id in ids:
-        if not recs[rec_id].get("overlay"):
-            sys.exit(f"{rec_id} has no dev-menu overlay: its answers come from the owner's labels instead")
+        if not observation_dir(recs[rec_id]):
+            sys.exit(f"{rec_id} has no overlay readings (observations/...): its answers come from the owner's labels")
         build(rec_id, recs[rec_id])
 
 

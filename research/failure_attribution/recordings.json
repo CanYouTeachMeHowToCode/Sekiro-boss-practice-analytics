@@ -47,6 +47,24 @@
       "game_version": "1.06",
       "overlay": false,
       "use": "answer set: fight without the overlay, labelled by the owner"
+    },
+    {
+      "id": "2026-10-16-castle-4",
+      "file_name": "开发者菜单录像/开发者菜单3.mp4",
+      "sha256": "4c8d950ef27e60537c1bf5c056657d4384fdc2fb88db61275e89fdfa93849a55",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": true,
+      "use": "reference: dev-menu fight recorded for V4 M1"
+    },
+    {
+      "id": "2026-10-16-castle-5",
+      "file_name": "开发者菜单录像/开发者菜单4.mp4",
+      "sha256": "1bbbb8aa991a9e01e233ded99812b9b80d3666e17463875ff53185d63190d6fd",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": true,
+      "use": "reference: dev-menu fight recorded for V4 M1"
     }
   ]
 }

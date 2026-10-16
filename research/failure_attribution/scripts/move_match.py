@@ -39,7 +39,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import GT, WORK, annotation_dir, recordings, work_dir  # noqa: E402
+from common import GT, WORK, annotation_dir, observation_dir, recordings, work_dir  # noqa: E402
 from failure_answers import BY_PREVIOUS, MOVES, WINDOWS, Overlay, moves_for, phase_at, read  # noqa: E402
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
@@ -175,12 +175,13 @@ def evaluate():
     st = settings()
     model, part, window, after, trend = st["model"], st["part"], st["window"], st["after"], st["trend"]
     which = opt("--refs", "all")
-    recs = {i: Rec(i, r, model, part, trend) for i, r in recordings().items() if r.get("overlay")}
+    recs = {i: Rec(i, r, model, part, trend) for i, r in recordings().items() if observation_dir(r)}
     refs = {i: r.references() for i, r in recs.items()}
     results = []
     for rec_id, q in recs.items():
         answers = {r["key"]: r for r in read(work_dir(rec_id) / "failure_answers.csv")}
-        for rev in read(annotation_dir(q.rec) / "failure_moves.csv"):
+        reviewed = annotation_dir(q.rec) / "failure_moves.csv"
+        for rev in (read(reviewed) if reviewed.exists() else []):      # a recording the owner has not reviewed yet
             a = answers.get(rev["key"])
             if a is None or rev["verdict"] not in ("correct", "wrong"):
                 continue
@@ -213,7 +214,7 @@ def evaluate():
 def predict(rec_id):
     st, recs = settings(), recordings()
     q = Rec(rec_id, recs[rec_id], st["model"], st["part"], st["trend"])
-    refs = [ref for j, r in recs.items() if r.get("overlay") and j != rec_id
+    refs = [ref for j, r in recs.items() if observation_dir(r) and j != rec_id
             for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references()]
     events = read(work_dir(rec_id) / "events.csv")
     for e in events:

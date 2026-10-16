@@ -72,6 +72,12 @@ def progress(work: Path):
     return overall, STEPS[i][1], d["fraction"], used, left, False
 
 
+def observation_dir(rec: dict):
+    """The V3.1 overlay readings of a dev-menu recording (frames.csv, occurrences.csv), or None before they exist."""
+    d = GT / "observations" / rec.get("ruleset", "vanilla") / "genichiro" / rec["id"]
+    return d if rec.get("overlay") and (d / "occurrences.csv").exists() else None
+
+
 def annotation_dir(rec: dict) -> Path:
     d = GT / "annotations" / rec.get("ruleset", "vanilla") / "genichiro" / rec["id"]
     d.mkdir(parents=True, exist_ok=True)

@@ -29,6 +29,7 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import datetime
 from urllib.parse import unquote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -165,8 +166,31 @@ def save_move(rec_id, body):
     return key
 
 
+def overlay_rows(mins):
+    """Reading a dev-menu recording's overlay (V3.1 steps, run locally): work/<id>/overlay_progress.json, written by
+    the local runner's watcher, gives each step's state; shown as a bar and a table."""
+    mark = {"done": "✓ 完成", "running": "▶ 进行中", "waiting": "· 等待", "failed": "✗ 出错"}
+    out = []
+    for rec_id in recordings():
+        path = work_dir(rec_id) / "overlay_progress.json"
+        if not path.exists():
+            continue
+        d = json.loads(path.read_text(encoding="utf-8"))
+        done = all(st["status"] == "done" for st in d["steps"])
+        used = (d["updated"] if done else time.time()) - d["started"]
+        head = f"完成，用了 {mins(used)}" if done else ("出错，停在这一步" if d["failed"] else f"已用 {mins(used)}")
+        cells = "".join(f'<tr class="{st["status"]}"><td>{i + 1}</td><td>{st["label"]}</td><td>{mark[st["status"]]}</td>'
+                        f'<td>{mins(st["seconds"]) if st["status"] in ("done", "running", "failed") else ""}</td></tr>'
+                        for i, st in enumerate(d["steps"]))
+        out.append(f'<div class="rec"><div class="name">{rec_id}</div><div class="bar"><div style="width:'
+                   f'{(1.0 if done else d["fraction"]) * 100:.1f}%"></div></div><div class="pct">{(1.0 if done else d["fraction"]):.0%}'
+                   f'</div><div class="status">{head}</div><table class="steps">{cells}</table></div>')
+    return "".join(out)
+
+
 def progress_page():
-    """The /progress view: one bar per recording that hud_pipeline.py has worked on; it reloads every 3 seconds."""
+    """The /progress view: one bar per recording that hud_pipeline.py has worked on, and the overlay reading of the
+    dev-menu recordings step by step; it reloads every 3 seconds."""
     def mins(s):
         return f"{s / 60:.0f} 分钟" if s >= 90 else f"{s:.0f} 秒"
     rows = []
@@ -179,7 +203,11 @@ def progress_page():
             f"{step} {frac:.0%} · 已用 {mins(used)}" + (f" · 预计还要 {mins(left)}" if left is not None else "")
         rows.append(f'<div class="rec"><div class="name">{rec_id}</div><div class="bar"><div style="width:{overall * 100:.1f}%">'
                     f'</div></div><div class="pct">{overall:.0%}</div><div class="status">{status}</div></div>')
-    return PROGRESS.replace("__ROWS__", "".join(rows) or "<p>还没有在跑的录像。</p>")
+    body = "<h2>读 HUD、跟踪 Boss、认招式</h2>" + ("".join(rows) or "<p>还没有在跑的录像。</p>")
+    ovl = overlay_rows(mins)
+    if ovl:
+        body += "<h2>读开发者菜单叠加层（动画编号）</h2>" + ovl
+    return PROGRESS.replace("__ROWS__", body)
 
 
 PROGRESS = """<!doctype html>
@@ -196,9 +224,16 @@ h1 { font-size:16px; margin:0 0 12px; }
 .bar div { height:100%; background:var(--ok); }
 .pct { text-align:right; font-variant-numeric:tabular-nums; }
 .status { grid-column:2 / 4; color:var(--muted); font-size:13px; }
+h2 { font-size:15px; margin:18px 0 8px; }
+table.steps { grid-column:1 / 4; border-collapse:collapse; font-size:13px; margin-top:4px; }
+table.steps td { padding:2px 10px 2px 0; font-variant-numeric:tabular-nums; }
+table.steps tr.waiting { color:var(--muted); }
+table.steps tr.running { font-weight:600; }
+table.steps tr.done td:nth-child(3) { color:var(--ok); }
+table.steps tr.failed td:nth-child(3) { color:#b3261e; }
 @media (max-width:600px) { .rec { grid-template-columns:1fr 48px; } .bar { grid-column:1 / 2; } .status { grid-column:1 / 3; } }
 </style></head><body><h1>处理进度（每 3 秒刷新）</h1>__ROWS__
-<p style="color:var(--muted)">步骤：读 HUD → 找失败事件 → 跟踪 Boss → 提取特征 → 认招式 → 缩略图。<a href="/">回到核对页面</a></p>
+<p style="color:var(--muted)">读 HUD 的步骤：读 HUD → 找失败事件 → 跟踪 Boss → 提取特征 → 认招式 → 缩略图。<a href="/">回到核对页面</a></p>
 </body></html>"""
 
 

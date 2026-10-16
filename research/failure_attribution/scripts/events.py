@@ -16,7 +16,8 @@ Events (one row each):
                    screen; HP back without the boss bar is a respawn away from the fight
     resurrection   HP comes back after a death (not a failure; kept so the reviewer sees what happened)
     deathblow      Wolf's deathblow on the boss (not a failure): from one frame to the next, the boss HP, at least
-                   BOSS_LEFT, is cleared to zero and at least BOSS_PALE of it shows as the pale just-lost segment, and
+                   BOSS_LEFT, is cleared to zero and at least BOSS_PALE of it shows as the pale just-lost segment (in that frame or the next two:
+                   the segment can lag one sample, rec 2026-10-16-castle-5 250.4 s), and
                    the HP does not come back for BOSS_HOLD (a cutscene may hide the bar). A screen fading to black also
                    empties the bar, but gradually and without the pale segment (rec 2026-10-09-castle 275.8 s). A deathblow also
                    empties Wolf's posture bar (owner, 2026-10-16: rec 2026-10-09-castle 273.6 s, the end of phase 2),
@@ -175,7 +176,7 @@ def detect(frame, t, hud, hp, bar, po, ln, boss_bar, boss_hp, boss_lost, boss_v,
     for i in range(1, len(t)):
         left = boss_hp[i - 1]
         if not (boss_bar[i - 1] and boss_bar[i] and left >= BOSS_LEFT and boss_hp[i] <= BOSS_ZERO
-                and boss_lost[i] >= BOSS_PALE * left):
+                and boss_lost[i:i + 3].max() >= BOSS_PALE * left):
             continue
         hold = (t > t[i]) & (t <= t[i] + BOSS_HOLD) & boss_bar
         if not (boss_hp[hold] > BOSS_ZERO).any():

@@ -34,7 +34,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 GT = HERE.parent.parent
 out_csv, out_md = sys.argv[1:3]
-RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle") if (p / "occurrences.csv").exists())
+RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle*") if (p / "occurrences.csv").exists())
 
 
 def parse(s):
