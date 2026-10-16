@@ -3,7 +3,7 @@
 Usage: python -I hud_pipeline.py <recording id | all> [--recache]
 
 Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/:
-hud_cache.npz (skipped when present, unless --recache), hud.csv, events.csv, boss_track.csv, boss_crops.npz and
+hud_cache.npz (skipped when present, unless --recache), hud.csv, death_screens.csv, events.csv, boss_track.csv, boss_crops.npz and
 boss_feats_small14.npy (skipped when present, unless --recache), thumbs/<event key>.jpg, and the moves behind the
 failures: for a dev-menu recording the answers read from the overlay (failure_answers.py), for any other the predictions
 (move_match.py predict), which need the dev-menu recordings processed first. A thumbnail shows six moments around the
@@ -19,7 +19,7 @@ import cv2
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import HERE, recordings, video_path, work_dir  # noqa: E402
+from common import HERE, recordings, report, video_path, work_dir  # noqa: E402
 from overlay_mask import mask_overlay  # noqa: E402
 
 OFFSETS = (-1.0, -0.5, -0.15, 0.15, 0.5, 1.0)
@@ -37,7 +37,8 @@ def thumbnails(video, work):
     out = work / "thumbs"
     out.mkdir(exist_ok=True)
     cap = cv2.VideoCapture(str(video))
-    for e in events:
+    for k, e in enumerate(events):
+        report(work, "thumbs", k / max(1, len(events)))
         cells = []
         for off in OFFSETS:
             t = float(e["time_s"]) + off
@@ -63,16 +64,23 @@ def main():
         rec, work = recs[rec_id], work_dir(rec_id)
         video = video_path(rec)
         print(f"== {rec_id}: {video.name}")
+        report(work, "hud_cache", start=True)
         if "--recache" in sys.argv or not (work / "hud_cache.npz").exists():
             run("hud_read.py", "cache", video, work / "hud_cache.npz")
+        report(work, "events")
         run("hud_read.py", "series", work / "hud_cache.npz", work / "hud.csv")
+        run("death_screen.py", rec_id)
         run("events.py", work / "hud.csv", work / "events.csv")
+        report(work, "boss_track")
         if "--recache" in sys.argv or not (work / "boss_crops.npz").exists():
             run("boss_track.py", rec_id)
+        report(work, "features")
         if "--recache" in sys.argv or not (work / "boss_feats_small14.npy").exists():
             run("boss_features.py", rec_id)
+        report(work, "moves")
         run("failure_answers.py" if rec.get("overlay") else "move_match.py", *([rec_id] if rec.get("overlay") else ["predict", rec_id]))
         thumbnails(video, work)
+        report(work, "done", 1.0)
 
 
 if __name__ == "__main__":

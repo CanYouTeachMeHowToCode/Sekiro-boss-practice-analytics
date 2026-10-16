@@ -21,7 +21,7 @@ import cv2
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import recordings, video_path, work_dir  # noqa: E402
+from common import recordings, report, video_path, work_dir  # noqa: E402
 from lockon import Tracker  # noqa: E402
 from overlay_mask import BASE_H, BASE_W, mask_overlay  # noqa: E402
 
@@ -41,7 +41,8 @@ def crop(frame, x, y):
 def track(rec_id, rec, step):
     video = video_path(rec)
     cap = cv2.VideoCapture(str(video))
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps, total = cap.get(cv2.CAP_PROP_FPS), max(1, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+    work = work_dir(rec_id)
     tracker, rows, blobs = Tracker(), [], []
     last, last_t, n, start = None, -1e9, 0, time.time()
     while cap.grab():
@@ -61,7 +62,8 @@ def track(rec_id, rec, step):
             rows.append([n, f"{t:.3f}", state, int(x), int(y), f"{ncc:.3f}"])
             blobs.append(cv2.imencode(".jpg", crop(frame, x, y), [cv2.IMWRITE_JPEG_QUALITY, 90])[1].tobytes())
         n += 1
-    work = work_dir(rec_id)
+        if n % 600 == 0:
+            report(work, "boss_track", n / total)
     with open(work / "boss_track.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh, lineterminator="\r\n")
         w.writerow(["frame", "time_s", "state", "x", "y", "ncc"])

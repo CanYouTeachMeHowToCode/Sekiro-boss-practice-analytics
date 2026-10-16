@@ -35,7 +35,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import GT, annotation_dir, recordings, video_path, work_dir  # noqa: E402
+from common import GT, annotation_dir, progress, recordings, video_path, work_dir  # noqa: E402
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
@@ -118,11 +118,14 @@ def page_data():
         failures = read_csv(work_dir(rec_id) / ("failure_answers.csv" if source == "overlay" else "failure_predictions.csv"))
         done = {r["key"]: r for r in read_csv(moves_file(rec))}
         for f in failures:
-            r = done.get(f["key"])
+            # a review follows its failure by the event it was keyed on, so a failure that later gains an earlier
+            # event (a hit the detector missed before) keeps its review
+            r = done.get(f["key"]) or next((done[k] for k in f["events"].split() if k in done), None)
             f["source"] = source
             f["verdict"], f["correct_move"], f["review_note"] = (r["verdict"], r["correct_move"], r["note"]) if r else ("", "", "")
             f["merge_prev"] = bool(r and r.get("merge_prev"))
             f["stale"] = bool(r and r["verdict"] and r["proposed"] != f["move"])
+            f["review_key"] = r["key"] if r else f["key"]
         out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
                     "missed": missed, "failures": failures})
     return {"recs": out, "moves": product_moves()}
@@ -160,6 +163,43 @@ def save_move(rec_id, body):
                      "updated": datetime.now().isoformat(timespec="seconds")})
     write_csv(moves_file(rec), MOVE_FIELDS, rows)
     return key
+
+
+def progress_page():
+    """The /progress view: one bar per recording that hud_pipeline.py has worked on; it reloads every 3 seconds."""
+    def mins(s):
+        return f"{s / 60:.0f} 分钟" if s >= 90 else f"{s:.0f} 秒"
+    rows = []
+    for rec_id in recordings():
+        p = progress(work_dir(rec_id))
+        if p is None:
+            continue
+        overall, step, frac, used, left, done = p
+        status = f"完成，用了 {mins(used)}" if done else \
+            f"{step} {frac:.0%} · 已用 {mins(used)}" + (f" · 预计还要 {mins(left)}" if left is not None else "")
+        rows.append(f'<div class="rec"><div class="name">{rec_id}</div><div class="bar"><div style="width:{overall * 100:.1f}%">'
+                    f'</div></div><div class="pct">{overall:.0%}</div><div class="status">{status}</div></div>')
+    return PROGRESS.replace("__ROWS__", "".join(rows) or "<p>还没有在跑的录像。</p>")
+
+
+PROGRESS = """<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="refresh" content="3">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>处理进度</title>
+<style>
+:root { --bg:#fbfbfa; --panel:#fff; --fg:#1f1f1e; --muted:#6b6b66; --line:#e3e2de; --ok:#1f7a4d; }
+@media (prefers-color-scheme: dark) { :root { --bg:#1e1e1e; --panel:#252526; --fg:#e6e6e3; --muted:#a3a39e; --line:#3a3a3a; --ok:#5cc58f; } }
+body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:14px/1.5 system-ui, "Microsoft YaHei", sans-serif; }
+h1 { font-size:16px; margin:0 0 12px; }
+.rec { display:grid; grid-template-columns:170px minmax(0,1fr) 48px; gap:4px 12px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:10px; max-width:900px; }
+.name { font-variant-numeric:tabular-nums; }
+.bar { height:12px; background:var(--line); border-radius:999px; overflow:hidden; }
+.bar div { height:100%; background:var(--ok); }
+.pct { text-align:right; font-variant-numeric:tabular-nums; }
+.status { grid-column:2 / 4; color:var(--muted); font-size:13px; }
+@media (max-width:600px) { .rec { grid-template-columns:1fr 48px; } .bar { grid-column:1 / 2; } .status { grid-column:1 / 3; } }
+</style></head><body><h1>处理进度（每 3 秒刷新）</h1>__ROWS__
+<p style="color:var(--muted)">步骤：读 HUD → 找失败事件 → 跟踪 Boss → 提取特征 → 认招式 → 缩略图。<a href="/">回到核对页面</a></p>
+</body></html>"""
 
 
 PAGE = r"""<!doctype html>
@@ -349,7 +389,7 @@ function fcard(r, f) {
   const paint = () => [...cands.querySelectorAll('button')].forEach((b) => b.classList.toggle('on', b.dataset.slug === chosen()));
   const set = async (v) => {
     f.verdict = v; if (v !== 'wrong') { sel.value = ''; } f.correct_move = sel.value; f.merge_prev = mbox.checked; note.textContent = '保存中…';
-    try { await post({ rec: r.id, key: f.key, time_s: f.time_s, proposed: f.move, verdict: v, correct_move: sel.value, merge_prev: mbox.checked, note: ta.value }, '/api/move'); note.textContent = '已保存'; f.stale = false; }
+    try { await post({ rec: r.id, key: f.review_key, time_s: f.time_s, proposed: f.move, verdict: v, correct_move: sel.value, merge_prev: mbox.checked, note: ta.value }, '/api/move'); note.textContent = '已保存'; f.stale = false; }
     catch (err) { note.textContent = '保存失败：' + err.message; }
     sel.hidden = v !== 'wrong';
     c.className = 'card ' + (v || ''); [...acts.querySelectorAll('button[data-v]')].forEach((b) => b.classList.toggle('on', b.dataset.v === v)); paint(); counts();
@@ -451,6 +491,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         try:
+            if path == "/progress":
+                return self._send(200, progress_page(), "text/html; charset=utf-8")
             if path in ("/", "/index.html"):
                 payload = json.dumps(page_data(), ensure_ascii=False).replace("</", "<\\/")
                 return self._send(200, PAGE.replace("__DATA__", payload), "text/html; charset=utf-8")

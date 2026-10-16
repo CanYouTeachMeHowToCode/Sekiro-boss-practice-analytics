@@ -16,7 +16,12 @@ Geometry, measured at 2560×1440 and scaled to other resolutions:
                  dev-menu recordings the overlay's "[Active Anime]" header (left visible on purpose) crosses the lower
                  rows.
 Colours (OpenCV HSV, H 0–179):
-    HP           red: H <= 12 or >= 168, S >= 70, V >= 80; just lost (pale): S <= 45, V >= 120; empty track: V <= 70
+    HP           red: H <= 12 or >= 168, S >= 70, V >= 80; just lost (pale): S <= 45, V >= 120; empty track: V <= 70.
+                 The HUD is on screen when the bar's right end cap (the strip's last two columns: light grey, S <= 30,
+                 V >= 120, at least 40 brighter than the track just left of it) shows, or when every column reads as
+                 red, pale or dark track on a screen that is not black. The empty track is see-through, so with little
+                 HP and the red low-HP vignette it can read V 71–96; the cap does not change (rec 2026-10-16-castle-1
+                 40–44 s). A fade to black, a cutscene and the pause menu have no cap.
     boss HP      red: H <= 12 or >= 168, S >= 70, V >= 70; just lost (pale): S <= 45, V >= 90; empty track: V <= 70.
                  Wolf's deathblow takes all the remaining HP at once: the red goes pale, then drains.
     posture      the posture is the bright part growing from the centre: V >= 140, S >= 120, warm hue (H <= 35 or
@@ -32,7 +37,8 @@ Colours (OpenCV HSV, H 0–179):
                  snow.
 The output columns: frame, time_s, hud (HP bar on screen), hp, hp_lost (0..1 of the bar), posture_bar (posture bar on
 screen), posture (0..1 of PO_HALF), break_line (share of line-coloured columns on the weaker side, 0..1), boss_bar
-(boss HP bar on screen), boss_hp, boss_lost (0..1 of the bar).
+(boss HP bar on screen), boss_hp, boss_lost (0..1 of the bar), boss_v (median brightness of the boss bar strip, which
+does not change when Wolf is hit but falls to 0 when the screen fades to black).
 """
 import csv
 import sys
@@ -42,6 +48,7 @@ import cv2
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from common import report  # noqa: E402
 from overlay_mask import BASE_H, BASE_W, mask_overlay  # noqa: E402
 
 HP_ROWS, HP_X0, HP_X1 = (1304, 1314), 148, 980
@@ -64,7 +71,7 @@ def columns(frame, rows, x0, x1):
 
 def cache(video, out, step):
     cap = cv2.VideoCapture(video)
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps, total = cap.get(cv2.CAP_PROP_FPS), max(1, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
     frames, hp, po, line, boss = [], [], [], [], []
     n = 0
     while cap.grab():
@@ -79,6 +86,8 @@ def cache(video, out, step):
                                    for a, b in sides]))
             boss.append(columns(frame, BOSS_ROWS, BOSS_X0, BOSS_X1))
         n += 1
+        if n % 600 == 0:
+            report(Path(out).parent, "hud_cache", n / total)
     np.savez_compressed(out, frame=np.array(frames), fps=fps, hp=np.stack(hp), posture=np.stack(po), line=np.stack(line),
                         boss=np.stack(boss))
     print(f"{n} frames, {len(frames)} cached from {video}")
@@ -105,7 +114,8 @@ def read_hp(cols):
     n = red.size
     hp = run_from(red, 0)
     lost = run_from(pale, hp) if hp < n else 0
-    hud = (red | pale | dark).mean() >= 0.9
+    cap = (s[-2:] <= 30).all() and (v[-2:] >= 120).all() and v[-2:].mean() - v[-8:-3].mean() >= 40
+    hud = bool(cap) or ((red | pale | dark).mean() >= 0.9 and v.mean() > 25)
     return hud, hp / n, lost / n
 
 
@@ -145,7 +155,7 @@ def series(cache_file, out):
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["frame", "time_s", "hud", "hp", "hp_lost", "posture_bar", "posture", "break_line", "boss_bar", "boss_hp",
-                    "boss_lost"])
+                    "boss_lost", "boss_v"])
         for n, hp_cols, po_cols, line_cols, boss_cols in zip(d["frame"], d["hp"], d["posture"], d["line"], d["boss"]):
             hud, hp, lost = read_hp(hp_cols)
             bar, posture = read_posture(po_cols) if hud else (False, 0.0)
@@ -153,7 +163,7 @@ def series(cache_file, out):
             boss_bar, boss_hp, boss_lost = read_boss(boss_cols)
             w.writerow([int(n), f"{n / fps:.3f}", int(hud), f"{hp:.4f}", f"{lost:.4f}", int(bar), f"{posture:.4f}",
                         f"{line:.3f}", int(boss_bar), f"{boss_hp:.4f}" if boss_bar else "0.0000",
-                        f"{boss_lost:.4f}" if boss_bar else "0.0000"])
+                        f"{boss_lost:.4f}" if boss_bar else "0.0000", f"{np.median(boss_cols[:, 2]):.1f}"])
     print(f"wrote {out}")
 
 
