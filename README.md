@@ -203,6 +203,20 @@ While expanding boss coverage, community wiki movesets turned out to be incomple
 
 ---
 
+## V3.1 — Combat Ground Truth
+
+### V3.1 — Completed
+
+V3.1 checked castle Genichiro's moves against the game itself, then rebuilt the product's moveset from that evidence. It was first planned as V4.
+
+* ✅ **Research pipeline:** scripts that read the game files and the boss's battle AI, and a reader for the developer-menu overlay that turns gameplay recordings into verified animation IDs ([`research/ground_truth/`](research/ground_truth/README.md)). No game files or recordings are committed.
+* ✅ **Move catalog:** every attack chain castle Genichiro's AI can use in all three phases, 63 moves in all, with their triggers, phases and evidence, each entry approved by the project owner.
+* ✅ **Completeness review:** all 353 animation entries of the two Genichiro models are classified, and every move transition in two recorded fights is explained by the AI.
+* ✅ **Rebuilt moveset:** Genichiro now has 26 moves, five of them listed by neither wiki, with Iaijutsu merged into Receding Tide and descriptions corrected where the game contradicted the wiki. New moves have no description yet.
+* ✅ **Every attempt has an owner:** claim attempts recorded before accounts existed before upgrading (see "Running Locally").
+
+---
+
 ## Future Direction
 
 The full plan is in [ROADMAP.md](ROADMAP.md). In short:

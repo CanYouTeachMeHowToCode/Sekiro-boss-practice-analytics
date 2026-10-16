@@ -321,7 +321,7 @@ It does not claim the move taxonomy is complete.
 
 ---
 
-# V3.1 — Combat Ground Truth Foundation
+# V3.1 — Combat Ground Truth Foundation ✅
 
 **Numbering.** This stage was first planned as V4. It mainly adds a research foundation and a Genichiro content update to the V3 product, so it is V3.1 and ships as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 

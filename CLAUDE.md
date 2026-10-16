@@ -127,25 +127,44 @@ v3.0.0
 
 ---
 
+## V3.1 — Completed
+
+V3.1 established combat ground truth for castle Genichiro (vanilla, all three phases) and rebuilt the product's Genichiro moveset from it. It was first planned as V4 (see the numbering note in section 3).
+
+Delivered:
+
+- a research workspace and pipeline in `research/ground_truth/`: game-file and battle-AI extraction, and a reader for the dev-menu overlay that turns recordings into verified animation IDs
+- two verified castle recordings, and a check that every recorded transition is explained by the AI chains
+- the castle Genichiro move catalog (63 moves from 45 AI chains), every entry approved by the project owner
+- a completeness review of all 353 TAE entries of c7100 and c7110
+- the product's Genichiro moveset rebuilt from the catalog: 26 moves, Iaijutsu merged into Receding Tide, texts reviewed against the engine evidence
+- `attempts.user_id` NOT NULL
+
+Released as:
+
+```text
+v3.1.0
+```
+
+---
+
 # 3. Current Development Focus
 
-## V3.1 — Combat Ground Truth Foundation
+## V4 — Automated Gameplay Analysis
 
-**Numbering.** This stage was first planned as V4. It mainly adds a research foundation and a Genichiro content update to the V3 product, so it is V3.1 and ships as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
+V4 answers:
 
-V3.1 answers:
+> **What happened during the fight without requiring the player to manually enter everything?**
 
-> **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
+Start with V4 Milestone 1: the failure attribution prototype on local Genichiro recordings (section 38). The V3.1 research in `research/ground_truth/` is its input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
 
-V3.1 Milestones 1–6 are done for castle Genichiro: the runtime bridge is proven, the project owner approved the move catalog and the completeness review, and the product's Genichiro moveset was rebuilt from them (section 32). What remains for `v3.1.0` is the release; further recording only fills gaps in the catalog. The step-by-step plan is `research/ground_truth/genichiro-plan.md`. `v3.1.0` covers castle Genichiro, all three phases. See sections 18–36.
+**Numbering.** The combat ground-truth stage was first planned as V4. It mainly added a research foundation and a Genichiro content update to the V3 product, so it became V3.1 and shipped as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 
-V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
+V3 and V3.1 are released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply. Sections 18–36 remain the reference for the ground-truth pipeline, which every later boss goes through (section 34).
 
-Public deployment is part of V4: it waits until a user can upload a recording and see which moves caused their failures (section 33).
+Public deployment is V4 Milestone 4: it waits until a user can upload a recording and see which moves caused their failures (section 33).
 
-V3.1 covers vanilla Sekiro only. All Resurrection mod work is deferred until after `v3.1.0` (section 35).
-
-Boss expansion is deferred until the Genichiro end-to-end flow works in V4 (section 34): the first goal is a user uploading a Genichiro recording and getting the moves behind their failures.
+Resurrection mod work is deferred (section 35). Boss expansion is deferred until the Genichiro end-to-end flow works in V4 (section 34).
 
 Practice recommendations are part of V4.
 
@@ -1624,24 +1643,18 @@ Examples currently not justified by default:
 
 # 53. Current Priority Order
 
-V3 is released. V3.1 order:
+V3 and V3.1 are released. V4 order (section 38):
 
 ```text
-1. Research foundation (V3.1 Milestone 1) — done
-2. Genichiro runtime pilot (V3.1 Milestone 2) — bridge proven; further recording only fills catalog gaps
-3. Genichiro semantic catalog (V3.1 Milestone 4), with static engine mapping (V3.1 Milestone 3) as needed — done
-4. Completeness review (V3.1 Milestone 5) — done
+1. Failure attribution prototype on local recordings (V4 Milestone 1) — current
+2. Reliability validation on independent recordings (V4 Milestone 2)
+3. Video upload and failure report (V4 Milestone 3)
+4. Public deployment (V4 Milestone 4)
 ```
 
-Then, to complete `v3.1.0`:
+The later V4 milestones (whole-fight move detection, player responses, per-move analytics, recommendations) follow. Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Resurrection is deferred (section 35).
 
-```text
-5. Product integration (V3.1 Milestone 6) — done; release `v3.1.0` next
-```
-
-Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Public deployment comes in V4, after the upload → failure report flow works (section 33). Resurrection is deferred until after `v3.1.0` (section 35).
-
-Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V3.1 Milestone 6.
+Keep the released product working: fix product bugs on `dev` as they appear.
 
 ---
 
