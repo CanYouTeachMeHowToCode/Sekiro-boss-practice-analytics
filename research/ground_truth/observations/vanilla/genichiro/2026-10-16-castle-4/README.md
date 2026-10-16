@@ -10,7 +10,8 @@
 - The recording itself stays local. `recording.json` holds its SHA-256 and format.
 
 **Status: automatic reads, not every read checked by eye.** The two V3.1 recordings were checked read by read; this one
-was not. What was checked is listed under Verification. The phases are proposed from the HUD and await the owner.
+was not. What was checked is listed under Verification. The phases were proposed from the HUD; the owner approved them on 2026-10-16, with the recording's
+failure events and moves (`research/ground_truth/annotations/vanilla/genichiro/2026-10-16-castle-4/`).
 
 ## Files
 
@@ -18,7 +19,7 @@ Same format as `../2026-10-09-castle/`, whose README describes the overlay and t
 
 | File | Content |
 |---|---|
-| `recording.json` | Video hash and format, the character ID on screen, the proposed phases, the verification level. |
+| `recording.json` | Video hash and format, the character ID on screen, the phases, the verification level. |
 | `frames.csv` | One row per video frame: the character ID and the five "Active Anime" lines as `ID@time`. |
 | `occurrences.csv` | 642 occurrences, with phase, frames, lines and animation times. |
 | `ids.csv` | One row per animation ID seen (75). |
