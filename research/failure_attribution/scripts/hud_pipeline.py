@@ -3,7 +3,8 @@
 Usage: python -I hud_pipeline.py <recording id | all> [--recache]
 
 Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/:
-hud_cache.npz (skipped when present, unless --recache), hud.csv, events.csv and thumbs/<event key>.jpg. A thumbnail
+hud_cache.npz (skipped when present, unless --recache), hud.csv, events.csv and thumbs/<event key>.jpg, and for a
+dev-menu recording the move answers (failure_answers.py), which follow the events. A thumbnail
 shows six moments around the event (-1.0 to +1.0 s), each with the HP and posture read at that moment; frames go
 through mask_overlay() like everywhere else.
 """
@@ -64,6 +65,8 @@ def main():
             run("hud_read.py", "cache", video, work / "hud_cache.npz")
         run("hud_read.py", "series", work / "hud_cache.npz", work / "hud.csv")
         run("events.py", work / "hud.csv", work / "events.csv")
+        if rec.get("overlay"):
+            run("failure_answers.py", rec_id)
         thumbnails(video, work)
 
 

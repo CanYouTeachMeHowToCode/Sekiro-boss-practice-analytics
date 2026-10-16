@@ -13,6 +13,13 @@ review by its key (type@time to 0.1 s), or failing that by type and a time withi
 whose time moves with the detector rule), so reruns of the detector keep the reviews. An event the owner added as
 missed that a later detector finds shows as confirmed, and editing it rewrites that row. The video is served with
 HTTP range requests so the browser can seek.
+
+The 招式 view lists, for the dev-menu recordings, the failures and the move behind each one as failure_answers.py
+proposes them from the overlay. The owner marks each answer correct / wrong / unsure, picks the right product move when
+it is wrong, and can add a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the failure's first
+event), time_s, proposed (the move slug that was shown), verdict, correct_move, note, updated. A review whose proposed
+move no longer matches the current proposal is shown as needing another look. The side panel counts the failures per
+move, using the owner's correction where there is one.
 """
 import csv
 import io
@@ -26,32 +33,50 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import annotation_dir, recordings, video_path, work_dir  # noqa: E402
+from common import GT, annotation_dir, recordings, video_path, work_dir  # noqa: E402
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
 TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
+MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "note", "updated"]
+MOVE_VERDICTS = {"correct", "wrong", "unsure", ""}
+OTHER_MOVE = "other"
+
+
+def product_moves():
+    rows = csv.DictReader(open(GT / "semantic/genichiro_product_moveset.csv", encoding="utf-8"))
+    return [{"slug": r["slug"], "zh": r["name_zh"], "en": r["name_en"], "phases": r["phases"].split("、")} for r in rows]
 
 
 def review_file(rec):
     return annotation_dir(rec) / "hud_events.csv"
 
 
-def read_reviews(rec):
-    path = review_file(rec)
+def moves_file(rec):
+    return annotation_dir(rec) / "failure_moves.csv"
+
+
+def read_csv(path):
     return list(csv.DictReader(open(path, encoding="utf-8"))) if path.exists() else []
 
 
-def write_reviews(rec, rows):
+def write_csv(path, fields, rows):
     rows.sort(key=lambda r: float(r["time_s"]))
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=FIELDS, lineterminator="\r\n")
+    w = csv.DictWriter(buf, fieldnames=fields, lineterminator="\r\n")
     w.writeheader()
     w.writerows(rows)
-    path = review_file(rec)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(buf.getvalue(), encoding="utf-8", newline="")
     os.replace(tmp, path)
+
+
+def read_reviews(rec):
+    return read_csv(review_file(rec))
+
+
+def write_reviews(rec, rows):
+    write_csv(review_file(rec), FIELDS, rows)
 
 
 TOLERANCE = {"posture_break": 1.0}     # seconds; 0.3 for the other types
@@ -87,9 +112,15 @@ def page_data():
                     e["verdict"], e["review_note"] = "correct", f"你补充过的漏检（{float(m['time_s']):.2f} 秒），现在已检测到"
                     e["review_key"] = m["key"]     # an edit replaces the missed row instead of adding a second one
         missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
+        failures = read_csv(work_dir(rec_id) / "failure_answers.csv")
+        done = {r["key"]: r for r in read_csv(moves_file(rec))}
+        for f in failures:
+            r = done.get(f["key"])
+            f["verdict"], f["correct_move"], f["review_note"] = (r["verdict"], r["correct_move"], r["note"]) if r else ("", "", "")
+            f["stale"] = bool(r and r["verdict"] and r["proposed"] != f["move"])
         out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
-                    "missed": missed})
-    return out
+                    "missed": missed, "failures": failures})
+    return {"recs": out, "moves": product_moves()}
 
 
 def save(rec_id, body):
@@ -105,6 +136,23 @@ def save(rec_id, body):
         rows.append({"key": key, "type": kind, "time_s": time_s, "verdict": verdict, "note": note,
                      "updated": datetime.now().isoformat(timespec="seconds")})
     write_reviews(rec, rows)
+    return key
+
+
+def save_move(rec_id, body):
+    rec = recordings()[rec_id]
+    verdict, correct = body.get("verdict", ""), body.get("correct_move", "")
+    if verdict not in MOVE_VERDICTS:
+        raise ValueError("bad verdict")
+    if correct and correct not in {m["slug"] for m in product_moves()} | {OTHER_MOVE}:
+        raise ValueError("unknown move")
+    key, note = body["key"], " ".join(str(body.get("note", "")).split())
+    rows = [r for r in read_csv(moves_file(rec)) if r["key"] != key]
+    if verdict or note or correct:
+        rows.append({"key": key, "time_s": f"{float(body['time_s']):.3f}", "proposed": body.get("proposed", ""),
+                     "verdict": verdict, "correct_move": correct, "note": note,
+                     "updated": datetime.now().isoformat(timespec="seconds")})
+    write_csv(moves_file(rec), MOVE_FIELDS, rows)
     return key
 
 
@@ -144,16 +192,24 @@ h1 { font-size:16px; margin:0; }
 .saved { font-size:12px; color:var(--muted); }
 .hint { color:var(--muted); font-size:13px; margin:0 0 10px; }
 .missed li { margin:4px 0; }
+.answer { margin:2px 0 6px; } .answer strong { font-size:15px; }
+ul.hits { margin:4px 0 8px; padding-left:18px; font-size:13px; }
+.warnline { color:var(--warn); font-size:13px; margin:2px 0; }
+.actions select { font:inherit; border:1px solid var(--line); border-radius:6px; padding:4px 6px; background:var(--bg); color:var(--fg); max-width:100%; }
+.summary { margin-top:10px; font-size:13px; } .summary table { border-collapse:collapse; width:100%; }
+.summary th, .summary td { text-align:left; padding:3px 6px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+.summary td.n, .summary th.n { text-align:right; }
 </style></head><body>
 <header>
   <h1>失败事件核对</h1>
+  <div class="tabs" id="modes"></div>
   <div class="tabs" id="tabs"></div>
   <div class="filters" id="filters"></div>
   <div class="counts" id="counts"></div>
 </header>
 <div class="layout">
   <main>
-    <p class="hint">每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。</p>
+    <p class="hint" id="hint"></p>
     <div id="list"></div>
   </main>
   <aside class="player">
@@ -168,33 +224,49 @@ h1 { font-size:16px; margin:0; }
       <span></span><button type="submit">添加</button>
     </form>
     <ul class="missed" id="missed"></ul>
+    <div class="summary" id="summary"></div>
   </aside>
 </div>
 <script id="data" type="application/json">__DATA__</script>
 <script>
-const recs = JSON.parse(document.getElementById('data').textContent);
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const recs = DATA.recs, MOVES = DATA.moves;
+const MOVE = Object.fromEntries(MOVES.map((m) => [m.slug, m]));
 const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）' };
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
-let cur = 0, filter = '全部';
+const HINT = {
+  events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
+  moves: '每次失败：答案是开发者菜单上被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并。看对不对，标 ✅ / ❌ / ？；不对时在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
+};
+let cur = 0, filter = '全部', mode = 'events';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
 const fmt = (s) => { s = Number(s); const m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; };
 const video = document.getElementById('video');
 video.addEventListener('timeupdate', () => { document.getElementById('now').textContent = `录像当前时间 ${fmt(video.currentTime)}（${video.currentTime.toFixed(2)} 秒）`; });
 
-async function post(body) {
-  const res = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+async function post(body, url = '/api/review') {
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const j = await res.json();
   if (!j.ok) throw new Error(j.error);
   return j.key;
 }
 function counts() {
   const r = recs[cur], c = { '': 0, correct: 0, wrong: 0, unsure: 0 };
-  r.events.forEach((e) => { c[e.verdict] = (c[e.verdict] || 0) + 1; });
-  document.getElementById('counts').replaceChildren(el('span', '', `待核对 ${c['']}`), el('span', '', `✅ ${c.correct}`), el('span', '', `❌ ${c.wrong}`), el('span', '', `？ ${c.unsure}`), el('span', '', `补充 ${r.missed.length}`));
+  const items = mode === 'moves' ? r.failures : r.events;
+  items.forEach((e) => { c[e.verdict] = (c[e.verdict] || 0) + 1; });
+  const parts = [el('span', '', `待核对 ${c['']}`), el('span', '', `✅ ${c.correct}`), el('span', '', `❌ ${c.wrong}`), el('span', '', `？ ${c.unsure}`)];
+  if (mode === 'events') parts.push(el('span', '', `补充 ${r.missed.length}`));
+  document.getElementById('counts').replaceChildren(...parts);
+  if (mode === 'moves') summary();
 }
 function tabs() {
-  document.getElementById('tabs').replaceChildren(...recs.map((r, i) => { const b = el('button', '', r.id); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
-  const f = ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
+  document.getElementById('modes').replaceChildren(...[['events', '事件'], ['moves', '招式']].map(([m, label]) => {
+    const b = el('button', '', label); b.setAttribute('aria-pressed', String(m === mode));
+    b.onclick = () => { mode = m; filter = '全部'; render(false); }; return b;
+  }));
+  const shownRecs = recs.map((r, i) => [r, i]).filter(([r]) => mode === 'events' || r.failures.length);
+  document.getElementById('tabs').replaceChildren(...shownRecs.map(([r, i]) => { const b = el('button', '', r.id); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
+  const f = mode === 'moves' ? ['全部', '待核对', '扣血', '被打崩', '死亡', '有提示'] : ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
   document.getElementById('filters').replaceChildren(...f.map((x) => { const b = el('button', '', x); b.setAttribute('aria-pressed', String(x === filter)); b.onclick = () => { filter = x; render(false); }; return b; }));
 }
 function card(r, e) {
@@ -229,6 +301,68 @@ function card(r, e) {
   c.append(acts);
   return c;
 }
+function fcard(r, f) {
+  const c = el('div', 'card ' + (f.verdict || ''));
+  const head = el('div', 'head');
+  head.append(el('span', 'type', TYPE[f.type] || f.type), el('span', 'time', fmt(f.time_s)), el('span', 'meta', `第 ${f.phase} 阶段`));
+  const play = el('button', '', '▶ 播放'); play.type = 'button';
+  play.onclick = () => { video.currentTime = Math.max(0, Number(f.time_s) - 3); video.play(); };
+  head.append(play);
+  c.append(head);
+  const ans = el('div', 'answer');
+  ans.append(el('strong', '', f.move_zh || '（没有答案）'), el('span', 'meta', f.move_en ? `  ${f.move_en}` : ''));
+  c.append(ans, el('div', 'meta', `目录条目 ${f.entries || '—'}；这一次出招 ${f.chain || '—'}`));
+  const ul = el('ul', 'hits');
+  f.hits.split(' ｜ ').filter(Boolean).forEach((h) => ul.append(el('li', '', h)));
+  c.append(ul);
+  if (f.flags) c.append(el('div', 'warnline', '⚠ ' + f.flags));
+  if (f.stale) c.append(el('div', 'warnline', '⚠ 你核对之后答案变了，请再看一次'));
+  const img = el('img'); img.loading = 'lazy'; img.src = `/thumb/${encodeURIComponent(r.id)}/${encodeURIComponent(f.key)}.jpg`;
+  img.onclick = () => img.classList.toggle('big');
+  c.append(img);
+  const acts = el('div', 'actions'), note = el('div', 'saved');
+  const sel = el('select');
+  const phaseMoves = MOVES.filter((m) => m.phases.includes(String(f.phase))), others = MOVES.filter((m) => !m.phases.includes(String(f.phase)));
+  sel.append(new Option('选正确的招式…', ''));
+  phaseMoves.forEach((m) => sel.append(new Option(m.zh, m.slug)));
+  others.forEach((m) => sel.append(new Option(`${m.zh}（不在第 ${f.phase} 阶段）`, m.slug)));
+  sel.append(new Option('不是这些招式里的（写在备注里）', 'other'));
+  sel.value = f.correct_move || '';
+  sel.hidden = f.verdict !== 'wrong';
+  const ta = el('textarea'); ta.placeholder = '备注（可选）'; ta.value = f.review_note || '';
+  const set = async (v) => {
+    f.verdict = v; if (v !== 'wrong') { sel.value = ''; } f.correct_move = sel.value; note.textContent = '保存中…';
+    try { await post({ rec: r.id, key: f.key, time_s: f.time_s, proposed: f.move, verdict: v, correct_move: sel.value, note: ta.value }, '/api/move'); note.textContent = '已保存'; f.stale = false; }
+    catch (err) { note.textContent = '保存失败：' + err.message; }
+    sel.hidden = v !== 'wrong';
+    c.className = 'card ' + (v || ''); [...acts.querySelectorAll('button[data-v]')].forEach((b) => b.classList.toggle('on', b.dataset.v === v)); counts();
+  };
+  for (const [v, label] of Object.entries(VERDICT)) {
+    const b = el('button', v + (f.verdict === v ? ' on' : ''), label); b.type = 'button'; b.dataset.v = v; b.onclick = () => set(v); acts.append(b);
+  }
+  const reset = el('button', '', '↺'); reset.type = 'button'; reset.title = '恢复成待核对'; reset.onclick = () => { ta.value = ''; set(''); };
+  sel.onchange = () => set('wrong');
+  acts.append(reset, sel, ta, note);
+  let timer = null;
+  ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => set(f.verdict), 1000); };
+  c.append(acts);
+  return c;
+}
+function summary() {
+  const r = recs[cur], by = {};
+  for (const f of r.failures) {
+    const slug = f.verdict === 'wrong' && f.correct_move ? f.correct_move : f.move;
+    const name = slug === 'other' ? '其他' : (MOVE[slug] ? MOVE[slug].zh : (f.move_zh || '（没有答案）'));
+    const row = by[name] || (by[name] = { damage: 0, posture_break: 0, death: 0, all: 0 });
+    row[f.type] += 1; row.all += 1;
+  }
+  const rows = Object.entries(by).sort((a, b) => b[1].all - a[1].all);
+  const t = el('table'), head = el('tr');
+  ['招式', '扣血', '被打崩', '死亡', '合计'].forEach((h, i) => head.append(el('th', i ? 'n' : '', h)));
+  t.append(head);
+  rows.forEach(([name, n]) => { const tr = el('tr'); tr.append(el('td', '', name), el('td', 'n', n.damage), el('td', 'n', n.posture_break), el('td', 'n', n.death), el('td', 'n', n.all)); t.append(tr); });
+  document.getElementById('summary').replaceChildren(el('div', 'type', `按招式汇总（${r.failures.length} 次失败，核对过的按你的修改算）`), t);
+}
 function missed() {
   const r = recs[cur];
   document.getElementById('missed').replaceChildren(...r.missed.map((m) => {
@@ -249,13 +383,23 @@ document.getElementById('addform').onsubmit = async (ev) => {
   document.getElementById('addnote').value = ''; missed(); counts();
 };
 function render(newRec) {
+  if (mode === 'moves' && !recs[cur].failures.length) {
+    const i = recs.findIndex((r) => r.failures.length);
+    if (i >= 0 && i !== cur) { cur = i; newRec = true; }
+  }
   tabs(); counts();
   const r = recs[cur];
   if (newRec) { video.src = `/video/${encodeURIComponent(r.id)}`; }
-  const keep = { '全部': () => true, '待核对': (e) => !e.verdict, '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow' }[filter];
-  const shown = r.events.filter(keep);
-  document.getElementById('list').replaceChildren(...(shown.length ? shown.map((e) => card(r, e)) : [el('p', 'hint', '没有符合这个筛选的事件。')]));
-  missed();
+  document.getElementById('hint').textContent = HINT[mode];
+  document.getElementById('addform').hidden = mode === 'moves';
+  document.getElementById('missed').hidden = mode === 'moves';
+  document.getElementById('summary').hidden = mode !== 'moves';
+  const keep = { '全部': () => true, '待核对': (e) => !e.verdict, '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow', '有提示': (e) => e.flags || e.stale }[filter];
+  const items = mode === 'moves' ? r.failures : r.events;
+  const shown = items.filter(keep);
+  const make = mode === 'moves' ? (e) => fcard(r, e) : (e) => card(r, e);
+  document.getElementById('list').replaceChildren(...(shown.length ? shown.map(make) : [el('p', 'hint', mode === 'moves' && !items.length ? '这个录像还没有招式答案（只有开发者菜单录像有）。' : '没有符合这个筛选的条目。')]));
+  if (mode === 'events') missed();
 }
 render(true);
 </script></body></html>"""
@@ -324,11 +468,12 @@ class Handler(BaseHTTPRequestHandler):
                 left -= len(chunk)
 
     def do_POST(self):
-        if self.path != "/api/review":
+        handlers = {"/api/review": save, "/api/move": save_move}
+        if self.path not in handlers:
             return self._send(404, "not found", "text/plain")
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))).decode("utf-8"))
-            key = save(body["rec"], body)
+            key = handlers[self.path](body["rec"], body)
             self._send(200, json.dumps({"ok": True, "key": key}), "application/json")
         except Exception as ex:  # noqa: BLE001
             self._send(400, json.dumps({"ok": False, "error": str(ex)}, ensure_ascii=False), "application/json")
