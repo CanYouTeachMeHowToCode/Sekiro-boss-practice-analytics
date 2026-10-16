@@ -3,7 +3,7 @@
   "recordings": [
     {
       "id": "2026-10-09-castle",
-      "file_name": "开发者菜单弦一郎三个阶段招式.mp4",
+      "file_name": "开发者菜单录像/开发者菜单弦一郎三个阶段招式.mp4",
       "sha256": "b7715326820219f300aa9cb63392cc99165b2c8087d8af6a8ecb46c73e560a70",
       "ruleset": "vanilla",
       "game_version": "1.06",
@@ -13,13 +13,40 @@
     },
     {
       "id": "2026-10-13-castle",
-      "file_name": "弦一郎录像2.mp4",
+      "file_name": "开发者菜单录像/弦一郎录像2.mp4",
       "sha256": "9b3b8cfd2a42ff247c5791696ee997b5692e727f79c1ecfa9065bfaf680272e7",
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
       "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle"
+    },
+    {
+      "id": "2026-10-16-castle-1",
+      "file_name": "测试录像/测试录像1.mp4",
+      "sha256": "85cb3be1f7966f25e86bbd10c2777adf7b9bca5afb0165f83792d1af597162a0",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "answer set: fight without the overlay, labelled by the owner"
+    },
+    {
+      "id": "2026-10-16-castle-2",
+      "file_name": "测试录像/测试录像2.mp4",
+      "sha256": "73ea4fadce87a5edbe8f09405f386b1e1f670cdb99e51c6ab295857d0e45de67",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "answer set: fight without the overlay, labelled by the owner"
+    },
+    {
+      "id": "2026-10-16-castle-3",
+      "file_name": "测试录像/测试录像3.mp4",
+      "sha256": "20e99e9834bb4d7e9d00f42eba95d7b4150bfb8a72d638918a36332945e2631c",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "answer set: fight without the overlay, labelled by the owner"
     }
   ]
 }

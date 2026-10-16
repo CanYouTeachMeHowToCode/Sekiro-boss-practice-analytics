@@ -2,9 +2,10 @@
 
 Usage: python -I register.py [file name ...] [--overlay] [--use "text"]
 
-With no file names, every video in recordings_dir (local.config) that recordings.json does not list yet is added.
-Each entry gets an id from the file's date (modification time) and "-castle", with a letter when the date is taken
-(2026-10-17-castle-a, -b, ...), its SHA-256, ruleset vanilla and game version 1.06 (the owner's setup for M1; edit the
+With no file names, every video in recordings_dir (local.config) and its subfolders that recordings.json does not list
+yet is added; file names are relative to recordings_dir ("测试录像/测试录像1.mp4").
+Each entry gets an id from the file's date (modification time), "-castle" and a number (2026-10-16-castle-1, -2, ...),
+its SHA-256, ruleset vanilla and game version 1.06 (the owner's setup for M1; edit the
 entry if a recording differs), overlay false unless --overlay, and a `use` note. The video's size, frame rate and
 length are printed so a recording that is not 2560×1440, 16:9 or 60 fps is noticed before the pipeline runs.
 """
@@ -48,7 +49,7 @@ def main():
         else:
             names.append(args[i])
         i += 1
-    files = [folder / n for n in names] if names else sorted(p for p in folder.iterdir() if p.suffix.lower() in VIDEO)
+    files = [folder / n for n in names] if names else sorted(p for p in folder.rglob("*") if p.suffix.lower() in VIDEO)
     use = use or ("reference: dev-menu fight recorded for V4 M1" if overlay
                   else "answer set: fight without the overlay, labelled by the owner")
     added = 0
@@ -62,9 +63,7 @@ def main():
         w, h, fps, n = (cap.get(p) for p in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS,
                                              cv2.CAP_PROP_FRAME_COUNT))
         day = datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d")
-        rec_id = f"{day}-castle"
-        if rec_id in ids:
-            rec_id = next(f"{day}-castle-{c}" for c in "abcdefghijklmnopqrstuvwxyz" if f"{day}-castle-{c}" not in ids)
+        rec_id = next(f"{day}-castle-{k}" for k in range(1, 1000) if f"{day}-castle-{k}" not in ids)
         ids.add(rec_id)
         registry["recordings"].append({"id": rec_id, "file_name": name, "sha256": sha256(path), "ruleset": "vanilla",
                                        "game_version": "1.06", "overlay": overlay, "use": use})
