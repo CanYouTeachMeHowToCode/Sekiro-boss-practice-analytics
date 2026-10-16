@@ -137,7 +137,7 @@ V3.1 answers:
 
 > **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
 
-V3.1 Milestones 1–5 are done for castle Genichiro: the runtime bridge is proven, and the project owner approved the move catalog and the completeness review. Current work is product integration (Milestone 6, section 32), following `research/ground_truth/semantic/genichiro_product_moveset.md`; further recording only fills gaps in the catalog. The step-by-step plan is `research/ground_truth/genichiro-plan.md`. `v3.1.0` covers castle Genichiro, all three phases. See sections 18–36.
+V3.1 Milestones 1–6 are done for castle Genichiro: the runtime bridge is proven, the project owner approved the move catalog and the completeness review, and the product's Genichiro moveset was rebuilt from them (section 32). What remains for `v3.1.0` is the release; further recording only fills gaps in the catalog. The step-by-step plan is `research/ground_truth/genichiro-plan.md`. `v3.1.0` covers castle Genichiro, all three phases. See sections 18–36.
 
 V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
 
@@ -359,6 +359,7 @@ Current expectations:
 - new attempts belong to the authenticated user
 - ownerless historical attempts are preserved
 - ownerless historical attempts are hidden
+- since V3.1 every attempt has an owner: `attempts.user_id` is NOT NULL (section 32)
 - explicit claiming is supported
 - request bodies do not control ownership
 
@@ -1113,6 +1114,18 @@ Only after the research schema stabilizes:
 - consider adding ruleset support
 - consider adding engine-action mappings
 
+**Delivered for castle Genichiro (owner decisions, 2026-10-15):**
+
+- the product moveset rebuilt from the owner-approved catalog: 26 moves instead of 22, five new ones that neither wiki lists, Iaijutsu merged into Receding Tide, several moves extended to phase 3, and the owner's English and Chinese names (`research/ground_truth/semantic/genichiro_product_moveset.md`)
+- move texts reviewed against the engine evidence; new moves have no text yet (`semantic/genichiro_content_review.md`)
+- a migration that moves Iaijutsu attempts to Receding Tide before deleting the move
+- `attempts.user_id` NOT NULL; the migration refuses to run while ownerless attempts remain
+- the cross-wiki mapping marks every Genichiro row `owner_confirmed`, with the catalog entries behind it
+- the moveset source line reads "Some descriptions from:", since not every text comes from the wiki
+- no engine-mapping tables: the research catalog stays the source of the move ↔ animation chains (owner decision)
+
+The product seed is written from the research files by `research/ground_truth/scripts/ai/sync_seed.py`; change the moveset there, not by hand. Importing V1 history now needs an owner: `python -m scripts.import_v1_data --attempts <file> --owner <username>`.
+
 Potential future tables:
 
 ```text
@@ -1623,7 +1636,7 @@ V3 is released. V3.1 order:
 Then, to complete `v3.1.0`:
 
 ```text
-5. Product integration (V3.1 Milestone 6) — current
+5. Product integration (V3.1 Milestone 6) — done; release `v3.1.0` next
 ```
 
 Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Public deployment comes in V4, after the upload → failure report flow works (section 33). Resurrection is deferred until after `v3.1.0` (section 35).

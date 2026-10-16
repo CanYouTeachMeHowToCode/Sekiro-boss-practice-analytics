@@ -278,7 +278,7 @@ Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
 
 To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
 
-Each account sees only its own attempts. Attempts recorded before accounts existed (V1 and V2) have no owner and are hidden until you assign them. After registering, run this once:
+Each account sees only its own attempts. Since v3.1.0 every attempt must have an owner. Attempts recorded before accounts existed (V1 and V2) had none, and the v3.1.0 database migration refuses to run while any remain: the backend then stops at startup. If you upgrade from an older version, claim them first, on the version you are running: register, then run
 
 ```bash
 docker compose exec backend python -m scripts.claim_attempts <your-username>

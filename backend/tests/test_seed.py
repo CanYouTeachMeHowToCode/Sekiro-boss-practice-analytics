@@ -126,7 +126,8 @@ def v1_attempt(**overrides):
     return V1Attempt.model_validate({**fields, **overrides})
 
 
-def test_import_v1_attempts_maps_moves_and_keeps_timestamps(seeded_session):
+def test_import_v1_attempts_maps_moves_and_keeps_timestamps(seeded_session, make_user):
+    owner = make_user("wolf")
     history = [
         v1_attempt(),
         v1_attempt(
@@ -147,7 +148,7 @@ def test_import_v1_attempts_maps_moves_and_keeps_timestamps(seeded_session):
         ),
     ]
 
-    assert import_v1_attempts(seeded_session, history) == 3
+    assert import_v1_attempts(seeded_session, history, owner) == 3
 
     rows = seeded_session.scalars(select(Attempt).order_by(Attempt.created_at)).all()
     assert [r.boss.slug for r in rows] == ["genichiro-ashina", "genichiro-ashina", "owl-father"]
@@ -155,16 +156,18 @@ def test_import_v1_attempts_maps_moves_and_keeps_timestamps(seeded_session):
     assert rows[0].created_at == datetime(2026, 8, 26, 19, 37, tzinfo=timezone.utc)
     assert rows[1].failure_move is None and rows[1].failure_category == "not_sure"
     assert rows[2].result == "victory"
+    assert {r.user_id for r in rows} == {owner.id}
 
 
-def test_import_v1_attempts_refuses_to_run_twice(seeded_session):
-    import_v1_attempts(seeded_session, [v1_attempt()])
+def test_import_v1_attempts_refuses_to_run_twice(seeded_session, make_user):
+    owner = make_user("wolf")
+    import_v1_attempts(seeded_session, [v1_attempt()], owner)
 
     with pytest.raises(SeedError, match="already has 1 rows"):
-        import_v1_attempts(seeded_session, [v1_attempt(id="attempt-002")])
+        import_v1_attempts(seeded_session, [v1_attempt(id="attempt-002")], owner)
     assert count(seeded_session, Attempt) == 1
 
 
-def test_import_v1_attempts_rejects_a_move_from_another_boss(seeded_session):
+def test_import_v1_attempts_rejects_a_move_from_another_boss(seeded_session, make_user):
     with pytest.raises(SeedError, match="does not belong to boss"):
-        import_v1_attempts(seeded_session, [v1_attempt(failure_move_id="shadowfall")])
+        import_v1_attempts(seeded_session, [v1_attempt(failure_move_id="shadowfall")], make_user("wolf"))

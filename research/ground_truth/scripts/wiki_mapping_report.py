@@ -26,8 +26,10 @@ RELATIONS = {
     "unclear": "No confident correspondence.",
     "only_fextralife": "Only Fextralife describes it.",
     "only_fandom": "Only Fandom describes it.",
+    "engine_only": "Neither wiki describes it; it comes from the V3.1 engine research.",
 }
-V4_STATUSES = {"unverified"}
+# "owner_confirmed": the project owner decided the row through the V3.1 research (castle Genichiro, 2026-10-15).
+V4_STATUSES = {"unverified", "owner_confirmed"}
 
 
 def load_mappings() -> list[dict]:
@@ -73,8 +75,9 @@ def report(mappings: list[dict]) -> str:
         "and records how they relate. It measures how much two independent human sources disagree, which is a **lower bound** on the "
         "gap between the product's movesets and engine-level ground truth.",
         "",
-        "**Nothing here is ground truth.** Every row is `unverified`. V3.1 adds runtime and engine evidence to `engine_evidence`; "
-        "which semantic moves and mappings become ground truth is decided by the project owner, never by tooling or by Claude.",
+        "**Rows are not ground truth unless the project owner confirmed them.** A row is `unverified` until then. The V3.1 research "
+        "adds runtime and engine evidence to `engine_evidence`; which semantic moves and mappings become ground truth is decided by "
+        "the project owner, never by tooling or by Claude. So far only castle Genichiro is `owner_confirmed`.",
         "",
         "## Relations",
         "",
@@ -84,8 +87,8 @@ def report(mappings: list[dict]) -> str:
         "",
         "## Summary",
         "",
-        "| Boss | Product moves | Rows | same | partial | split | conflict | unclear | only Fextralife | only Fandom | Product moves matched 1:1 |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Boss | Product moves | Rows | same | partial | split | conflict | unclear | only Fextralife | only Fandom | engine only | Product moves matched 1:1 |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     totals = Counter()
     for m in mappings:
@@ -118,13 +121,13 @@ def report(mappings: list[dict]) -> str:
             f"- Fandom: <{fd['url']}> ({fd['version']}, fetched {fd['fetched']})",
             *[f"- {note}" for note in m["notes"]],
             "",
-            "| Product moves | Fextralife | Fandom | Relation | Notes |",
-            "|---|---|---|---|---|",
+            "| Product moves | Fextralife | Fandom | Relation | Status | Notes |",
+            "|---|---|---|---|---|---|",
         ]
         for e in m["entries"]:
             notes = e["notes"].replace("|", "/") or ""
             lines.append(
-                f"| {cell(e['product_moves'])} | {cell(e['fextralife'])} | {cell(e['fandom'])} | `{e['relation']}` | {notes} |"
+                f"| {cell(e['product_moves'])} | {cell(e['fextralife'])} | {cell(e['fandom'])} | `{e['relation']}` | `{e['v4_status']}` | {notes} |"
             )
     return "\n".join(lines) + "\n"
 

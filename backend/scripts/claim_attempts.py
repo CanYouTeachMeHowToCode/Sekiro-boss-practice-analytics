@@ -1,9 +1,12 @@
 """Assign ownerless attempts to a user.
 
-Attempts recorded before accounts existed (V1/V2 history) have no owner and
-are visible to nobody. Run this once after registering your account:
+Attempts recorded before accounts existed (V1/V2 history) had no owner and
+were visible to nobody. Since V3.1 every attempt must have one: the migration
+that makes attempts.user_id NOT NULL refuses to run while any remain. Run this
+against the database before that upgrade, after registering your account:
 
     python -m scripts.claim_attempts <username>
+    docker compose run --rm backend python -m scripts.claim_attempts <username>   # with Docker Compose
 
 Only ownerless attempts are touched; attempts that already belong to someone
 are never reassigned. Running it again is harmless.

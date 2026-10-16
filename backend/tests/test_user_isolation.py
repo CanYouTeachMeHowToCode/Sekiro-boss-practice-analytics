@@ -1,8 +1,9 @@
-"""Every attempt belongs to one user, and nobody sees anyone else's (V3 Milestones 2-3)."""
+"""Every attempt belongs to one user, and nobody sees anyone else's (V3 Milestones 2-3, V3.1 M6)."""
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.db import models as db
 from app.main import app
@@ -31,13 +32,6 @@ def other_client(anon_client):
 
 def boss_row(session, slug=BOSS):
     return session.scalar(select(db.Boss).where(db.Boss.slug == slug))
-
-
-def add_ownerless_attempt(session, **fields):
-    attempt = db.Attempt(boss=boss_row(session), **{"result": "failed", "phase_reached": 1, **fields})
-    session.add(attempt)
-    session.flush()
-    return attempt
 
 
 # --- API level ---------------------------------------------------------------
@@ -98,12 +92,12 @@ def test_a_user_id_in_the_request_body_is_ignored(client, other_client, seeded_s
     assert seeded_session.get(db.Attempt, int(created["id"])).user.username == "other"
 
 
-def test_ownerless_attempts_are_visible_to_nobody(client, seeded_session):
-    add_ownerless_attempt(seeded_session)
+def test_every_attempt_needs_an_owner(seeded_session):
+    seeded_session.add(db.Attempt(boss=boss_row(seeded_session), result="failed", phase_reached=1))
 
-    assert client.get(f"/api/bosses/{BOSS}/attempts").json() == []
-    assert client.get(f"/api/bosses/{BOSS}/analytics").json()["total_attempts"] == 0
-    assert client.get("/api/sekiro/analytics").json()["total_attempts"] == 0
+    with pytest.raises(IntegrityError):
+        seeded_session.flush()
+    seeded_session.rollback()
 
 
 # --- Service level -----------------------------------------------------------
@@ -118,7 +112,6 @@ def test_services_only_return_the_given_users_attempts(seeded_session, make_user
             db.Attempt(boss=boss, user=emma, result="failed", phase_reached=3),
         ]
     )
-    add_ownerless_attempt(seeded_session, phase_reached=2)
 
     assert [a.phase_reached for a in attempt_service.get_attempts(seeded_session, wolf.id, BOSS)] == [1]
     assert analytics_service.compute_analytics(seeded_session, emma.id, BOSS).best_phase == 3
@@ -141,28 +134,11 @@ def test_first_victory_is_counted_within_each_users_own_history(seeded_session, 
 
 
 # --- Claiming ownerless attempts ---------------------------------------------
-
-
-def test_claim_assigns_only_ownerless_attempts(seeded_session, make_user):
-    owner, other = make_user("owner"), make_user("other")
-    old = [add_ownerless_attempt(seeded_session), add_ownerless_attempt(seeded_session, phase_reached=2)]
-    theirs = db.Attempt(boss=boss_row(seeded_session), user=other, result="failed", phase_reached=1)
-    seeded_session.add(theirs)
-    seeded_session.flush()
-
-    claimed = claim_attempts(seeded_session, "OWNER")
-
-    assert claimed == 2
-    assert all(a.user_id == owner.id for a in old)
-    assert theirs.user_id == other.id
-    assert count_ownerless(seeded_session) == 0
-    assert claim_attempts(seeded_session, "owner") == 0
+# Claiming itself is tested against a database before the NOT NULL migration, in tests/db/test_schema.py.
 
 
 def test_claim_refuses_an_unknown_user(seeded_session):
-    add_ownerless_attempt(seeded_session)
-
     with pytest.raises(ClaimError):
         claim_attempts(seeded_session, "nobody")
 
-    assert count_ownerless(seeded_session) == 1
+    assert count_ownerless(seeded_session) == 0
