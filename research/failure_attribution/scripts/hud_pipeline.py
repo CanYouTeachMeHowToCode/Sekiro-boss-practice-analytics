@@ -1,12 +1,14 @@
-"""Run the HUD steps for one recording: cache, series, events and the review thumbnails.
+"""Run every step for one recording: HUD events, boss track, move answers or predictions, review thumbnails.
 
 Usage: python -I hud_pipeline.py <recording id | all> [--recache]
 
 Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/:
-hud_cache.npz (skipped when present, unless --recache), hud.csv, events.csv and thumbs/<event key>.jpg, and for a
-dev-menu recording the move answers (failure_answers.py), which follow the events. A thumbnail
-shows six moments around the event (-1.0 to +1.0 s), each with the HP and posture read at that moment; frames go
-through mask_overlay() like everywhere else.
+hud_cache.npz (skipped when present, unless --recache), hud.csv, events.csv, boss_track.csv, boss_crops.npz and
+boss_feats_small14.npy (skipped when present, unless --recache), thumbs/<event key>.jpg, and the moves behind the
+failures: for a dev-menu recording the answers read from the overlay (failure_answers.py), for any other the predictions
+(move_match.py predict), which need the dev-menu recordings processed first. A thumbnail shows six moments around the
+event (-1.0 to +1.0 s), each with the HP and posture read at that moment; frames go through mask_overlay() like
+everywhere else.
 """
 import csv
 import subprocess
@@ -65,8 +67,11 @@ def main():
             run("hud_read.py", "cache", video, work / "hud_cache.npz")
         run("hud_read.py", "series", work / "hud_cache.npz", work / "hud.csv")
         run("events.py", work / "hud.csv", work / "events.csv")
-        if rec.get("overlay"):
-            run("failure_answers.py", rec_id)
+        if "--recache" in sys.argv or not (work / "boss_crops.npz").exists():
+            run("boss_track.py", rec_id)
+        if "--recache" in sys.argv or not (work / "boss_feats_small14.npy").exists():
+            run("boss_features.py", rec_id)
+        run("failure_answers.py" if rec.get("overlay") else "move_match.py", *([rec_id] if rec.get("overlay") else ["predict", rec_id]))
         thumbnails(video, work)
 
 

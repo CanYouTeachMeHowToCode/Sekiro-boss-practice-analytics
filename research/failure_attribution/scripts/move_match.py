@@ -2,6 +2,7 @@
 
 Usage: python -I move_match.py eval [--model small14] [--part cls|patch|both] [--window 1.5] [--after 1.0]
                                    [--detrend 0.5] [--refs all|other]
+       python -I move_match.py predict <recording id | all> [the same options]
 
 References: every hit of a boss animation in the dev-menu recordings, at the moment its TAE attack window opens
 (projectiles: the moment the shot is fired), labelled from the overlay with the same mapping as failure_answers.py:
@@ -18,6 +19,16 @@ eval: over the owner-checked answers (failure_moves.csv). --refs other compares 
 recordings (leave one recording out); --refs all also uses its own recording, leaving out EXCLUDE seconds around the
 failure, which is closer to the final use, where both dev-menu recordings are references. Prints the top-1 and top-3
 accuracy of the product move and of the animation; writes each failure's ranking to work/move_match_eval.csv.
+
+predict: the failure report proposal for a recording, from its HUD events (hud_pipeline.py) and boss features, with
+every dev-menu recording but itself as references. Without the overlay there is no AI chain to say which hits came
+from one play of a move, so a hit within MERGE_GAP of the last one joins its failure when the failure's top move is
+among the hit's top two (Floating Passage's last hit can rank another move first); a
+posture break, the hit that broke it and the hits while Wolf is staggered are one failure, as is a death with the hit
+that killed (the owner's rules, as in failure_answers.py). A failure's moves are ranked by the mean score over its hits
+(the posture break alone when there is one). Writes work/<recording id>/failure_predictions.csv: the columns of
+failure_answers.csv, the top move as the answer, and the top three with their scores as `candidates`. The review page
+shows it for a recording without the overlay, so the owner labels the moves with the candidates at hand.
 """
 import csv
 import sys
@@ -30,7 +41,8 @@ from common import GT, WORK, annotation_dir, recordings, work_dir  # noqa: E402
 from failure_answers import BY_PREVIOUS, MOVES, WINDOWS, Overlay, moves_for, phase_at, read  # noqa: E402
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
-EXCLUDE = 5.0
+EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
+SEVERITY = {"death": 3, "posture_break": 2, "damage": 1}
 ZH = {m["slug"]: m["zh"] for m in MOVES}
 
 
@@ -135,9 +147,15 @@ def lead_time(row):
     return times.get("打崩", float(items[0][1].rstrip("s")))
 
 
+def settings():
+    return {"model": opt("--model", "small14"), "part": opt("--part", "cls"), "window": float(opt("--window", "1.5")),
+            "after": float(opt("--after", "1.0")), "trend": float(opt("--detrend", "0.5"))}
+
+
 def evaluate():
-    model, part, window = opt("--model", "small14"), opt("--part", "cls"), float(opt("--window", "1.5"))
-    after, which, trend = float(opt("--after", "1.0")), opt("--refs", "all"), float(opt("--detrend", "0.5"))
+    st = settings()
+    model, part, window, after, trend = st["model"], st["part"], st["window"], st["after"], st["trend"]
+    which = opt("--refs", "all")
     recs = {i: Rec(i, r, model, part, trend) for i, r in recordings().items() if r.get("overlay")}
     refs = {i: r.references() for i, r in recs.items()}
     results = []
@@ -172,6 +190,80 @@ def evaluate():
           f"animation: top-1 {acc(1, 'anim_rank'):.0%}  top-3 {acc(3, 'anim_rank'):.0%}   -> {out}")
 
 
+def predict(rec_id):
+    st, recs = settings(), recordings()
+    q = Rec(rec_id, recs[rec_id], st["model"], st["part"], st["trend"])
+    refs = [ref for j, r in recs.items() if r.get("overlay") and j != rec_id
+            for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references()]
+    events = read(work_dir(rec_id) / "events.csv")
+    for e in events:
+        e["t"], e["phase"] = float(e["time_s"]), phase_at(float(e["time_s"]), q.blows, q.ends)
+        if e["type"] in ("damage", "posture_break"):
+            e["moves"], _, e["scores"] = rank(q, e["t"], e["phase"], refs, st["window"], st["after"])
+    top = lambda e: e["moves"][0] if e.get("moves") else None  # noqa: E731
+
+    groups, run, stagger = [], None, None
+    for e in (e for e in events if e["type"] in ("damage", "posture_break")):
+        if stagger and e["t"] <= stagger["until"]:
+            stagger["group"]["events"].append(e)
+            continue
+        last = run["events"][-1] if run else None
+        same = last and e.get("moves") and run["move"] in e["moves"][:2] and e["t"] - last["t"] <= MERGE_GAP
+        broke = last and e["type"] == "posture_break" and e["t"] - last["t"] <= BREAK_WITH
+        if same or broke:
+            run["events"].append(e)
+        else:
+            run = {"events": [e], "lead": e, "move": top(e)}
+            groups.append(run)
+        if e["type"] == "posture_break":
+            run["lead"], run["move"] = e, top(e)
+            stagger = {"group": run, "until": e["t"] + PUNISH_WINDOW}
+    by_key = {x["key"]: g for g in groups for x in g["events"]}
+    for death in (e for e in events if e["type"] == "death"):
+        g = by_key.get(death["linked"])
+        if g is None:
+            g = {"events": [], "lead": death}
+            groups.append(g)
+        g["events"].append(death)
+
+    rows = []
+    for g in sorted(groups, key=lambda g: min(x["t"] for x in g["events"])):
+        evs = sorted(g["events"], key=lambda x: (x["t"], -SEVERITY[x["type"]]))
+        lead = g["lead"]
+        voters = [lead] if lead["type"] == "posture_break" else [x for x in evs if "scores" in x]
+        total = {}
+        for x in voters:
+            for m, sc in x.get("scores", {}).items():
+                total[m] = total.get(m, 0.0) + sc / len(voters)
+        moves = sorted(total, key=total.get, reverse=True)
+        hits = []
+        for x in evs:
+            if "scores" in x:
+                role = "打崩" if x["type"] == "posture_break" else \
+                    ("追击" if lead["type"] == "posture_break" and x["t"] > lead["t"] + BREAK_WITH else "扣血")
+                hits.append(f"{role} {x['time_s']}s: 第一候选 {ZH.get(top(x), '—')}")
+        best = next((m for m in MOVES if moves and m["slug"] == moves[0]), None)
+        rows.append({
+            "key": evs[0]["key"], "time_s": evs[0]["time_s"],
+            "type": max((x["type"] for x in evs), key=SEVERITY.get),
+            "types": " ".join(x["type"] for x in evs), "phase": evs[0]["phase"],
+            "events": " ".join(x["key"] for x in evs), "hits": " ｜ ".join(hits), "anims": "", "chain": "",
+            "entries": "", "move": best["slug"] if best else "", "move_zh": best["zh"] if best else "",
+            "move_en": best["en"] if best else "", "flags": "" if best else "没有候选",
+            "candidates": " ".join(f"{m}:{total[m]:.3f}" for m in moves[:3])})
+    out = work_dir(rec_id) / "failure_predictions.csv"
+    with open(out, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\r\n")
+        w.writeheader()
+        w.writerows(rows)
+    print(f"{rec_id}: {len(rows)} failures from {sum(1 for e in events if 'scores' in e)} hits, "
+          f"{len(refs)} references -> {out}")
+
+
 if __name__ == "__main__":
     if sys.argv[1] == "eval":
         evaluate()
+    elif sys.argv[1] == "predict":
+        for rid, r in recordings().items():
+            if sys.argv[2] in ("all", rid):
+                predict(rid)

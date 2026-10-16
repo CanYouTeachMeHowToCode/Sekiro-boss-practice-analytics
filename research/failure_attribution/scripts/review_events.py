@@ -14,12 +14,14 @@ whose time moves with the detector rule), so reruns of the detector keep the rev
 missed that a later detector finds shows as confirmed, and editing it rewrites that row. The video is served with
 HTTP range requests so the browser can seek.
 
-The 招式 view lists, for the dev-menu recordings, the failures and the move behind each one as failure_answers.py
-proposes them from the overlay. The owner marks each answer correct / wrong / unsure, picks the right product move when
-it is wrong, and can add a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the failure's first
-event), time_s, proposed (the move slug that was shown), verdict, correct_move, note, updated. A review whose proposed
-move no longer matches the current proposal is shown as needing another look. The side panel counts the failures per
-move, using the owner's correction where there is one.
+The 招式 view lists the failures of a recording and the move behind each one: for a dev-menu recording as
+failure_answers.py reads it from the overlay, for any other recording as move_match.py predicts it (with its top three
+candidates as buttons). The owner marks each answer correct / wrong / unsure, picks the right product move when it is
+wrong, can tick that a failure belongs to the one before (the automatic grouping split one play of a move), and can add
+a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the failure's first event), time_s, proposed
+(the move slug that was shown), verdict, correct_move, merge_prev, note, updated. A review whose proposed move no longer
+matches the current proposal is shown as needing another look. The side panel counts the failures per move, using the
+owner's corrections and merges.
 """
 import csv
 import io
@@ -38,7 +40,7 @@ from common import GT, annotation_dir, recordings, video_path, work_dir  # noqa:
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
 TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
-MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "note", "updated"]
+MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "merge_prev", "note", "updated"]
 MOVE_VERDICTS = {"correct", "wrong", "unsure", ""}
 OTHER_MOVE = "other"
 
@@ -112,11 +114,14 @@ def page_data():
                     e["verdict"], e["review_note"] = "correct", f"你补充过的漏检（{float(m['time_s']):.2f} 秒），现在已检测到"
                     e["review_key"] = m["key"]     # an edit replaces the missed row instead of adding a second one
         missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
-        failures = read_csv(work_dir(rec_id) / "failure_answers.csv")
+        source = "overlay" if (work_dir(rec_id) / "failure_answers.csv").exists() else "prediction"
+        failures = read_csv(work_dir(rec_id) / ("failure_answers.csv" if source == "overlay" else "failure_predictions.csv"))
         done = {r["key"]: r for r in read_csv(moves_file(rec))}
         for f in failures:
             r = done.get(f["key"])
+            f["source"] = source
             f["verdict"], f["correct_move"], f["review_note"] = (r["verdict"], r["correct_move"], r["note"]) if r else ("", "", "")
+            f["merge_prev"] = bool(r and r.get("merge_prev"))
             f["stale"] = bool(r and r["verdict"] and r["proposed"] != f["move"])
         out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
                     "missed": missed, "failures": failures})
@@ -147,10 +152,11 @@ def save_move(rec_id, body):
     if correct and correct not in {m["slug"] for m in product_moves()} | {OTHER_MOVE}:
         raise ValueError("unknown move")
     key, note = body["key"], " ".join(str(body.get("note", "")).split())
+    merge = "1" if body.get("merge_prev") else ""
     rows = [r for r in read_csv(moves_file(rec)) if r["key"] != key]
-    if verdict or note or correct:
+    if verdict or note or correct or merge:
         rows.append({"key": key, "time_s": f"{float(body['time_s']):.3f}", "proposed": body.get("proposed", ""),
-                     "verdict": verdict, "correct_move": correct, "note": note,
+                     "verdict": verdict, "correct_move": correct, "merge_prev": merge, "note": note,
                      "updated": datetime.now().isoformat(timespec="seconds")})
     write_csv(moves_file(rec), MOVE_FIELDS, rows)
     return key
@@ -199,6 +205,10 @@ ul.hits { margin:4px 0 8px; padding-left:18px; font-size:13px; }
 .summary { margin-top:10px; font-size:13px; } .summary table { border-collapse:collapse; width:100%; }
 .summary th, .summary td { text-align:left; padding:3px 6px; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
 .summary td.n, .summary th.n { text-align:right; }
+.cands { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px; align-items:center; }
+.cands button { font:inherit; font-size:13px; padding:2px 10px; border-radius:999px; border:1px solid var(--line); background:var(--chip); color:var(--fg); cursor:pointer; }
+.cands button.on { border-color:var(--ok); color:var(--ok); font-weight:600; }
+.merge { font-size:13px; color:var(--muted); }
 </style></head><body>
 <header>
   <h1>失败事件核对</h1>
@@ -236,7 +246,7 @@ const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
-  moves: '每次失败：答案是开发者菜单上被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并。看对不对，标 ✅ / ❌ / ？；不对时在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
+  moves: '每次失败：开发者菜单录像的答案是被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的；其他录像的答案是自动识别的，列出前三个候选，点候选就能选。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并；自动识别的录像如果把同一次出招拆成了两次，在后一次勾"和上一次算同一次失败"。不对时也可以在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
 };
 let cur = 0, filter = '全部', mode = 'events';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
@@ -311,7 +321,10 @@ function fcard(r, f) {
   c.append(head);
   const ans = el('div', 'answer');
   ans.append(el('strong', '', f.move_zh || '（没有答案）'), el('span', 'meta', f.move_en ? `  ${f.move_en}` : ''));
-  c.append(ans, el('div', 'meta', `目录条目 ${f.entries || '—'}；这一次出招 ${f.chain || '—'}`));
+  if (f.source === 'overlay') c.append(ans, el('div', 'meta', `目录条目 ${f.entries || '—'}；这一次出招 ${f.chain || '—'}`));
+  else c.append(ans, el('div', 'meta', '自动识别的答案，请从候选里选或在下拉框里改'));
+  const cands = el('div', 'cands');
+  const candList = (f.candidates || '').split(' ').filter(Boolean).map((x) => x.split(':'));
   const ul = el('ul', 'hits');
   f.hits.split(' ｜ ').filter(Boolean).forEach((h) => ul.append(el('li', '', h)));
   c.append(ul);
@@ -330,38 +343,58 @@ function fcard(r, f) {
   sel.value = f.correct_move || '';
   sel.hidden = f.verdict !== 'wrong';
   const ta = el('textarea'); ta.placeholder = '备注（可选）'; ta.value = f.review_note || '';
+  const mlabel = el('label', 'merge'), mbox = el('input'); mbox.type = 'checkbox'; mbox.checked = !!f.merge_prev;
+  mlabel.append(mbox, ' 和上一次算同一次失败');
+  const chosen = () => (f.verdict === 'correct' ? f.move : (f.verdict === 'wrong' ? f.correct_move : ''));
+  const paint = () => [...cands.querySelectorAll('button')].forEach((b) => b.classList.toggle('on', b.dataset.slug === chosen()));
   const set = async (v) => {
-    f.verdict = v; if (v !== 'wrong') { sel.value = ''; } f.correct_move = sel.value; note.textContent = '保存中…';
-    try { await post({ rec: r.id, key: f.key, time_s: f.time_s, proposed: f.move, verdict: v, correct_move: sel.value, note: ta.value }, '/api/move'); note.textContent = '已保存'; f.stale = false; }
+    f.verdict = v; if (v !== 'wrong') { sel.value = ''; } f.correct_move = sel.value; f.merge_prev = mbox.checked; note.textContent = '保存中…';
+    try { await post({ rec: r.id, key: f.key, time_s: f.time_s, proposed: f.move, verdict: v, correct_move: sel.value, merge_prev: mbox.checked, note: ta.value }, '/api/move'); note.textContent = '已保存'; f.stale = false; }
     catch (err) { note.textContent = '保存失败：' + err.message; }
     sel.hidden = v !== 'wrong';
-    c.className = 'card ' + (v || ''); [...acts.querySelectorAll('button[data-v]')].forEach((b) => b.classList.toggle('on', b.dataset.v === v)); counts();
+    c.className = 'card ' + (v || ''); [...acts.querySelectorAll('button[data-v]')].forEach((b) => b.classList.toggle('on', b.dataset.v === v)); paint(); counts();
   };
+  for (const [slug, score] of candList) {
+    const b = el('button', '', `${MOVE[slug] ? MOVE[slug].zh : slug} ${Number(score).toFixed(2)}`); b.type = 'button'; b.dataset.slug = slug;
+    b.onclick = () => { if (slug === f.move) { set('correct'); } else { sel.value = slug; set('wrong'); } };
+    cands.append(b);
+  }
+  if (candList.length) { c.insertBefore(cands, ul); paint(); }
+  mbox.onchange = () => set(f.verdict);
   for (const [v, label] of Object.entries(VERDICT)) {
     const b = el('button', v + (f.verdict === v ? ' on' : ''), label); b.type = 'button'; b.dataset.v = v; b.onclick = () => set(v); acts.append(b);
   }
   const reset = el('button', '', '↺'); reset.type = 'button'; reset.title = '恢复成待核对'; reset.onclick = () => { ta.value = ''; set(''); };
   sel.onchange = () => set('wrong');
-  acts.append(reset, sel, ta, note);
+  acts.append(reset, sel, mlabel, ta, note);
   let timer = null;
   ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => set(f.verdict), 1000); };
   c.append(acts);
   return c;
 }
 function summary() {
-  const r = recs[cur], by = {};
+  const r = recs[cur], by = {}, rank = { damage: 1, posture_break: 2, death: 3 };
+  const merged = [];
   for (const f of r.failures) {
     const slug = f.verdict === 'wrong' && f.correct_move ? f.correct_move : f.move;
-    const name = slug === 'other' ? '其他' : (MOVE[slug] ? MOVE[slug].zh : (f.move_zh || '（没有答案）'));
+    if (f.merge_prev && merged.length) {
+      const m = merged[merged.length - 1];
+      if (rank[f.type] > rank[m.type]) m.type = f.type;
+      continue;
+    }
+    merged.push({ slug, type: f.type, zh: f.move_zh });
+  }
+  for (const m of merged) {
+    const name = m.slug === 'other' ? '其他' : (MOVE[m.slug] ? MOVE[m.slug].zh : (m.zh || '（没有答案）'));
     const row = by[name] || (by[name] = { damage: 0, posture_break: 0, death: 0, all: 0 });
-    row[f.type] += 1; row.all += 1;
+    row[m.type] += 1; row.all += 1;
   }
   const rows = Object.entries(by).sort((a, b) => b[1].all - a[1].all);
   const t = el('table'), head = el('tr');
   ['招式', '扣血', '被打崩', '死亡', '合计'].forEach((h, i) => head.append(el('th', i ? 'n' : '', h)));
   t.append(head);
   rows.forEach(([name, n]) => { const tr = el('tr'); tr.append(el('td', '', name), el('td', 'n', n.damage), el('td', 'n', n.posture_break), el('td', 'n', n.death), el('td', 'n', n.all)); t.append(tr); });
-  document.getElementById('summary').replaceChildren(el('div', 'type', `按招式汇总（${r.failures.length} 次失败，核对过的按你的修改算）`), t);
+  document.getElementById('summary').replaceChildren(el('div', 'type', `按招式汇总（${merged.length} 次失败，核对过的按你的修改和合并算）`), t);
 }
 function missed() {
   const r = recs[cur];
