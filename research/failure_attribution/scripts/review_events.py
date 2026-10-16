@@ -3,9 +3,9 @@
 Usage: python -I review_events.py [port]          (default 8770; then open http://127.0.0.1:<port>)
 
 For every recording in recordings.json that hud_pipeline.py has processed, the page lists the detected events
-(damage, death, resurrection, posture break) with their thumbnail and a button that plays the recording from two
-seconds before the event. The owner marks each one correct / wrong / unsure with a note, and adds the events the
-detector missed (the video's current time can be used as the event time).
+(damage, death, resurrection, posture break, Wolf's deathblow) with their thumbnail and a button that plays the
+recording from two seconds before the event. The owner marks each one correct / wrong / unsure with a note, and adds the
+events the detector missed (the video's current time can be used as the event time).
 
 Reviews are written straight to research/ground_truth/annotations/<ruleset>/genichiro/<recording>/hud_events.csv:
 key, type, time_s, verdict (correct / wrong / unsure / missed), note, updated. A detected event is matched to its
@@ -30,7 +30,7 @@ from common import annotation_dir, recordings, video_path, work_dir  # noqa: E40
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
-TYPES = {"damage", "death", "resurrection", "posture_break"}
+TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
 
 
 def review_file(rec):
@@ -153,7 +153,7 @@ h1 { font-size:16px; margin:0; }
 </header>
 <div class="layout">
   <main>
-    <p class="hint">每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。</p>
+    <p class="hint">每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。</p>
     <div id="list"></div>
   </main>
   <aside class="player">
@@ -161,7 +161,7 @@ h1 { font-size:16px; margin:0; }
     <div class="now" id="now"></div>
     <form id="addform">
       <label>漏掉的事件</label>
-      <select id="addtype"><option value="damage">扣血</option><option value="posture_break">被打崩</option><option value="death">死亡</option></select>
+      <select id="addtype"><option value="damage">扣血</option><option value="posture_break">被打崩</option><option value="death">死亡</option><option value="deathblow">狼的忍杀</option></select>
       <label>时间（秒）</label>
       <span><input id="addtime" type="number" step="0.1" min="0" style="width:110px"> <button type="button" id="usenow">用录像当前时间</button></span>
       <label>备注</label><input id="addnote">
@@ -173,7 +173,7 @@ h1 { font-size:16px; margin:0; }
 <script id="data" type="application/json">__DATA__</script>
 <script>
 const recs = JSON.parse(document.getElementById('data').textContent);
-const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩' };
+const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）' };
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 let cur = 0, filter = '全部';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
@@ -194,14 +194,15 @@ function counts() {
 }
 function tabs() {
   document.getElementById('tabs').replaceChildren(...recs.map((r, i) => { const b = el('button', '', r.id); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
-  const f = ['全部', '待核对', '扣血', '被打崩', '死亡'];
+  const f = ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
   document.getElementById('filters').replaceChildren(...f.map((x) => { const b = el('button', '', x); b.setAttribute('aria-pressed', String(x === filter)); b.onclick = () => { filter = x; render(false); }; return b; }));
 }
 function card(r, e) {
   const c = el('div', 'card ' + (e.verdict || ''));
   const head = el('div', 'head');
   head.append(el('span', 'type', TYPE[e.type] || e.type), el('span', 'time', fmt(e.time_s)));
-  const hp = e.type === 'posture_break' ? `躯干清空；当时血量 ${e.hp_before}` : `血量 ${e.hp_before} → ${e.hp_after}`;
+  const hp = e.type === 'posture_break' ? `躯干清空；当时血量 ${e.hp_before}`
+    : e.type === 'deathblow' ? `Boss 血量清空；狼的血量 ${e.hp_before}` : `血量 ${e.hp_before} → ${e.hp_after}`;
   head.append(el('span', 'meta', hp + (e.linked ? `；由 ${e.linked} 造成` : '') + (e.note ? `；${e.note}` : '')));
   const play = el('button', '', '▶ 播放'); play.type = 'button';
   play.onclick = () => { video.currentTime = Math.max(0, Number(e.time_s) - 2); video.play(); };
@@ -251,7 +252,7 @@ function render(newRec) {
   tabs(); counts();
   const r = recs[cur];
   if (newRec) { video.src = `/video/${encodeURIComponent(r.id)}`; }
-  const keep = { '全部': () => true, '待核对': (e) => !e.verdict, '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection' }[filter];
+  const keep = { '全部': () => true, '待核对': (e) => !e.verdict, '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow' }[filter];
   const shown = r.events.filter(keep);
   document.getElementById('list').replaceChildren(...(shown.length ? shown.map((e) => card(r, e)) : [el('p', 'hint', '没有符合这个筛选的事件。')]));
   missed();
