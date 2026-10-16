@@ -15,8 +15,9 @@ the mean cosine of the DINOv2 features of the aligned crops; crops without a loc
 by their best reference, among the moves of the failure's phase. The overlay's animation lines are read only from the
 V3.1 tables, never from the crops (which went through mask_overlay()).
 
-eval: over the owner-checked answers (failure_moves.csv), with the owner's rule that Floating Passage's opening two
-slashes without their follow-up may also be answered Two-Hit Slash (accepted()). --refs other compares each failure only with the other
+eval: over the owner-checked answers (failure_moves.csv), with the owner's rules on moves that look the same: Floating
+Passage's opening two slashes without their follow-up may also be answered Two-Hit Slash, and Counter Slash and Deflect
+Counter Slash count for each other (accepted()). --refs other compares each failure only with the other
 recordings (leave one recording out); --refs all also uses its own recording, leaving out EXCLUDE seconds around the
 failure, which is closer to the final use, where both dev-menu recordings are references. Prints the top-1 and top-3
 accuracy of the product move and of the animation; writes each failure's ranking to work/move_match_eval.csv.
@@ -47,6 +48,8 @@ EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
 # deflect look like Two-Hit Slash, so either answer is right for such a play
 OPENERS, FOLLOW_UP = {3068, 3063}, 3092
 TWO_SLASHES = {"advance", "floating-passage", "floating-passage-phase-3"}
+# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other
+SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}]
 
 
 def accepted(truth, play):
@@ -54,7 +57,7 @@ def accepted(truth, play):
     anims = {int(a) for a in play.replace("｜", " ").replace("→", " ").split() if a.isdigit()}
     if truth in TWO_SLASHES and anims & OPENERS and FOLLOW_UP not in anims:
         return TWO_SLASHES
-    return {truth}
+    return next((group for group in SAME_MOTION if truth in group), {truth})
 # a death whose killing hit left no mark on the HP bar (events.py puts it 2.4 s before the death screen): the hit came
 # 1.6-2.9 s before the 死 on the reviewed deaths, so every moment of that span is tried and each move keeps its best
 UNSEEN_SPAN, UNSEEN_STEP = (-0.5, 0.8), 0.1

@@ -6,7 +6,7 @@ damage@51.3,51.274,horizontal-slash,wrong,counter-slash,,,2026-10-16T18:11:41
 damage@107.8,107.750,deflect-counter-slash,correct,,,,2026-10-16T18:11:57
 damage@110.8,110.750,hawk-shot,correct,,,,2026-10-16T18:12:04
 damage@116.0,115.951,two-hit-combo,correct,,,,2026-10-16T18:12:20
-death@130.4,130.386,counter-slash,unsure,,,这个更像强弹反斩，不过动作基本一模一样,2026-10-16T18:14:23
+death@130.4,130.386,counter-slash,correct,,,这个更像强弹反斩，不过动作基本一模一样（2026-10-16 你定：拼刀反斩和强弹反斩动作基本一样，算互相都对，所以预测的拼刀反斩算对）,2026-10-16T18:14:23
 damage@161.8,161.824,hawk-shot,correct,,,,2026-10-16T18:14:05
 damage@198.3,198.263,hawk-shot,correct,,,,2026-10-16T18:14:38
 damage@213.4,213.399,lightning-of-tomoe-shot,correct,,,,2026-10-16T18:14:42
