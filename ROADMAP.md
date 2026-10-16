@@ -524,7 +524,7 @@ These clips later become the foundation of the V4 video dataset.
 
 ---
 
-# V3.1 Milestone 1 — Ground Truth Research Workspace
+# V3.1 Milestone 1 — Ground Truth Research Workspace ✅
 
 Create a research area separate from production application data.
 
@@ -563,7 +563,7 @@ Commit only:
 
 ---
 
-# V3.1 Milestone 2 — Genichiro Runtime Ground Truth Pilot
+# V3.1 Milestone 2 — Genichiro Runtime Ground Truth Pilot ✅
 
 Use Genichiro as the first complete vertical slice.
 
@@ -597,7 +597,7 @@ Once this bridge is proven, further recording is targeted. It fills gaps in the 
 
 ---
 
-# V3.1 Milestone 3 — Static Engine Mapping
+# V3.1 Milestone 3 — Static Engine Mapping ✅
 
 Starting from known runtime identifiers, trace backward into game/mod data.
 
@@ -637,7 +637,7 @@ manually inspect thousands of animations
 
 ---
 
-# V3.1 Milestone 4 — Genichiro Semantic Move Catalog
+# V3.1 Milestone 4 — Genichiro Semantic Move Catalog ✅
 
 Create a reviewed catalog of the boss's semantic moves and the engine actions behind them.
 
@@ -692,7 +692,7 @@ Do not prematurely migrate this schema into production PostgreSQL.
 
 ---
 
-# V3.1 Milestone 5 — Completeness Validation
+# V3.1 Milestone 5 — Completeness Validation ✅
 
 For the supported boss, define three sets:
 
@@ -731,7 +731,7 @@ The objective is to make unexplained combat-relevant actions approach zero for t
 
 ---
 
-# V3.1 Milestone 6 — Product Integration
+# V3.1 Milestone 6 — Product Integration ✅
 
 Once the ground-truth schema is stable enough:
 
@@ -742,6 +742,16 @@ Once the ground-truth schema is stable enough:
 - optionally expose verification status internally
 - preserve existing attempt references safely
 - make `attempts.user_id` NOT NULL through a migration, after confirming no ownerless pre-account attempts remain
+
+**Delivered for castle Genichiro (owner decisions, 2026-10-15):**
+
+- the product moveset rebuilt from the owner-approved catalog: 26 moves instead of 22, five new ones that neither wiki lists, Iaijutsu merged into Receding Tide, several moves extended to phase 3, and the owner's English and Chinese names (`research/ground_truth/semantic/genichiro_product_moveset.md`)
+- move texts reviewed against the engine evidence; new moves have no text yet (`semantic/genichiro_content_review.md`)
+- a migration that moves Iaijutsu attempts to Receding Tide before deleting the move
+- `attempts.user_id` NOT NULL; the migration refuses to run while ownerless attempts remain
+- the cross-wiki mapping marks every Genichiro row `owner_confirmed`, with the catalog entries behind it
+- the moveset source line reads "Some descriptions from:", since not every text comes from the wiki
+- no engine-mapping tables: the research catalog stays the source of the move ↔ animation chains (owner decision)
 
 Only now should production schema changes for engine-action mappings be considered.
 

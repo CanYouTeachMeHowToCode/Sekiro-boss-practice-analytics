@@ -522,7 +522,7 @@ engine_actions
 
 ---
 
-# V3.1 Milestone 1 — 真实数据研究工作区
+# V3.1 Milestone 1 — 真实数据研究工作区 ✅
 
 建立一个和产品数据分开的研究区域。
 
@@ -561,7 +561,7 @@ research/
 
 ---
 
-# V3.1 Milestone 2 — 苇名弦一郎运行时真实数据试点
+# V3.1 Milestone 2 — 苇名弦一郎运行时真实数据试点 ✅
 
 以苇名弦一郎作为第一个完整的纵向样例。
 
@@ -593,7 +593,7 @@ research/
 
 ---
 
-# V3.1 Milestone 3 — 静态引擎映射
+# V3.1 Milestone 3 — 静态引擎映射 ✅
 
 从已知的运行时标识出发，反向追溯到游戏/模组数据中。
 
@@ -633,7 +633,7 @@ AtkParam / Bullet / SpEffect
 
 ---
 
-# V3.1 Milestone 4 — 苇名弦一郎语义招式目录
+# V3.1 Milestone 4 — 苇名弦一郎语义招式目录 ✅
 
 建立一份经过审核的目录：Boss 的语义招式，以及每个招式背后的引擎动作。
 
@@ -688,7 +688,7 @@ AtkParam / Bullet / SpEffect
 
 ---
 
-# V3.1 Milestone 5 — 完整性验证
+# V3.1 Milestone 5 — 完整性验证 ✅
 
 针对所支持的 Boss，定义三个集合：
 
@@ -727,7 +727,7 @@ unknown（未知）
 
 ---
 
-# V3.1 Milestone 6 — 产品集成
+# V3.1 Milestone 6 — 产品集成 ✅
 
 当真实数据的结构足够稳定后：
 
@@ -738,6 +738,16 @@ unknown（未知）
 - 视情况在内部展示验证状态
 - 安全地保留现有尝试的引用
 - 确认已经没有未归属的旧尝试后，通过迁移把 `attempts.user_id` 改为 NOT NULL
+
+**天守阁弦一郎已交付（项目负责人在 2026-10-15 决定）：**
+
+- 按项目负责人审核通过的目录重建产品招式：22 个改成 26 个，新增 5 个两个 wiki 都没写的招式，居合斩并入退潮，几个招式加上三阶段，名称用项目负责人起的中英文名（`research/ground_truth/semantic/genichiro_product_moveset.md`）
+- 对照引擎证据复核招式文字；新增招式暂时没有文字（`semantic/genichiro_content_review.md`）
+- 一个迁移：先把居合斩的练习记录迁到退潮，再删掉这个招式
+- `attempts.user_id` 改为 NOT NULL；还有无主记录时迁移拒绝执行
+- 跨 wiki 对照里弦一郎的每一条都标为 `owner_confirmed`，并写明对应的目录条目
+- 招式表的来源说明改为"部分描述来自："，因为不是所有文字都来自 wiki
+- 不建引擎映射表：招式和动画链的对应关系以研究目录为准（项目负责人决定）
 
 只有到这时，才应考虑为引擎动作映射修改生产环境的数据库结构。
 
