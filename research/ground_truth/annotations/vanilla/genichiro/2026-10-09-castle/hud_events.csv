@@ -2,12 +2,17 @@ key,type,time_s,verdict,note,updated
 damage@25.4,damage,25.435,correct,,2026-10-16T01:31:55
 damage@40.5,damage,40.470,correct,,2026-10-16T01:31:56
 damage@41.5,damage,41.537,correct,,2026-10-16T01:31:58
+damage@58.2,damage,58.171,correct,,2026-10-16T17:37:05
 damage@70.7,damage,70.706,correct,,2026-10-16T01:31:59
 damage@99.4,damage,99.441,correct,,2026-10-16T01:32:01
 damage@109.9,damage,109.876,correct,,2026-10-16T01:32:02
+damage@115.2,damage,115.209,correct,,2026-10-16T17:37:51
 posture_break@115.3,posture_break,115.276,correct,,2026-10-16T01:32:04
 damage@118.8,damage,118.810,correct,,2026-10-16T01:32:05
 damage@121.5,damage,121.510,correct,,2026-10-16T01:32:13
+damage@124.8,damage,124.810,correct,,2026-10-16T17:37:58
+death@124.8,death,124.810,correct,,2026-10-16T17:38:04
+resurrection@129.8,resurrection,129.777,correct,,2026-10-16T17:38:10
 deathblow@176.8,deathblow,176.781,correct,,2026-10-16T04:30:26
 damage@185.1,damage,185.148,correct,,2026-10-16T01:32:25
 damage@187.3,damage,187.282,correct,,2026-10-16T01:32:43
@@ -24,6 +29,7 @@ resurrection@337.5,resurrection,337.527,correct,,2026-10-16T01:33:50
 damage@363.0,damage,363.029,correct,,2026-10-16T01:33:58
 damage@378.7,damage,378.697,correct,,2026-10-16T01:34:05
 damage@390.7,damage,390.731,correct,,2026-10-16T01:34:18
+damage@396.6,damage,396.565,correct,,2026-10-16T17:38:28
 damage@408.6,damage,408.566,correct,,2026-10-16T01:34:27
 missed:posture_break@408.80,posture_break,408.800,missed,,2026-10-16T01:35:28
 damage@409.4,damage,409.366,correct,,2026-10-16T01:34:34
