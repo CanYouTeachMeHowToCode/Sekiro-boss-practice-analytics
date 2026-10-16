@@ -5,6 +5,7 @@ Workspace for the first V4 milestone: in the player's own recordings of castle G
 | Path | What it holds |
 |---|---|
 | `plan.md` | The milestone plan, in Chinese: recordings, pipeline, labelling page, metrics and the owner's decisions. |
+| `scripts/hud_read.py` | Reads Wolf's HP (red part, and the pale just-lost part) and posture (the bright part growing from the centre, yellow to orange-red as it fills) from the HUD. `cache` decodes a video once and keeps per-column HUD colours; `series` turns them into one row per frame. |
 | `scripts/overlay_mask.py` | `mask_overlay(frame)`: paints the dev-menu overlay's live animation lines black. Every frame the pipeline reads goes through it. Run it on a video and a time to write a before/after check image. |
 
 Inputs come from the V3.1 research in `../ground_truth/`: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which are labelled reference data.
