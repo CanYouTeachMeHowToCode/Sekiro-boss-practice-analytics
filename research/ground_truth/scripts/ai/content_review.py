@@ -41,10 +41,11 @@ PROPOSALS = {
     ],
     "perilous-grab": [
         ("counter",
-         "Perfect-deflect it, or step back to dodge it. Striking him during this attack topples his balance, even with a "
-         "visible block at the end of the move.",
-         "完美弹反，或者向后垫步躲开。在这招期间攻击他能打乱他的平衡，即使招式结尾他明显在防御也一样。",
-         "前面加上你在决策表 A04 写的两条应对方法;原来 Fandom 的那句保留在后面"),
+         "Perfect-deflect it, or step back to dodge it.",
+         "完美弹反，或者向后垫步躲开。",
+         "只保留你在 A04 写的两条(你定:不能打断就去掉 Fandom 那句)。Fandom 说\"攻击他能打乱他的平衡\",引擎证据不支持:"
+         "投技 3020 整段(0–1.97 秒)和侧跳斩 3037 收招段(1.23–1.80 秒)带破绽标记 3710040,这时你出刀,弹刀 AI 出特殊弹刀 3102"
+         "(特效 200230\"特殊弹刀动画播放\"),是他弹开你;3037 起手时你抢先出刀,他普通弹刀或出 8010,整招中止(录像 9 次里 7 次),也不是打出硬直"),
     ],
     "closing-tide": [
         ("description",
