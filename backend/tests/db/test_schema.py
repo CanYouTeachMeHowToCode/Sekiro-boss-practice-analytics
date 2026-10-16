@@ -295,9 +295,9 @@ def test_attempt_persists_with_nullable_failure_move(session):
 
 
 def test_attempt_can_reference_a_known_move(session):
-    boss = make_boss(session)
+    boss, user = make_boss(session), make_user(session)
     move = Move(boss=boss, slug="shadowfall", name="Shadowfall", move_type="thrust")
-    session.add(Attempt(boss=boss, user=make_user(session), result="failed", phase_reached=2, failure_move=move))
+    session.add(Attempt(boss=boss, user=user, result="failed", phase_reached=2, failure_move=move))
     session.flush()
 
     attempt = session.query(Attempt).one()
@@ -327,13 +327,9 @@ def test_attempt_check_constraints(session, fields):
 
 
 def test_attempt_cannot_have_both_a_failure_move_and_a_category(session):
-    boss = make_boss(session)
+    boss, user = make_boss(session), make_user(session)
     move = Move(boss=boss, slug="shadowfall", name="Shadowfall", move_type="thrust")
-    session.add(
-        Attempt(
-            boss=boss, user=make_user(session), result="failed", phase_reached=1, failure_move=move, failure_category="other"
-        )
-    )
+    session.add(Attempt(boss=boss, user=user, result="failed", phase_reached=1, failure_move=move, failure_category="other"))
     with pytest.raises(IntegrityError):
         session.flush()
 
