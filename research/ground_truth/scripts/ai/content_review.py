@@ -152,7 +152,7 @@ for r in moveset:
     slug, cur = r["slug"], current.get(r["slug"], {})
     props = PROPOSALS.get(slug, [])
     if not props:
-        texts = "；".join(f"{FIELD_ZH[f]}:{cur[f + '_zh']}" for f in ("description", "telegraph", "counter", "common_mistakes") if cur.get(f + "_zh"))
+        texts = " ".join(f"【{FIELD_ZH[f]}】{cur[f + '_zh']}" for f in ("description", "telegraph", "counter", "common_mistakes") if cur.get(f + "_zh"))
         rows.append({"slug": slug, "field": "keep", "name": r["name_zh"], "phases": r["phases"], "change": r["change"],
                      "current_zh": texts or "(没有文字)", "current_en": "", "new_zh": "全部保留", "new_en": "",
                      "evidence": "没有发现和 AI、TAE、录像矛盾的地方"})
