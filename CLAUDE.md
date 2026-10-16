@@ -156,7 +156,7 @@ V4 answers:
 
 > **What happened during the fight without requiring the player to manually enter everything?**
 
-Start with V4 Milestone 1: the failure attribution prototype on local Genichiro recordings (section 38). The V3.1 research in `research/ground_truth/` is its input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
+V4 Milestone 1, the failure attribution prototype on local Genichiro recordings, is done (owner confirmed, 2026-10-16). Its code and tools are in `research/failure_attribution/`, its results in `research/failure_attribution/results.md`: an owner-checked answer set of 7 castle recordings, all HUD failure events correct, and the move behind a failure the top candidate in 88% and among the top three in 93% of the failures in recordings never used for tuning. Current: V4 Milestone 2, reliability validation on more independent recordings (section 38). The V3.1 research in `research/ground_truth/` remains the input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
 
 **Numbering.** The combat ground-truth stage was first planned as V4. It mainly added a research foundation and a Genichiro content update to the V3 product, so it became V3.1 and shipped as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 
@@ -1646,8 +1646,8 @@ Examples currently not justified by default:
 V3 and V3.1 are released. V4 order (section 38):
 
 ```text
-1. Failure attribution prototype on local recordings (V4 Milestone 1) — current
-2. Reliability validation on independent recordings (V4 Milestone 2)
+1. Failure attribution prototype on local recordings (V4 Milestone 1) — done (2026-10-16)
+2. Reliability validation on independent recordings (V4 Milestone 2) — current
 3. Video upload and failure report (V4 Milestone 3)
 4. Public deployment (V4 Milestone 4)
 ```

@@ -888,7 +888,7 @@ Practice Suggestions
 
 ---
 
-## V4 Milestone 1 — Failure Attribution Prototype
+## V4 Milestone 1 — Failure Attribution Prototype ✅
 
 The first V4 goal is narrow: in the player's own recordings, find each failure and the boss move that caused it.
 
@@ -915,6 +915,14 @@ The annotation tooling should be useful even if automatic recognition never beco
 Recordings made for V3.1 carry the dev-menu animation labels, so they double as labelled reference data. Mask the overlay region when training or evaluating, so a model cannot read the label.
 
 Output: one recording → one failure report a person can check.
+
+Delivered (owner confirmed, 2026-10-16; `research/failure_attribution/results.md`):
+
+- one command per recording: HUD events (damage, posture break, death by the death screen, Wolf's deathblow, resurrection), boss tracking by the lock-on dot, the moves behind the failures, merged by the owner's rules
+- a local review page: events, the three candidate moves per failure, merging, failures per move, processing progress
+- dev-menu recordings read into observations with one command, checked against the AI chains, and used as answers and as the reference library
+- an owner-checked answer set of 7 castle recordings: 141 events, 82 failures
+- all 141 events correct with none missed; on recordings never used for tuning, the move behind a failure is the top candidate in 36 of 41 (88%) and among the top three in 38 of 41 (93%)
 
 ---
 
