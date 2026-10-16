@@ -1,6 +1,6 @@
 # 天守阁弦一郎:天守阁 AI 会出的攻击动画(待你审核)
 
-由 `scripts/ai/classify.py` 生成,数据在 `engine/genichiro_castle_tae_classes.csv`。对应计划第 7 步(V4 M5)。
+由 `scripts/ai/classify.py` 生成,数据在 `engine/genichiro_castle_tae_classes.csv`。对应计划第 7 步(V3.1 M5)。
 
 - c7100(一、二阶段)和 c7110(三阶段)共 353 个 TAE 编号,全部分了类。
 - **按你 2026-10-13 的决定,只审核天守阁 AI 会出、带攻击判定或飞行物的编号**,共 83 个,都属于招式目录里你审核通过的条目。

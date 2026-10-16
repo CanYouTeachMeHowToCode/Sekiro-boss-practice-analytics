@@ -1,4 +1,4 @@
-"""The product's Genichiro moveset after the owner's step-8 decisions (V4 M6).
+"""The product's Genichiro moveset after the owner's step-8 decisions (V3.1 M6).
 
 Usage: python -I moveset.py <out.csv> <out.md>
 

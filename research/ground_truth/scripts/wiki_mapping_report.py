@@ -73,7 +73,7 @@ def report(mappings: list[dict]) -> str:
         "and records how they relate. It measures how much two independent human sources disagree, which is a **lower bound** on the "
         "gap between the product's movesets and engine-level ground truth.",
         "",
-        "**Nothing here is ground truth.** Every row is `unverified`. V4 adds runtime and engine evidence to `engine_evidence`; "
+        "**Nothing here is ground truth.** Every row is `unverified`. V3.1 adds runtime and engine evidence to `engine_evidence`; "
         "which semantic moves and mappings become ground truth is decided by the project owner, never by tooling or by Claude.",
         "",
         "## Relations",

@@ -1,4 +1,4 @@
-"""Decision table for plan step 8 (V4 M6): how the approved move catalog becomes the product's Genichiro moves.
+"""Decision table for plan step 8 (V3.1 M6): how the approved move catalog becomes the product's Genichiro moves.
 
 Usage: python -I decisions.py <out.csv> <out.md>
 

@@ -181,7 +181,7 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts. Public hosting is now planned for V5, once a player can upload a recording and see which moves caused their failures.
+* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts. Public hosting is now planned for V4, once a player can upload a recording and see which moves caused their failures.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
 
 ---
@@ -196,10 +196,10 @@ V3 turned the single-user local app into a foundation that several players can u
 * ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
 * ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
 * ✅ **English / 中文 interface:** a language switch, with each language showing only its own text. The choice is saved on the account, or in the browser for visitors. Most Chinese move names and descriptions are translations of the English source material.
-* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V4.
+* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V3.1.
 * ✅ **Hardening:** the four required CI jobs also check that accounts and attempts survive a Docker restart.
 
-While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V4.
+While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V3.1.
 
 ---
 
@@ -208,17 +208,17 @@ While expanding boss coverage, community wiki movesets turned out to be incomple
 The full plan is in [ROADMAP.md](ROADMAP.md). In short:
 
 ```text
-V1  What killed me?                      → manual attempt analytics
-V2  Where am I improving or struggling?  → structured relational analytics
-V3  Can different players use it?        → multi-user product foundation
-V4  What moves actually exist?           → combat ground truth
-V5  What happened in the fight?          → gameplay video analysis + public deployment
-V6  Can this work across games?          → multi-game platform
+V1    What killed me?                      → manual attempt analytics
+V2    Where am I improving or struggling?  → structured relational analytics
+V3    Can different players use it?        → multi-user product foundation
+V3.1  What moves actually exist?           → combat ground truth
+V4    What happened in the fight?          → gameplay video analysis + public deployment
+V5    Can this work across games?          → multi-game platform
 ```
 
-* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro.
-* **V5** analyzes uploaded gameplay, starting with the failures in a recording and the moves that caused them; the app is deployed publicly once that works. It then detects every boss move and the player's responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
-* **V6** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
+* **V3.1** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro.
+* **V4** analyzes uploaded gameplay, starting with the failures in a recording and the moves that caused them; the app is deployed publicly once that works. It then detects every boss move and the player's responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
+* **V5** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
 
 The long-term goal is to turn gameplay footage into trustworthy, explainable boss-practice analytics with as little manual input as possible.
 
