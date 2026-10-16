@@ -9,6 +9,8 @@ Sheets:
     decisions        semantic/genichiro_product_decisions.md and .csv (catalog → product moves, plan step 8); the page
                      can also filter by strength of evidence, and has a name box (招式名称) on every row whose
                      Chinese name has no wiki source
+    content          semantic/genichiro_content_review.md and .csv (the product's Genichiro move texts to keep or
+                     change, plan step 8)
 
 Then open http://127.0.0.1:<port> — in VS Code: Command Palette → "Simple Browser: Show".
 Every click is written straight into the sheet's .md (the 审核 and 理由 cells of that row, and the review counts when
@@ -73,6 +75,19 @@ def decisions_view(r):
             "tag": r["strength"]}
 
 
+CONTENT_FIELD = {"keep": "全部保留", "description": "描述", "telegraph": "预兆", "counter": "应对方法",
+                 "common_mistakes": "常见失误", "move_type": "招式类型", "source_label": "来源说明"}
+
+
+def content_view(r):
+    group = (1, "没发现问题:全部保留") if r["field"] == "keep" else (0, "修改建议")
+    fields = [("现在(中文)", r["current_zh"]), ("现在(英文)", r["current_en"]), ("建议(中文)", r["new_zh"]),
+              ("建议(英文)", r["new_en"]), ("问题和证据", r["evidence"])]
+    return {"title": f"{r['key']} {r['name']} · {CONTENT_FIELD.get(r['field'], r['field'])}",
+            "sub": " · ".join(x for x in (r["slug"], f"阶段 {r['phases']}" if r["phases"] else "", r["change"]) if x),
+            "mono": "", "fields": [[k, v] for k, v in fields if v], "group": group, "tag": ""}
+
+
 SHEETS = {
     "catalog": {"md": GT / "semantic/genichiro_catalog.md", "csv": GT / "semantic/genichiro_catalog.csv", "key": "entry",
                 "title": "天守阁弦一郎招式目录 · 审核", "view": catalog_view, "tags": []},
@@ -85,6 +100,8 @@ SHEETS = {
                   "name": {"col": 4, "csv": "owner_name", "label": "招式名称", "editable": lambda r: r["name_source"] != "wiki",
                            "placeholder": lambda r: (f"留空 = 用现在的名字:{r['product_name_zh']} / {r['product_name']}"
                                                      if r["section"] == "A" else "中文名 / English name(新增时必填)")}},
+    "content": {"md": GT / "semantic/genichiro_content_review.md", "csv": GT / "semantic/genichiro_content_review.csv",
+                "key": "key", "title": "第 8 步:弦一郎招式文字复核", "view": content_view, "tags": []},
 }
 SHEET = SHEETS[sys.argv[2] if len(sys.argv) > 2 else "catalog"]
 MD, CSV, KEY = SHEET["md"], SHEET["csv"], SHEET["key"]
@@ -113,7 +130,7 @@ def load():
             name = parts[NAME["col"]].strip() if NAME and len(parts) > NAME["col"] + 1 else ""
             marks[parts[1].strip()] = (parts[2].strip() or "☐", parts[3].strip(), "" if name == "—" else name)
     for r in rows:
-        r["mark"], r["reason"], r["name"] = marks.get(r[KEY], ("☐", "", ""))
+        r["mark"], r["reason"], r["_owner_name"] = marks.get(r[KEY], ("☐", "", ""))
     return rows
 
 
@@ -172,7 +189,7 @@ def view_rows():
     out = []
     for r in load():
         v = SHEET["view"](r)
-        v.update({"key": r[KEY], "mark": r["mark"], "reason": r["reason"], "name": r["name"], "name_field": None})
+        v.update({"key": r[KEY], "mark": r["mark"], "reason": r["reason"], "name": r["_owner_name"], "name_field": None})
         if NAME and NAME["editable"](r):
             v["name_field"] = {"label": NAME["label"], "placeholder": NAME["placeholder"](r)}
         out.append(v)

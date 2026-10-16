@@ -40,6 +40,7 @@ catalog + reachability + TAE   ai/classify.py         -> engine/genichiro_castle
 catalog + wiki mapping + seed  ai/decisions.py        -> semantic/genichiro_product_decisions.csv, .md
 catalog + occurrences.csv      ai/chain_check.py      -> observations/vanilla/genichiro/chain_check.csv, .md
 decisions + catalog + seed     ai/moveset.py          -> semantic/genichiro_product_moveset.csv, .md
+moveset + seed                 ai/content_review.py   -> semantic/genichiro_content_review.csv, .md
 ```
 
 Example, with `<work>` outside the repository:
@@ -61,6 +62,7 @@ python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_tr
 python -I research/ground_truth/scripts/ai/decisions.py research/ground_truth/semantic/genichiro_product_decisions.csv research/ground_truth/semantic/genichiro_product_decisions.md
 python -I research/ground_truth/scripts/ai/chain_check.py research/ground_truth/observations/vanilla/genichiro/chain_check.csv research/ground_truth/observations/vanilla/genichiro/chain_check.md
 python -I research/ground_truth/scripts/ai/moveset.py research/ground_truth/semantic/genichiro_product_moveset.csv research/ground_truth/semantic/genichiro_product_moveset.md
+python -I research/ground_truth/scripts/ai/content_review.py research/ground_truth/semantic/genichiro_content_review.csv research/ground_truth/semantic/genichiro_content_review.md
 ```
 
 ## Scripts
@@ -72,9 +74,10 @@ python -I research/ground_truth/scripts/ai/moveset.py research/ground_truth/sema
 | `reachability.py` | The castle result table. The castle-specific rules it applies on top of `ai_moves.py`, each read from the decompiled script, are listed in its docstring. |
 | `encounters.py` | Finds every c7100 / c7110 placement and what it is wired to (maps, params, events, text). |
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
-| `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default), `classification` (with a confidence filter) and `decisions` (with a strength-of-evidence filter). Open it in VS Code with Simple Browser. |
+| `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default), `classification` (with a confidence filter), `decisions` (with a strength-of-evidence filter) and `content`. Open it in VS Code with Simple Browser. |
 | `classify.py` | Sorts every TAE entry into the completeness classes (CLAUDE.md section 31), with a confidence and the evidence. The entries the owner reviews (castle AI can request them, attack or projectile) go to `engine/genichiro_castle_tae_classes.csv` and the review sheet `semantic/genichiro_classification.md`; the others to `deferred/`. Also writes the gap report `semantic/genichiro_gap_report.md`. |
 | `chain_check.py` | Checks the catalog's AI chains against the order of animations in every castle recording. Each chain becomes, per phase, its possible first and last animations and every allowed step. Each observed transition is then classed: a chain step, a visible interrupt, an option start (Act, Kengeki after a visible clash, Parry, Damaged), or a mismatch. Also lists cut chains, phase openers, what follows 8604 / 8704, and the chain steps never recorded. |
+| `content_review.py` | The checklist of the product's Genichiro move texts: one row per proposed change of one field of one move (with its evidence and a bilingual draft), one keep row per move without a proposal, and the move types of the new moves. Review sheet `content` in `catalog_review.py`. |
 | `moveset.py` | Turns the owner-reviewed decision table into the product's Genichiro moveset: which decision rows make each product move (written out in RESOLVE), its phases, names (the owner's, with proposed typo fixes) and catalog entries. Checks that every decision row and every catalog move is placed and that only the moves the owner removed disappear. |
 | `decisions.py` | Plan step 8 (V3.1 M6): the decision table from the approved catalog to the product's Genichiro moves. Section A: each of the 22 product moves with its candidate catalog entries, a strength (强 / 中 / 弱) and the evidence, written in the script. Section B: the catalog moves no product move covers yet, grouped by identical attack and projectile animations. Every move whose Chinese name has no wiki source gets a 招式名称 cell for the owner's name. Checks that every catalog move lands in a row; keeps the owner's review and names on regeneration. |
 | `genichiro_models.py` | Identifies the six Genichiro-family model IDs from their archives (FLVER materials and bones, TAE entries, animations), map placements, cutscene references and the events that play those cutscenes. Writes `characters/genichiro_models.json`. |
