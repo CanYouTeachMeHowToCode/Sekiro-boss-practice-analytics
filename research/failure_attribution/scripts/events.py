@@ -11,7 +11,9 @@ Events (one row each):
     posture_break  the owner's definition (2026-10-16): the posture bar was full or nearly full (>= POSTURE_HIGH for
                    at least POSTURE_HOLD) and is then cleared completely (bar gone within CLEAR_WITHIN and staying gone
                    for CLEAR_HOLD). A full bar that is not cleared is not a break, since a perfect deflect never breaks
-                   posture. Clears around a death or a resurrection are not breaks.
+                   posture. A clear from a death to just after its resurrection is not a break (the bar stays
+                   until the resurrection, then empties); a break right before a death still counts. The event
+                   time is the last nearly full sample before the clear, close to the hit that broke the posture.
 Excluded on purpose: drops right before the HUD goes away (deathblow cutscenes, the boss's defeat, menus), where the
 fading bar reads as lost HP. A drop counts only while the HUD stays on screen for HUD_AFTER after its onset.
 """
@@ -100,9 +102,9 @@ def detect(frame, t, hud, hp, bar, po):
                     end = gone
                     while end + 1 < len(t) and not bar[end + 1]:
                         end += 1
-                    near_death = any(a - 0.5 <= t[gone] <= b + RESURRECTION_MARGIN for a, b in deaths)
+                    near_death = any(a <= t[gone] <= b + RESURRECTION_MARGIN for a, b in deaths)
                     if t[end] - t[gone] >= CLEAR_HOLD and not near_death:
-                        events.append({"type": "posture_break", "i": i, "hp_before": hpm[i], "hp_after": hpm[gone],
+                        events.append({"type": "posture_break", "i": j, "hp_before": hpm[i], "hp_after": hpm[gone],
                                        "cleared": t[gone]})
             i = j + 1
         else:

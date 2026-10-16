@@ -9,8 +9,10 @@ detector missed (the video's current time can be used as the event time).
 
 Reviews are written straight to research/ground_truth/annotations/<ruleset>/genichiro/<recording>/hud_events.csv:
 key, type, time_s, verdict (correct / wrong / unsure / missed), note, updated. A detected event is matched to its
-review by its key (type@time to 0.1 s), or failing that by type and a time within 0.3 s, so reruns of the detector
-keep the reviews. The video is served with HTTP range requests so the browser can seek.
+review by its key (type@time to 0.1 s), or failing that by type and a time within 0.3 s (1.0 s for posture breaks,
+whose time moves with the detector rule), so reruns of the detector keep the reviews. An event the owner added as
+missed that a later detector finds shows as confirmed, and editing it rewrites that row. The video is served with
+HTTP range requests so the browser can seek.
 """
 import csv
 import io
@@ -52,10 +54,14 @@ def write_reviews(rec, rows):
     os.replace(tmp, path)
 
 
+TOLERANCE = {"posture_break": 1.0}     # seconds; 0.3 for the other types
+
+
 def match(review, event):
     if review["key"] == event["key"]:
         return True
-    return review["type"] == event["type"] and abs(float(review["time_s"]) - float(event["time_s"])) <= 0.3
+    tolerance = TOLERANCE.get(event["type"], 0.3)
+    return review["type"] == event["type"] and abs(float(review["time_s"]) - float(event["time_s"])) <= tolerance
 
 
 def page_data():
@@ -73,7 +79,14 @@ def page_data():
                 used.add(reviews.index(r))
             e["verdict"], e["review_note"] = (r["verdict"], r["note"]) if r else ("", "")
             e["review_key"] = r["key"] if r else e["key"]
-        missed = [r for r in reviews if r["verdict"] == "missed"]
+            if r is None:
+                # an event the owner added as missed, which the detector now finds: it is confirmed
+                m = next((m for i, m in enumerate(reviews) if i not in used and m["verdict"] == "missed" and match(m, e)), None)
+                if m is not None:
+                    used.add(reviews.index(m))
+                    e["verdict"], e["review_note"] = "correct", f"你补充过的漏检（{float(m['time_s']):.2f} 秒），现在已检测到"
+                    e["review_key"] = m["key"]     # an edit replaces the missed row instead of adding a second one
+        missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
         out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
                     "missed": missed})
     return out
