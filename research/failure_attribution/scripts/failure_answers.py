@@ -18,7 +18,8 @@ For every damage or posture-break event:
   2. Which catalog entry: the chain check (observations/vanilla/genichiro/chain_check.csv) gives, for every play of an
      animation, the entries whose AI chain explains it.
   3. Which product move: the moveset (semantic/genichiro_product_moveset.csv) lists each move's catalog entries and
-     phases; P12-20 belongs to two moves, one per phase, so the phase picks.
+     phases; P12-20 belongs to two moves, one per phase, so the phase picks. P3-30 (3080) belongs to two moves of
+     phase 3, so the animation before it picks (BY_PREVIOUS).
 Phase: 1 + Wolf's deathblows so far (each ends a phase); a death that is not resurrected ends the attempt.
 
 Failures, merged by the owner's rules (plan.md, 2026-10-16):
@@ -40,6 +41,11 @@ from common import GT, recordings, work_dir  # noqa: E402
 HIT_LOOKBACK, WINDOW_SLACK, BULLET_FLIGHT = 0.1, 0.1, 1.5
 BREAK_WITH, PUNISH_WINDOW = 0.3, 2.0
 CONTINUES = {"链内衔接", "打断衔接", "打断衔接(你确认)"}
+# an animation in two product moves of the same phase, settled by the animation before it. 3080 (P3-30) is the thrust
+# after a perfect deflect: of 3032 it belongs to the phase-3 perilous follow-up, of the last hit of a Floating Passage
+# set (3028, 3041, 3092) to Floating Passage (the owner's P3-30 label, 2026-10-15)
+BY_PREVIOUS = {3080: {3032: "perilous-attack-follow-up-phase-3", 3028: "floating-passage-phase-3",
+                      3041: "floating-passage-phase-3", 3092: "floating-passage-phase-3"}}
 SEVERITY = {"death": 3, "posture_break": 2, "damage": 1}
 FIELDS = ["key", "time_s", "type", "types", "phase", "events", "hits", "anims", "chain", "entries", "move", "move_zh",
           "move_en", "flags"]
@@ -81,7 +87,8 @@ class Overlay:
                 n += 1
             if r["verdict"] != "链内衔接":
                 seg += 1
-            self.chain.append((int(r["anim"]), mmss_to_s(r["time"]), set(r["entries"].split()), n, seg))
+            prev = int(r["prev"]) if r["prev"] else None
+            self.chain.append((int(r["anim"]), mmss_to_s(r["time"]), set(r["entries"].split()), n, seg, prev))
         # an animation shared by several entries (the arrow 3018 opens both tides) is settled by the steps around it:
         # the entry must explain every step of the same chain
         steps = defaultdict(list)
@@ -103,12 +110,12 @@ class Overlay:
         return next(((s, e, t) for s, e, t in self.occ[anim] if s <= k <= e), None)
 
     def chain_of(self, anim, start_time):
-        """Catalog entries and chain number of the play of `anim` that started at start_time."""
+        """Catalog entries, chain number and previous animation of the play of `anim` that started at start_time."""
         i = min((i for i, c in enumerate(self.chain) if c[0] == anim), key=lambda i: abs(self.chain[i][1] - start_time),
                 default=None)
         if i is None or abs(self.chain[i][1] - start_time) > 0.15:
-            return [], None
-        return sorted(self.narrowed[i]), self.chain[i][3]
+            return [], None, None
+        return sorted(self.narrowed[i]), self.chain[i][3], self.chain[i][5]
 
     def play(self, n):
         """The animations of play number n, in order ("3018 → 3043")."""
@@ -150,14 +157,19 @@ def answer(ov, e, phase):
     cands = ov.candidates(int(e["frame"]))
     out = {"hits": [], "anims": [], "entries": set(), "moves": {}, "chains": set(), "plays": [], "flags": []}
     for c in cands:
-        entries, chain = ov.chain_of(c["anim"], c["occ"][2]) if c["occ"] else ([], None)
+        entries, chain, prev = ov.chain_of(c["anim"], c["occ"][2]) if c["occ"] else ([], None, None)
         out["hits"].append(f"{c['anim']} {c['how']} @{c['at']:.2f}s")
         out["anims"].append(str(c["anim"]))
         out["entries"] |= set(entries)
         out["chains"].add(chain)
         if chain is not None:
             out["plays"].append(ov.play(chain))
-        for m in moves_for(entries, phase):
+        moves = moves_for(entries, phase)
+        pick = BY_PREVIOUS.get(c["anim"], {}).get(prev)
+        if len(moves) > 1 and pick in {m["slug"] for m in moves}:
+            moves = [m for m in moves if m["slug"] == pick]
+            out["hits"][-1] += f"（前面是 {prev}）"
+        for m in moves:
             out["moves"][m["slug"]] = m
         if not entries:
             out["flags"].append(f"{c['anim']} 在链核对里找不到")
