@@ -42,6 +42,9 @@ from failure_answers import BY_PREVIOUS, MOVES, WINDOWS, Overlay, moves_for, pha
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
 EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
+# a death whose killing hit left no mark on the HP bar (events.py puts it 2.4 s before the death screen): the hit came
+# 1.6-2.9 s before the 死 on the reviewed deaths, so every moment of that span is tried and each move keeps its best
+UNSEEN_SPAN, UNSEEN_STEP = (-0.5, 0.8), 0.1
 SEVERITY = {"death": 3, "posture_break": 2, "damage": 1}
 ZH = {m["slug"]: m["zh"] for m in MOVES}
 
@@ -231,12 +234,16 @@ def predict(rec_id):
         evs = sorted(g["events"], key=lambda x: (x["t"], -SEVERITY[x["type"]]))
         lead = g["lead"]
         voters = [lead] if lead["type"] == "posture_break" else [x for x in evs if "scores" in x]
-        total = {}
+        total, unseen = {}, not voters and lead["type"] == "death"
         for x in voters:
             for m, sc in x.get("scores", {}).items():
                 total[m] = total.get(m, 0.0) + sc / len(voters)
+        if unseen:
+            for d in np.arange(UNSEEN_SPAN[0], UNSEEN_SPAN[1] + 1e-6, UNSEEN_STEP):
+                for m, sc in rank(q, lead["t"] + d, lead["phase"], refs, st["window"], st["after"])[2].items():
+                    total[m] = max(total.get(m, -1.0), sc)
         moves = sorted(total, key=total.get, reverse=True)
-        hits = []
+        hits = [f"死亡 {lead['time_s']}s: 致命一击在血条上看不到，按「死」字前 1.6–2.9 秒估计"] if unseen else []
         for x in evs:
             if "scores" in x:
                 role = "打崩" if x["type"] == "posture_break" else \
