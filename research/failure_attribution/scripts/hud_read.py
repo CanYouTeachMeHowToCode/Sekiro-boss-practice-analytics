@@ -4,7 +4,7 @@ Usage:
     python -I hud_read.py cache  <video> <cache.npz> [--step N]   decode once, keep per-column HUD colours
     python -I hud_read.py series <cache.npz> <out.csv>             HP, posture and HUD visibility per frame
 
-The cache keeps, for every N-th frame (default 2), the median HSV colour of each column of the two HUD strips, so
+The cache keeps, for every N-th frame (default 2), the median HSV colour of each column of the HUD strips, so
 thresholds can be tuned without decoding the video again. Frames go through mask_overlay() first, like everywhere in
 the pipeline, although these strips never touch the overlay.
 
@@ -15,9 +15,16 @@ Colours (OpenCV HSV, H 0–179):
     HP           red: H <= 12 or >= 168, S >= 70, V >= 80; just lost (pale): S <= 45, V >= 120; empty track: V <= 70
     posture      the posture is the bright part growing from the centre: V >= 140, S >= 120, warm hue (H <= 35 or
                  >= 170). It turns from yellow (H ≈ 25) to orange-red (H ≈ 13) as it fills. The track around it is
-                 dimmer (V ≈ 70–130), orange or red.
+                 dimmer (V ≈ 70–130), orange or red. The ends of the bar taper to a point, so a full bar can read as
+                 little as 0.84.
+    break line   when Wolf's posture breaks, the bar turns for a few tenths of a second into a thin bright red line
+                 about twice its width, without the end chevrons (rows ≈ 1242–1251, reaching x 1280 ± 450 or further).
+                 A bar that is full during a grab or at a resurrection only turns dark red and keeps its shape and
+                 chevrons (± 290). The line is measured where the normal bar never reaches, x 1280 ± 340–450, on rows
+                 1243–1250, against rows 1232–1239 just above: red hue (H >= 165 or <= 6), S >= 100, V >= 75, and
+                 at least 30 brighter or 50 more saturated than the rows above, so it shows in dark scenes and on snow.
 The output columns: frame, time_s, hud (HP bar on screen), hp, hp_lost (0..1 of the bar), posture_bar (posture bar on
-screen), posture (0..1 of PO_HALF).
+screen), posture (0..1 of PO_HALF), break_line (share of line-coloured columns on the weaker side, 0..1).
 """
 import csv
 import sys
@@ -31,6 +38,7 @@ from overlay_mask import BASE_H, BASE_W, mask_overlay  # noqa: E402
 
 HP_ROWS, HP_X0, HP_X1 = (1304, 1314), 148, 980
 PO_ROWS, PO_CX, PO_HALF, PIN = (1238, 1247), 1280, 290, 6
+LINE_ROWS, ABOVE_ROWS, LINE_IN, LINE_OUT = (1243, 1250), (1232, 1239), 340, 450
 
 
 def columns(frame, rows, x0, x1):
@@ -44,7 +52,7 @@ def columns(frame, rows, x0, x1):
 def cache(video, out, step):
     cap = cv2.VideoCapture(video)
     fps = cap.get(cv2.CAP_PROP_FPS)
-    frames, hp, po = [], [], []
+    frames, hp, po, line = [], [], [], []
     n = 0
     while cap.grab():
         if n % step == 0:
@@ -53,8 +61,11 @@ def cache(video, out, step):
             frames.append(n)
             hp.append(columns(frame, HP_ROWS, HP_X0, HP_X1))
             po.append(columns(frame, PO_ROWS, PO_CX - PO_HALF, PO_CX + PO_HALF))
+            sides = [(PO_CX - LINE_OUT, PO_CX - LINE_IN), (PO_CX + LINE_IN, PO_CX + LINE_OUT)]
+            line.append(np.vstack([np.hstack([columns(frame, LINE_ROWS, a, b), columns(frame, ABOVE_ROWS, a, b)])
+                                   for a, b in sides]))
         n += 1
-    np.savez_compressed(out, frame=np.array(frames), fps=fps, hp=np.stack(hp), posture=np.stack(po))
+    np.savez_compressed(out, frame=np.array(frames), fps=fps, hp=np.stack(hp), posture=np.stack(po), line=np.stack(line))
     print(f"{n} frames, {len(frames)} cached from {video}")
 
 
@@ -93,16 +104,27 @@ def read_posture(cols):
     return reach > 2, (PIN + reach) / PO_HALF if reach > 2 else 0.0
 
 
+def read_line(cols):
+    h, s, v, s_above, v_above = (cols[:, i].astype(int) for i in (0, 1, 2, 4, 5))
+    red = ((h >= 165) | (h <= 6)) & (s >= 100) & (v >= 75) & ((v - v_above >= 30) | (s - s_above >= 50))
+    half = red.size // 2
+    return min(red[:half].mean(), red[half:].mean())
+
+
 def series(cache_file, out):
     d = np.load(cache_file)
+    if "line" not in d:
+        sys.exit(f"{cache_file} has no break-line strip: rebuild it (hud_pipeline.py <id> --recache)")
     fps = float(d["fps"])
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        w.writerow(["frame", "time_s", "hud", "hp", "hp_lost", "posture_bar", "posture"])
-        for n, hp_cols, po_cols in zip(d["frame"], d["hp"], d["posture"]):
+        w.writerow(["frame", "time_s", "hud", "hp", "hp_lost", "posture_bar", "posture", "break_line"])
+        for n, hp_cols, po_cols, line_cols in zip(d["frame"], d["hp"], d["posture"], d["line"]):
             hud, hp, lost = read_hp(hp_cols)
             bar, posture = read_posture(po_cols) if hud else (False, 0.0)
-            w.writerow([int(n), f"{n / fps:.3f}", int(hud), f"{hp:.4f}", f"{lost:.4f}", int(bar), f"{posture:.4f}"])
+            line = read_line(line_cols) if hud else 0.0
+            w.writerow([int(n), f"{n / fps:.3f}", int(hud), f"{hp:.4f}", f"{lost:.4f}", int(bar), f"{posture:.4f}",
+                        f"{line:.3f}"])
     print(f"wrote {out}")
 
 
