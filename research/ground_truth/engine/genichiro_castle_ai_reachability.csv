@@ -1,0 +1,354 @@
+character,anim,category,reuse,recorded_phase1,castle_ai_phase1,recorded_phase2,castle_ai_phase2,recorded_phase3,castle_ai_phase3,castle_ai_paths,castle_status,castle_not_reachable_reason,requested_by_other_ai
+c7100,a000_000000,other,imports a000_400000,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_000001,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003000,attack,,0,yes,0,yes,,,710000:Act01,reachable_not_recorded,,710300(心中的弦一郎): Act01; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003001,attack,,0,yes,0,yes,,,710000:Act01,reachable_not_recorded,,710300(心中的弦一郎): Act01; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003002,attack,,0,yes,0,yes,,,710000:Act01,reachable_not_recorded,,710300(心中的弦一郎): Act01; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003003,attack,,3,yes,3,yes,,,710000:Act01; 710000:Act31,recorded,,"710300(心中的弦一郎): Act01, Act31; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003004,attack,,1,yes,0,yes,,,710000:Act02,recorded,,710300(心中的弦一郎): Act02; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003005,attack,,0,yes,2,yes,,,710000:Act03,recorded,,710300(心中的弦一郎): Act03; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003006,attack,,0,yes,1,yes,,,710000:Act10,recorded,,"710300(心中的弦一郎): Act10, Act39; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003007,attack,,0,yes,0,yes,,,710000:Act34,reachable_not_recorded,,"710300(心中的弦一郎): Act08, Act34, Kengeki20; 711000(另一个角色的 AI)"
+c7100,a000_003008,bullet,,0,no,0,no,,,,not_reachable,710000 从不请求,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003009,bullet,,0,yes,1,yes,,,710000:Damaged; 710000:Kengeki03,recorded,,"710300(心中的弦一郎): Act30, Damaged, Kengeki03; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003010,attack,,0,yes,0,yes,,,710000:Act01,reachable_not_recorded,,710300(心中的弦一郎): Act01; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003011,bullet,,0,yes,0,yes,,,710000:Act34,reachable_not_recorded,,"710300(心中的弦一郎): Act08, Act34"
+c7100,a000_003012,bullet,,0,no,0,no,,,,not_reachable,710000 从不请求,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003013,bullet,plays a000_003014,0,yes,0,yes,,,710000:Act48,reachable_not_recorded,,710300(心中的弦一郎): Act48; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003014,bullet,,3,yes,1,yes,,,710000:Act15,recorded,,"710300(心中的弦一郎): Act07, Act15; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003015,attack,,4,yes,0,yes,,,710000:Act15; 710000:Act48; 710000:Kengeki32; 710000:Kengeki39,recorded,,"710300(心中的弦一郎): Act15, Act48, Kengeki32, Kengeki39; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003016,attack,,4,yes,1,yes,,,710000:Act06,recorded,,710300(心中的弦一郎): Act06; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003017,bullet,,0,no,0,yes,,,710000:Interrupt,reachable_not_recorded,,
+c7100,a000_003018,bullet,,1,yes,1,yes,,,710000:Kengeki32; 710000:Kengeki33,recorded,,"710300(心中的弦一郎): Act49, Kengeki12, Kengeki32, Kengeki33; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003019,attack,,0,yes,0,yes,,,710000:Kengeki15; 710000:Kengeki33,reachable_not_recorded,,"710300(心中的弦一郎): Kengeki15, Kengeki33; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003020,attack,,2,yes,0,yes,,,710000:Act11,recorded,,710300(心中的弦一郎): Act11
+c7100,a000_003021,attack,,0,no,0,no,,,,not_reachable,只作为冷却编号出现,
+c7100,a000_003022,attack,,1,yes,0,yes,,,710000:Act16,recorded,,710300(心中的弦一郎): Act16
+c7100,a000_003023,bullet,,2,yes,0,yes,,,710000:Interrupt,recorded,,710300(心中的弦一郎): Interrupt
+c7100,a000_003025,attack,,8,yes,1,yes,,,710000:Act01; 710000:Kengeki38,recorded,,"710300(心中的弦一郎): Act01, Kengeki41; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003026,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,"710300(心中的弦一郎): Act14, Act38, Act39, Act49, Interrupt, Kengeki12; 711300(另一个角色的 AI)"
+c7100,a000_003027,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,711300(另一个角色的 AI)
+c7100,a000_003028,attack,,2,yes,0,yes,,,710000:Kengeki40,recorded,,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003029,attack,,0,yes,0,yes,,,710000:Kengeki15; 710000:Kengeki33,reachable_not_recorded,,"710300(心中的弦一郎): Kengeki15, Kengeki33; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003030,attack,,8,yes,5,yes,,,710000:Kengeki38,recorded,,710300(心中的弦一郎): Kengeki41; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003031,bullet,,0,yes,0,yes,,,710000:Kengeki15,reachable_not_recorded,,710300(心中的弦一郎): Kengeki15; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003032,attack,,0,no,0,no,,,,not_reachable,只作为冷却编号出现,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003034,bullet,,0,yes,1,yes,,,710000:Kengeki39,recorded,,710300(心中的弦一郎): Kengeki39; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003035,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,711300(另一个角色的 AI)
+c7100,a000_003036,bullet,,0,yes,0,yes,,,710000:Kengeki15; 710000:Kengeki39,reachable_not_recorded,,"710300(心中的弦一郎): Kengeki15, Kengeki39; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003037,attack,,2,yes,3,yes,,,710000:Act11,recorded,,710300(心中的弦一郎): Act11
+c7100,a000_003038,attack,,0,no,0,no,,,,not_reachable,只在从不被选中的函数里: Kengeki47,"710300(心中的弦一郎): Act07, Act08, Act30, Act49, Kengeki12; 711300(另一个角色的 AI)"
+c7100,a000_003039,bullet,,0,no,0,no,,,,not_reachable,只在从不被选中的函数里: Kengeki46,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003040,attack,,0,yes,0,yes,,,710000:Act09,reachable_not_recorded,,"710300(心中的弦一郎): Act35, Act38, Kengeki40, Kengeki48; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003041,attack,,0,yes,0,yes,,,710000:Act09,reachable_not_recorded,,710300(心中的弦一郎): Act35; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003042,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003043,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003044,bullet,,3,yes,3,yes,,,710000:Act24; 710000:Kengeki02,recorded,,"710300(心中的弦一郎): Act24, Kengeki02; 711300(另一个角色的 AI)"
+c7100,a000_003045,attack,,1,yes,0,yes,,,710000:Act31,recorded,,710300(心中的弦一郎): Act31; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003046,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003048,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,"710300(心中的弦一郎): Act38, Act39, Kengeki40, Kengeki48"
+c7100,a000_003049,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,"710300(心中的弦一郎): Interrupt, Kengeki40, Kengeki48"
+c7100,a000_003050,attack,,3,yes,2,yes,,,710000:Kengeki01,recorded,,710300(心中的弦一郎): Kengeki01; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003055,attack,,2,yes,2,yes,,,710000:Kengeki04,recorded,,710300(心中的弦一郎): Kengeki04; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003060,attack,,0,no,0,no,,,,not_reachable,只在从不被选中的函数里: Kengeki07,710300(心中的弦一郎): Kengeki07
+c7100,a000_003061,bullet,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003062,attack,,0,yes,1,yes,,,710000:Kengeki43,recorded,,710300(心中的弦一郎): Kengeki43; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003063,attack,,0,yes,0,yes,,,710000:Kengeki30,reachable_not_recorded,,710300(心中的弦一郎): Kengeki30; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003065,attack,,4,yes,3,yes,,,710000:Kengeki10,recorded,,"710300(心中的弦一郎): Kengeki10, Kengeki22"
+c7100,a000_003066,bullet,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003067,attack,,0,no,4,yes,,,710000:Kengeki38,recorded,,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003068,attack,,6,yes,2,yes,,,710000:Kengeki31,recorded,,710300(心中的弦一郎): Kengeki31; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003070,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003071,attack,,3,yes,2,yes,,,710000:Kengeki17,recorded,,710300(心中的弦一郎): Kengeki17
+c7100,a000_003075,attack,,0,no,0,no,,,,not_reachable,只在从不被选中的函数里: Kengeki13,710300(心中的弦一郎): Kengeki13
+c7100,a000_003076,attack,,17,yes,11,yes,,,710000:Kengeki14,recorded,,710300(心中的弦一郎): Kengeki14; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003080,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003091,attack,imports a000_008602,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_003092,attack,imports a000_008603,3,yes,2,yes,,,710000:Interrupt,recorded,,710300(心中的弦一郎): Interrupt; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003100,other,,29,yes,18,yes,,,710000:Parry; 710000:ShootReaction,recorded,,"710300(心中的弦一郎): Parry, ShootReaction; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_003101,other,plays a000_003100,23,yes,14,yes,,,710000:Parry,recorded,,710300(心中的弦一郎): Parry; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_003102,other,plays a000_003100,1,yes,0,yes,,,710000:Parry,recorded,,710300(心中的弦一郎): Parry
+c7100,a000_003103,other,plays a000_003100,0,yes,5,yes,,,710000:Parry,recorded,,710300(心中的弦一郎): Parry; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_004100,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_004110,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_005201,other,,7,yes,6,yes,,,710000:Act24; 710000:Damaged; 710000:Kengeki02; 710000:Parry,recorded,,"710300(心中的弦一郎): Act24, Parry, Damaged, Kengeki02; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_005202,other,,0,yes,0,yes,,,710000:Act22,reachable_not_recorded,,"710300(心中的弦一郎): Act22, Kengeki20; 711000(另一个角色的 AI); 711300(另一个角色的 AI)"
+c7100,a000_005203,other,,0,yes,0,yes,,,710000:Act22,reachable_not_recorded,,710300(心中的弦一郎): Act22; 711000(另一个角色的 AI); 711300(另一个角色的 AI)
+c7100,a000_007000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007010,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007020,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007100,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_007110,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007120,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_007200,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007210,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007220,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007600,other,imports a000_007000,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007610,other,imports a000_007010,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_007620,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008010,other,,15,no,9,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008011,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008012,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008013,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008020,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008021,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008022,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008023,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008050,other,plays a000_008010,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008051,other,plays a000_008011,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008120,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008121,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008130,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008140,other,plays a000_008010,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008141,other,plays a000_008011,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008150,other,plays a000_008130,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008210,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008220,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008230,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008240,other,plays a000_008210,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008250,other,plays a000_008220,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008260,other,plays a000_008230,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008300,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008301,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008310,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008320,other,plays a000_008300,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008400,other,,15,no,11,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008401,other,,8,no,3,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008500,other,,13,no,7,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008501,other,,16,no,11,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008502,other,,1,no,0,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008503,other,imports a000_008502,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008504,other,,0,no,3,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008505,other,imports a000_008504,0,no,2,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008510,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008511,other,imports a000_008510,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008550,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008551,other,imports a000_008550,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008600,other,,3,no,4,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008601,other,,8,no,5,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008602,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008603,attack,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008604,other,,3,no,0,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_008605,other,imports a000_008604,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008650,other,plays a000_008550,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008651,other,imports a000_008650,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008700,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008701,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008704,other,imports a000_008604,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008705,other,imports a000_008605,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_008900,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_009200,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_009500,other,,5,no,7,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_009501,other,imports a000_009500,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_009502,other,imports a000_009500,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_009503,other,imports a000_009500,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_009600,other,imports a000_009700,30,no,16,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_009700,other,,4,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_009999,other,,48,no,31,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_010000,other,plays a000_008010,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_010001,other,plays a000_400000,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_012000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_012100,other,,1,no,0,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_012110,other,,1,no,0,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_012120,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013100,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013110,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013120,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013200,other,imports a000_012000,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013400,other,imports a000_013500,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013410,other,imports a000_013510,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_013500,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_013510,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_013800,other,,8,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_020110,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_021000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_021001,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_040000,other,,0,no,1,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_040001,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_040010,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_041500,other,,7,no,5,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_400000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_401050,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_405000,other,,7,no,2,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_405001,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_405002,other,,6,no,3,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_405003,other,,6,no,5,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_405010,other,,2,no,2,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_405400,other,,1,no,0,no,,,,recorded_not_requested_by_ai,710000 从不请求,
+c7100,a000_405401,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_405402,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_405403,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_500000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_501040,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505000,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505001,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505002,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505003,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505400,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505401,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505402,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7100,a000_505403,other,,0,no,0,no,,,,not_reachable,710000 从不请求,
+c7110,a000_000000,other,imports a000_400000,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_003000,attack,,,,,,5,yes,711000:Act01,recorded,,"711300(心中的弦一郎): Act01, Act04; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003001,attack,,,,,,1,yes,711000:Act01,recorded,,"711300(心中的弦一郎): Act01, Act04; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003002,attack,,,,,,0,yes,711000:Act01,reachable_not_recorded,,"711300(心中的弦一郎): Act01, Act04; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003003,attack,,,,,,0,yes,711000:Act01,reachable_not_recorded,,"711000 带 3711500(剑圣战巴流); 711300(心中的弦一郎): Act01, Act31, Act41; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003004,attack,,,,,,2,yes,711000:Act02,recorded,,"711300(心中的弦一郎): Act02, Act14; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003005,attack,,,,,,0,yes,711000:Act03,reachable_not_recorded,,"711300(心中的弦一郎): Act03, Act21; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003006,attack,,,,,,2,yes,711000:Act10,recorded,,"711300(心中的弦一郎): Act10, Act32; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003007,attack,,,,,,1,yes,711000:Kengeki20,recorded,,710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003008,attack,,,,,,4,yes,711000:Act20; 711000:Interrupt,recorded,,"711300(心中的弦一郎): Act20, Interrupt"
+c7110,a000_003009,attack,,,,,,2,yes,711000:Interrupt,recorded,,711300(心中的弦一郎): Interrupt; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003010,attack,,,,,,0,yes,711000:Act01,reachable_not_recorded,,"711300(心中的弦一郎): Act01, Act04; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003011,bullet,,,,,,0,no,,not_reachable,只在从不被选中的函数里: Act34,710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003012,bullet,,,,,,1,yes,711000:Act13,recorded,,711300(心中的弦一郎): Act13
+c7110,a000_003013,bullet,plays a000_003014,,,,,0,yes,711000:Act48,reachable_not_recorded,,711300(心中的弦一郎): Act48; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003014,bullet,,,,,,0,yes,711000:Act15,reachable_not_recorded,,"711300(心中的弦一郎): Act15, Act33; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003015,attack,,,,,,0,yes,711000:Act15; 711000:Act48; 711000:Kengeki39,reachable_not_recorded,,"711300(心中的弦一郎): Act15, Act33, Act48, Kengeki39; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003016,attack,,,,,,2,yes,711000:Act06; 711000:Kengeki35,recorded,,"711300(心中的弦一郎): Act06, Act29, Interrupt, Kengeki35; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003018,bullet,,,,,,2,yes,711000:Interrupt; 711000:Kengeki32; 711000:Kengeki33,recorded,,"711000 带 3711500(剑圣战巴流); 711300(心中的弦一郎): Act46, Kengeki12, Kengeki22, Kengeki32, Kengeki33; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003019,attack,,,,,,1,yes,711000:Kengeki15; 711000:Kengeki33,recorded,,"711300(心中的弦一郎): Kengeki15, Kengeki33; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003021,attack,,,,,,0,no,,not_reachable,"只在从不被选中的函数里: Act08, Act11, Act12",
+c7110,a000_003022,attack,,,,,,0,no,,not_reachable,只在从不被选中的函数里: Act16,710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003023,bullet,,,,,,0,no,,not_reachable,711000 从不请求,710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003024,other,plays a000_003100,,,,,0,no,,not_reachable,711000 从不请求,711300(心中的弦一郎): Interrupt
+c7110,a000_003025,attack,,,,,,1,yes,711000:Act01; 711000:Kengeki38,recorded,,"711300(心中的弦一郎): Act01, Kengeki38; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003026,attack,,,,,,0,no,,not_reachable,711000 从不请求,"711300(心中的弦一郎): Act04, Act14, Act21, Act29, Act31, Act32, Act33, Act35, Act46, Kengeki12; 710300(另一个角色的 AI)"
+c7110,a000_003027,attack,,,,,,0,no,,not_reachable,711000 从不请求,"711300(心中的弦一郎): Interrupt, Parry"
+c7110,a000_003028,attack,,,,,,0,yes,711000:Kengeki40,reachable_not_recorded,,711300(心中的弦一郎): Kengeki40; 710000(另一个角色的 AI)
+c7110,a000_003029,attack,,,,,,0,yes,711000:Kengeki15; 711000:Kengeki33,reachable_not_recorded,,"711300(心中的弦一郎): Kengeki15, Kengeki33; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003030,attack,,,,,,2,yes,711000:Kengeki38,recorded,,711300(心中的弦一郎): Kengeki38; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003031,bullet,,,,,,1,yes,711000:Kengeki15,recorded,,711300(心中的弦一郎): Kengeki15; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003032,attack,,,,,,0,yes,711000:Kengeki38,reachable_not_recorded,,711300(心中的弦一郎): Kengeki38
+c7110,a000_003034,bullet,,,,,,0,yes,711000:Kengeki39,reachable_not_recorded,,711300(心中的弦一郎): Kengeki39; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003035,attack,,,,,,0,no,,not_reachable,711000 从不请求,"711300(心中的弦一郎): Act46, Kengeki12"
+c7110,a000_003036,bullet,,,,,,0,yes,711000:Kengeki15; 711000:Kengeki39,reachable_not_recorded,,"711300(心中的弦一郎): Kengeki15, Kengeki39; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003037,attack,,,,,,0,no,,not_reachable,"只在从不被选中的函数里: Act12, Kengeki34",710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003038,attack,,,,,,0,no,,not_reachable,711000 从不请求,711300(心中的弦一郎): Interrupt; 710300(另一个角色的 AI)
+c7110,a000_003039,bullet,,,,,,1,yes,711000:Act13; 711000:Act17; 711000:Kengeki46,recorded,,"711300(心中的弦一郎): Act13, Act17, Kengeki46"
+c7110,a000_003040,attack,,,,,,0,yes,711000:Act09,reachable_not_recorded,,"711300(心中的弦一郎): Act09, Act35, Act37; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003041,attack,,,,,,0,yes,711000:Act09,reachable_not_recorded,,711300(心中的弦一郎): Act09; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003042,attack,,,,,,1,yes,711000:Act19; 711000:Kengeki45,recorded,,"711300(心中的弦一郎): Act19, Kengeki45"
+c7110,a000_003043,attack,,,,,,3,yes,711000:Act18; 711000:Kengeki32,recorded,,"711300(心中的弦一郎): Act18, Act37, Kengeki32"
+c7110,a000_003044,attack,,,,,,0,no,,not_reachable,711000 从不请求,711300(心中的弦一郎): Act35; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003045,attack,,,,,,0,no,,not_reachable,Act41: 只在 Boss 带 3711500 时加权; 只在从不被选中的函数里: Act31,"711000 带 3711500(剑圣战巴流); 711300(心中的弦一郎): Act31, Act41; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003046,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_003047,bullet,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_003048,bullet,,,,,,0,no,,not_reachable,711000 从不请求,710300(另一个角色的 AI)
+c7110,a000_003050,attack,,,,,,0,yes,711000:Kengeki01,reachable_not_recorded,,711300(心中的弦一郎): Kengeki01; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003055,attack,,,,,,0,yes,711000:Kengeki04,reachable_not_recorded,,711300(心中的弦一郎): Kengeki04; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003062,attack,,,,,,0,yes,711000:Kengeki43,reachable_not_recorded,,711300(心中的弦一郎): Kengeki43; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003063,attack,,,,,,0,yes,711000:Kengeki30,reachable_not_recorded,,711300(心中的弦一郎): Kengeki30; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003067,attack,,,,,,1,yes,711000:Act09; 711000:Kengeki38; 711000:Kengeki44,recorded,,"711300(心中的弦一郎): Act09, Kengeki38, Kengeki44; 710000(另一个角色的 AI)"
+c7110,a000_003068,attack,,,,,,2,yes,711000:Kengeki31,recorded,,711300(心中的弦一郎): Kengeki31; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003076,attack,,,,,,0,yes,711000:Kengeki14; 711000:Kengeki17,reachable_not_recorded,,"711300(心中的弦一郎): Kengeki14, Kengeki17; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003080,attack,,,,,,0,yes,711000:Interrupt,reachable_not_recorded,,711300(心中的弦一郎): Interrupt
+c7110,a000_003085,attack,,,,,,0,no,,not_reachable,"Act40: 只在 Boss 带 3711500 时加权; Act41: 只在 Boss 带 3711500 时加权; Interrupt: 只在 Boss 带 3711500 时; 只在从不被选中的函数里: Act42, Act43, Act44, Act45","711000 带 3711500(剑圣战巴流); 711300(心中的弦一郎): Act40, Act41"
+c7110,a000_003086,attack,,,,,,0,no,,not_reachable,"Act09: 只在 Boss 带 3711500 时; Interrupt: 需要特效 5031,只有 3085/3087 会发出",711000 带 3711500(剑圣战巴流)
+c7110,a000_003087,attack,,,,,,0,no,,not_reachable,Act15: 只在 Boss 带 3711500 时; Act48: 只在 Boss 带 3711500 时; Kengeki22: 只在 Boss 带 3711500 时加权,"711000 带 3711500(剑圣战巴流); 711300(心中的弦一郎): Act15, Act33, Act48, Kengeki22"
+c7110,a000_003091,attack,imports a000_008602,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_003092,attack,imports a000_008603,,,,,1,yes,711000:Interrupt,recorded,,711300(心中的弦一郎): Interrupt; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003100,other,,,,,,9,yes,711000:Parry; 711000:ShootReaction,recorded,,"711300(心中的弦一郎): Parry, ShootReaction; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_003101,other,plays a000_003100,,,,,3,yes,711000:Parry,recorded,,711300(心中的弦一郎): Parry; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_003103,other,plays a000_003100,,,,,1,yes,711000:Parry,recorded,,711300(心中的弦一郎): Parry; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_004110,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_005201,other,,,,,,1,yes,711000:Kengeki02; 711000:Parry,recorded,,"711300(心中的弦一郎): Parry, Kengeki02, Kengeki45, Kengeki46; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_005202,other,,,,,,2,yes,711000:Act22; 711000:Kengeki20,recorded,,"711300(心中的弦一郎): Act22, Kengeki20; 710000(另一个角色的 AI); 710300(另一个角色的 AI)"
+c7110,a000_005203,other,,,,,,0,yes,711000:Act22,reachable_not_recorded,,711300(心中的弦一郎): Act22; 710000(另一个角色的 AI); 710300(另一个角色的 AI)
+c7110,a000_007000,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007010,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007020,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007100,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007110,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007120,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007200,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007210,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007220,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007600,other,imports a000_007000,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007610,other,imports a000_007010,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_007620,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008010,other,,,,,,4,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008011,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008012,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008013,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008020,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008021,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008022,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008023,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008050,other,plays a000_008010,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008051,other,plays a000_008011,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008120,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008121,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008130,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008140,other,plays a000_008010,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008141,other,plays a000_008011,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008150,other,plays a000_008130,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008210,other,,,,,,7,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008220,other,,,,,,5,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008230,other,,,,,,3,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008240,other,plays a000_008210,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008250,other,plays a000_008220,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008260,other,plays a000_008230,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008300,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008301,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008310,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008320,other,plays a000_008300,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008400,other,,,,,,3,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008401,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008500,other,,,,,,3,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008501,other,,,,,,5,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008504,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008505,other,imports a000_008504,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008510,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008511,other,imports a000_008510,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008550,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008551,other,imports a000_008550,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008600,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008601,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_008602,attack,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008603,attack,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008604,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008605,other,imports a000_008604,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008650,other,plays a000_008550,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008651,other,imports a000_008650,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008700,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008701,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008704,other,imports a000_008604,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008705,other,imports a000_008604,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_008900,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_009200,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_009500,other,,,,,,8,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_009501,other,imports a000_009500,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_009502,other,imports a000_009500,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_009503,other,imports a000_009500,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_009600,other,imports a000_009700,,,,,11,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_009700,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_009999,other,,,,,,27,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_010000,other,plays a000_008010,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_010001,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_012000,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_012100,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_012110,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_012120,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013100,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013110,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013120,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013200,other,imports a000_012000,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013400,other,imports a000_013500,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013410,other,imports a000_013510,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013500,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013510,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013700,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_013800,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_020110,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_020200,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_400000,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_405000,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_405001,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405002,other,,,,,,4,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405003,other,,,,,,4,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405010,other,,,,,,5,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405400,other,,,,,,0,no,,not_reachable,711000 从不请求,
+c7110,a000_405401,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405402,other,,,,,,1,no,,recorded_not_requested_by_ai,711000 从不请求,
+c7110,a000_405403,other,,,,,,0,no,,not_reachable,711000 从不请求,

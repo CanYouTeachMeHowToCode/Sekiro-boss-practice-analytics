@@ -108,7 +108,7 @@ Therefore:
 
 > V3 must not pretend Wiki content is complete engine-level ground truth.
 
-Ground-truth completeness is now explicitly a V4 concern.
+Ground-truth completeness is now explicitly a V3.1 concern.
 
 Delivered:
 
@@ -127,21 +127,46 @@ v3.0.0
 
 ---
 
+## V3.1 — Completed
+
+V3.1 established combat ground truth for castle Genichiro (vanilla, all three phases) and rebuilt the product's Genichiro moveset from it. It was first planned as V4 (see the numbering note in section 3).
+
+Delivered:
+
+- a research workspace and pipeline in `research/ground_truth/`: game-file and battle-AI extraction, and a reader for the dev-menu overlay that turns recordings into verified animation IDs
+- two verified castle recordings, and a check that every recorded transition is explained by the AI chains
+- the castle Genichiro move catalog (63 moves from 45 AI chains), every entry approved by the project owner
+- a completeness review of all 353 TAE entries of c7100 and c7110
+- the product's Genichiro moveset rebuilt from the catalog: 26 moves, Iaijutsu merged into Receding Tide, texts reviewed against the engine evidence
+- `attempts.user_id` NOT NULL
+
+Released as:
+
+```text
+v3.1.0
+```
+
+---
+
 # 3. Current Development Focus
 
-## V4 — Combat Ground Truth Foundation
+## V4 — Automated Gameplay Analysis
 
 V4 answers:
 
-> **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
+> **What happened during the fight without requiring the player to manually enter everything?**
 
-Start with V4 Milestone 1 (research foundation) and Milestone 2 (Genichiro runtime pilot). See sections 18–36.
+Start with V4 Milestone 1: the failure attribution prototype on local Genichiro recordings (section 38). The V3.1 research in `research/ground_truth/` is its input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
 
-V3 is released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply.
+**Numbering.** The combat ground-truth stage was first planned as V4. It mainly added a research foundation and a Genichiro content update to the V3 product, so it became V3.1 and shipped as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 
-Public deployment is V4 Milestone 9.
+V3 and V3.1 are released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply. Sections 18–36 remain the reference for the ground-truth pipeline, which every later boss goes through (section 34).
 
-Practice recommendations are part of V5.
+Public deployment is V4 Milestone 4: it waits until a user can upload a recording and see which moves caused their failures (section 33).
+
+Resurrection mod work is deferred (section 35). Boss expansion is deferred until the Genichiro end-to-end flow works in V4 (section 34).
+
+Practice recommendations are part of V4.
 
 ---
 
@@ -254,7 +279,7 @@ Move
 Animation
 ```
 
-This distinction becomes critical in V4.
+This distinction becomes critical in V3.1.
 
 ---
 
@@ -301,7 +326,7 @@ Floating Passage success rate: 75%
 
 unless the system knows how many times the move actually occurred.
 
-Before V5 automated gameplay observation, the denominator usually does not exist.
+Before V4 automated gameplay observation, the denominator usually does not exist.
 
 ---
 
@@ -353,6 +378,7 @@ Current expectations:
 - new attempts belong to the authenticated user
 - ownerless historical attempts are preserved
 - ownerless historical attempts are hidden
+- since V3.1 every attempt has an owner: `attempts.user_id` is NOT NULL (section 32)
 - explicit claiming is supported
 - request bodies do not control ownership
 
@@ -510,7 +536,7 @@ The existing content was reviewed against both Fextralife and Fandom, and the us
 - move types made consistent
 - the cross-wiki mapping for every boss is in `research/ground_truth/semantic/wiki_mapping/`; it records what both wikis say, including what the product does not use
 
-Decided: Lady Butterfly and Guardian Ape keep their current move lists. Fandom's more specific lists are recorded in the mapping, and V4 rebuilds these movesets from engine evidence.
+Decided: Lady Butterfly and Guardian Ape keep their current move lists. Fandom's more specific lists are recorded in the mapping, and V3.1 rebuilds these movesets from engine evidence.
 
 ---
 
@@ -537,7 +563,7 @@ If the application cannot confidently resolve the disagreement:
 ```text
 record uncertainty
 or
-defer to V4 research
+defer to V3.1 research
 ```
 
 Do not manufacture a confident answer.
@@ -567,7 +593,7 @@ Product-level quality means:
 - major user-facing moves are represented
 - uncertain information is not presented as fact
 
-Engine completeness belongs to V4.
+Engine completeness belongs to V3.1.
 
 ---
 
@@ -651,15 +677,15 @@ It does not claim complete combat knowledge.
 
 ---
 
-# 18. V4 — Combat Ground Truth Foundation
+# 18. V3.1 — Combat Ground Truth Foundation
 
-V4 answers:
+V3.1 answers:
 
 > **What boss actions actually exist, and what evidence supports the semantic moves used by the product?**
 
 This version exists because the Wiki-only approach is not sufficiently reliable for later automated gameplay analysis.
 
-V4 is primarily:
+V3.1 is primarily:
 
 ```text
 runtime instrumentation
@@ -671,11 +697,11 @@ data engineering
 semantic mapping
 ```
 
-Do not treat V4 primarily as a machine-learning milestone.
+Do not treat V3.1 primarily as a machine-learning milestone.
 
 ---
 
-# 19. V4 Evidence Model
+# 19. V3.1 Evidence Model
 
 Ground truth should be based on several evidence layers.
 
@@ -701,14 +727,15 @@ No single source should automatically override all others.
 
 # 20. Rulesets
 
-V4 must introduce the concept of a combat ruleset.
+Every dataset carries its combat ruleset.
 
-At minimum:
+V3.1 covers only:
 
 ```text
 Vanilla Sekiro
-Resurrection Mod
 ```
+
+The Resurrection mod is a separate ruleset. Its work is deferred until after `v3.1.0` (section 35), but the ruleset label stays on every dataset so it can be added later without reworking vanilla data.
 
 Version metadata should be preserved where possible.
 
@@ -751,7 +778,7 @@ Example responsibilities:
 
 ```text
 rulesets/
-→ Vanilla / Resurrection version metadata
+→ ruleset version metadata (vanilla in V3.1)
 
 characters/
 → product boss ↔ character ID mappings
@@ -802,11 +829,11 @@ Raw extracted game assets should remain local and gitignored.
 
 ---
 
-# 23. V4 Milestone 1 — Research Foundation
+# 23. V3.1 Milestone 1 — Research Foundation
 
 Create:
 
-- ruleset metadata
+- vanilla ruleset metadata (Resurrection metadata is deferred with the rest of the Resurrection work)
 - research folder structure
 - ground-truth schema drafts
 - local asset paths through configuration
@@ -817,11 +844,11 @@ Do not modify the production DB merely to anticipate later needs.
 
 ---
 
-# 24. V4 Milestone 2 — Genichiro Runtime Pilot
+# 24. V3.1 Milestone 2 — Genichiro Runtime Pilot
 
 Use Genichiro as the first vertical slice.
 
-Start with Vanilla unless explicitly choosing Resurrection first for a specific experiment.
+Vanilla only.
 
 Objectives:
 
@@ -842,9 +869,11 @@ for a small number of representative attacks.
 
 Do not attempt full game extraction before proving this bridge works.
 
+Once the bridge is proven, recording is targeted at gaps in the semantic catalog (section 29): moves with only static or ambiguous evidence, and moves the product will support that lack a reference clip. Do not try to record every animation in the game files.
+
 ---
 
-# 25. V4 Runtime-First Principle
+# 25. V3.1 Runtime-First Principle
 
 Prefer:
 
@@ -872,9 +901,9 @@ Runtime instrumentation should shrink the static reverse-engineering search spac
 
 ---
 
-# 26. V4 Milestone 3 — Static Engine Mapping
+# 26. V3.1 Milestone 3 — Static Engine Mapping
 
-After obtaining runtime identifiers, trace them into engine/mod data.
+After obtaining runtime identifiers, trace them into engine data.
 
 Possible chain:
 
@@ -893,7 +922,6 @@ AtkParam / Bullet / SpEffect
 Use:
 
 - Debug Menu / developer runtime information
-- Resurrection override files
 - targeted original-game extraction
 - DSAnimStudio or equivalent animation inspection
 - TAE extraction
@@ -905,7 +933,9 @@ Do not introduce tooling simply because it exists.
 
 ---
 
-# 27. Resurrection Analysis Strategy
+# 27. Resurrection Analysis Strategy (Deferred)
+
+Deferred until after `v3.1.0`, together with section 35. Kept here for when that work starts.
 
 Treat Resurrection as:
 
@@ -977,7 +1007,15 @@ Preserve this uncertainty until actual data confirms the schema.
 
 ---
 
-# 29. V4 Milestone 4 — Genichiro Semantic Catalog
+# 29. V3.1 Milestone 4 — Genichiro Semantic Catalog
+
+The catalog lists every action that can hit the player, cause a mistake, break the player's posture or kill. Guards, deflects, steps, dashes and hit reactions are engine actions, not moves. An animation can be only part of a move.
+
+Build the draft from the battle AI (each AI option usually requests one complete move chain, with branches and trigger conditions), TAE, runtime recordings, wiki names as candidates, and animation previews. Group variants under a move family: Genichiro's three Floating Passage variants are one family.
+
+Every entry carries an evidence status: `runtime observed`, `static evidence only` or `to confirm`. The project owner confirms every name, grouping and variant.
+
+Outputs: a reviewable move ↔ animation table, and time-labelled reference clips for the moves the product will support.
 
 For each semantic move, gather evidence such as:
 
@@ -1047,7 +1085,7 @@ Confidence values are proposals until the project owner confirms them.
 
 ---
 
-# 31. V4 Milestone 5 — Completeness Review
+# 31. V3.1 Milestone 5 — Completeness Review
 
 For each supported boss define:
 
@@ -1083,27 +1121,7 @@ Do not claim absolute mathematical completeness unless evidence supports it.
 
 ---
 
-# 32. V4 Milestone 6 — Resurrection Ground Truth
-
-After the Vanilla pipeline is understood, build the Resurrection mapping.
-
-Classify differences as:
-
-```text
-unchanged
-modified
-new_in_resurrection
-vanilla_only
-same_semantic_move_different_engine_sequence
-```
-
-Every gameplay/video observation must carry its ruleset.
-
-This becomes essential for future CV training.
-
----
-
-# 33. V4 Milestone 7 — Product Integration
+# 32. V3.1 Milestone 6 — Product Integration
 
 Only after the research schema stabilizes:
 
@@ -1111,8 +1129,21 @@ Only after the research schema stabilizes:
 - improve phase mappings
 - sync verified semantic content
 - preserve attempt foreign-key integrity
+- make `attempts.user_id` NOT NULL through a migration. V3 left it nullable so attempts recorded before accounts existed could stay ownerless until claimed with `python -m scripts.claim_attempts <username>`. The migration should fail loudly if any ownerless attempts remain.
 - consider adding ruleset support
 - consider adding engine-action mappings
+
+**Delivered for castle Genichiro (owner decisions, 2026-10-15):**
+
+- the product moveset rebuilt from the owner-approved catalog: 26 moves instead of 22, five new ones that neither wiki lists, Iaijutsu merged into Receding Tide, several moves extended to phase 3, and the owner's English and Chinese names (`research/ground_truth/semantic/genichiro_product_moveset.md`)
+- move texts reviewed against the engine evidence; new moves have no text yet (`semantic/genichiro_content_review.md`)
+- a migration that moves Iaijutsu attempts to Receding Tide before deleting the move
+- `attempts.user_id` NOT NULL; the migration refuses to run while ownerless attempts remain
+- the cross-wiki mapping marks every Genichiro row `owner_confirmed`, with the catalog entries behind it
+- the moveset source line reads "Some descriptions from:", since not every text comes from the wiki
+- no engine-mapping tables: the research catalog stays the source of the move ↔ animation chains (owner decision)
+
+The product seed is written from the research files by `research/ground_truth/scripts/ai/sync_seed.py`; change the moveset there, not by hand. Importing V1 history now needs an owner: `python -m scripts.import_v1_data --attempts <file> --owner <username>`.
 
 Potential future tables:
 
@@ -1129,9 +1160,50 @@ Let the actual research data determine the relational model.
 
 ---
 
-# 34. V4 Milestone 8 — Boss Expansion
+# 33. Public Deployment (V4)
 
-After Genichiro is complete enough to validate the pipeline, expand boss-by-boss.
+Public deployment moved from V3.1 to V4 (owner decision, 2026-10-12). The public product starts with the end-to-end flow: a user uploads a recording and sees their failures and the moves that caused them. It comes right after the video upload and failure report (section 38).
+
+Before deployment ensure:
+
+- the upload → failure report flow works and has passed reliability validation
+- authentication works reliably
+- user isolation is tested, uploaded recordings included
+- bilingual UI works
+- database migrations are reproducible
+- verified content is distinguishable from uncertain content
+
+Rehearse with a private deployment once the upload work begins. A small invite-only deployment is fine if outside feedback is needed sooner.
+
+Production concerns may include:
+
+- HTTPS
+- production PostgreSQL
+- secure environment variables
+- database backups
+- migration execution
+- secure cookies
+- deployment workflow
+- logging
+- recovery
+- object storage for uploaded recordings
+- background processing for video analysis, and its cost
+- upload size limits
+- retention and privacy rules for users' recordings
+
+Choose infrastructure based on actual hosting requirements.
+
+Do not introduce Kubernetes by default.
+
+---
+
+# 34. Deferred — Boss Expansion
+
+Not part of V3.1 (owner decision, 2026-10-13). It starts after the V4 end-to-end flow works for Genichiro and is publicly deployed (section 33); when exactly is the project owner's decision.
+
+Each new boss then goes through the whole pipeline once: the ground truth (V3.1 tooling) and the data that V4's recognition needs, such as reference clips and labels. Expanding earlier would mean redoing those bosses once V4 shows what it needs.
+
+Expand boss-by-boss.
 
 Do not immediately process every boss in parallel.
 
@@ -1155,67 +1227,53 @@ The ground-truth pipeline should become more automated with each boss.
 
 ---
 
-# 35. V4 Milestone 9 — Public Deployment
+# 35. Deferred — Resurrection Ground Truth
 
-Public deployment is intentionally deferred until V4.
+Not part of V3.1's vanilla milestones. It starts after `v3.1.0`; whether in a v3.x release or after V4 is the project owner's decision.
 
-Before deployment ensure:
+Once the vanilla pipeline is understood, build the Resurrection mapping.
 
-- authentication works reliably
-- user isolation is tested
-- bilingual UI works
-- database migrations are reproducible
-- verified content is distinguishable from uncertain content
-- at least one ground-truth vertical slice is integrated
-- `attempts.user_id` is made NOT NULL through a migration. V3 left it nullable so attempts recorded before accounts existed could stay ownerless until claimed with `python -m scripts.claim_attempts <username>`. The migration should fail loudly if any ownerless attempts remain.
+Classify differences as:
 
-Production concerns may include:
+```text
+unchanged
+modified
+new_in_resurrection
+vanilla_only
+same_semantic_move_different_engine_sequence
+```
 
-- HTTPS
-- production PostgreSQL
-- secure environment variables
-- database backups
-- migration execution
-- secure cookies
-- deployment workflow
-- logging
-- recovery
+Every gameplay/video observation must carry its ruleset.
 
-Choose infrastructure based on actual hosting requirements.
-
-Do not introduce Kubernetes by default.
+This becomes essential for future CV training.
 
 ---
 
-# 36. V4 Release Boundary
+# 36. V3.1 Release Boundary
 
-Do not block `v4.0.0` on ground-truth completeness for every Sekiro boss.
+Do not block `v3.1.0` on ground-truth completeness for every Sekiro boss.
 
-Recommended `v4.0.0` target:
+Recommended `v3.1.0` target:
 
 ```text
 Genichiro ground-truth pipeline proven
 +
-verified production integration
+castle Genichiro move catalog confirmed by the project owner
 +
-stable public deployment
+verified production integration
 ```
 
-Then expand boss coverage through:
+Public deployment is not part of `v3.1.0`; it comes in V4 (section 33).
 
-```text
-v4.1.x
-v4.2.x
-...
-```
+Boss expansion is not part of V3.1 either. It follows the Genichiro end-to-end flow (section 34), so ground-truth completeness for other bosses never blocks a release.
 
-This avoids turning “all bosses complete” into an unbounded release blocker.
+Resurrection is not part of `v3.1.0` (section 35).
 
 ---
 
-# 37. V5 — Automated Gameplay Analysis
+# 37. V4 — Automated Gameplay Analysis
 
-V5 answers:
+V4 answers:
 
 > **What happened during the fight without requiring the player to manually enter everything?**
 
@@ -1239,28 +1297,32 @@ Recommend Practice
 
 ---
 
-# 38. V5 Development Order
+# 38. V4 Development Order
 
 Do not jump directly to full automatic fight understanding.
 
 Use:
 
 ```text
-1. Video upload
-2. Manual annotation
-3. Semi-automatic annotation
-4. Short-clip move classification
-5. Temporal move detection
+1. Failure attribution prototype on local recordings
+   (hand-labelled answer set; detect damage / posture break / death
+    → look back → identify the move → merge one failure → failure report)
+2. Reliability validation on independent recordings
+3. Video upload and failure report (failure counts per move)
+4. Public deployment (section 33)
+5. Whole-fight move detection (short clips first, then temporal segmentation)
 6. Player-response detection
-7. Automatic fight report
+7. True per-move analytics
 8. Recommendations
 ```
+
+At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
 
 Every stage should produce useful intermediate tooling.
 
 ---
 
-# 39. V5 Video Data Model Principles
+# 39. V4 Video Data Model Principles
 
 PostgreSQL should hold:
 
@@ -1277,7 +1339,7 @@ Do not choose a storage provider until public deployment requirements justify it
 
 ---
 
-# 40. V5 Analytics Rule
+# 40. V4 Analytics Rule
 
 True per-move success rates become valid only when move occurrences and responses are actually observed.
 
@@ -1301,7 +1363,7 @@ Do not mix the two definitions.
 
 ---
 
-# 41. Practice Recommendations Move to V5
+# 41. Practice Recommendations Move to V4
 
 Do not build a sophisticated recommendation engine from incomplete manual failure labels.
 
@@ -1324,9 +1386,9 @@ Avoid opaque skill scores.
 
 ---
 
-# 42. V6 — Multi-Game Platform
+# 42. V5 — Multi-Game Platform
 
-V6 generalizes the architecture beyond Sekiro.
+V5 generalizes the architecture beyond Sekiro.
 
 The first planned additional game is:
 
@@ -1334,7 +1396,7 @@ The first planned additional game is:
 Black Myth: Wukong
 ```
 
-Do not begin V6 abstractions during V3–V5 unless a real shared requirement emerges.
+Do not begin V5 abstractions during V3–V4 unless a real shared requirement emerges.
 
 Avoid speculative generic schemas.
 
@@ -1477,7 +1539,7 @@ register
 → analytics update
 ```
 
-Future V4/V5 tests should be added incrementally as those systems exist.
+Future V3.1/V4 tests should be added incrementally as those systems exist.
 
 ---
 
@@ -1581,19 +1643,18 @@ Examples currently not justified by default:
 
 # 53. Current Priority Order
 
-V3 is released. Work through V4 in milestone order:
+V3 and V3.1 are released. V4 order (section 38):
 
 ```text
-1. Research foundation (V4 Milestone 1)
-2. Genichiro runtime pilot (V4 Milestone 2)
-3. Static engine mapping (V4 Milestone 3)
-4. Genichiro semantic catalog (V4 Milestone 4)
-5. Completeness review (V4 Milestone 5)
+1. Failure attribution prototype on local recordings (V4 Milestone 1) — current
+2. Reliability validation on independent recordings (V4 Milestone 2)
+3. Video upload and failure report (V4 Milestone 3)
+4. Public deployment (V4 Milestone 4)
 ```
 
-The later V4 milestones (Resurrection, product integration, boss expansion, public deployment) follow once Genichiro's pipeline is proven.
+The later V4 milestones (whole-fight move detection, player responses, per-move analytics, recommendations) follow. Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Resurrection is deferred (section 35).
 
-Keep the released V3 product working: fix product bugs on `dev` as they appear, and do not change the production schema for ground-truth research until V4 Milestone 7.
+Keep the released product working: fix product bugs on `dev` as they appear.
 
 ---
 
@@ -1610,7 +1671,7 @@ Then:
 1. identify the uncertainty
 2. inspect available sources
 3. compare runtime evidence if available
-4. defer to V4 research if unresolved
+4. defer to V3.1 research if unresolved
 
 Never fabricate combat behavior to complete a data file.
 
@@ -1660,13 +1721,13 @@ Structured analytics
 V3
 Multi-user product foundation
 
-V4
+V3.1
 Combat ground truth
 
-V5
+V4
 Automated gameplay analysis
 
-V6
+V5
 Multi-game platform
 ```
 

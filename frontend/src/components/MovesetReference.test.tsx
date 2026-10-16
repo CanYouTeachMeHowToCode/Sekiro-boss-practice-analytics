@@ -78,16 +78,23 @@ describe("MovesetReference", () => {
     expect(thrust.textContent).toBe("Thrust");
   });
 
-  it("links to the boss's data source", () => {
+  it("links to the boss's data source, which only some descriptions come from", () => {
     render(<MovesetReference boss={boss} />);
 
+    expect(screen.getByText("Some descriptions from:")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Fextralife Sekiro Wiki" })).toHaveAttribute("href", boss.source_url);
+  });
+
+  it("labels the boss's data source in Chinese mode", () => {
+    render(withLanguage(<MovesetReference boss={boss} />, "zh"));
+
+    expect(screen.getByText("部分描述来自：")).toBeInTheDocument();
   });
 
   it("shows no source line when the boss has no source", () => {
     render(<MovesetReference boss={{ ...boss, source_name: null, source_url: null }} />);
 
-    expect(screen.queryByText(/source:/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/descriptions from:/i)).not.toBeInTheDocument();
   });
 
   it("shows only English in English mode", () => {

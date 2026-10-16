@@ -181,7 +181,7 @@ V2 runs locally with Docker Compose.
 
 #### Deferred or Skipped
 
-* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts, and public hosting is now planned for V4, once boss content is backed by verified game data.
+* **Public deployment** was deferred: without accounts, a public instance would let anyone record attempts. V3 adds accounts. Public hosting is now planned for V4, once a player can upload a recording and see which moves caused their failures.
 * **Boss search and filtering** was skipped, because 8 bosses fit comfortably on one page.
 
 ---
@@ -196,10 +196,24 @@ V3 turned the single-user local app into a foundation that several players can u
 * ✅ **User-owned attempts:** every attempt belongs to the player who recorded it. Attempts recorded before accounts existed are kept and can be claimed with `scripts.claim_attempts`.
 * ✅ **Per-user analytics:** attempt history, boss analytics, progression, and the Sekiro dashboard only cover your own attempts.
 * ✅ **English / 中文 interface:** a language switch, with each language showing only its own text. The choice is saved on the account, or in the browser for visitors. Most Chinese move names and descriptions are translations of the English source material.
-* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V4.
+* ✅ **Existing content cleanup:** the current boss data was checked against two wikis (Fextralife and Fandom); errors and misleading text were fixed and phase structures corrected, rather than adding more bosses from wikis. The comparison for every boss is kept in [`research/ground_truth/semantic/wiki_mapping/`](research/ground_truth/semantic/wiki_mapping/README.md) as the starting point for V3.1.
 * ✅ **Hardening:** the four required CI jobs also check that accounts and attempts survive a Docker restart.
 
-While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V4.
+While expanding boss coverage, community wiki movesets turned out to be incomplete and sometimes inconsistent with each other. V3 therefore treats boss data as human-readable reference content, not as a complete record of every attack in the game. Verifying movesets against the game itself is the job of V3.1.
+
+---
+
+## V3.1 — Combat Ground Truth
+
+### V3.1 — Completed
+
+V3.1 checked castle Genichiro's moves against the game itself, then rebuilt the product's moveset from that evidence. It was first planned as V4.
+
+* ✅ **Research pipeline:** scripts that read the game files and the boss's battle AI, and a reader for the developer-menu overlay that turns gameplay recordings into verified animation IDs ([`research/ground_truth/`](research/ground_truth/README.md)). No game files or recordings are committed.
+* ✅ **Move catalog:** every attack chain castle Genichiro's AI can use in all three phases, 63 moves in all, with their triggers, phases and evidence, each entry approved by the project owner.
+* ✅ **Completeness review:** all 353 animation entries of the two Genichiro models are classified, and every move transition in two recorded fights is explained by the AI.
+* ✅ **Rebuilt moveset:** Genichiro now has 26 moves, five of them listed by neither wiki, with Iaijutsu merged into Receding Tide and descriptions corrected where the game contradicted the wiki. New moves have no description yet.
+* ✅ **Every attempt has an owner:** claim attempts recorded before accounts existed before upgrading (see "Running Locally").
 
 ---
 
@@ -208,17 +222,17 @@ While expanding boss coverage, community wiki movesets turned out to be incomple
 The full plan is in [ROADMAP.md](ROADMAP.md). In short:
 
 ```text
-V1  What killed me?                      → manual attempt analytics
-V2  Where am I improving or struggling?  → structured relational analytics
-V3  Can different players use it?        → multi-user product foundation
-V4  What moves actually exist?           → combat ground truth + public deployment
-V5  What happened in the fight?          → gameplay video analysis
-V6  Can this work across games?          → multi-game platform
+V1    What killed me?                      → manual attempt analytics
+V2    Where am I improving or struggling?  → structured relational analytics
+V3    Can different players use it?        → multi-user product foundation
+V3.1  What moves actually exist?           → combat ground truth
+V4    What happened in the fight?          → gameplay video analysis + public deployment
+V5    Can this work across games?          → multi-game platform
 ```
 
-* **V4** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro. The app is then deployed publicly.
-* **V5** analyzes uploaded gameplay to detect boss moves and player responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
-* **V6** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
+* **V3.1** builds verified boss data from the game itself, through runtime instrumentation and targeted reverse engineering, starting with Genichiro.
+* **V4** analyzes uploaded gameplay, starting with the failures in a recording and the moves that caused them; the app is deployed publicly once that works. It then detects every boss move and the player's responses. Knowing how often each move actually occurred makes true per-move success rates and practice recommendations possible.
+* **V5** extends the platform beyond Sekiro, starting with Black Myth: Wukong.
 
 The long-term goal is to turn gameplay footage into trustworthy, explainable boss-practice analytics with as little manual input as possible.
 
@@ -278,7 +292,7 @@ Requires [Docker](https://www.docker.com/) (Docker Desktop on Windows or macOS).
 
 To open the app on a phone on the same network, use `http://<your computer's LAN IP>:8080`. On Windows, find the IP with `ipconfig` under the Ethernet or Wi-Fi adapter, not the `vEthernet (WSL)` one.
 
-Each account sees only its own attempts. Attempts recorded before accounts existed (V1 and V2) have no owner and are hidden until you assign them. After registering, run this once:
+Each account sees only its own attempts. Since v3.1.0 every attempt must have an owner. Attempts recorded before accounts existed (V1 and V2) had none, and the v3.1.0 database migration refuses to run while any remain: the backend then stops at startup. If you upgrade from an older version, claim them first, on the version you are running: register, then run
 
 ```bash
 docker compose exec backend python -m scripts.claim_attempts <your-username>

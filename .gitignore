@@ -216,3 +216,25 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ground truth research: machine-specific paths, game files, recordings and extraction caches stay local
+research/ground_truth/local.config
+*.dcx
+*.dcx.2010
+*.anibnd
+*.tae
+*.hkx
+*.mp4
+*.mkv
+*.mov
+*.npy
+*.npz
+# Ground truth research: game scripts, params and AI decompilations stay local
+*.lua
+*.luabnd
+*.emevd
+*.msb
+*.parambnd
+*_battle.txt
+*_logic.txt
+*_tae.json

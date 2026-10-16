@@ -142,9 +142,9 @@ class Attempt(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     boss_id: Mapped[int] = mapped_column(ForeignKey("bosses.id", ondelete="RESTRICT"), index=True)
-    # Null only for attempts recorded before accounts existed. They are visible to
-    # nobody until `python -m scripts.claim_attempts <username>` assigns them.
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+    # NOT NULL since V3.1: attempts recorded before accounts existed had to be claimed with
+    # `python -m scripts.claim_attempts <username>` before that migration.
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
     result: Mapped[str] = mapped_column(String(20))
     phase_reached: Mapped[int] = mapped_column(Integer)
     failure_move_id: Mapped[int | None] = mapped_column(ForeignKey("moves.id", ondelete="RESTRICT"))
@@ -153,7 +153,7 @@ class Attempt(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     boss: Mapped[Boss] = relationship()
-    user: Mapped["User | None"] = relationship()
+    user: Mapped["User"] = relationship()
     failure_move: Mapped[Move | None] = relationship()
 
 

@@ -1,0 +1,46 @@
+{
+  "recording": "2026-10-13-castle",
+  "recorded_on": "file written 2026-10-13 01:32 local time; the second round of recordings (plan step 6)",
+  "ruleset": "vanilla",
+  "resurrection_mod": "off (confirmed by the project owner on 2026-10-13)",
+  "game_version": "1.06",
+  "game_version_note": "confirmed by the project owner on 2026-10-13",
+  "encounter": "Genichiro Ashina, top of Ashina Castle, all three phases in one recording; the player won",
+  "video": {
+    "file_name": "弦一郎录像2.mp4",
+    "kept": "locally only, never committed",
+    "sha256": "9b3b8cfd2a42ff247c5791696ee997b5692e727f79c1ecfa9065bfaf680272e7",
+    "bytes": 1271062390,
+    "width": 2560,
+    "height": 1440,
+    "fps": 59.9975,
+    "frames": 27001,
+    "duration_s": 450.05
+  },
+  "overlay": {
+    "tool": "Sekiro-Debug-Patch",
+    "build": "the same setup as the first recording",
+    "shown": "target character ID line and the 'Active Anime' list (1-5 lines of a000_DDDDDD (t.tt) [cur/tot])",
+    "layout_note": "during the phase transition (about 180 s) the dev menu showed other nodes and no 'Active Anime' lines"
+  },
+  "extraction": {
+    "scripts": "research/ground_truth/scripts/overlay",
+    "python": "3.10.5",
+    "opencv-python-headless": "5.0.0",
+    "numpy": "2.2.6",
+    "id_whitelist": "research/ground_truth/engine/c7100_tae_ids.txt + c7110_tae_ids.txt (196 IDs)",
+    "template_frames": "13 frames of this recording read by eye (labeled.json in the work directory): 3, 15, 45, 60, 100, 140, 160 s as c7100_0000 and 200, 230, 260, 290, 350, 440 s as c7110_0001"
+  },
+  "character_on_screen": [
+    {"frames": [0, 10164], "time_s": [0.0, 169.41], "character": "c7100_0000"},
+    {"frames": [10165, 11192], "time_s": [169.42, 186.54], "character": null, "note": "phase transition, no overlay lines"},
+    {"frames": [11193, 27000], "time_s": [186.56, 450.02], "character": "c7110_0001", "note": "the 'Active Anime' lines return at frame 11304 (188.40 s)"}
+  ],
+  "phases": {
+    "status": "confirmed by the project owner on 2026-10-13",
+    "1": {"frames": [0, 4003], "time_s": [0.0, 66.72], "ends_with": "a000_013100 -> a000_013110 (first deathblow, 63.09-66.72 s)"},
+    "2": {"frames": [4004, 10164], "time_s": [66.74, 169.41], "ends_with": "a000_012000 (second deathblow, 164.64-169.41 s)"},
+    "3": {"frames": [11193, 27000], "time_s": [186.56, 450.02], "ends_with": "the final deathblow a000_012000 -> a000_020200 -> a000_013700 (428.89-442.65 s); a000_010001 (the defeated boss) until the end"},
+    "evidence": "the AI ends Kengeki38 (3030) with 3067 only when one deathblow is left: the four 3030 before 63 s all end with 3025, and two of the three after 66.7 s end with 3067; 3067 occurs only after 66.7 s"
+  }
+}

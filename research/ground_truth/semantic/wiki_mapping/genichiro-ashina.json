@@ -16,7 +16,8 @@
     }
   },
   "notes": [
-    "Phase structure conflict: Fextralife lists 2 phases (phase 1, then Way of Tomoe); Fandom lists 3. The product follows Fandom (3 phases), as decided by the user."
+    "Phase structure conflict: Fextralife lists 2 phases (phase 1, then Way of Tomoe); Fandom lists 3. The product follows Fandom (3 phases), as decided by the user.",
+    "2026-10-15: the castle moveset was rebuilt from the V3.1 research. Every row is owner-confirmed; engine_evidence names the catalog entries and decision rows behind it. Iaijutsu merged into Receding Tide; five moves that neither wiki lists were added (relation engine_only)."
   ],
   "entries": [
     {
@@ -31,8 +32,16 @@
       ],
       "relation": "same",
       "notes": "Overhead smash, then a Perilous Thrust. Fextralife does not mark it perilous.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-20"
+        ],
+        "decision_rows": [
+          "A01"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -46,8 +55,16 @@
       ],
       "relation": "partial",
       "notes": "Fextralife lists the sweep variant in its phase 1 (which covers our phases 1-2); Fandom only from phase 2.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-20"
+        ],
+        "decision_rows": [
+          "A02"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -61,8 +78,17 @@
       ],
       "relation": "partial",
       "notes": "Way of Tomoe variant. Fextralife: ends in a horizontal slash (not a sweep). Fandom: thrust, sweep, or a quick upward cut followed by a delayed Perilous Thrust.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-17",
+          "P3-30"
+        ],
+        "decision_rows": [
+          "A03"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -76,8 +102,16 @@
       ],
       "relation": "partial",
       "notes": "Fextralife: a backhand after a single spin attack, not marked perilous. Fandom: sideways jumping slash, elbow jab, then a punch.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-17"
+        ],
+        "decision_rows": [
+          "A04"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -91,8 +125,25 @@
       ],
       "relation": "same",
       "notes": "One or two arrows, then a rolling slash.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-10",
+          "P12-09",
+          "P12-11",
+          "P12-12",
+          "P3-09",
+          "P3-10",
+          "P3-11"
+        ],
+        "decision_rows": [
+          "A05",
+          "B09",
+          "B10",
+          "B11"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -107,8 +158,22 @@
       ],
       "relation": "split",
       "notes": "Fextralife lists the arrow-shot cancel as its own entry; Fandom folds it into Floating Passage.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-21",
+          "P12-22",
+          "P12-27",
+          "P12-29",
+          "P12-32",
+          "P12-14"
+        ],
+        "decision_rows": [
+          "A06",
+          "B13"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -122,8 +187,16 @@
       ],
       "relation": "same",
       "notes": "Both: used to punish healing.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-19"
+        ],
+        "decision_rows": [
+          "A07"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -137,8 +210,16 @@
       ],
       "relation": "same",
       "notes": "Four arrows while airborne. Fandom: up to five in phase 2.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-23"
+        ],
+        "decision_rows": [
+          "A08"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -152,8 +233,16 @@
       ],
       "relation": "same",
       "notes": "Spinning slash, then a kick.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-02"
+        ],
+        "decision_rows": [
+          "A09"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -167,8 +256,16 @@
       ],
       "relation": "same",
       "notes": "Fextralife: punishes healing, followed by Running Grab if deflected. Fandom: punishes item use, may follow with Perilous Grab.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-06"
+        ],
+        "decision_rows": [
+          "A10"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -182,8 +279,16 @@
       ],
       "relation": "same",
       "notes": "Running grab, throw, stab.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-07"
+        ],
+        "decision_rows": [
+          "A11"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -197,8 +302,16 @@
       ],
       "relation": "same",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-21"
+        ],
+        "decision_rows": [
+          "A12"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -212,8 +325,17 @@
       ],
       "relation": "same",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-22",
+          "P3-14"
+        ],
+        "decision_rows": [
+          "A13"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -225,8 +347,17 @@
       ],
       "relation": "only_fandom",
       "notes": "Runs at Wolf and does a plunging attack.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-18"
+        ],
+        "decision_rows": [
+          "A14",
+          "B17"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -238,8 +369,18 @@
       ],
       "relation": "only_fandom",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-26",
+          "P3-25"
+        ],
+        "decision_rows": [
+          "A15",
+          "B20"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -251,8 +392,20 @@
       ],
       "relation": "only_fandom",
       "notes": "Sweep followed by an arrow shot.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-06",
+          "P3-05",
+          "P3-27"
+        ],
+        "decision_rows": [
+          "A16",
+          "B06",
+          "B22"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -264,8 +417,18 @@
       ],
       "relation": "only_fandom",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-03",
+          "P3-02"
+        ],
+        "decision_rows": [
+          "A17",
+          "B03"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -277,21 +440,18 @@
       ],
       "relation": "only_fandom",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
-    },
-    {
-      "product_moves": [
-        "iaijutsu"
-      ],
-      "fextralife": [],
-      "fandom": [
-        "Iaijutsu"
-      ],
-      "relation": "only_fandom",
-      "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-05",
+          "P3-04"
+        ],
+        "decision_rows": [
+          "A18",
+          "B05"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -299,12 +459,27 @@
       ],
       "fextralife": [],
       "fandom": [
-        "Receding Tide"
+        "Receding Tide",
+        "Iaijutsu"
       ],
       "relation": "only_fandom",
-      "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "notes": "The product folds Fandom's Iaijutsu into Receding Tide: the drawn strike follows the two arrows (owner, 2026-10-15).",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-15",
+          "P12-16",
+          "P3-15",
+          "P3-16"
+        ],
+        "decision_rows": [
+          "A20",
+          "A19",
+          "B15",
+          "B16"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -316,8 +491,23 @@
       ],
       "relation": "only_fandom",
       "notes": "Fextralife lists no Floating Passage for the Way of Tomoe phase.",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-18",
+          "P3-20",
+          "P3-26",
+          "P3-28",
+          "P3-30",
+          "P3-31",
+          "P3-13"
+        ],
+        "decision_rows": [
+          "A21",
+          "B14"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     },
     {
       "product_moves": [
@@ -329,8 +519,127 @@
       ],
       "relation": "only_fandom",
       "notes": "",
-      "v4_status": "unverified",
-      "engine_evidence": null
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P3-19",
+          "P3-08"
+        ],
+        "decision_rows": [
+          "A22"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
+    },
+    {
+      "product_moves": [
+        "slash-combo"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Found in the castle AI and recordings (V3.1); neither wiki lists it.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-01",
+          "P3-01"
+        ],
+        "decision_rows": [
+          "B01"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
+    },
+    {
+      "product_moves": [
+        "horizontal-slash"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Found in the castle AI and recordings (V3.1); neither wiki lists it.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-04",
+          "P3-03",
+          "P12-13",
+          "P3-12"
+        ],
+        "decision_rows": [
+          "B04",
+          "B12"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
+    },
+    {
+      "product_moves": [
+        "backstep-shot"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Found in the castle AI and recordings (V3.1); neither wiki lists it.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-07",
+          "P12-08"
+        ],
+        "decision_rows": [
+          "B08"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
+    },
+    {
+      "product_moves": [
+        "counter-slash"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Found in the castle AI and recordings (V3.1); neither wiki lists it.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-24",
+          "P3-23",
+          "P12-25",
+          "P3-24",
+          "P12-31",
+          "P3-29"
+        ],
+        "decision_rows": [
+          "B18",
+          "B19",
+          "B24"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
+    },
+    {
+      "product_moves": [
+        "deflect-counter-slash"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Found in the castle AI and recordings (V3.1); neither wiki lists it.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [
+          "P12-28",
+          "P12-30"
+        ],
+        "decision_rows": [
+          "B21",
+          "B23"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
+      }
     }
   ]
 }

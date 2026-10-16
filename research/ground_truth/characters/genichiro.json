@@ -1,0 +1,233 @@
+{
+ "status": "encounter labels confirmed by the project owner on 2026-10-11 (checked against the unpacked maps)",
+ "ruleset": "vanilla",
+ "game_version": "1.06",
+ "placements": [
+  {
+   "map": "m11_00_00_00",
+   "part": "c7100_0000",
+   "entity": 1100727,
+   "think_param": 1,
+   "ai_battle_goal": 11000,
+   "npc_param": 71003080,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200051,
+    221000
+   ],
+   "position": [
+    -76.4,
+    -67.0,
+    -6.7
+   ],
+   "boss_bars": [],
+   "encounter": "非战斗演出:与神子同场的弦一郎(苇名外围,可能是过场)",
+   "evidence": "m11_00;NpcThinkParam=1,没有战斗 AI;没有血条;由模板事件 11105741 以参数 (1100726, 1100727, 0, 21001) 启动,让弦一郎循环播放 a000_021001(项目负责人在 DS Anim Studio 中确认是原地站立);约 1 米外是 1100726 c7200_0001(项目负责人确认 c7200 是神子);事件条件是剧情标志 71110055、71120426、8302,之后检查玩家距离 8/5/3 米"
+  },
+  {
+   "map": "m11_01_00_00",
+   "part": "c7100_0000",
+   "entity": 1110800,
+   "think_param": 71000000,
+   "ai_battle_goal": 710000,
+   "npc_param": 71001000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200050,
+    221000
+   ],
+   "position": [
+    -107.8,
+    54.0,
+    235.4
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_01_00_00",
+     "name_id": 907100,
+     "name": {
+      "engus": "Genichiro Ashina",
+      "zhocn": "苇名弦一郎"
+     }
+    },
+    {
+     "event_file": "m11_01_71_00",
+     "name_id": 907100,
+     "name": {
+      "engus": "Genichiro Ashina",
+      "zhocn": "苇名弦一郎"
+     }
+    }
+   ],
+   "encounter": "天守阁 苇名弦一郎 一、二阶段",
+   "evidence": "m11_01 天守阁顶;事件 11115810 开战;两次忍杀后事件 11115820 播转场并换成 1110801"
+  },
+  {
+   "map": "m11_01_00_00",
+   "part": "c7100_0001",
+   "entity": 1110890,
+   "think_param": 71030000,
+   "ai_battle_goal": 710300,
+   "npc_param": 71001000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200050,
+    221000
+   ],
+   "position": [
+    -107.8,
+    54.0,
+    235.4
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_01_71_01",
+     "name_id": 907103,
+     "name": {
+      "engus": "Inner Genichiro",
+      "zhocn": "心中的弦一郎"
+     }
+    }
+   ],
+   "encounter": "心中的弦一郎 第一段 (c7100)",
+   "evidence": "m11_01 天守阁顶,与正式战同位置;只由回忆事件文件 m11_01_71_01 启用;血条名 907103"
+  },
+  {
+   "map": "m11_01_00_00",
+   "part": "c7110_0000",
+   "entity": 1110891,
+   "think_param": 71130000,
+   "ai_battle_goal": 711300,
+   "npc_param": 71100000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200050,
+    221000
+   ],
+   "position": [
+    -103.5,
+    54.0,
+    243.1
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_01_71_01",
+     "name_id": 907103,
+     "name": {
+      "engus": "Inner Genichiro",
+      "zhocn": "心中的弦一郎"
+     }
+    }
+   ],
+   "encounter": "心中的弦一郎 第二段 (c7110)",
+   "evidence": "同上;血条名 907103"
+  },
+  {
+   "map": "m11_01_00_00",
+   "part": "c7110_0001",
+   "entity": 1110801,
+   "think_param": 71100000,
+   "ai_battle_goal": 711000,
+   "npc_param": 71100000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200050,
+    221000
+   ],
+   "position": [
+    -103.5,
+    54.0,
+    243.1
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_01_00_00",
+     "name_id": 907110,
+     "name": {
+      "engus": "Genichiro, Way of Tomoe",
+      "zhocn": "巴流 苇名弦一郎"
+     }
+    },
+    {
+     "event_file": "m11_01_71_00",
+     "name_id": 907110,
+     "name": {
+      "engus": "Genichiro, Way of Tomoe",
+      "zhocn": "巴流 苇名弦一郎"
+     }
+    }
+   ],
+   "encounter": "天守阁 巴流 苇名弦一郎 三阶段",
+   "evidence": "m11_01 与 1110800 同位置;由事件 11115820 启用"
+  },
+  {
+   "map": "m11_02_00_00",
+   "part": "c7100_0000",
+   "entity": 1120800,
+   "think_param": 71000000,
+   "ai_battle_goal": 710000,
+   "npc_param": 71000000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200051,
+    221000
+   ],
+   "position": [
+    -394.3,
+    -43.9,
+    187.7
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_02_00_00",
+     "name_id": 907101,
+     "name": {
+      "engus": "Genichiro Ashina",
+      "zhocn": "苇名弦一郎"
+     }
+    }
+   ],
+   "encounter": "序章 苇名弦一郎",
+   "evidence": "m11_02 芦苇地;NpcParam 带 200051(在 AI 里关掉一批选项);血条名 907101;战后播过场 11020000/11020001"
+  },
+  {
+   "map": "m11_02_00_00",
+   "part": "c7110_0000",
+   "entity": 1120830,
+   "think_param": 71100000,
+   "ai_battle_goal": 711000,
+   "npc_param": 71101000,
+   "boss_spEffects_checked_by_ai": [
+    200004,
+    200050,
+    221000,
+    3711500
+   ],
+   "position": [
+    -397.3,
+    -44.4,
+    183.5
+   ],
+   "boss_bars": [
+    {
+     "event_file": "m11_02_00_00",
+     "name_id": 907110,
+     "name": {
+      "engus": "Genichiro, Way of Tomoe",
+      "zhocn": "巴流 苇名弦一郎"
+     }
+    },
+    {
+     "event_file": "m11_02_71_10",
+     "name_id": 907110,
+     "name": {
+      "engus": "Genichiro, Way of Tomoe",
+      "zhocn": "巴流 苇名弦一郎"
+     }
+    }
+   ],
+   "encounter": "剑圣战 第一阶段 巴流 苇名弦一郎",
+   "evidence": "m11_02 芦苇地;同一地图接着是 1120860 剑圣 苇名一心。与天守阁三阶段同为 c7110、同一 AI 711000,但 NpcParam 71101000 不同:modelDispMask1 显示不死斩(材质 sword02A/02B,天守阁是 modelDispMask2 的普通太刀加刀鞘),常驻特效 25 = 3711500(纯 AI 标记,开放不死斩招式 3085–3087),体干 750(天守阁 900)。不死斩特效 SFX 671120–671123(sfx/sfxbnd_m11)只由 3085/3086/3087 的 TAE 在 DummyPoly 300 生成;项目负责人确认这三招就是弦一郎的不死斩招式。复战 m11_02_71_10 用同一实体,只改强化特效并关掉一心、序章弦一郎和神子"
+  }
+ ]
+}

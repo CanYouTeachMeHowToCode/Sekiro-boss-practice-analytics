@@ -7,7 +7,7 @@ from pathlib import Path
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove
+from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove, User
 from app.models.attempt import Attempt as V1Attempt
 from app.models.boss import Boss as BossData
 
@@ -191,11 +191,12 @@ def load_v1_attempts(path: Path) -> list[V1Attempt]:
         return [V1Attempt.model_validate(entry) for entry in json.load(f)]
 
 
-def import_v1_attempts(session: Session, attempts: list[V1Attempt]) -> int:
-    """Copy V1 attempt history into the attempts table, preserving timestamps and order.
+def import_v1_attempts(session: Session, attempts: list[V1Attempt], owner: User) -> int:
+    """Copy V1 attempt history into the attempts table for `owner`, preserving timestamps and order.
 
     Runs only against an empty attempts table so it can't duplicate history if
-    it is accidentally run twice.
+    it is accidentally run twice. Every attempt needs an owner (V3.1), so the
+    history goes to the account that recorded it.
     """
     existing = session.scalar(select(func.count()).select_from(Attempt))
     if existing:
@@ -214,6 +215,7 @@ def import_v1_attempts(session: Session, attempts: list[V1Attempt]) -> int:
         session.add(
             Attempt(
                 boss=boss,
+                user=owner,
                 result=v1.result.value,
                 phase_reached=v1.phase_reached,
                 failure_move=move,
