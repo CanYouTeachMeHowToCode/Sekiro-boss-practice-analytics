@@ -8,6 +8,7 @@ damage@109.9,damage,109.876,correct,,2026-10-16T01:32:02
 posture_break@115.3,posture_break,115.276,correct,,2026-10-16T01:32:04
 damage@118.8,damage,118.810,correct,,2026-10-16T01:32:05
 damage@121.5,damage,121.510,correct,,2026-10-16T01:32:13
+deathblow@176.8,deathblow,176.781,correct,,2026-10-16T04:30:26
 damage@185.1,damage,185.148,correct,,2026-10-16T01:32:25
 damage@187.3,damage,187.282,correct,,2026-10-16T01:32:43
 damage@207.8,damage,207.850,correct,,2026-10-16T01:32:49
@@ -16,6 +17,7 @@ death@208.7,death,208.717,correct,,2026-10-16T01:33:11
 resurrection@212.7,resurrection,212.717,correct,,2026-10-16T01:35:50
 damage@242.3,damage,242.253,correct,,2026-10-16T01:33:24
 damage@249.1,damage,249.120,correct,,2026-10-16T01:33:32
+deathblow@273.5,deathblow,273.455,correct,,2026-10-16T04:30:37
 damage@333.9,damage,333.860,correct,,2026-10-16T01:33:39
 death@333.9,death,333.860,correct,,2026-10-16T01:33:40
 resurrection@337.5,resurrection,337.527,correct,,2026-10-16T01:33:50

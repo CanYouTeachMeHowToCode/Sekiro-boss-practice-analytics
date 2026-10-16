@@ -1,5 +1,6 @@
 key,type,time_s,verdict,note,updated
 damage@48.6,damage,48.635,correct,,2026-10-16T01:46:09
+deathblow@64.4,deathblow,64.403,correct,,2026-10-16T04:31:10
 damage@76.6,damage,76.603,correct,,2026-10-16T01:46:16
 damage@92.3,damage,92.271,correct,,2026-10-16T01:46:27
 missed:posture_break@93.10,posture_break,93.100,missed,,2026-10-16T01:47:07
@@ -9,6 +10,7 @@ damage@126.8,damage,126.839,correct,,2026-10-16T01:47:32
 damage@146.5,damage,146.539,correct,,2026-10-16T01:47:38
 posture_break@147.0,posture_break,147.039,correct,,2026-10-16T01:47:45
 damage@155.0,damage,154.973,correct,,2026-10-16T01:47:52
+deathblow@166.7,deathblow,166.707,correct,,2026-10-16T04:31:17
 damage@210.2,damage,210.242,correct,,2026-10-16T01:47:57
 damage@213.2,damage,213.242,correct,,2026-10-16T01:48:02
 damage@225.0,damage,225.043,correct,,2026-10-16T01:48:10
@@ -25,3 +27,4 @@ damage@372.7,damage,372.682,correct,,2026-10-16T01:49:08
 damage@388.0,damage,387.983,correct,,2026-10-16T01:49:12
 damage@399.5,damage,399.517,correct,,2026-10-16T01:49:21
 damage@403.1,damage,403.050,correct,,2026-10-16T01:49:28
+deathblow@431.0,deathblow,430.951,correct,,2026-10-16T04:31:24
