@@ -34,9 +34,20 @@ def test_get_boss(client):
     # Phase 2 inherits Phase 1, except its Perilous Attack Follow Up can also end in a sweep.
     assert phase_1_move_ids - phase_2_move_ids == {"perilous-attack-follow-up"}
     assert phase_2_move_ids - phase_1_move_ids == {"perilous-attack-follow-up-phase-2"}
-    # The Way of Tomoe phase has its own moveset, including three lightning attacks.
-    assert phase_3_move_ids.isdisjoint(phase_2_move_ids)
-    assert {"lightning-of-tomoe-shot", "lightning-of-tomoe-slash", "lightning-of-tomoe-smash"} <= phase_3_move_ids
+    # The Way of Tomoe phase keeps the sword and bow moves its AI shares with phases 1-2 and adds its
+    # own, including three lightning attacks (the V3.1 moveset, built from the castle AI).
+    assert phase_3_move_ids - phase_2_move_ids == {
+        "deaths-thrust",
+        "floating-passage-phase-3",
+        "perilous-attack-follow-up-phase-3",
+        "perilous-grab-phase-3",
+        "lightning-of-tomoe-shot",
+        "lightning-of-tomoe-slash",
+        "lightning-of-tomoe-smash",
+    }
+    assert {"closing-tide", "receding-tide", "slash-combo", "counter-slash"} <= phase_3_move_ids & phase_2_move_ids
+    # Iaijutsu was merged into Receding Tide.
+    assert "iaijutsu" not in phase_1_move_ids | phase_2_move_ids | phase_3_move_ids
     assert data["source_url"].endswith("/Genichiro_Ashina,_Second_Encounter")
 
 
