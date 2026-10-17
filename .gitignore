@@ -238,3 +238,6 @@ research/ground_truth/local.config
 *_battle.txt
 *_logic.txt
 *_tae.json
+
+# Failure attribution: work files derived from the recordings (caches, series, thumbnails)
+research/failure_attribution/work/

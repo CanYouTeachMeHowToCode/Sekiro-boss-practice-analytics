@@ -8,7 +8,7 @@ Usage:
 
 Also reads, from research/ground_truth:
     engine/genichiro_castle_ai_reachability.csv                  which AI options the castle fight uses, per animation
-    observations/vanilla/genichiro/*-castle/occurrences.csv     every castle recording: occurrences per phase (summed)
+    observations/vanilla/genichiro/*-castle*/occurrences.csv    every castle recording: occurrences per phase (summed)
                                                                 and the first time each animation was seen
 
 An AI option (ActNN, KengekiNN, a request inside Interrupt, Parry, Damaged) usually requests one complete move
@@ -34,7 +34,12 @@ sys.path.insert(0, str(HERE))
 import ai_flowchart as af  # noqa: E402
 
 ai_dir, tae_dir, out_csv, out_md = sys.argv[1:5]
-RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle") if (p / "occurrences.csv").exists())
+RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle*") if (p / "occurrences.csv").exists())
+
+
+def rec_label(p):
+    """2026-10-09 for 2026-10-09-castle; 2026-10-16-4 for 2026-10-16-castle-4 (several recordings that day)."""
+    return p.name[:10] + p.name.split("-castle", 1)[1]
 CASTLE = {"710000": ("c7100", ("1", "2")), "711000": ("c7110", ("3",))}
 
 # What makes the AI pick each option, read from the decompiled scripts (see engine/genichiro_castle_ai.md).
@@ -195,7 +200,9 @@ NOTES = {
     ("711000", "Act01"): "两条分支都在天守阁 AI 711000 里(心中的弦一郎 711300 相同,只多一个计数),三阶段 70% 走 3002 → 3003,30% 走 3010 → 3025。"
                          "每一段都要你还在距离内才接下一段:走 3002 那条,3001 和 3002 都要约 3.4 米内;走 3010 那条,3001 要 3.5 米内,3010 要 5 米内。3002、3003、3010 都没录到;你决定按 AI 文件收录(2026-10-13)。",
     ("710000", "Act34"): "在天守阁 AI 710000 里:注册为第 34 个选项,5–7 米时权重 100,只有序章(带 200051)会清零;心中的弦一郎 710300 里也有同样的 Act34。"
-                         "15 秒内出过 3007 时权重降为 1。你确认原版有这招(2026-10-13),但还没录到。",
+                         "15 秒内出过 3007 时权重降为 1。你确认原版有这招(2026-10-13)。2026-10-16 的第 4 段开发者菜单录像"
+                         "(2026-10-16-castle-4)在二阶段录到两次 3007(1:53.9、2:29.4),都紧跟在射箭取消 3017 之后,"
+                         "也都被打断(他被打出硬直 8013、他弹刀 3101),所以后面那一箭 3011 还没录到。",
 }
 # Confirmed by the owner on 2026-10-15, from the recording check (observations/vanilla/genichiro/chain_check.md).
 NOTES.update({
@@ -203,7 +210,9 @@ NOTES.update({
                              "第二次录像里有两次(3:38.6、5:11.8)。和 Fandom 写的第三种结尾“上挑,被弹开后接延迟危·突刺”一致。",
     ("711000", "Interrupt:3080"): "三阶段 AI 在他身上出现特效 5030 时出 3080;TAE 里只有 8604 加 5030,8704 完全借用 8604。"
                                   "3032 和飞渡浮舟三套的最后一下(3028、3041、3092)带同一个攻击判定 292。"
-                                  "录到的两次 3080 都在完美弹开 3032 之后;完美弹开飞渡浮舟之后的 3080 还没录到。",
+                                  "第二次录像的两次 3080 都在完美弹开 3032 之后。2026-10-16 的两段开发者菜单录像里,"
+                                  "完美弹开飞渡浮舟最后一下之后的 3080 录到 5 次,中间都有 8604:第 4 段 3:36.5、4:06.0、5:29.1"
+                                  "(接 3092),第 5 段 3:20.3(接 3041)、3:50.3(接 3092)。",
     ("710000", "Act34"): NOTES[("710000", "Act34")] + "3007 是危·下段(你确认,2026-10-15;之前标的“下段(非危)”是看漏了):"
                          "TAE 里 3007 在 0.6 秒调用飞行物行为 980,和其他危字招式一样,三阶段录像里在这个时间看得到危字;0–2.23 秒带特效 400200,跳踩的体干伤害 ×8。",
     ("711000", "Act01"): NOTES[("711000", "Act01")] + "你说一二阶段的 3002 是肘击(2026-10-15);三阶段 c7110 的 3002 攻击判定时间相同(0.27–0.37 秒),多半是同一个肘击。",
@@ -237,7 +246,7 @@ for rec_dir in RECS:
         key = (r["character"][:5], int(r["anim"][5:]))
         counts[key] += 1
         if key not in first_seen:  # recordings in date order, occurrences in time order
-            first_seen[key] = (rec_dir.name[:10], float(r["start_time"]))
+            first_seen[key] = (rec_label(rec_dir), float(r["start_time"]))
 
 hits = {}
 for c in ("c7100", "c7110"):
@@ -394,7 +403,7 @@ with open(out_csv, "w", newline="", encoding="utf-8") as fh:
 # ---------------------------------------------------------------- review sheet
 moves = [r for r in rows if r["kind"] == "move"]
 md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
-      "由 `scripts/ai/catalog.py` 从天守阁战斗 AI、TAE 和天守阁录像(" + "、".join(p.name[:10] for p in RECS) + ")生成,数据在 `genichiro_catalog.csv`。",
+      "由 `scripts/ai/catalog.py` 从天守阁战斗 AI、TAE 和天守阁录像(" + "、".join(rec_label(p) for p in RECS) + ")生成,数据在 `genichiro_catalog.csv`。",
       "",
       "- \"录到次数\"是所有录像的合计;\"最早录到\"是第一次录到它的录像日期和录像内时间。",
       "",
@@ -427,7 +436,7 @@ md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
       "| 仅静态证据 | 一个都没录到,只有 AI 和 TAE 的证据 |",
       "",
       "证据按动画计算:一个动画在对应阶段录到过就算,不区分是哪个 AI 选项请求的。"
-      "比如三阶段录到的那次 3067 来自危攻击后续追击,飞渡浮舟第一套本身还没录到。",
+      "比如 3067 既是飞渡浮舟第一套在三阶段的结尾,也是危攻击后续追击的一种结尾,在哪个选项里录到都算这个动画录到过。",
       "",
       "## 统计", "",
       "| | 一、二阶段 c7100 | 三阶段 c7110 |", "|---|---|---|"]
