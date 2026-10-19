@@ -1,5 +1,5 @@
 {
-  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline).",
+  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py).",
   "recordings": [
     {
       "id": "2026-10-09-castle",
@@ -9,7 +9,8 @@
       "game_version": "1.06",
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
-      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle"
+      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle",
+      "set": "development"
     },
     {
       "id": "2026-10-13-castle",
@@ -19,7 +20,8 @@
       "game_version": "1.06",
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
-      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle"
+      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-1",
@@ -28,7 +30,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-2",
@@ -37,7 +40,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-3",
@@ -46,7 +50,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-4",
@@ -55,7 +60,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": true,
-      "use": "reference: dev-menu fight recorded for V4 M1"
+      "use": "reference: dev-menu fight recorded for V4 M1",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-5",
@@ -64,7 +70,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": true,
-      "use": "reference: dev-menu fight recorded for V4 M1"
+      "use": "reference: dev-menu fight recorded for V4 M1",
+      "set": "development"
     }
   ]
 }

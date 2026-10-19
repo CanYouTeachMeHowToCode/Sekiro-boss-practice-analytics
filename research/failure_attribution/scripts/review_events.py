@@ -22,6 +22,15 @@ a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the f
 (the move slug that was shown), verdict, correct_move, merge_prev, note, updated. A review whose proposed move no longer
 matches the current proposal is shown as needing another look. The side panel counts the failures per move, using the
 owner's corrections and merges.
+
+A test recording of the reliability validation (recordings.json "set": "test", without the overlay) gets the blind
+招式 view instead: the page is never sent the system's answer, its candidates or its scores, so the owner's labels are
+not pulled towards them. Each failure the pipeline reported, and each failure event the owner added as missed that
+no reported failure holds, is a card with its events, thumbnail and player; the owner picks the move from the list
+(or "其他", or "看不出来"), ticks when the move was Floating Passage's opening two slashes without their follow-up (Two-Hit
+Slash then counts too), ticks when it belongs to the failure before, and can split a card whose hits came from
+different plays. The labels go to failure_truth.csv (reliability.py): one row per failure with its events, so the
+answer does not depend on how the pipeline grouped the hits.
 """
 import csv
 import io
@@ -36,7 +45,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import GT, annotation_dir, progress, recordings, video_path, work_dir  # noqa: E402
+from common import GT, TWO_SLASHES, annotation_dir, progress, recordings, video_path, work_dir  # noqa: E402
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
@@ -44,6 +53,10 @@ TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
 MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "merge_prev", "note", "updated"]
 MOVE_VERDICTS = {"correct", "wrong", "unsure", ""}
 OTHER_MOVE = "other"
+TRUTH_FIELDS = ["key", "time_s", "events", "move", "two_slashes", "merge_prev", "source", "note", "updated"]
+FAILURE_TYPES = {"damage", "posture_break", "death"}
+# what a blind card may carry: the failure's events and phase come from the HUD, everything about the move is left out
+BLIND_KEEP = ("key", "time_s", "type", "types", "phase", "events")
 
 
 def product_moves():
@@ -57,6 +70,14 @@ def review_file(rec):
 
 def moves_file(rec):
     return annotation_dir(rec) / "failure_moves.csv"
+
+
+def truth_file(rec):
+    return annotation_dir(rec) / "failure_truth.csv"
+
+
+def blind(rec):
+    return rec.get("set") == "test" and not rec.get("overlay")
 
 
 def read_csv(path):
@@ -115,6 +136,9 @@ def page_data():
                     e["verdict"], e["review_note"] = "correct", f"你补充过的漏检（{float(m['time_s']):.2f} 秒），现在已检测到"
                     e["review_key"] = m["key"]     # an edit replaces the missed row instead of adding a second one
         missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
+        if blind(rec):
+            out.append(blind_data(rec_id, rec, events, missed))
+            continue
         source = "overlay" if (work_dir(rec_id) / "failure_answers.csv").exists() else "prediction"
         failures = read_csv(work_dir(rec_id) / ("failure_answers.csv" if source == "overlay" else "failure_predictions.csv"))
         done = {r["key"]: r for r in read_csv(moves_file(rec))}
@@ -129,7 +153,56 @@ def page_data():
             f["review_key"] = r["key"] if r else f["key"]
         out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
                     "missed": missed, "failures": failures})
-    return {"recs": out, "moves": product_moves()}
+    return {"recs": out, "moves": product_moves(), "two_slashes": sorted(TWO_SLASHES)}
+
+
+def blind_data(rec_id, rec, events, missed):
+    """A test recording for the blind 招式 view: the reported failures without anything about their move, plus a card
+    for each missed failure event outside them, and the owner's labels so far."""
+    by_key = {e["key"]: e for e in events}
+    blows = sorted(float(e["time_s"]) for e in events if e["type"] == "deathblow")
+    hit = lambda e: {"key": e["key"], "type": e["type"], "time_s": e["time_s"], "linked": e.get("linked", ""),  # noqa: E731
+                     "verdict": e.get("verdict", "")}
+    cards = []
+    for f in read_csv(work_dir(rec_id) / "failure_predictions.csv"):
+        card = {k: f[k] for k in BLIND_KEEP}
+        card["hit_list"] = [hit(by_key[k]) for k in f["events"].split() if k in by_key]
+        cards.append(card)
+    inside = {k for c in cards for k in c["events"].split()}
+    for m in missed:
+        if m["type"] in FAILURE_TYPES and m["key"] not in inside:
+            t = float(m["time_s"])
+            cards.append({"key": m["key"], "time_s": m["time_s"], "type": m["type"], "types": m["type"],
+                          "phase": str(min(3, 1 + sum(b < t for b in blows))), "events": m["key"], "missed": True,
+                          "hit_list": [{"key": m["key"], "type": m["type"], "time_s": m["time_s"], "linked": "",
+                                        "verdict": "missed"}]})
+    cards.sort(key=lambda c: float(c["time_s"]))
+    return {"id": rec_id, "use": rec.get("use", ""), "overlay": False, "blind": True, "events": events,
+            "missed": missed, "failures": cards, "truth": read_csv(truth_file(rec))}
+
+
+def save_truth(rec_id, body):
+    """The blind labels of one card: replaces the rows that hold any of its events."""
+    rec = recordings()[rec_id]
+    if not blind(rec):
+        raise ValueError("not a blind test recording")
+    slugs = {m["slug"] for m in product_moves()} | {OTHER_MOVE, "unsure", ""}
+    card = set(body["card_events"])
+    detected = {e["key"]: float(e["time_s"]) for e in read_csv(work_dir(rec_id) / "events.csv")}
+    times = {k: detected.get(k, float(k.split("@")[1])) for k in card}
+    rows = [r for r in read_csv(truth_file(rec)) if not set(r["events"].split()) & card]
+    for new in body["rows"]:
+        keys = sorted(set(new["events"]) & card, key=times.get)
+        if new.get("move", "") not in slugs:
+            raise ValueError("unknown move")
+        if not keys or not (new.get("move") or new.get("note") or new.get("merge_prev")):
+            continue
+        rows.append({"key": keys[0], "time_s": f"{times[keys[0]]:.3f}", "events": " ".join(keys), "move": new.get("move", ""),
+                     "two_slashes": "1" if new.get("two_slashes") else "", "merge_prev": "1" if new.get("merge_prev") else "",
+                     "source": "blind review (M2)", "note": " ".join(str(new.get("note", "")).split()),
+                     "updated": datetime.now().isoformat(timespec="seconds")})
+    write_csv(truth_file(rec), TRUTH_FIELDS, rows)
+    return {"key": sorted(card, key=times.get)[0], "rows": [r for r in rows if set(r["events"].split()) & card]}
 
 
 def save(rec_id, body):
@@ -315,12 +388,13 @@ ul.hits { margin:4px 0 8px; padding-left:18px; font-size:13px; }
 <script id="data" type="application/json">__DATA__</script>
 <script>
 const DATA = JSON.parse(document.getElementById('data').textContent);
-const recs = DATA.recs, MOVES = DATA.moves;
+const recs = DATA.recs, MOVES = DATA.moves, TWO = new Set(DATA.two_slashes);
 const MOVE = Object.fromEntries(MOVES.map((m) => [m.slug, m]));
 const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）' };
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
+  blind: 'M2 测试录像，盲审：页面上没有系统的答案。先在"事件"视图核对完事件、补上漏检，再在这里给每次失败选招式（看不清就选"看不出来"）。几下来自不同的出招就点"拆开"；和上一次是同一次出招就勾"和上一次算同一次失败"。你补充的漏检也在这里单独列出。点"▶ 播放"从失败前 3 秒开始看。',
   moves: '每次失败：开发者菜单录像的答案是被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的；其他录像的答案是自动识别的，列出前三个候选，点候选就能选。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并；自动识别的录像如果把同一次出招拆成了两次，在后一次勾"和上一次算同一次失败"。不对时也可以在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
 };
 let cur = 0, filter = '全部', mode = 'events';
@@ -329,15 +403,25 @@ const fmt = (s) => { s = Number(s); const m = Math.floor(s / 60); return `${m}:$
 const video = document.getElementById('video');
 video.addEventListener('timeupdate', () => { document.getElementById('now').textContent = `录像当前时间 ${fmt(video.currentTime)}（${video.currentTime.toFixed(2)} 秒）`; });
 
-async function post(body, url = '/api/review') {
+async function postJ(body, url) {
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const j = await res.json();
   if (!j.ok) throw new Error(j.error);
-  return j.key;
+  return j;
 }
+async function post(body, url = '/api/review') { return (await postJ(body, url)).key; }
+const keysOf = (f) => f.events.split(' ').filter(Boolean);
+const rowsOf = (r, f) => { const ks = new Set(keysOf(f)); return r.truth.filter((t) => t.events.split(' ').some((k) => ks.has(k))); };
+const labelled = (r, f) => { const rows = rowsOf(r, f).filter((t) => t.move); return !rows.length ? '' : (rows.some((t) => t.move === 'unsure') ? 'unsure' : 'correct'); };
 function counts() {
   const r = recs[cur], c = { '': 0, correct: 0, wrong: 0, unsure: 0 };
   const items = mode === 'moves' ? r.failures : r.events;
+  if (mode === 'moves' && r.blind) {
+    items.forEach((f) => { const v = labelled(r, f); c[v] = (c[v] || 0) + 1; });
+    document.getElementById('counts').replaceChildren(el('span', '', `待标 ${c['']}`), el('span', '', `已标 ${c.correct}`), el('span', '', `看不出来 ${c.unsure}`));
+    summary();
+    return;
+  }
   items.forEach((e) => { c[e.verdict] = (c[e.verdict] || 0) + 1; });
   const parts = [el('span', '', `待核对 ${c['']}`), el('span', '', `✅ ${c.correct}`), el('span', '', `❌ ${c.wrong}`), el('span', '', `？ ${c.unsure}`)];
   if (mode === 'events') parts.push(el('span', '', `补充 ${r.missed.length}`));
@@ -447,10 +531,124 @@ function fcard(r, f) {
   c.append(acts);
   return c;
 }
+function moveSelect(phase, value) {
+  const sel = el('select');
+  sel.append(new Option('选招式…', ''));
+  MOVES.filter((m) => m.phases.includes(String(phase))).forEach((m) => sel.append(new Option(m.zh, m.slug)));
+  MOVES.filter((m) => !m.phases.includes(String(phase))).forEach((m) => sel.append(new Option(`${m.zh}（不在第 ${phase} 阶段）`, m.slug)));
+  sel.append(new Option('不是这些招式里的（写在备注里）', 'other'), new Option('看不出来', 'unsure'));
+  sel.value = value || '';
+  return sel;
+}
+const atOf = (k) => Number(k.split('@')[1]);
+function bcard(r, f) {
+  const c = el('div', 'card ' + labelled(r, f));
+  const head = el('div', 'head');
+  head.append(el('span', 'type', TYPE[f.type] || f.type), el('span', 'time', fmt(f.time_s)), el('span', 'meta', `第 ${f.phase} 阶段`));
+  const play = el('button', '', '▶ 播放'); play.type = 'button';
+  play.onclick = () => { video.currentTime = Math.max(0, Number(f.time_s) - 3); video.play(); };
+  head.append(play);
+  c.append(head);
+  if (f.missed) c.append(el('div', 'warnline', '你补充的漏检：系统没有报告这次失败'));
+  const ul = el('ul', 'hits');
+  f.hit_list.forEach((h) => ul.append(el('li', '', `${TYPE[h.type] || h.type} ${fmt(h.time_s)}` + (h.verdict === 'wrong' ? '（你标了不对）' : (h.verdict ? '' : '（事件视图里还没核对）')))));
+  c.append(ul);
+  if (!f.missed) {
+    const img = el('img'); img.loading = 'lazy'; img.src = `/thumb/${encodeURIComponent(r.id)}/${encodeURIComponent(f.key)}.jpg`;
+    img.onclick = () => img.classList.toggle('big'); c.append(img);
+  }
+  const real = f.hit_list.filter((h) => h.verdict !== 'wrong');
+  if (!real.length) { c.append(el('p', 'hint', '这次的事件你都标了不对，不用选招式。')); return c; }
+  // a death joins the hit that killed, so the plays are the other hits (or the death alone when its hit was not seen)
+  const hits = real.filter((h) => h.type !== 'death'), deaths = real.filter((h) => h.type === 'death');
+  const plays = hits.length ? hits : deaths;
+  // the saved labels: one row per play of a move; a play starts at the first of its hits
+  const rows = rowsOf(r, f).sort((a, b) => a.time_s - b.time_s);
+  const rowAt = new Map();
+  for (const t of rows) {
+    const first = t.events.split(' ').filter((k) => plays.some((h) => h.key === k)).sort((a, b) => atOf(a) - atOf(b))[0];
+    if (first) rowAt.set(first, t);
+  }
+  let split = rows.length > 1;
+  const starts = plays.map((h, i) => i === 0 || (split && rowAt.has(h.key)));
+  const state = plays.map((h, i) => { const t = rowAt.get(h.key) || (i === 0 ? rows[0] : null) || {}; return { move: t.move || '', two: !!t.two_slashes }; });
+  let merge = !!(rows[0] && rows[0].merge_prev), note = rows[0] ? rows[0].note : '';
+  const box = el('div'), saved = el('div', 'saved');
+  const save = async () => {
+    const groups = [];
+    plays.forEach((h, i) => { if (i === 0 || (split && starts[i])) groups.push({ keys: [h.key], at: i }); else groups[groups.length - 1].keys.push(h.key); });
+    for (const d of (hits.length ? deaths : [])) {
+      const g = groups.find((x) => x.keys.includes(d.linked)) || [...groups].reverse().find((x) => Number(plays[x.at].time_s) <= Number(d.time_s)) || groups[0];
+      g.keys.push(d.key);
+    }
+    const out = groups.map((g, n) => ({ events: g.keys, move: state[g.at].move, two_slashes: TWO.has(state[g.at].move) && state[g.at].two,
+      merge_prev: n === 0 && merge, note: n === 0 ? note : '' }));
+    saved.textContent = '保存中…';
+    try {
+      const j = await postJ({ rec: r.id, card_events: keysOf(f), rows: out }, '/api/truth');
+      const ks = new Set(keysOf(f));
+      r.truth = r.truth.filter((t) => !t.events.split(' ').some((k) => ks.has(k))).concat(j.rows);
+      saved.textContent = '已保存';
+    } catch (err) { saved.textContent = '保存失败：' + err.message; }
+    c.className = 'card ' + labelled(r, f); counts();
+  };
+  const pick = (i) => {
+    const wrap = el('span', 'cands'), sel = moveSelect(f.phase, state[i].move);
+    const two = el('label', 'merge'), tbox = el('input'); tbox.type = 'checkbox'; tbox.checked = state[i].two;
+    two.append(tbox, ' 只有起手两刀、没接后续（二连横砍和飞渡浮舟都算对）');
+    two.hidden = !TWO.has(state[i].move);
+    sel.onchange = () => { state[i].move = sel.value; two.hidden = !TWO.has(sel.value); save(); };
+    tbox.onchange = () => { state[i].two = tbox.checked; save(); };
+    wrap.append(sel, two);
+    return wrap;
+  };
+  const draw = () => {
+    box.replaceChildren();
+    if (!split) box.append(pick(0));
+    else plays.forEach((h, i) => {
+      const line = el('div', 'actions');
+      line.append(el('span', 'time', `${TYPE[h.type]} ${fmt(h.time_s)}`));
+      if (i > 0) {
+        const l = el('label', 'merge'), b = el('input'); b.type = 'checkbox'; b.checked = !starts[i];
+        l.append(b, ' 和上一下是同一次出招');
+        b.onchange = () => { starts[i] = !b.checked; draw(); save(); };
+        line.append(l);
+      }
+      if (starts[i]) line.append(pick(i));
+      box.append(line);
+    });
+    const acts = el('div', 'actions');
+    const ml = el('label', 'merge'), mb = el('input'); mb.type = 'checkbox'; mb.checked = merge;
+    ml.append(mb, ' 和上一次算同一次失败');
+    mb.onchange = () => { merge = mb.checked; save(); };
+    acts.append(ml);
+    if (plays.length > 1) {
+      const sb = el('button', '', split ? '不拆了' : '拆开（这几下不是同一次出招）'); sb.type = 'button';
+      sb.onclick = () => { split = !split; plays.forEach((h, i) => { starts[i] = i === 0 || split; }); draw(); save(); };
+      acts.append(sb);
+    }
+    const ta = el('textarea'); ta.placeholder = '备注（可选）'; ta.value = note;
+    let timer = null;
+    ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => { note = ta.value; save(); }, 1000); };
+    acts.append(ta, saved);
+    box.append(acts);
+  };
+  draw();
+  c.append(box);
+  return c;
+}
 function summary() {
   const r = recs[cur], by = {}, rank = { damage: 1, posture_break: 2, death: 3 };
   const merged = [];
-  for (const f of r.failures) {
+  if (r.blind) {
+    const kind = (k) => k.replace(/^missed:/, '').split('@')[0];
+    for (const t of [...r.truth].sort((a, b) => a.time_s - b.time_s)) {
+      const type = t.events.split(' ').map(kind).reduce((a, b) => (rank[b] > rank[a] ? b : a), 'damage');
+      if (t.merge_prev && merged.length) { const m = merged[merged.length - 1]; if (rank[type] > rank[m.type]) m.type = type; continue; }
+      if (t.move) merged.push({ slug: t.move, type, zh: t.move === 'unsure' ? '看不出来' : '' });
+    }
+  }
+  for (const f of (r.blind ? [] : r.failures)) {
     const slug = f.verdict === 'wrong' && f.correct_move ? f.correct_move : f.move;
     if (f.merge_prev && merged.length) {
       const m = merged[merged.length - 1];
@@ -469,7 +667,8 @@ function summary() {
   ['招式', '扣血', '被打崩', '死亡', '合计'].forEach((h, i) => head.append(el('th', i ? 'n' : '', h)));
   t.append(head);
   rows.forEach(([name, n]) => { const tr = el('tr'); tr.append(el('td', '', name), el('td', 'n', n.damage), el('td', 'n', n.posture_break), el('td', 'n', n.death), el('td', 'n', n.all)); t.append(tr); });
-  document.getElementById('summary').replaceChildren(el('div', 'type', `按招式汇总（${merged.length} 次失败，核对过的按你的修改和合并算）`), t);
+  const title = r.blind ? `按招式汇总（你标了 ${merged.length} 次失败）` : `按招式汇总（${merged.length} 次失败，核对过的按你的修改和合并算）`;
+  document.getElementById('summary').replaceChildren(el('div', 'type', title), t);
 }
 function missed() {
   const r = recs[cur];
@@ -498,14 +697,14 @@ function render(newRec) {
   tabs(); counts();
   const r = recs[cur];
   if (newRec) { video.src = `/video/${encodeURIComponent(r.id)}`; }
-  document.getElementById('hint').textContent = HINT[mode];
+  document.getElementById('hint').textContent = mode === 'moves' && r.blind ? HINT.blind : HINT[mode];
   document.getElementById('addform').hidden = mode === 'moves';
   document.getElementById('missed').hidden = mode === 'moves';
   document.getElementById('summary').hidden = mode !== 'moves';
-  const keep = { '全部': () => true, '待核对': (e) => !e.verdict, '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow', '有提示': (e) => e.flags || e.stale }[filter];
+  const keep = { '全部': () => true, '待核对': (e) => (mode === 'moves' && r.blind ? !labelled(r, e) : !e.verdict), '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow', '有提示': (e) => e.flags || e.stale }[filter];
   const items = mode === 'moves' ? r.failures : r.events;
   const shown = items.filter(keep);
-  const make = mode === 'moves' ? (e) => fcard(r, e) : (e) => card(r, e);
+  const make = mode === 'moves' ? (r.blind ? (e) => bcard(r, e) : (e) => fcard(r, e)) : (e) => card(r, e);
   document.getElementById('list').replaceChildren(...(shown.length ? shown.map(make) : [el('p', 'hint', mode === 'moves' && !items.length ? '这个录像还没有招式答案（只有开发者菜单录像有）。' : '没有符合这个筛选的条目。')]));
   if (mode === 'events') missed();
 }
@@ -578,13 +777,14 @@ class Handler(BaseHTTPRequestHandler):
                 left -= len(chunk)
 
     def do_POST(self):
-        handlers = {"/api/review": save, "/api/move": save_move}
+        handlers = {"/api/review": save, "/api/move": save_move, "/api/truth": save_truth}
         if self.path not in handlers:
             return self._send(404, "not found", "text/plain")
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))).decode("utf-8"))
-            key = handlers[self.path](body["rec"], body)
-            self._send(200, json.dumps({"ok": True, "key": key}), "application/json")
+            result = handlers[self.path](body["rec"], body)
+            reply = {"ok": True, **result} if isinstance(result, dict) else {"ok": True, "key": result}
+            self._send(200, json.dumps(reply, ensure_ascii=False), "application/json")
         except Exception as ex:  # noqa: BLE001
             self._send(400, json.dumps({"ok": False, "error": str(ex)}, ensure_ascii=False), "application/json")
 

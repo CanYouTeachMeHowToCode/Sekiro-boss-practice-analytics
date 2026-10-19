@@ -1,13 +1,16 @@
 """Add the owner's new recordings to recordings.json.
 
-Usage: python -I register.py [file name ...] [--overlay] [--use "text"]
+Usage: python -I register.py [file name ...] [--overlay] [--use "text"] [--set test|development]
 
 With no file names, every video in recordings_dir (local.config) and its subfolders that recordings.json does not list
 yet is added; file names are relative to recordings_dir ("测试录像/测试录像1.mp4").
 Each entry gets an id from the file's date (modification time), "-castle" and a number (2026-10-16-castle-1, -2, ...),
 its SHA-256, ruleset vanilla and game version 1.06 (the owner's setup for M1; edit the
-entry if a recording differs), overlay false unless --overlay, and a `use` note. The video's size, frame rate and
-length are printed so a recording that is not 2560×1440, 16:9 or 60 fps is noticed before the pipeline runs.
+entry if a recording differs), overlay false unless --overlay, a `use` note, and its `set` for reliability.py: test for
+a recording without the overlay (an M2 recording, held out: the review page labels it blind), development for a
+dev-menu one. A new dev-menu recording becomes a reference for the move recognition, so it changes the pipeline: add one
+only between test rounds, never while a frozen version is being tested. The video's size, frame rate and length are
+printed so a recording that is not 2560×1440, 16:9 or 60 fps is noticed before the pipeline runs.
 """
 import configparser
 import hashlib
@@ -40,18 +43,21 @@ def main():
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
     known = {r["file_name"] for r in registry["recordings"]}
     ids = {r["id"] for r in registry["recordings"]}
-    args, names, overlay, use, i = sys.argv[1:], [], False, None, 0
+    args, names, overlay, use, which, i = sys.argv[1:], [], False, None, None, 0
     while i < len(args):
         if args[i] == "--overlay":
             overlay = True
         elif args[i] == "--use":
             use, i = args[i + 1], i + 1
+        elif args[i] == "--set":
+            which, i = args[i + 1], i + 1
         else:
             names.append(args[i])
         i += 1
     files = [folder / n for n in names] if names else sorted(p for p in folder.rglob("*") if p.suffix.lower() in VIDEO)
     use = use or ("reference: dev-menu fight recorded for V4 M1" if overlay
-                  else "answer set: fight without the overlay, labelled by the owner")
+                  else "M2 test: fight without the overlay, labelled blind by the owner")
+    which = which or ("development" if overlay else "test")
     added = 0
     for path in files:
         name = path.relative_to(folder).as_posix()
@@ -66,11 +72,11 @@ def main():
         rec_id = next(f"{day}-castle-{k}" for k in range(1, 1000) if f"{day}-castle-{k}" not in ids)
         ids.add(rec_id)
         registry["recordings"].append({"id": rec_id, "file_name": name, "sha256": sha256(path), "ruleset": "vanilla",
-                                       "game_version": "1.06", "overlay": overlay, "use": use})
+                                       "game_version": "1.06", "overlay": overlay, "use": use, "set": which})
         warn = "" if (int(w), int(h)) == (2560, 1440) and abs(fps - 60) < 1 else "   <- not 2560×1440 at 60 fps"
         if abs(w / h - 16 / 9) > 0.01:
             warn += "   <- not 16:9: the HUD positions will not fit"
-        print(f"{rec_id}: {name}  {int(w)}×{int(h)} {fps:.2f} fps {n / fps:.0f} s{warn}")
+        print(f"{rec_id}: {name}  {int(w)}×{int(h)} {fps:.2f} fps {n / fps:.0f} s, set {which}{warn}")
         added += 1
     registry_path.write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"{added} added to {registry_path}")
