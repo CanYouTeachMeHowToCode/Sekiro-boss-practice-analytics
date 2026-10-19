@@ -922,7 +922,7 @@ Delivered (owner confirmed, 2026-10-16; `research/failure_attribution/results.md
 - a local review page: events, the three candidate moves per failure, merging, failures per move, processing progress
 - dev-menu recordings read into observations with one command, checked against the AI chains, and used as answers and as the reference library
 - an owner-checked answer set of 7 castle recordings: 141 events, 82 failures
-- all 141 events correct with none missed; on recordings never used for tuning, the move behind a failure is the top candidate in 36 of 41 (88%) and among the top three in 38 of 41 (93%)
+- all 141 events correct with none missed; on recordings whose parameters were never tuned on them, the move behind a failure is the top candidate in 36 of 41 (88%) and among the top three in 38 of 41 (93%). Two rules were added after looking at the errors in one of them, so these numbers are optimistic; M2 measures again
 
 ---
 
@@ -938,6 +938,8 @@ Keep results the system cannot confirm as uncertain.
 
 Measure precision and recall, for failure detection and for move identification.
 
+Plan (`research/failure_attribution/plan_m2.md`, 2026-10-19): the M1 recordings are the development set. New recordings without the overlay are the test set: they are run only with the frozen pipeline, the owner labels their moves blind (the review page does not show the system's answer), and their errors are recorded, not fixed. Any change after that is a new version, measured on a new batch. A move answer counts as sure only when its score leads the next different move by a set margin; otherwise the report says the move is uncertain and names the top two.
+
 ---
 
 ## V4 Milestone 3 — Video Upload and Failure Report
@@ -951,6 +953,8 @@ Add:
 - metadata
 - processing status
 - storage lifecycle
+- a check that the upload is a castle Genichiro fight, not another boss, another game or an unrelated video (owner decision, 2026-10-19)
+- a test on one recording at another resolution: the prototype reads the HUD at 2560×1440 (owner decision, 2026-10-19)
 
 Show the failure times, their clips, the moves, and the number of failures per move.
 
