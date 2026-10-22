@@ -192,6 +192,7 @@ OWNER.update({("c7110", 3009): "危·投技", ("c7110", 3039): "危·雷电", ("
 OWNER[("c7100", 3045)] = "踢一脚(横砍踢击 3003 → 3045 的第二段;2026-10-15)"
 OWNER[("c7100", 3002)] = "肘击(2026-10-15)"
 OWNER[("c7110", 3007)] = "危·下段"  # owner, 2026-10-15; c7100 3007 was 下段(非危) until the owner corrected it the same day
+OWNER[("c7110", 3010)] = "跳起来横砍一下、再劈砍一下(你在 M2 测试录像 7 的 3:24 看到,2026-10-22)"
 
 # Notes the owner asked for while reviewing (2026-10-13), with the evidence checked in the decompiled AI.
 NOTES = {
@@ -221,6 +222,14 @@ NOTES.update({
     ("711000", "Kengeki20"): "3007 是危·下段(你确认,2026-10-15):0.6 秒出危字(录像 4:05.8、6:32.1 截图可见),0–2.23 秒跳踩的体干伤害 ×8(特效 400200)。",
     ("710000", "Interrupt:3023"): "两次录像里的 3 次 3023 都是你喝药或使用道具时出的(你确认,2026-10-15:第一次录像 1:02.9、1:59.9,第二次 2:05.3)。",
     ("711000", "Interrupt:3008"): "喝药也会触发;你确认录像里三阶段有一次 3008 是你喝药时出的(2026-10-15)。",
+})
+# Seen by the owner in a fight without the dev menu (2026-10-22): no animation IDs, so the evidence column (runtime
+# observations) does not change; the owner judged the sighting enough to show the branch occurs.
+NOTES.update({
+    ("711000", "Act01"): NOTES[("711000", "Act01")] + "2026-10-22:你在 M2 测试录像 7(没开开发者菜单)的 3:22 看到整套 3000 → 3001 → 3010 → 3025,"
+                         "3010 那两下从 3:24 开始:跳起来横砍一下、再劈砍一下。没有动画编号,你确认这足以证明这一支会出现,不专门补录参考(2026-10-22)。",
+    ("710000", "Act01"): NOTES[("710000", "Act01")] + "你确认一二阶段也会出现 3010 → 3025 这一支(2026-10-22,三阶段在 M2 测试录像 7 的 3:22 看到同一套);"
+                         "TAE 里 c7100 和 c7110 的 3010 攻击判定完全相同(判定 320、321,0.53–0.67 秒和 0.83–0.93 秒)。不专门补录参考(你决定,2026-10-22)。",
 })
 
 CASTLE_FACTS = [  # applied to the chain text: castle Genichiro has 200050 and never 3711500
