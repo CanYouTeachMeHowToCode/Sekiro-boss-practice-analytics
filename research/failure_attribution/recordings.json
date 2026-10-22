@@ -141,6 +141,8 @@
       "sha256": "dce152ec2b2875d1e4114e8e040883881ec1cff6c775692ece6a3f336e0ada5e",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "M2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
@@ -151,6 +153,8 @@
       "sha256": "6f71a3c4649215e7ecc153c58a931427e1ac542e53370a0120eb337bece0c5ec",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "M2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
@@ -161,6 +165,8 @@
       "sha256": "f9c0bea64e471cb68c4f0be7521574e51468ed3fb444d49fe58cd0c228d04c60",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "M2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
@@ -171,6 +177,8 @@
       "sha256": "a6f542ae9fe82c91c6f51f41e039165aa5888e3220b17876f8bcaf64a01041d8",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "M2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
@@ -181,6 +189,8 @@
       "sha256": "197833a932d90741ca70850db48551f92bce9757a808dff9ed7299e2fcae5c03",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "M2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
