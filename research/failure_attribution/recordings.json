@@ -86,6 +86,104 @@
       "overlay": true,
       "use": "reference: dev-menu fight recorded for V4 M1",
       "set": "development"
+    },
+    {
+      "id": "2026-10-20-castle-1",
+      "file_name": "测试录像/测试录像4.mp4",
+      "sha256": "d4290a0380d38d70888c077c6537a1040b2386139cf848013f1d4257143db53e",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-1",
+      "file_name": "测试录像/测试录像5.mp4",
+      "sha256": "07254da8817391aa3a12ab9493450904ada3538e1f8b05e53750d805cb253da8",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-2",
+      "file_name": "测试录像/测试录像6.mp4",
+      "sha256": "6e392c2a6681ee6267bc1f936f9db7a40c05a512d116b93267e5685945ceaa51",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-3",
+      "file_name": "测试录像/测试录像7.mp4",
+      "sha256": "0dbab58b1c9a04f51ff973dede6ebffa94905a91cf113c19faf6075d6a9c1203",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-4",
+      "file_name": "测试录像/测试录像8.mp4",
+      "sha256": "dce152ec2b2875d1e4114e8e040883881ec1cff6c775692ece6a3f336e0ada5e",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-5",
+      "file_name": "测试录像/测试录像9.mp4",
+      "sha256": "6f71a3c4649215e7ecc153c58a931427e1ac542e53370a0120eb337bece0c5ec",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-6",
+      "file_name": "测试录像/测试录像10.mp4",
+      "sha256": "f9c0bea64e471cb68c4f0be7521574e51468ed3fb444d49fe58cd0c228d04c60",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-7",
+      "file_name": "测试录像/测试录像11.mp4",
+      "sha256": "a6f542ae9fe82c91c6f51f41e039165aa5888e3220b17876f8bcaf64a01041d8",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-8",
+      "file_name": "测试录像/测试录像12.mp4",
+      "sha256": "197833a932d90741ca70850db48551f92bce9757a808dff9ed7299e2fcae5c03",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
     }
   ]
 }
