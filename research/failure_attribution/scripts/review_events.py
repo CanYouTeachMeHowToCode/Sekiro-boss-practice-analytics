@@ -72,6 +72,11 @@ def moves_file(rec):
     return annotation_dir(rec) / "failure_moves.csv"
 
 
+def file_label(rec):
+    """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs."""
+    return Path(rec["file_name"]).stem
+
+
 def truth_file(rec):
     return annotation_dir(rec) / "failure_truth.csv"
 
@@ -151,7 +156,7 @@ def page_data():
             f["merge_prev"] = bool(r and r.get("merge_prev"))
             f["stale"] = bool(r and r["verdict"] and r["proposed"] != f["move"])
             f["review_key"] = r["key"] if r else f["key"]
-        out.append({"id": rec_id, "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
+        out.append({"id": rec_id, "file": file_label(rec), "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
                     "missed": missed, "failures": failures})
     return {"recs": out, "moves": product_moves(), "two_slashes": sorted(TWO_SLASHES)}
 
@@ -177,7 +182,7 @@ def blind_data(rec_id, rec, events, missed):
                           "hit_list": [{"key": m["key"], "type": m["type"], "time_s": m["time_s"], "linked": "",
                                         "verdict": "missed"}]})
     cards.sort(key=lambda c: float(c["time_s"]))
-    return {"id": rec_id, "use": rec.get("use", ""), "overlay": False, "blind": True, "events": events,
+    return {"id": rec_id, "file": file_label(rec), "use": rec.get("use", ""), "overlay": False, "blind": True, "events": events,
             "missed": missed, "failures": cards, "truth": read_csv(truth_file(rec))}
 
 
@@ -434,7 +439,7 @@ function tabs() {
     b.onclick = () => { mode = m; filter = '全部'; render(false); }; return b;
   }));
   const shownRecs = recs.map((r, i) => [r, i]).filter(([r]) => mode === 'events' || r.failures.length);
-  document.getElementById('tabs').replaceChildren(...shownRecs.map(([r, i]) => { const b = el('button', '', r.id); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
+  document.getElementById('tabs').replaceChildren(...shownRecs.map(([r, i]) => { const b = el('button', '', `${r.file}（${r.id}）`); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
   const f = mode === 'moves' ? ['全部', '待核对', '扣血', '被打崩', '死亡', '有提示'] : ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
   document.getElementById('filters').replaceChildren(...f.map((x) => { const b = el('button', '', x); b.setAttribute('aria-pressed', String(x === filter)); b.onclick = () => { filter = x; render(false); }; return b; }));
 }

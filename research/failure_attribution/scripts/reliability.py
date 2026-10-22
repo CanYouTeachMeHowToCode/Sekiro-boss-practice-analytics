@@ -218,13 +218,20 @@ def name(slug):
     return {"other": "其他", "unsure": "看不出来", "": "—"}.get(slug, ZH.get(slug, slug))
 
 
+# the scripts that turn a recording into reported failures: the version the M2 plan freezes. The review page, the
+# registry and this report are left out, since changing them changes no result
+PIPELINE = ["common.py", "hud_pipeline.py", "hud_read.py", "death_screen.py", "events.py", "lockon.py", "boss_track.py",
+            "boss_features.py", "overlay_mask.py", "failure_answers.py", "move_match.py"]
+
+
 def commit_state():
-    """The last commit that changed the pipeline's scripts: the version the plan freezes."""
-    head = subprocess.run(["git", "-C", str(REPO), "log", "-1", "--format=%h", "--", str(FA / "scripts")],
+    """The last commit that changed the pipeline's scripts, and whether any of them has uncommitted changes."""
+    paths = [str(FA / "scripts" / f) for f in PIPELINE]
+    head = subprocess.run(["git", "-C", str(REPO), "log", "-1", "--format=%h", "--", *paths],
                           capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "-C", str(REPO), "status", "--porcelain", "--", str(FA / "scripts")],
+    dirty = subprocess.run(["git", "-C", str(REPO), "status", "--porcelain", "--", *paths],
                            capture_output=True, text=True).stdout.strip()
-    return head + ("（scripts 有未提交的改动）" if dirty else "")
+    return head + ("（流水线脚本有未提交的改动）" if dirty else "")
 
 
 def report(which):
