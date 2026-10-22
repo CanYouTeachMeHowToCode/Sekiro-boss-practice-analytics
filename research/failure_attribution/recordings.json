@@ -1,5 +1,5 @@
 {
-  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py).",
+  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect.",
   "recordings": [
     {
       "id": "2026-10-09-castle",
@@ -7,6 +7,8 @@
       "sha256": "b7715326820219f300aa9cb63392cc99165b2c8087d8af6a8ecb46c73e560a70",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
       "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle",
@@ -18,6 +20,8 @@
       "sha256": "9b3b8cfd2a42ff247c5791696ee997b5692e727f79c1ecfa9065bfaf680272e7",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
       "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle",
@@ -29,6 +33,8 @@
       "sha256": "85cb3be1f7966f25e86bbd10c2777adf7b9bca5afb0165f83792d1af597162a0",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "answer set: fight without the overlay, labelled by the owner",
       "set": "development"
@@ -39,6 +45,8 @@
       "sha256": "73ea4fadce87a5edbe8f09405f386b1e1f670cdb99e51c6ab295857d0e45de67",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "answer set: fight without the overlay, labelled by the owner",
       "set": "development"
@@ -49,6 +57,8 @@
       "sha256": "20e99e9834bb4d7e9d00f42eba95d7b4150bfb8a72d638918a36332945e2631c",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "answer set: fight without the overlay, labelled by the owner",
       "set": "development"
@@ -59,6 +69,8 @@
       "sha256": "4c8d950ef27e60537c1bf5c056657d4384fdc2fb88db61275e89fdfa93849a55",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu fight recorded for V4 M1",
       "set": "development"
@@ -69,6 +81,8 @@
       "sha256": "1bbbb8aa991a9e01e233ded99812b9b80d3666e17463875ff53185d63190d6fd",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu fight recorded for V4 M1",
       "set": "development"
