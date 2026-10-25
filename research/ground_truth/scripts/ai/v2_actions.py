@@ -142,7 +142,9 @@ def main():
           "失败按打中你的那个动作和它需要的应对来归类。招式和名字沿用 M2 的版本，只有应对和这一招主要内容不同的动作才单独归类。", "",
           "## 已定的事", ""]
     md += [f"- {x}" for x in DECIDED]
-    md += ["", "跃起后危·突刺的英文名还没定（现在是 Sword Dive Thrust Attack）。"]
+    md += ["", "跃起后危·突刺的英文名建议 **Leaping Perilous Thrust**（现在是 Sword Dive Thrust Attack）。英文版游戏把危字攻击叫 "
+           "perilous attack，产品里的英文名也一直用 Perilous 对应\"危\"（Perilous Thrust、Perilous Grab、Perilous Sweep），"
+           "所以不用再加 Dangerous attack。审表时请一起确认。"]
     md += ["", f"## 改了归类的动画（{len(changed)} 个）", "",
            "| 角色 | 动画 | 审核 | 理由 | 阶段 | 类型 | 现在算 | 建议算 | 依据 | 问题 | 你的标签 | 录到次数 |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     md += [f"| {r['character']} | {r['anim']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {r['kind']} | {r['current_moves']} "

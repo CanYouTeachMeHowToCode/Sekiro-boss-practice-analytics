@@ -17,7 +17,7 @@
 - 连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算"危·突刺"（A）。
 - 招式前后附带的普通的箭算新的一招"普通射箭攻击 / Arrow Shot"（C）。
 
-跃起后危·突刺的英文名还没定（现在是 Sword Dive Thrust Attack）。
+跃起后危·突刺的英文名建议 **Leaping Perilous Thrust**（现在是 Sword Dive Thrust Attack）。英文版游戏把危字攻击叫 perilous attack，产品里的英文名也一直用 Perilous 对应"危"（Perilous Thrust、Perilous Grab、Perilous Sweep），所以不用再加 Dangerous attack。审表时请一起确认。
 
 ## 改了归类的动画（19 个）
 
