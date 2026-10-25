@@ -1,6 +1,6 @@
 # V4 M2 计划：在新录像上验证可靠性
 
-**状态：测完（2026-10-25），三条标准全部达标，是否通过由你定。** 结果见 [`results_m2.md`](results_m2.md)，M1 的结果见 [`results.md`](results.md)。
+**状态：已完成，通过**（你在 2026-10-25 判定）。 结果见 [`results_m2.md`](results_m2.md)，M1 的结果见 [`results.md`](results.md)。
 
 ## 要回答的问题
 

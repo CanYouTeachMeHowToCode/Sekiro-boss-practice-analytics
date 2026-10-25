@@ -926,7 +926,7 @@ Delivered (owner confirmed, 2026-10-16; `research/failure_attribution/results.md
 
 ---
 
-## V4 Milestone 2 — Reliability Validation
+## V4 Milestone 2 — Reliability Validation ✅
 
 Check the prototype on independent fight recordings:
 
@@ -939,6 +939,13 @@ Keep results the system cannot confirm as uncertain.
 Measure precision and recall, for failure detection and for move identification.
 
 Plan (`research/failure_attribution/plan_m2.md`, 2026-10-19): the M1 recordings are the development set. New recordings without the overlay are the test set: they are run only with the frozen pipeline, the owner labels their moves blind (the review page does not show the system's answer), and their errors are recorded, not fixed. Any change after that is a new version, measured on a new batch. A move answer counts as sure only when its score leads the next different move by a set margin; otherwise the report says the move is uncertain and names the top two.
+
+Delivered (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2.md`):
+
+- a held-out test set of 9 fights (37 minutes, 70 failures), run once with the frozen pipeline and labelled blind by the owner
+- the results, against criteria the owner set before seeing them: failure precision 97% and recall 100%; 81% of the move answers sure, and 93% of those right; every rate with its 95% interval
+- the tooling: a blind review view, "uncertain" move answers, and a report of precision, recall, merge errors and failures per move
+- for the next version (owner decision): a failure is classified by the action that hit the player and the response it needs, not by the AI chain; an arrow that opens a combo becomes its own move, and the perilous thrusts countered by Mikiri become one move
 
 ---
 
