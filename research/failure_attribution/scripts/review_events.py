@@ -34,6 +34,7 @@ answer does not depend on how the pipeline grouped the hits.
 """
 import csv
 import io
+from collections import Counter
 import json
 import os
 import re
@@ -75,6 +76,23 @@ def moves_file(rec):
 def file_label(rec):
     """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs."""
     return Path(rec["file_name"]).stem
+
+
+def unique_keys(keys):
+    """Event keys made unique, in order: a key already seen gets #2, #3. The detector can report one event more than
+    once at the same moment (测试录像10, 2026-10-22-castle-6: a death screen that flickered in was read as three, so
+    one death became three); each copy then needs its own review, so a duplicate can be marked wrong."""
+    seen, out = Counter(), []
+    for k in keys:
+        seen[k] += 1
+        out.append(k if seen[k] == 1 else f"{k}#{seen[k]}")
+    return out
+
+
+def event_times(rec_id):
+    """Each detected event's time by its unique key."""
+    events = read_csv(work_dir(rec_id) / "events.csv")
+    return {u: float(e["time_s"]) for e, u in zip(events, unique_keys(e["key"] for e in events))}
 
 
 def truth_file(rec):
@@ -125,6 +143,8 @@ def page_data():
         if not events_csv.exists():
             continue
         events = list(csv.DictReader(open(events_csv, encoding="utf-8")))
+        for e, uid in zip(events, unique_keys(e["key"] for e in events)):
+            e["uid"] = uid
         reviews = read_reviews(rec)
         used = set()
         for e in events:
@@ -132,7 +152,7 @@ def page_data():
             if r is not None:
                 used.add(reviews.index(r))
             e["verdict"], e["review_note"] = (r["verdict"], r["note"]) if r else ("", "")
-            e["review_key"] = r["key"] if r else e["key"]
+            e["review_key"] = r["key"] if r else e["uid"]
             if r is None:
                 # an event the owner added as missed, which the detector now finds: it is confirmed
                 m = next((m for i, m in enumerate(reviews) if i not in used and m["verdict"] == "missed" and match(m, e)), None)
@@ -164,14 +184,16 @@ def page_data():
 def blind_data(rec_id, rec, events, missed):
     """A test recording for the blind 招式 view: the reported failures without anything about their move, plus a card
     for each missed failure event outside them, and the owner's labels so far."""
-    by_key = {e["key"]: e for e in events}
+    by_uid = {e["uid"]: e for e in events}
     blows = sorted(float(e["time_s"]) for e in events if e["type"] == "deathblow")
-    hit = lambda e: {"key": e["key"], "type": e["type"], "time_s": e["time_s"], "linked": e.get("linked", ""),  # noqa: E731
+    hit = lambda e: {"key": e["uid"], "type": e["type"], "time_s": e["time_s"], "linked": e.get("linked", ""),  # noqa: E731
                      "verdict": e.get("verdict", "")}
     cards = []
     for f in read_csv(work_dir(rec_id) / "failure_predictions.csv"):
         card = {k: f[k] for k in BLIND_KEEP}
-        card["hit_list"] = [hit(by_key[k]) for k in f["events"].split() if k in by_key]
+        # copies of one event sit in the same failure, so numbering them within the card matches unique_keys()
+        card["events"] = " ".join(unique_keys(f["events"].split()))
+        card["hit_list"] = [hit(by_uid[k]) for k in card["events"].split() if k in by_uid]
         cards.append(card)
     inside = {k for c in cards for k in c["events"].split()}
     for m in missed:
@@ -193,8 +215,8 @@ def save_truth(rec_id, body):
         raise ValueError("not a blind test recording")
     slugs = {m["slug"] for m in product_moves()} | {OTHER_MOVE, "unsure", ""}
     card = set(body["card_events"])
-    detected = {e["key"]: float(e["time_s"]) for e in read_csv(work_dir(rec_id) / "events.csv")}
-    times = {k: detected.get(k, float(k.split("@")[1])) for k in card}
+    detected = event_times(rec_id)
+    times = {k: detected.get(k, float(k.split("@")[1].split("#")[0])) for k in card}
     rows = [r for r in read_csv(truth_file(rec)) if not set(r["events"].split()) & card]
     for new in body["rows"]:
         keys = sorted(set(new["events"]) & card, key=times.get)
@@ -545,7 +567,7 @@ function moveSelect(phase, value) {
   sel.value = value || '';
   return sel;
 }
-const atOf = (k) => Number(k.split('@')[1]);
+const atOf = (k) => Number(k.split('@')[1].split('#')[0]);
 function bcard(r, f) {
   const c = el('div', 'card ' + labelled(r, f));
   const head = el('div', 'head');

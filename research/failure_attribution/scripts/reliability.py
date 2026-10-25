@@ -37,7 +37,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import FA, REPO, TWO_SLASHES, WORK, accepted, annotation_dir, observation_dir, recordings, work_dir  # noqa: E402
-from review_events import match, product_moves  # noqa: E402
+from review_events import match, product_moves, unique_keys  # noqa: E402
 
 ZH = {m["slug"]: m["zh"] for m in product_moves()}
 
@@ -64,7 +64,7 @@ def write(path, fields, rows):
 
 
 def key_time(key):
-    return float(key.split("@")[1])
+    return float(key.split("@")[1].split("#")[0])
 
 
 def truth_moves(row, chain=""):
@@ -135,7 +135,10 @@ class Recording:
     def __init__(self, rec_id, rec):
         self.id, self.problems = rec_id, []
         work, ann = work_dir(rec_id), annotation_dir(rec)
-        self.detected = [e for e in read(work / "events.csv") if e["type"] in FAILURE_TYPES]
+        detected = read(work / "events.csv")
+        for e, uid in zip(detected, unique_keys(e["key"] for e in detected)):
+            e["key"] = uid               # an event reported twice gets #2 (review_events.unique_keys)
+        self.detected = [e for e in detected if e["type"] in FAILURE_TYPES]
         reviews = [r for r in read(ann / "hud_events.csv") if r["type"] in FAILURE_TYPES]
         # each detected event: real, false (marked wrong), unsure or not reviewed
         self.status, used = {}, set()
@@ -169,7 +172,7 @@ class Recording:
         self.reported = []
         for p in read(work / "failure_predictions.csv"):
             cands = [c.rsplit(":", 1) for c in p["candidates"].split()]
-            self.reported.append({"row": p, "events": set(p["events"].split()), "t": float(p["time_s"]),
+            self.reported.append({"row": p, "events": set(unique_keys(p["events"].split())), "t": float(p["time_s"]),
                                   "top": [c[0] for c in cands], "sure": p.get("certain", "1") == "1",
                                   "confidence": p.get("confidence", "")})
         self.components()
