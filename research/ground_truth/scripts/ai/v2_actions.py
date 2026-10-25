@@ -2,13 +2,16 @@
 
 Usage: python -I v2_actions.py
 
-The owner's rule (2026-10-25): a failure is classified by the action that hit the player and the response it needs,
-not by the AI chain the boss was playing. Read here as:
-- an action that needs its own response (an arrow, a perilous attack: Mikiri, jump, dodge, lightning reversal) is
-  classified by that response, whatever combo it is part of;
-- an ordinary attack, which is deflected like any other, stays with the move (combo) it is part of, since what the
-  player practises there is that combo's rhythm; an animation two moves share is still told apart by what comes
-  before and after it, as now.
+The owner's rule (2026-10-25): a failure is classified by the action that hit the player and the response it needs.
+As the owner refined it the same day: the M2 moves and their full names stay, and a hit counts for the move whose
+main content hit the player; only an action that needs a different response from that main content is classified
+apart:
+- a plain arrow inside another move (before or after it) is "普通射击"; the standalone shooting moves (后撤射击,
+  破防射击, 鹰射) stay as they are;
+- a perilous thrust that needs Mikiri (3025, 3080) is 危·突刺 wherever it comes (to be confirmed under the refined
+  rule). A perilous sweep, which needs a jump, is never put with a thrust; it stays with its move, as do the grabs and
+  the lightning attacks (owner: each needs its own response).
+An animation two moves share is told apart by what comes before and after it, as now.
 
 Inputs: semantic/genichiro_catalog.csv (entries, hits, owner labels), semantic/genichiro_product_moveset.csv (the
 current moves), engine/genichiro_attack_windows.csv (attack, projectile and 危 windows). Writes
@@ -26,25 +29,28 @@ GT = Path(__file__).resolve().parents[2]
 OUT_CSV, OUT_MD = GT / "semantic/genichiro_v2_actions.csv", GT / "semantic/genichiro_v2_actions.md"
 PHASES = {"c7100": "1、2", "c7110": "3"}
 
-# Arrows that open or end a combo (the owner chose option B, 2026-10-25): a hit by one is "射箭"; the report may say
-# what followed it. 3011 (after the perilous sweep) and 3012 (before the lightning) are in their own question.
-OPENING_ARROWS = {3013, 3014, 3017, 3018, 3031, 3034, 3036}
+# Plain arrows inside another move, before or after its main content (owner, Q5 and Q6, 2026-10-25): a hit by one is
+# "普通射击"; the report may say what followed it
+PLAIN_ARROWS = {("c7100", a) for a in (3011, 3013, 3014, 3017, 3018, 3031, 3034, 3036)} |     {("c7110", a) for a in (3012, 3013, 3014, 3018, 3031, 3034, 3036)}
 # by character: c7110 uses 3009 for its perilous grab
 STANDALONE_SHOTS = {("c7100", 3009): "后撤射击", ("c7100", 3023): "破防射击", ("c7100", 3044): "鹰射（后撤/四连射击）"}
 # Perilous attacks by the response they need. The owner's labels name them for c7100; c7110 shares the animation IDs
 # and the windows, so its 3025 and 3067 are read the same way (marked as inferred).
-MIKIRI = {3025, 3062, 3080}
-SWEEP = {3007, 3067}
-GRAB = {("c7100", 3020), ("c7110", 3009)}
-LIGHTNING = {3039, 3042}
+MIKIRI_IN_OTHER_MOVES = {3025, 3080}
 
+DECIDED = [
+    "招式和名字沿用 M2 的版本；被一招的主要内容打中，就算这一招的全名（Q6）。",
+    "招式前后附带的普通的箭算\"普通射击\"；单独的射击招式（后撤射击、破防射击、鹰射）各自保持一招（Q5）。",
+    "下段危要跳、突刺危要识破，两者一定分开，就算前面的连招完全一样；下段危不跨招式合并，留在各自的招式里（Q1）。",
+    "一二阶段的危·投技可以弹开，和三阶段的危·投技不合并（Q2）。",
+    "巴之雷的几招都是雷电，但动画和应对不同，各自保持一招（Q3）。",
+    "跳起突刺（c7110 3008）是要识破的突刺（Q4）。",
+]
 QUESTIONS = {
-    "Q1": "危·下段（要跳）要不要也像危·突刺一样，不管在哪一招里都合成一招？涉及 3007（危·下段横扫）和 3067（跳劈后续、三阶段飞渡浮舟里的下段）。",
-    "Q2": "一二阶段的危·投技（3020）和三阶段的危·投技（c7110 3009）应对一样，要不要合成一招？",
-    "Q3": "巴之雷：3039（危·雷电，射击）和 3042（危·雷电，斩击）都要雷返，要不要合成一招\"巴之雷\"？3043（巴之雷·砸击）也有危字窗口，但你只标了招式名，它是不是雷电、要怎么应对？",
-    "Q4": "跳起突刺（c7110 3008）有危字窗口，但还没有你的标签：它是要识破的突刺（并进危·突刺），还是别的应对？",
-    "Q5": "单独的射击招式（后撤射击 3009、破防射击 3023、鹰射 3044）保持各自一招，还是也并进\"射箭\"？危·下段横扫之后的那一箭（3011）和巴之雷·射击开头的那一箭（c7110 3012）算\"射箭\"吗？",
-    "Q6": "拆完以后几招的名字要改：涨潮只剩前滚劈砍，退潮只剩居合斩，跳劈后续只剩跳劈和上挑，巴之雷·射击只剩雷电（如果 3012 算射箭）。新招式\"射箭\"\"危·突刺（合并后）\"的中英文名字也请你定。",
+    "A": "需要识破的危·突刺还合并吗？就是把连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算\"危·突刺\"。"
+         "我建议合并：M2 有两次就是把这种突刺认错成了别的突刺；而且合并以后，跳劈后续里的突刺和下段就自然分开了（Q1）。",
+    "B": "跳起突刺本身就是一招，主要内容就是突刺：它保持\"跳起突刺\"这一招，还是也并进\"危·突刺\"？",
+    "C": "新的一类叫什么：\"普通射击\"还是\"射箭\"？英文名呢（我建议 Arrow Shot）？",
 }
 
 
@@ -54,29 +60,21 @@ def read(path):
 
 def proposal(ch, anim, kinds, current, label):
     """(proposed move, reason, question) for one animation."""
-    if anim in OPENING_ARROWS:
-        return "射箭", "连招开头（或结尾）的箭：被箭打中就算射箭（你选的方案 B）", ""
+    if (ch, anim) in PLAIN_ARROWS:
+        return "普通射击", "招式前后附带的普通的箭（你定，Q5、Q6）", "C"
     if (ch, anim) in STANDALONE_SHOTS:
-        return STANDALONE_SHOTS[(ch, anim)], "单独的射击招式，先保持原样", "Q5"
-    if anim in (3011, 3012):
-        return "射箭（待定）", "接在别的招式前后的箭", "Q5"
-    if "peril" in kinds or "bullet" in kinds and anim in LIGHTNING:
-        if anim == 3022:
-            return "倒地后跳刺危攻击", "只能侧闪、不能识破（你标的），应对不同，单独保留", ""
-        if anim in MIKIRI:
-            inferred = "（c7110 按一二阶段同编号推断）" if ch == "c7110" and anim != 3062 and anim != 3080 else ""
-            return "危·突刺", "要识破的危·突刺，不管在哪一招里都合成一招（你定的原则）" + inferred, ""
-        if anim in SWEEP:
-            inferred = "（c7110 按一二阶段同编号推断）" if ch == "c7110" and anim == 3067 else ""
-            return "危·下段（待定）", "要跳的危·下段" + inferred, "Q1"
-        if (ch, anim) in GRAB:
-            return "危·投技（待定）", "要躲开的危·投技", "Q2"
-        if anim in LIGHTNING:
-            return "巴之雷（待定）", "要雷返的危·雷电", "Q3"
-        if anim == 3043:
-            return "巴之雷·砸击", "有危字窗口，应对待你确认", "Q3"
-        if anim == 3008:
-            return "跳起突刺", "有危字窗口，应对待你确认", "Q4"
+        return STANDALONE_SHOTS[(ch, anim)], "单独的射击招式，保持一招（你定，Q5）", ""
+    if anim in MIKIRI_IN_OTHER_MOVES:
+        inferred = "；c7110 的 3025 按一二阶段同编号推断" if ch == "c7110" and anim == 3025 else ""
+        return "危·突刺（待你确认）", "要识破的突刺，在别的招式里；和下段危分开（Q1）" + inferred, "A"
+    if ch == "c7110" and anim == 3008:
+        return "跳起突刺（待定）", "要识破的突刺（你定，Q4）", "B"
+    if "peril" in kinds:
+        reason = {3007: "下段危，留在自己的招式里（你定，Q1）", 3067: "下段危，留在自己的招式里，按前后动作决定是哪一招（你定，Q1）",
+                  3020: "一二阶段的危·投技可以弹开，不和三阶段合并（你定，Q2）", 3009: "三阶段的危·投技，不和一二阶段合并（你定，Q2）",
+                  3039: "巴之雷各自保持一招（你定，Q3）", 3042: "巴之雷各自保持一招（你定，Q3）", 3043: "巴之雷各自保持一招（你定，Q3）",
+                  3062: "要识破的危·突刺，本来就是这一招", 3022: "只能侧闪、不能识破（你标的），单独一招"}.get(anim, "危字攻击，留在自己的招式里")
+        return " / ".join(current), reason, ""
     if len(current) > 1:
         return " / ".join(current), "普通攻击，几招共用这个动画：按前后动作决定是哪一招（同现在）", ""
     return current[0], "普通攻击：还算它所在的那一招", ""
@@ -138,10 +136,10 @@ def main():
           "由 `scripts/ai/v2_actions.py` 生成。每一行是一个会打中你的动画，以及按版本 2 的原则建议它算哪一招。"
           "**建议不是定论**：请在\"审核\"一栏标 ✅ 或 ❌，有意见写在\"理由\"里，重新生成时会保留。", "",
           "## 原则（你定，2026-10-25）", "",
-          "失败按打中你的那个动作和它需要的应对来归类，不再按 AI 选的整套连招归类。具体是：", "",
-          "- **需要特别应对的动作**（箭、危字攻击：识破、跳、躲开、雷返）按应对归类，不管它在哪一招里；",
-          "- **普通攻击**（照常弹开就行）还算它所在的那一招，因为那里练的是这一招的节奏。几招共用的动画照旧按前后动作区分。", "",
-          "## 要你定的问题", ""]
+          "失败按打中你的那个动作和它需要的应对来归类。招式和名字沿用 M2 的版本，只有应对和这一招主要内容不同的动作才单独归类。", "",
+          "## 已定的事", ""]
+    md += [f"- {x}" for x in DECIDED]
+    md += ["", "## 还要你定的问题", ""]
     md += [f"- **{k}**：{v}" for k, v in QUESTIONS.items()]
     md += ["", f"## 改了归类的动画（{len(changed)} 个）", "",
            "| 角色 | 动画 | 审核 | 理由 | 阶段 | 类型 | 现在算 | 建议算 | 依据 | 问题 | 你的标签 | 录到次数 |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
