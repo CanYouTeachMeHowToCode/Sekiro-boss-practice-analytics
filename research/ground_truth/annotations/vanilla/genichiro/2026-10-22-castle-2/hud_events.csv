@@ -1,0 +1,15 @@
+key,type,time_s,verdict,note,updated
+damage@7.2,damage,7.167,correct,,2026-10-25T17:02:54
+damage@38.1,damage,38.134,correct,,2026-10-25T17:02:56
+deathblow@71.5,deathblow,71.502,correct,,2026-10-25T17:02:57
+damage@86.0,damage,86.002,correct,,2026-10-25T17:02:59
+damage@99.7,damage,99.703,correct,,2026-10-25T17:03:01
+deathblow@147.7,deathblow,147.737,correct,,2026-10-25T17:03:02
+damage@213.0,damage,213.006,correct,,2026-10-25T17:03:03
+damage@219.8,damage,219.839,correct,,2026-10-25T17:03:05
+damage@231.2,damage,231.173,correct,,2026-10-25T17:03:06
+damage@238.2,damage,238.173,correct,,2026-10-25T17:03:07
+damage@247.2,damage,247.173,correct,,2026-10-25T17:03:08
+death@247.2,death,247.173,correct,,2026-10-25T17:03:16
+resurrection@251.3,resurrection,251.273,correct,,2026-10-25T17:03:17
+deathblow@294.1,deathblow,294.141,correct,,2026-10-25T17:03:19
