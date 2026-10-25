@@ -1,8 +1,12 @@
 from datetime import datetime
 
 from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
     CheckConstraint,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -156,6 +160,92 @@ class Attempt(Base):
     user: Mapped["User"] = relationship()
     failure_move: Mapped[Move | None] = relationship()
 
+
+
+RECORDING_STATUSES = ("uploaded", "checking", "rejected", "queued", "processing", "done", "failed")
+FAILURE_TYPES = ("damage", "posture_break", "death")
+
+
+class Recording(Base):
+    """A fight recording a user uploaded for the failure report (V4 Milestone 3).
+
+    The video stays on disk under RECORDINGS_DIR; only its metadata and path are stored here. The worker moves it
+    through the statuses: uploaded -> checking -> rejected (reject_code says why) or queued -> processing -> done
+    (or failed).
+    """
+
+    __tablename__ = "recordings"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN (" + ", ".join(f"'{s}'" for s in RECORDING_STATUSES) + ")", name="ck_recordings_status"
+        ),
+        CheckConstraint("progress >= 0 AND progress <= 1", name="ck_recordings_progress"),
+        CheckConstraint("status = 'rejected' OR reject_code IS NULL", name="ck_recordings_reject_code_only_if_rejected"),
+        # The list shows one user's recordings, newest first; the worker looks for work by status.
+        Index("ix_recordings_user_id_created_at", "user_id", "created_at"),
+        Index("ix_recordings_status", "status"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+    boss_id: Mapped[int] = mapped_column(ForeignKey("bosses.id", ondelete="RESTRICT"))
+    original_filename: Mapped[str] = mapped_column(String(255))
+    # relative to RECORDINGS_DIR
+    storage_path: Mapped[str] = mapped_column(Text)
+    size_bytes: Mapped[int] = mapped_column(BigInteger)
+    sha256: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(20), default="uploaded", server_default="uploaded")
+    # why a recording was rejected, as a code the frontend translates (e.g. too_long, not_genichiro)
+    reject_code: Mapped[str | None] = mapped_column(String(40))
+    # processing progress, 0 to 1, and an error for the logs when processing failed
+    progress: Mapped[float] = mapped_column(Float, default=0.0, server_default="0")
+    error: Mapped[str | None] = mapped_column(Text)
+    # filled in by the worker's check
+    duration_s: Mapped[float | None] = mapped_column(Float)
+    width: Mapped[int | None] = mapped_column(Integer)
+    height: Mapped[int | None] = mapped_column(Integer)
+    fps: Mapped[float | None] = mapped_column(Float)
+    # the frozen pipeline version that produced the failures
+    pipeline_version: Mapped[str | None] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    user: Mapped["User"] = relationship()
+    boss: Mapped[Boss] = relationship()
+    failures: Mapped[list["RecordingFailure"]] = relationship(
+        back_populates="recording", cascade="all, delete-orphan", order_by="RecordingFailure.time_s"
+    )
+
+
+class RecordingFailure(Base):
+    """One failure found in a recording: damage, a posture break or a death, with the move behind it.
+
+    move_id is set only when the system is sure of the move (sure); otherwise candidates holds the moves it could be,
+    best first, and the report says the move is uncertain.
+    """
+
+    __tablename__ = "recording_failures"
+    __table_args__ = (
+        CheckConstraint("type IN (" + ", ".join(f"'{t}'" for t in FAILURE_TYPES) + ")", name="ck_recording_failures_type"),
+        CheckConstraint("sure OR move_id IS NULL", name="ck_recording_failures_move_only_if_sure"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    recording_id: Mapped[int] = mapped_column(ForeignKey("recordings.id", ondelete="CASCADE"), index=True)
+    time_s: Mapped[float] = mapped_column(Float)
+    type: Mapped[str] = mapped_column(String(20))
+    phase: Mapped[int] = mapped_column(Integer)
+    sure: Mapped[bool] = mapped_column(Boolean)
+    move_id: Mapped[int | None] = mapped_column(ForeignKey("moves.id", ondelete="RESTRICT"))
+    # [{"move": slug, "score": float}, ...], best first
+    candidates: Mapped[list] = mapped_column(JSON, default=list)
+    # the events merged into this failure: [{"type": ..., "time_s": ...}, ...]
+    events: Mapped[list] = mapped_column(JSON, default=list)
+    # relative to RECORDINGS_DIR; null until the clip is cut
+    clip_path: Mapped[str | None] = mapped_column(Text)
+
+    recording: Mapped[Recording] = relationship(back_populates="failures")
+    move: Mapped[Move | None] = relationship()
 
 class User(Base):
     __tablename__ = "users"

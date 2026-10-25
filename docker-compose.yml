@@ -20,6 +20,10 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sekiro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-sekiro}
+      # uploaded recordings and their clips (V4 M3); never in the database
+      RECORDINGS_DIR: /data/recordings
+    volumes:
+      - recordings-data:/data/recordings
     ports:
       - "8000:8000"
     depends_on:
@@ -37,3 +41,4 @@ services:
 
 volumes:
   postgres-data:
+  recordings-data:
