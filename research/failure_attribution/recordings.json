@@ -1,5 +1,5 @@
 {
-  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline).",
+  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect.",
   "recordings": [
     {
       "id": "2026-10-09-castle",
@@ -7,9 +7,12 @@
       "sha256": "b7715326820219f300aa9cb63392cc99165b2c8087d8af6a8ecb46c73e560a70",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
-      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle"
+      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-09-castle",
+      "set": "development"
     },
     {
       "id": "2026-10-13-castle",
@@ -17,9 +20,12 @@
       "sha256": "9b3b8cfd2a42ff247c5791696ee997b5692e727f79c1ecfa9065bfaf680272e7",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
       "use": "reference: dev-menu recording made for V3.1",
-      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle"
+      "observation": "research/ground_truth/observations/vanilla/genichiro/2026-10-13-castle",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-1",
@@ -27,8 +33,11 @@
       "sha256": "85cb3be1f7966f25e86bbd10c2777adf7b9bca5afb0165f83792d1af597162a0",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-2",
@@ -36,8 +45,11 @@
       "sha256": "73ea4fadce87a5edbe8f09405f386b1e1f670cdb99e51c6ab295857d0e45de67",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-3",
@@ -45,8 +57,11 @@
       "sha256": "20e99e9834bb4d7e9d00f42eba95d7b4150bfb8a72d638918a36332945e2631c",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
-      "use": "answer set: fight without the overlay, labelled by the owner"
+      "use": "answer set: fight without the overlay, labelled by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-4",
@@ -54,8 +69,11 @@
       "sha256": "4c8d950ef27e60537c1bf5c056657d4384fdc2fb88db61275e89fdfa93849a55",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
-      "use": "reference: dev-menu fight recorded for V4 M1"
+      "use": "reference: dev-menu fight recorded for V4 M1",
+      "set": "development"
     },
     {
       "id": "2026-10-16-castle-5",
@@ -63,8 +81,119 @@
       "sha256": "1bbbb8aa991a9e01e233ded99812b9b80d3666e17463875ff53185d63190d6fd",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": true,
-      "use": "reference: dev-menu fight recorded for V4 M1"
+      "use": "reference: dev-menu fight recorded for V4 M1",
+      "set": "development"
+    },
+    {
+      "id": "2026-10-20-castle-1",
+      "file_name": "测试录像/测试录像4.mp4",
+      "sha256": "d4290a0380d38d70888c077c6537a1040b2386139cf848013f1d4257143db53e",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-1",
+      "file_name": "测试录像/测试录像5.mp4",
+      "sha256": "07254da8817391aa3a12ab9493450904ada3538e1f8b05e53750d805cb253da8",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-2",
+      "file_name": "测试录像/测试录像6.mp4",
+      "sha256": "6e392c2a6681ee6267bc1f936f9db7a40c05a512d116b93267e5685945ceaa51",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-3",
+      "file_name": "测试录像/测试录像7.mp4",
+      "sha256": "0dbab58b1c9a04f51ff973dede6ebffa94905a91cf113c19faf6075d6a9c1203",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-4",
+      "file_name": "测试录像/测试录像8.mp4",
+      "sha256": "dce152ec2b2875d1e4114e8e040883881ec1cff6c775692ece6a3f336e0ada5e",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-5",
+      "file_name": "测试录像/测试录像9.mp4",
+      "sha256": "6f71a3c4649215e7ecc153c58a931427e1ac542e53370a0120eb337bece0c5ec",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-6",
+      "file_name": "测试录像/测试录像10.mp4",
+      "sha256": "f9c0bea64e471cb68c4f0be7521574e51468ed3fb444d49fe58cd0c228d04c60",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-7",
+      "file_name": "测试录像/测试录像11.mp4",
+      "sha256": "a6f542ae9fe82c91c6f51f41e039165aa5888e3220b17876f8bcaf64a01041d8",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
+    },
+    {
+      "id": "2026-10-22-castle-8",
+      "file_name": "测试录像/测试录像12.mp4",
+      "sha256": "197833a932d90741ca70850db48551f92bce9757a808dff9ed7299e2fcae5c03",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
+      "overlay": false,
+      "use": "M2 test: fight without the overlay, labelled blind by the owner",
+      "set": "test"
     }
   ]
 }

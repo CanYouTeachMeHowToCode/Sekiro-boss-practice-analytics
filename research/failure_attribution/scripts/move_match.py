@@ -29,8 +29,15 @@ among the hit's top two (Floating Passage's last hit can rank another move first
 posture break, the hit that broke it and the hits while Wolf is staggered are one failure, as is a death with the hit
 that killed (the owner's rules, as in failure_answers.py). A failure's moves are ranked by the mean score over its hits
 (the posture break alone when there is one). Writes work/<recording id>/failure_predictions.csv: the columns of
-failure_answers.csv, the top move as the answer, and the top three with their scores as `candidates`. The review page
-shows it for a recording without the overlay, so the owner labels the moves with the candidates at hand.
+failure_answers.csv, the top move as the answer, the top three with their scores as `candidates`, and how sure the
+answer is: `confidence` is the top score minus the best score of a move that does not count as the same (SAME_MOTION),
+and the answer is `certain` from SURE_MARGIN on. Below it the failure report says the move is uncertain and names the
+top two. The review page shows it for a recording without the overlay, so the owner labels the moves with the
+candidates at hand.
+
+SURE_MARGIN was set on the 82 failures of the M1 recordings (reliability.py, 2026-10-19): under 0.025 were 7 of the 10
+wrong answers and 7 of the 72 right ones, so 68 answers were sure and 65 of them right. Being set on those recordings,
+it is checked on the M2 test recordings.
 """
 import csv
 import sys
@@ -39,25 +46,23 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import GT, WORK, annotation_dir, observation_dir, recordings, work_dir  # noqa: E402
+from common import (GT, SAME_MOTION, TWO_SLASHES, WORK, accepted, annotation_dir, observation_dir,  # noqa: E402,F401
+                    recordings, work_dir)
 from failure_answers import BY_PREVIOUS, MOVES, WINDOWS, Overlay, moves_for, phase_at, read  # noqa: E402
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
 EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
-# the owner's rule (2026-10-16): Floating Passage's opening two slashes (3068 or 3063) without the 3092 that follows a
-# deflect look like Two-Hit Slash, so either answer is right for such a play
-OPENERS, FOLLOW_UP = {3068, 3063}, 3092
-TWO_SLASHES = {"advance", "floating-passage", "floating-passage-phase-3"}
-# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other
-SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}]
+SURE_MARGIN = 0.025
+# the owner's rules on moves that look the same (TWO_SLASHES, SAME_MOTION, accepted()) are in common.py, shared with the
+# review page
 
 
-def accepted(truth, play):
-    """The moves that count as right for a failure whose answer is `truth` and whose play is `play` ("3068 → 3092")."""
-    anims = {int(a) for a in play.replace("｜", " ").replace("→", " ").split() if a.isdigit()}
-    if truth in TWO_SLASHES and anims & OPENERS and FOLLOW_UP not in anims:
-        return TWO_SLASHES
-    return next((group for group in SAME_MOTION if truth in group), {truth})
+def margin(moves, scores):
+    """How far the top move is ahead of the best move that does not count as the same one."""
+    if not moves:
+        return 0.0
+    same = next((group for group in SAME_MOTION if moves[0] in group), {moves[0]})
+    return scores[moves[0]] - next((scores[m] for m in moves[1:] if m not in same), 0.0)
 # a death whose killing hit left no mark on the HP bar (events.py puts it 2.4 s before the death screen): the hit came
 # 1.6-2.9 s before the 死 on the reviewed deaths, so every moment of that span is tried and each move keeps its best
 UNSEEN_SPAN, UNSEEN_STEP = (-0.5, 0.8), 0.1
@@ -268,14 +273,20 @@ def predict(rec_id):
                     ("追击" if lead["type"] == "posture_break" and x["t"] > lead["t"] + BREAK_WITH else "扣血")
                 hits.append(f"{role} {x['time_s']}s: 第一候选 {ZH.get(top(x), '—')}")
         best = next((m for m in MOVES if moves and m["slug"] == moves[0]), None)
+        lead_by = margin(moves, total)
+        sure = best is not None and lead_by >= SURE_MARGIN
+        flags = "没有候选" if not best else ("" if sure else
+                 f"没把握：第一候选只比别的招式高 {lead_by:.3f}（要 {SURE_MARGIN} 以上），报告里写成「可能是 "
+                 f"{ZH.get(moves[0], moves[0])} 或 {ZH.get(moves[1], moves[1]) if len(moves) > 1 else '—'}」")
         rows.append({
             "key": evs[0]["key"], "time_s": evs[0]["time_s"],
             "type": max((x["type"] for x in evs), key=SEVERITY.get),
             "types": " ".join(x["type"] for x in evs), "phase": evs[0]["phase"],
             "events": " ".join(x["key"] for x in evs), "hits": " ｜ ".join(hits), "anims": "", "chain": "",
             "entries": "", "move": best["slug"] if best else "", "move_zh": best["zh"] if best else "",
-            "move_en": best["en"] if best else "", "flags": "" if best else "没有候选",
-            "candidates": " ".join(f"{m}:{total[m]:.3f}" for m in moves[:3])})
+            "move_en": best["en"] if best else "", "flags": flags,
+            "candidates": " ".join(f"{m}:{total[m]:.3f}" for m in moves[:3]),
+            "confidence": f"{lead_by:.3f}", "certain": "1" if sure else "0"})
     out = work_dir(rec_id) / "failure_predictions.csv"
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\r\n")

@@ -1,0 +1,8 @@
+# the failure attribution pipeline (Python 3.10); PyTorch's CUDA build comes from
+# --extra-index-url https://download.pytorch.org/whl/cu128
+numpy==2.2.6
+opencv-python-headless==5.0.0.93
+pillow==12.3.0
+timm==1.0.30
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128

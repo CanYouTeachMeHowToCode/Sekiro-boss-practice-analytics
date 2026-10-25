@@ -72,6 +72,22 @@ def progress(work: Path):
     return overall, STEPS[i][1], d["fraction"], used, left, False
 
 
+# the owner's rule (2026-10-16): Floating Passage's opening two slashes (3068 or 3063) without the 3092 that follows a
+# deflect look like Two-Hit Slash, so either answer is right for such a play
+OPENERS, FOLLOW_UP = {3068, 3063}, 3092
+TWO_SLASHES = {"advance", "floating-passage", "floating-passage-phase-3"}
+# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other
+SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}]
+
+
+def accepted(truth, play):
+    """The moves that count as right for a failure whose answer is `truth` and whose play is `play` ("3068 → 3092")."""
+    anims = {int(a) for a in play.replace("｜", " ").replace("→", " ").split() if a.isdigit()}
+    if truth in TWO_SLASHES and anims & OPENERS and FOLLOW_UP not in anims:
+        return TWO_SLASHES
+    return next((group for group in SAME_MOTION if truth in group), {truth})
+
+
 def observation_dir(rec: dict):
     """The V3.1 overlay readings of a dev-menu recording (frames.csv, occurrences.csv), or None before they exist."""
     d = GT / "observations" / rec.get("ruleset", "vanilla") / "genichiro" / rec["id"]
