@@ -6,11 +6,12 @@ The owner's rule (2026-10-25): a failure is classified by the action that hit th
 As the owner refined it the same day: the M2 moves and their full names stay, and a hit counts for the move whose
 main content hit the player; only an action that needs a different response from that main content is classified
 apart:
-- a plain arrow inside another move (before or after it) is "普通射击"; the standalone shooting moves (后撤射击,
-  破防射击, 鹰射) stay as they are;
-- a perilous thrust that needs Mikiri (3025, 3080) is 危·突刺 wherever it comes (to be confirmed under the refined
-  rule). A perilous sweep, which needs a jump, is never put with a thrust; it stays with its move, as do the grabs and
-  the lightning attacks (owner: each needs its own response).
+- a plain arrow inside another move (before or after it) is the new move 普通射箭攻击 / Arrow Shot; the standalone
+  shooting moves (后撤射击, 破防射击, 鹰射) stay as they are;
+- a perilous thrust that needs Mikiri inside another move (3025, 3080) is 危·突刺. A perilous sweep, which needs a
+  jump, is never put with a thrust; it stays with its move, as do the grabs and the lightning attacks (owner: each
+  needs its own response). The jumping thrust (c7110 3008) stays its own move, renamed 跃起后危·突刺: unlike the other
+  thrusts, using an item such as the gourd draws it out.
 An animation two moves share is told apart by what comes before and after it, as now.
 
 Inputs: semantic/genichiro_catalog.csv (entries, hits, owner labels), semantic/genichiro_product_moveset.csv (the
@@ -40,13 +41,15 @@ MIKIRI_IN_OTHER_MOVES = {3025, 3080}
 
 DECIDED = [
     "招式和名字沿用 M2 的版本；被一招的主要内容打中，就算这一招的全名（Q6）。",
-    "招式前后附带的普通的箭算\"普通射击\"；单独的射击招式（后撤射击、破防射击、鹰射）各自保持一招（Q5）。",
+    "招式前后附带的普通的箭单独算一招（名字见最后一条）；单独的射击招式（后撤射击、破防射击、鹰射）各自保持一招（Q5）。",
     "下段危要跳、突刺危要识破，两者一定分开，就算前面的连招完全一样；下段危不跨招式合并，留在各自的招式里（Q1）。",
     "一二阶段的危·投技可以弹开，和三阶段的危·投技不合并（Q2）。",
     "巴之雷的几招都是雷电，但动画和应对不同，各自保持一招（Q3）。",
-    "跳起突刺（c7110 3008）是要识破的突刺（Q4）。",
+    "跳起突刺（c7110 3008）是要识破的突刺（Q4）；它不并进危·突刺，因为你用道具（比如葫芦）会引出这一招，和别的突刺不同。名字改成\"跃起后危·突刺\"（B）。",
+    "连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算\"危·突刺\"（A）。",
+    "招式前后附带的普通的箭算新的一招\"普通射箭攻击 / Arrow Shot\"（C）。",
 ]
-QUESTIONS = {
+QUESTIONS_ANSWERED = {
     "A": "需要识破的危·突刺还合并吗？就是把连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算\"危·突刺\"。"
          "我建议合并：M2 有两次就是把这种突刺认错成了别的突刺；而且合并以后，跳劈后续里的突刺和下段就自然分开了（Q1）。",
     "B": "跳起突刺本身就是一招，主要内容就是突刺：它保持\"跳起突刺\"这一招，还是也并进\"危·突刺\"？",
@@ -61,14 +64,14 @@ def read(path):
 def proposal(ch, anim, kinds, current, label):
     """(proposed move, reason, question) for one animation."""
     if (ch, anim) in PLAIN_ARROWS:
-        return "普通射击", "招式前后附带的普通的箭（你定，Q5、Q6）", "C"
+        return "普通射箭攻击", "招式前后附带的普通的箭（你定，Q5、Q6、C）", ""
     if (ch, anim) in STANDALONE_SHOTS:
         return STANDALONE_SHOTS[(ch, anim)], "单独的射击招式，保持一招（你定，Q5）", ""
     if anim in MIKIRI_IN_OTHER_MOVES:
         inferred = "；c7110 的 3025 按一二阶段同编号推断" if ch == "c7110" and anim == 3025 else ""
-        return "危·突刺（待你确认）", "要识破的突刺，在别的招式里；和下段危分开（Q1）" + inferred, "A"
+        return "危·突刺", "要识破的突刺，在别的招式里，算危·突刺；和下段危分开（你定，A、Q1）" + inferred, ""
     if ch == "c7110" and anim == 3008:
-        return "跳起突刺（待定）", "要识破的突刺（你定，Q4）", "B"
+        return "跃起后危·突刺", "要识破的突刺，自成一招：用道具（比如葫芦）会引出来（你定，Q4、B）；这一招改名", ""
     if "peril" in kinds:
         reason = {3007: "下段危，留在自己的招式里（你定，Q1）", 3067: "下段危，留在自己的招式里，按前后动作决定是哪一招（你定，Q1）",
                   3020: "一二阶段的危·投技可以弹开，不和三阶段合并（你定，Q2）", 3009: "三阶段的危·投技，不和一二阶段合并（你定，Q2）",
@@ -139,8 +142,7 @@ def main():
           "失败按打中你的那个动作和它需要的应对来归类。招式和名字沿用 M2 的版本，只有应对和这一招主要内容不同的动作才单独归类。", "",
           "## 已定的事", ""]
     md += [f"- {x}" for x in DECIDED]
-    md += ["", "## 还要你定的问题", ""]
-    md += [f"- **{k}**：{v}" for k, v in QUESTIONS.items()]
+    md += ["", "跃起后危·突刺的英文名还没定（现在是 Sword Dive Thrust Attack）。"]
     md += ["", f"## 改了归类的动画（{len(changed)} 个）", "",
            "| 角色 | 动画 | 审核 | 理由 | 阶段 | 类型 | 现在算 | 建议算 | 依据 | 问题 | 你的标签 | 录到次数 |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     md += [f"| {r['character']} | {r['anim']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {r['kind']} | {r['current_moves']} "
