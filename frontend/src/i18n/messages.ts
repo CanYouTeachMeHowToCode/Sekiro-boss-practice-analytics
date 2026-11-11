@@ -100,7 +100,11 @@ const en = {
 
   "history.heading": "Recent Attempts",
   "history.empty": "No attempts recorded yet.",
+  "history.filterLabel": "Filter by result",
+  "history.filterAll": "All",
+  "history.noMatch": "No attempts match this filter.",
   "result.victory": "Victory",
+  "result.failed": "Failed",
   "result.failedAt": "Failed — {phase}",
   "cause.other": "Other",
   "cause.notSure": "Not Sure",
@@ -245,7 +249,11 @@ const zh: Record<MessageKey, string> = {
 
   "history.heading": "最近的尝试",
   "history.empty": "还没有记录任何尝试。",
+  "history.filterLabel": "结果筛选",
+  "history.filterAll": "全部",
+  "history.noMatch": "当前筛选条件下没有记录。",
   "result.victory": "胜利",
+  "result.failed": "失败",
   "result.failedAt": "失败 — {phase}",
   "cause.other": "其他",
   "cause.notSure": "不确定",
