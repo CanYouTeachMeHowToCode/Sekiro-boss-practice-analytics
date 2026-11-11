@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import AttemptHistory from "./AttemptHistory";
 import type { Attempt, Boss } from "../types";
@@ -58,7 +58,7 @@ describe("AttemptHistory", () => {
   it("shows Victory without a failure cause for a successful attempt", () => {
     render(<AttemptHistory boss={boss} attempts={attempts} />);
 
-    expect(screen.getByText("Victory")).toBeInTheDocument();
+    expect(within(screen.getByRole("list")).getByText("Victory")).toBeInTheDocument();
   });
 
   it("shows a placeholder when there is no history yet", () => {
