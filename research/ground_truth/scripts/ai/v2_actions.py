@@ -156,10 +156,21 @@ def main():
         w.writerows(out)
 
     changed = [r for r in out if r["changed"] == "是"]
-    md = ["# 版本 2：动作 → 招式对应表（天守阁弦一郎，草稿）", "",
-          "由 `scripts/ai/v2_actions.py` 生成。每一行是一个会打中你的动画，以及按版本 2 的原则建议它算哪一招。"
-          "**建议不是定论**：请在审核页面逐行标 ✅ 或 ❌（运行 `python -I research/ground_truth/scripts/ai/v2_review.py`，"
-          "浏览器打开 http://127.0.0.1:8771），这里会同步显示你的标记和理由。", "",
+    marks = reviews()
+    items = [f"{r['character']} {r['anim']}" for r in out] + list(NAME_REVIEWS)
+    approved = sum(1 for k in items if marks.get(k, ("", ""))[0] == "通过")
+    rejected = sum(1 for k in items if marks.get(k, ("", ""))[0] == "不通过")
+    if approved == len(items):
+        last = max(r["updated"] for r in read(REVIEW_CSV))[:10]
+        status = f"**状态：你已全部批准**（{len(items)} 项，{last}），这就是版本 2 的动作 → 招式对应。"
+    else:
+        status = (f"**状态：草稿**，已审 {approved + rejected} / {len(items)}（✅ {approved}，❌ {rejected}）。"
+                  "建议不是定论，审核时在审核页面逐行标 ✅ 或 ❌。")
+    md = ["# 版本 2：动作 → 招式对应表（天守阁弦一郎）", "",
+          "由 `scripts/ai/v2_actions.py` 生成。每一行是一个会打中你的动画，以及按版本 2 的原则它算哪一招。"
+          "审核页面：运行 `python -I research/ground_truth/scripts/ai/v2_review.py`，浏览器打开 http://127.0.0.1:8771；"
+          "你的标记和理由存在 `genichiro_v2_review.csv`，这里同步显示。", "",
+          status, "",
           "## 原则（你定，2026-10-25）", "",
           "失败按打中你的那个动作和它需要的应对来归类。招式和名字沿用 M2 的版本，只有应对和这一招主要内容不同的动作才单独归类。", "",
           "## 已定的事", ""]
