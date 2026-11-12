@@ -375,17 +375,53 @@ def progress_page():
     dev-menu recordings step by step; it reloads every 3 seconds."""
     def mins(s):
         return f"{s / 60:.0f} 分钟" if s >= 90 else f"{s:.0f} 秒"
-    rows = []
-    for rec_id in recordings():
-        p = progress(work_dir(rec_id))
-        if p is None:
-            continue
+    def row(name, overall, status):
+        return (f'<div class="rec"><div class="name">{name}</div><div class="bar"><div style="width:{overall * 100:.1f}%">'
+                f'</div></div><div class="pct">{overall:.0%}</div><div class="status">{status}</div></div>')
+
+    def state(p):
         overall, step, frac, used, left, done = p
-        status = f"完成，用了 {mins(used)}" if done else \
+        return f"完成，用了 {mins(used)}" if done else \
             f"{step} {frac:.0%} · 已用 {mins(used)}" + (f" · 预计还要 {mins(left)}" if left is not None else "")
-        rows.append(f'<div class="rec"><div class="name">{rec_id}</div><div class="bar"><div style="width:{overall * 100:.1f}%">'
-                    f'</div></div><div class="pct">{overall:.0%}</div><div class="status">{status}</div></div>')
-    body = "<h2>读 HUD、跟踪 Boss、认招式</h2>" + ("".join(rows) or "<p>还没有在跑的录像。</p>")
+
+    # the test batch is listed whole, waiting recordings too, with a bar for the batch weighted by file size
+    batch, rows = [], []
+    for rec_id, rec in recordings().items():
+        p = progress(work_dir(rec_id))
+        if rec.get("set") == "test":
+            try:
+                size = video_path(rec).stat().st_size
+            except OSError:
+                size = 0
+            batch.append((rec_id, rec, size, p))
+        elif p is not None:
+            rows.append(row(rec_id, p[0], state(p)))
+    body = ""
+    if batch:
+        total = sum(b[2] for b in batch) or 1
+        overall = sum(b[2] * (b[3][0] if b[3] else 0.0) for b in batch) / total
+        starts = [json.loads((work_dir(b[0]) / "progress.json").read_text(encoding="utf-8")).get("started")
+                  for b in batch if b[3]]
+        starts = [t for t in starts if t]
+        used = time.time() - min(starts) if starts else 0.0
+        n_done = sum(1 for b in batch if b[3] and b[3][5])
+        if n_done == len(batch):
+            head = f"全部完成，{n_done}/{len(batch)} 段"
+        elif starts:
+            head = f"已完成 {n_done}/{len(batch)} 段 · 已用 {mins(used)}"
+            if overall > 0.03:
+                head += f" · 预计还要 {mins(used * (1 - overall) / overall)}（按目前的速度和剩下的文件大小估算）"
+        else:
+            head = "还没开始"
+        body += "<h2>测试录像（只跑一次，跑完后你盲审）</h2>" + \
+            row("整批", overall, head).replace('class="rec"', 'class="rec total"', 1)
+        for rec_id, rec, size, p in batch:
+            name = f"{file_label(rec)}<br><small>{rec_id}</small>"
+            body += row(name, 0.0, f"等待 · {size / 2**20:.0f} MB") if p is None else row(name, p[0], state(p))
+    if batch and rows:
+        body += f'<details><summary>其他录像（{len(rows)} 段）</summary>{"".join(rows)}</details>'
+    elif rows or not batch:
+        body += "<h2>读 HUD、跟踪 Boss、认招式</h2>" + ("".join(rows) or "<p>还没有在跑的录像。</p>")
     ovl = overlay_rows(mins)
     if ovl:
         body += "<h2>读开发者菜单叠加层（动画编号）</h2>" + ovl
@@ -402,6 +438,9 @@ body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:14px/
 h1 { font-size:16px; margin:0 0 12px; }
 .rec { display:grid; grid-template-columns:170px minmax(0,1fr) 48px; gap:4px 12px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:10px; max-width:900px; }
 .name { font-variant-numeric:tabular-nums; }
+.name small { color:var(--muted); }
+.rec.total { border-color:var(--ok); }
+details summary { cursor:pointer; color:var(--muted); margin:18px 0 8px; }
 .bar { height:12px; background:var(--line); border-radius:999px; overflow:hidden; }
 .bar div { height:100%; background:var(--ok); }
 .pct { text-align:right; font-variant-numeric:tabular-nums; }
