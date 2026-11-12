@@ -640,6 +640,23 @@
         ],
         "moveset": "research/ground_truth/semantic/genichiro_product_moveset.md"
       }
+    },
+    {
+      "product_moves": [
+        "arrow-shot"
+      ],
+      "fextralife": [],
+      "fandom": [],
+      "relation": "engine_only",
+      "notes": "Version 2 (owner, 2026-11-11): a hit by a plain arrow before or after another move counts here. Both wikis describe these arrows inside Closing Tide, Receding Tide, Lightning of Tomoe and Floating Passage, not as a move of their own.",
+      "v4_status": "owner_confirmed",
+      "engine_evidence": {
+        "catalog_entries": [],
+        "decision_rows": [
+          "V2"
+        ],
+        "moveset": "research/ground_truth/semantic/genichiro_v2_actions.md"
+      }
     }
   ]
 }

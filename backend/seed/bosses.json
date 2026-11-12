@@ -337,6 +337,24 @@
             "common_mistakes_zh": null,
             "source_name": null,
             "source_url": null
+          },
+          {
+            "id": "arrow-shot",
+            "name": "Arrow Shot",
+            "name_zh": "普通射箭攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null,
+            "move_type": "ranged",
+            "description": null,
+            "description_zh": null,
+            "telegraph": null,
+            "telegraph_zh": null,
+            "counter": null,
+            "counter_zh": null,
+            "common_mistakes": null,
+            "common_mistakes_zh": null,
+            "source_name": null,
+            "source_url": null
           }
         ]
       },
@@ -668,6 +686,24 @@
             "common_mistakes_zh": null,
             "source_name": null,
             "source_url": null
+          },
+          {
+            "id": "arrow-shot",
+            "name": "Arrow Shot",
+            "name_zh": "普通射箭攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null,
+            "move_type": "ranged",
+            "description": null,
+            "description_zh": null,
+            "telegraph": null,
+            "telegraph_zh": null,
+            "counter": null,
+            "counter_zh": null,
+            "common_mistakes": null,
+            "common_mistakes_zh": null,
+            "source_name": null,
+            "source_url": null
           }
         ]
       },
@@ -678,8 +714,8 @@
         "moves": [
           {
             "id": "deaths-thrust",
-            "name": "Sword Dive Thrust Attack",
-            "name_zh": "跳起突刺",
+            "name": "Leaping Perilous Thrust",
+            "name_zh": "跃起后危·突刺",
             "name_zh_source": "translation",
             "name_zh_source_url": null,
             "move_type": "thrust",
@@ -953,6 +989,24 @@
             "name_zh_source": "translation",
             "name_zh_source_url": null,
             "move_type": "counter",
+            "description": null,
+            "description_zh": null,
+            "telegraph": null,
+            "telegraph_zh": null,
+            "counter": null,
+            "counter_zh": null,
+            "common_mistakes": null,
+            "common_mistakes_zh": null,
+            "source_name": null,
+            "source_url": null
+          },
+          {
+            "id": "arrow-shot",
+            "name": "Arrow Shot",
+            "name_zh": "普通射箭攻击",
+            "name_zh_source": "translation",
+            "name_zh_source_url": null,
+            "move_type": "ranged",
             "description": null,
             "description_zh": null,
             "telegraph": null,
