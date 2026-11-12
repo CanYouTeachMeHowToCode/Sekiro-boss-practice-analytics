@@ -18,8 +18,9 @@ Inputs: semantic/genichiro_catalog.csv (entries, hits, owner labels), semantic/g
 current moves), engine/genichiro_attack_windows.csv (attack, projectile and 危 windows). Writes
 semantic/genichiro_v2_actions.csv and .md: one row per animation that can hit, with its current move(s), the proposed
 version-2 move, the reason and the open question, if any. The proposals are written below as rules with their
-reason; none of them is ground truth until the owner approves it. The owner's marks in the .md (审核 ☐ / ✅ / ❌ and
-理由) are read back on regeneration, matched by character and animation.
+reason; none of them is ground truth until the owner approves it. The owner reviews them on the page of v2_review.py,
+which keeps the marks (通过 / 不通过 and a reason, by character and animation) in semantic/genichiro_v2_review.csv and
+regenerates the table after each one; before that file existed, marks typed into the .md were read back instead.
 """
 import csv
 import re
@@ -28,6 +29,11 @@ from pathlib import Path
 
 GT = Path(__file__).resolve().parents[2]
 OUT_CSV, OUT_MD = GT / "semantic/genichiro_v2_actions.csv", GT / "semantic/genichiro_v2_actions.md"
+REVIEW_CSV = GT / "semantic/genichiro_v2_review.csv"
+REVIEW_FIELDS = ["key", "mark", "reason", "updated"]
+SYMBOL = {"通过": "✅", "不通过": "❌"}
+# names to confirm along with the rows: review key -> (what, proposal, now)
+NAME_REVIEWS = {"name deaths-thrust en": ("跃起后危·突刺的英文名", "Leaping Perilous Thrust", "Sword Dive Thrust Attack")}
 PHASES = {"c7100": "1、2", "c7110": "3"}
 
 # Plain arrows inside another move, before or after its main content (owner, Q5 and Q6, 2026-10-25): a hit by one is
@@ -83,8 +89,23 @@ def proposal(ch, anim, kinds, current, label):
     return current[0], "普通攻击：还算它所在的那一招", ""
 
 
+def reviews():
+    """The owner's marks from the review page: review key -> (通过 / 不通过 / "", reason)."""
+    if not REVIEW_CSV.exists():
+        return {}
+    return {r["key"]: (r["mark"], r["reason"]) for r in read(REVIEW_CSV)}
+
+
 def previous_marks():
-    """The owner's 审核 and 理由 cells from the existing .md, by (character, animation)."""
+    """The owner's marks by (character, animation) as (☐ / ✅ / ❌, reason): from the review page's file, or, before
+    it existed, from the 审核 and 理由 cells of the existing .md."""
+    if REVIEW_CSV.exists():
+        out = {}
+        for key, (mark, reason) in reviews().items():
+            ch, _, anim = key.partition(" ")
+            if ch in PHASES:
+                out[(ch, anim)] = (SYMBOL.get(mark, "☐"), reason)
+        return out
     if not OUT_MD.exists():
         return {}
     marks = {}
@@ -142,9 +163,11 @@ def main():
           "失败按打中你的那个动作和它需要的应对来归类。招式和名字沿用 M2 的版本，只有应对和这一招主要内容不同的动作才单独归类。", "",
           "## 已定的事", ""]
     md += [f"- {x}" for x in DECIDED]
+    name_mark, name_reason = reviews().get("name deaths-thrust en", ("", ""))
+    status = {"通过": "你已确认 ✅", "不通过": f"你不同意 ❌：{name_reason}"}.get(name_mark, "待你确认 ☐")
     md += ["", "跃起后危·突刺的英文名建议 **Leaping Perilous Thrust**（现在是 Sword Dive Thrust Attack）。英文版游戏把危字攻击叫 "
            "perilous attack，产品里的英文名也一直用 Perilous 对应\"危\"（Perilous Thrust、Perilous Grab、Perilous Sweep），"
-           "所以不用再加 Dangerous attack。审表时请一起确认。"]
+           f"所以不用再加 Dangerous attack。{status}。"]
     md += ["", f"## 改了归类的动画（{len(changed)} 个）", "",
            "| 角色 | 动画 | 审核 | 理由 | 阶段 | 类型 | 现在算 | 建议算 | 依据 | 问题 | 你的标签 | 录到次数 |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     md += [f"| {r['character']} | {r['anim']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {r['kind']} | {r['current_moves']} "
