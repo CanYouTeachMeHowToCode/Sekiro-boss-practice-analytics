@@ -31,6 +31,21 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # Checks uploaded recordings and turns them into failure reports (V4 M3).
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sekiro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-sekiro}
+      RECORDINGS_DIR: /data/recordings
+    volumes:
+      - recordings-data:/data/recordings
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   frontend:
     build: ./frontend
     ports:

@@ -33,9 +33,14 @@ jobs:
     env:
       TEST_DATABASE_URL: postgresql+psycopg://sekiro:ci-only-password@localhost:5432/sekiro_test
       REQUIRE_DATABASE_TESTS: "1"
+      # the recording worker's tests read and cut real videos
+      REQUIRE_MEDIA_TESTS: "1"
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
 
       - uses: actions/setup-python@v5
         with:
@@ -184,6 +189,20 @@ jobs:
           curl -sf -b cookies.txt -H 'Content-Type: application/json' \
             -d '{"result": "failed", "phase_reached": 1, "failure_move_id": null, "failure_category": "not_sure", "notes": "persistence check"}' \
             http://localhost:8080/api/bosses/genichiro-ashina/attempts > /dev/null
+
+      # The worker reads an upload from the shared volume and checks its format (V4 M3).
+      - name: Upload a recording and wait for the worker to check it
+        run: |
+          docker compose exec -T worker ffmpeg -v error -y -f lavfi -i testsrc=size=1280x720:rate=60 -t 2             -c:v libx264 -pix_fmt yuv420p /tmp/smoke.mp4
+          docker compose cp worker:/tmp/smoke.mp4 smoke.mp4
+          id=$(curl -sf -b cookies.txt -H 'Content-Type: application/octet-stream' --data-binary @smoke.mp4             "http://localhost:8080/api/recordings?filename=smoke.mp4" | jq -r '.id')
+          for i in $(seq 1 30); do
+            status=$(curl -sf -b cookies.txt "http://localhost:8080/api/recordings/${id}" | jq -r '.recording.status')
+            if [ "${status}" != uploaded ] && [ "${status}" != checking ]; then break; fi
+            sleep 2
+          done
+          echo "status after the worker's check: ${status}"
+          test "${status}" = queued
 
       # Stopping the stack without -v must keep accounts and attempts in the
       # postgres-data volume (V3 success criteria: restart, data persists).

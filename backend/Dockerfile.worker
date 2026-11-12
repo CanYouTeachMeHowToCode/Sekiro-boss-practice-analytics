@@ -1,0 +1,16 @@
+FROM python:3.10-slim
+
+# ffprobe reads each upload's format; ffmpeg cuts the failure clips as H.264.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app ./app
+
+# The backend container applies the migrations; the worker waits for them.
+CMD ["python", "-m", "app.worker"]
