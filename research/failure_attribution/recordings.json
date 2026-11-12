@@ -1,5 +1,5 @@
 {
-  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect.",
+  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect. After M2 passed (2026-10-25) its nine test recordings became development recordings; version 2 is tested on new ones.",
   "recordings": [
     {
       "id": "2026-10-09-castle",
@@ -96,8 +96,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-1",
@@ -108,8 +108,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-2",
@@ -120,8 +120,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-3",
@@ -132,8 +132,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-4",
@@ -144,8 +144,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-5",
@@ -156,8 +156,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-6",
@@ -168,8 +168,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-7",
@@ -180,8 +180,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-10-22-castle-8",
@@ -192,8 +192,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "M2 test: fight without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "M2 test, development since version 2: fight without the overlay, labelled blind by the owner",
+      "set": "development"
     }
   ]
 }

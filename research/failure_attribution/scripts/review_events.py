@@ -160,7 +160,7 @@ def page_data():
                     e["review_key"] = m["key"]     # an edit replaces the missed row instead of adding a second one
         missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
         if blind(rec):
-            out.append(blind_data(rec_id, rec, events, missed))
+            out.append({**blind_data(rec_id, rec, events, missed), "recheck": recheck_items(rec, events)})
             continue
         source = "overlay" if (work_dir(rec_id) / "failure_answers.csv").exists() else "prediction"
         failures = read_csv(work_dir(rec_id) / ("failure_answers.csv" if source == "overlay" else "failure_predictions.csv"))
@@ -175,7 +175,7 @@ def page_data():
             f["stale"] = bool(r and r["verdict"] and r["proposed"] != f["move"])
             f["review_key"] = r["key"] if r else f["key"]
         out.append({"id": rec_id, "file": file_label(rec), "use": rec.get("use", ""), "overlay": rec.get("overlay", False), "events": events,
-                    "missed": missed, "failures": failures})
+                    "missed": missed, "failures": failures, "recheck": recheck_items(rec, events)})
     return {"recs": out, "moves": product_moves(), "two_slashes": sorted(TWO_SLASHES)}
 
 
@@ -227,6 +227,91 @@ def save_truth(rec_id, body):
                      "updated": datetime.now().isoformat(timespec="seconds")})
     write_csv(truth_file(rec), TRUTH_FIELDS, rows)
     return {"key": sorted(card, key=times.get)[0], "rows": [r for r in rows if set(r["events"].split()) & card]}
+
+
+# Version 2 of the move classification (the owner approved the action -> move table on 2026-11-11): a hit by a plain
+# arrow inside another move is 普通射箭攻击 (arrow-shot), a Mikiri thrust inside another move is 危·突刺. The 版本 2 复核
+# view lists every failure the owner labelled with a version-1 move that holds such an action, so the owner can say
+# what really hit: the move's main content, the arrow, or the thrust. The answers go to failure_v2_recheck.csv (key,
+# time_s, v1_move, v2_move, note, updated); the version-1 labels stay as they are.
+V2_TABLE = GT / "semantic/genichiro_v2_actions.csv"
+V2_APART = {"普通射箭攻击": "arrow-shot", "危·突刺": "perilous-thrust"}
+RECHECK_FIELDS = ["key", "time_s", "v1_move", "v2_move", "note", "updated"]
+SEVERITY_RANK = {"damage": 1, "posture_break": 2, "death": 3}
+
+
+def recheck_file(rec):
+    return annotation_dir(rec) / "failure_v2_recheck.csv"
+
+
+def v2_splits():
+    """Version-1 move slug -> the version-2 moves a hit labelled with it may count as instead, from the approved
+    table: every version-1 move that holds an animation version 2 counts apart."""
+    slug = {m["zh"]: m["slug"] for m in product_moves()}
+    out = {}
+    for r in read_csv(V2_TABLE):
+        target = V2_APART.get(r["proposed_move"])
+        if r["changed"] != "是" or target is None:
+            continue
+        for zh in split_move_names(r["current_moves"], slug):
+            if slug[zh] != target:
+                out.setdefault(slug[zh], set()).add(target)
+    return out
+
+
+def split_move_names(text, names):
+    """The move names in a " / "-joined list. Names can contain " / " themselves (连斩（肘击横砍收尾 / 危·突刺收尾 /
+    变招）), and one can start another (绝技·飞渡浮舟 and its phase-3 version), so the longest name that fits is taken
+    first."""
+    found, rest = [], text
+    by_length = sorted(names, key=len, reverse=True)
+    while rest:
+        name = next((n for n in by_length
+                     if rest.startswith(n) and (rest[len(n):] == "" or rest[len(n):].startswith(" / "))), None)
+        if name is None:
+            raise ValueError(f"unknown move name in {text!r}")
+        found.append(name)
+        rest = rest[len(name):].removeprefix(" / ")
+    return found
+
+
+def recheck_items(rec, events):
+    """The failures of a recording without the overlay whose version-1 label version 2 may split."""
+    if rec.get("overlay"):
+        return []
+    splits = v2_splits()
+    blows = sorted(float(e["time_s"]) for e in events if e["type"] == "deathblow")
+    done = {r["key"]: r for r in read_csv(recheck_file(rec))}
+    items = []
+    for t in read_csv(truth_file(rec)):
+        options = splits.get(t["move"])
+        if not options:
+            continue
+        kinds = [k.replace("missed:", "").split("@")[0] for k in t["events"].split()]
+        time = float(t["time_s"])
+        d = done.get(t["key"], {})
+        items.append({"key": t["key"], "time_s": t["time_s"], "type": max(kinds, key=lambda k: SEVERITY_RANK.get(k, 0)),
+                      "phase": str(min(3, 1 + sum(b < time for b in blows))), "events": t["events"],
+                      "v1_move": t["move"], "options": sorted(options), "v2_move": d.get("v2_move", ""),
+                      "note": d.get("note", "")})
+    return items
+
+
+def save_recheck(rec_id, body):
+    rec = recordings()[rec_id]
+    item = next((i for i in recheck_items(rec, read_csv(work_dir(rec_id) / "events.csv")) if i["key"] == body["key"]), None)
+    if item is None:
+        raise ValueError("not a failure to recheck")
+    v2_move = body.get("v2_move", "")
+    if v2_move not in {item["v1_move"], "unsure", ""} | set(item["options"]):
+        raise ValueError("not a version-2 choice for this failure")
+    note = " ".join(str(body.get("note", "")).split())
+    rows = [r for r in read_csv(recheck_file(rec)) if r["key"] != item["key"]]
+    if v2_move or note:
+        rows.append({"key": item["key"], "time_s": item["time_s"], "v1_move": item["v1_move"], "v2_move": v2_move,
+                     "note": note, "updated": datetime.now().isoformat(timespec="seconds")})
+    write_csv(recheck_file(rec), RECHECK_FIELDS, rows)
+    return item["key"]
 
 
 def save(rec_id, body):
@@ -419,9 +504,11 @@ const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
   blind: 'M2 测试录像，盲审：页面上没有系统的答案。先在"事件"视图核对完事件、补上漏检，再在这里给每次失败选招式（看不清就选"看不出来"）。几下来自不同的出招就点"拆开"；和上一次是同一次出招就勾"和上一次算同一次失败"。你补充的漏检也在这里单独列出。点"▶ 播放"从失败前 3 秒开始看。',
+  recheck: '版本 2 复核：这些失败你原来标的招式里，有版本 2 要单独算的动作。重看一下真正打中你的是什么：被招式前后附带的普通的箭射中，选"普通射箭攻击"；被别的招式里要识破的突刺打中（比如跳劈后续、连斩的收尾、完美弹开之后的突刺），选"危·突刺"；被这一招的主要内容打中，就还是原来的招。看不清选"看不出来"。你原来的标注不会改，答案另存。点"▶ 播放"从失败前 3 秒开始看。',
   moves: '每次失败：开发者菜单录像的答案是被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的；其他录像的答案是自动识别的，列出前三个候选，点候选就能选。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并；自动识别的录像如果把同一次出招拆成了两次，在后一次勾"和上一次算同一次失败"。不对时也可以在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
 };
-let cur = 0, filter = '全部', mode = 'events';
+const RECHECK = recs.some((r) => r.recheck && r.recheck.length);
+let cur = 0, filter = '全部', mode = RECHECK && recs.some((r) => (r.recheck || []).some((i) => !i.v2_move)) ? 'recheck' : 'events';
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
 const fmt = (s) => { s = Number(s); const m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; };
 const video = document.getElementById('video');
@@ -439,6 +526,13 @@ const rowsOf = (r, f) => { const ks = new Set(keysOf(f)); return r.truth.filter(
 const labelled = (r, f) => { const rows = rowsOf(r, f).filter((t) => t.move); return !rows.length ? '' : (rows.some((t) => t.move === 'unsure') ? 'unsure' : 'correct'); };
 function counts() {
   const r = recs[cur], c = { '': 0, correct: 0, wrong: 0, unsure: 0 };
+  if (mode === 'recheck') {
+    const allItems = recs.flatMap((x) => x.recheck || []), done = allItems.filter((i) => i.v2_move).length;
+    const here = r.recheck || [];
+    document.getElementById('counts').replaceChildren(el('span', '', `这段待复核 ${here.filter((i) => !i.v2_move).length}`),
+      el('span', '', `全部已复核 ${done} / ${allItems.length}`));
+    return;
+  }
   const items = mode === 'moves' ? r.failures : r.events;
   if (mode === 'moves' && r.blind) {
     items.forEach((f) => { const v = labelled(r, f); c[v] = (c[v] || 0) + 1; });
@@ -453,13 +547,13 @@ function counts() {
   if (mode === 'moves') summary();
 }
 function tabs() {
-  document.getElementById('modes').replaceChildren(...[['events', '事件'], ['moves', '招式']].map(([m, label]) => {
+  document.getElementById('modes').replaceChildren(...[['events', '事件'], ['moves', '招式']].concat(RECHECK ? [['recheck', '版本 2 复核']] : []).map(([m, label]) => {
     const b = el('button', '', label); b.setAttribute('aria-pressed', String(m === mode));
     b.onclick = () => { mode = m; filter = '全部'; render(false); }; return b;
   }));
-  const shownRecs = recs.map((r, i) => [r, i]).filter(([r]) => mode === 'events' || r.failures.length);
+  const shownRecs = recs.map((r, i) => [r, i]).filter(([r]) => mode === 'events' || (mode === 'recheck' ? (r.recheck || []).length : r.failures.length));
   document.getElementById('tabs').replaceChildren(...shownRecs.map(([r, i]) => { const b = el('button', '', `${r.file}（${r.id}）`); b.setAttribute('aria-pressed', String(i === cur)); b.onclick = () => { cur = i; render(true); }; return b; }));
-  const f = mode === 'moves' ? ['全部', '待核对', '扣血', '被打崩', '死亡', '有提示'] : ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
+  const f = mode === 'recheck' ? ['全部', '待复核'] : mode === 'moves' ? ['全部', '待核对', '扣血', '被打崩', '死亡', '有提示'] : ['全部', '待核对', '扣血', '被打崩', '死亡', '忍杀'];
   document.getElementById('filters').replaceChildren(...f.map((x) => { const b = el('button', '', x); b.setAttribute('aria-pressed', String(x === filter)); b.onclick = () => { filter = x; render(false); }; return b; }));
 }
 function card(r, e) {
@@ -661,6 +755,41 @@ function bcard(r, f) {
   c.append(box);
   return c;
 }
+const OPTION = { 'arrow-shot': '普通射箭攻击（被招式前后附带的箭射中）', 'perilous-thrust': '危·突刺（被要识破的突刺打中）', unsure: '看不出来' };
+function rcard(r, item) {
+  const c = el('div', 'card ' + (item.v2_move ? (item.v2_move === 'unsure' ? 'unsure' : 'correct') : ''));
+  const head = el('div', 'head');
+  head.append(el('span', 'type', TYPE[item.type] || item.type), el('span', 'time', fmt(item.time_s)), el('span', 'meta', `第 ${item.phase} 阶段`));
+  const play = el('button', '', '▶ 播放'); play.type = 'button';
+  play.onclick = () => { video.currentTime = Math.max(0, Number(item.time_s) - 3); video.play(); };
+  head.append(play);
+  c.append(head);
+  const v1 = MOVE[item.v1_move] ? MOVE[item.v1_move].zh : item.v1_move;
+  c.append(el('div', 'answer', `你原来标的（版本 1）：${v1}`));
+  const img = el('img'); img.loading = 'lazy'; img.src = `/thumb/${encodeURIComponent(r.id)}/${encodeURIComponent(item.key)}.jpg`;
+  img.onerror = () => img.remove(); img.onclick = () => img.classList.toggle('big');
+  c.append(img);
+  const acts = el('div', 'cands'), saved = el('span', 'saved');
+  const note = el('input'); note.placeholder = '备注（可选）'; note.value = item.note || '';
+  const choices = [[item.v1_move, `还是 ${v1}（被这一招的主要内容打中）`]].concat(item.options.map((o) => [o, OPTION[o]]), [['unsure', OPTION.unsure]]);
+  const paint = () => {
+    c.className = 'card ' + (item.v2_move ? (item.v2_move === 'unsure' ? 'unsure' : 'correct') : '');
+    acts.querySelectorAll('button[data-m]').forEach((b) => b.classList.toggle('on', b.dataset.m === item.v2_move));
+  };
+  const set = async (m) => {
+    item.v2_move = m; item.note = note.value; paint(); saved.textContent = '保存中…';
+    try { await postJ({ rec: r.id, key: item.key, v2_move: m, note: note.value }, '/api/recheck'); saved.textContent = '已保存'; counts(); }
+    catch (err) { saved.textContent = '保存失败：' + err.message; }
+  };
+  for (const [m, label] of choices) { const b = el('button', '', label); b.type = 'button'; b.dataset.m = m; b.onclick = () => set(m); acts.append(b); }
+  const reset = el('button', '', '↺'); reset.type = 'button'; reset.title = '恢复成待复核'; reset.onclick = () => { note.value = ''; set(''); };
+  let timer = null;
+  note.oninput = () => { clearTimeout(timer); timer = setTimeout(() => set(item.v2_move), 800); };
+  const row = el('div', 'actions'); row.append(reset, note, saved);
+  c.append(acts, row);
+  paint();
+  return c;
+}
 function summary() {
   const r = recs[cur], by = {}, rank = { damage: 1, posture_break: 2, death: 3 };
   const merged = [];
@@ -718,17 +847,21 @@ function render(newRec) {
     const i = recs.findIndex((r) => r.failures.length);
     if (i >= 0 && i !== cur) { cur = i; newRec = true; }
   }
+  if (mode === 'recheck' && !(recs[cur].recheck || []).length) {
+    const i = recs.findIndex((r) => (r.recheck || []).length);
+    if (i >= 0 && i !== cur) { cur = i; newRec = true; }
+  }
   tabs(); counts();
   const r = recs[cur];
   if (newRec) { video.src = `/video/${encodeURIComponent(r.id)}`; }
   document.getElementById('hint').textContent = mode === 'moves' && r.blind ? HINT.blind : HINT[mode];
-  document.getElementById('addform').hidden = mode === 'moves';
-  document.getElementById('missed').hidden = mode === 'moves';
+  document.getElementById('addform').hidden = mode !== 'events';
+  document.getElementById('missed').hidden = mode !== 'events';
   document.getElementById('summary').hidden = mode !== 'moves';
-  const keep = { '全部': () => true, '待核对': (e) => (mode === 'moves' && r.blind ? !labelled(r, e) : !e.verdict), '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow', '有提示': (e) => e.flags || e.stale }[filter];
-  const items = mode === 'moves' ? r.failures : r.events;
+  const keep = { '全部': () => true, '待复核': (e) => !e.v2_move, '待核对': (e) => (mode === 'moves' && r.blind ? !labelled(r, e) : !e.verdict), '扣血': (e) => e.type === 'damage', '被打崩': (e) => e.type === 'posture_break', '死亡': (e) => e.type === 'death' || e.type === 'resurrection', '忍杀': (e) => e.type === 'deathblow', '有提示': (e) => e.flags || e.stale }[filter];
+  const items = mode === 'recheck' ? (r.recheck || []) : mode === 'moves' ? r.failures : r.events;
   const shown = items.filter(keep);
-  const make = mode === 'moves' ? (r.blind ? (e) => bcard(r, e) : (e) => fcard(r, e)) : (e) => card(r, e);
+  const make = mode === 'recheck' ? (e) => rcard(r, e) : mode === 'moves' ? (r.blind ? (e) => bcard(r, e) : (e) => fcard(r, e)) : (e) => card(r, e);
   document.getElementById('list').replaceChildren(...(shown.length ? shown.map(make) : [el('p', 'hint', mode === 'moves' && !items.length ? '这个录像还没有招式答案（只有开发者菜单录像有）。' : '没有符合这个筛选的条目。')]));
   if (mode === 'events') missed();
 }
@@ -801,7 +934,7 @@ class Handler(BaseHTTPRequestHandler):
                 left -= len(chunk)
 
     def do_POST(self):
-        handlers = {"/api/review": save, "/api/move": save_move, "/api/truth": save_truth}
+        handlers = {"/api/review": save, "/api/move": save_move, "/api/truth": save_truth, "/api/recheck": save_recheck}
         if self.path not in handlers:
             return self._send(404, "not found", "text/plain")
         try:
