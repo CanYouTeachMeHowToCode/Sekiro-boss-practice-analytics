@@ -10,7 +10,9 @@ Version 2 classifies a failure by the action that hit the player (the action -> 
   events did not change. Where version 2 splits a version-1 failure (a plain arrow and the slash after it are two moves
   now), the note says so;
 - a recording without it: the owner's version-1 answers, with the move of each failure the owner rechecked under
-  version 2 (failure_v2_recheck.csv, the review page's 版本 2 复核 view) replaced by the rechecked one.
+  version 2 (failure_v2_recheck.csv, the review page's 版本 2 复核 view) replaced by the rechecked one. The file also
+  holds the owner's later corrections of a version-1 label (测试录像5 63.1 s and 测试录像6 219.8 s, 2026-11-12: the
+  jump slash 3030 hit, not a Perilous Thrust), so the version-1 file stays as it was labelled.
 """
 import csv
 import io
@@ -53,7 +55,7 @@ def from_overlay(rec_id, v1):
                 changed.append(f"{a['key']} {same['move']} -> {a['move']}")
         else:
             parent = next((by_event[k] for k in a["events"].split() if k in by_event), None)
-            note = f"版本 2 从版本 1 的 {parent['key']}（{parent['move']}）拆出来" if parent else "版本 2 新出现"
+            note = f"版本 2 从版本 1 的 {parent['key']}（{parent['move']}）拆出来，你确认（2026-11-12）" if parent else "版本 2 新出现"
             row = {"key": a["key"], "time_s": a["time_s"], "events": a["events"], "move": a["move"], "two_slashes": "",
                    "merge_prev": "", "source": "version 2 of the overlay answers", "note": note, "updated": now}
             changed.append(f"{a['key']} {note} -> {a['move']}")
@@ -95,7 +97,13 @@ def main():
             print(f"{rec_id}: no version-1 answers, skipped")
             continue
         rows, changed = from_overlay(rec_id, v1) if observation_dir(rec) else from_recheck(rec)
-        write(annotation_dir(rec) / "failure_truth_v2.csv", rows)
+        out = annotation_dir(rec) / "failure_truth_v2.csv"
+        before = {r["key"]: r for r in read(out)}
+        for r in rows:          # a row that did not change keeps its time, so a rerun changes nothing
+            old = before.get(r["key"])
+            if old and all(old[f] == r[f] for f in FIELDS if f != "updated"):
+                r["updated"] = old["updated"]
+        write(out, rows)
         print(f"{rec_id}: {len(v1)} -> {len(rows)} failures, {len(changed)} changed")
         for c in changed:
             print(f"    {c}")

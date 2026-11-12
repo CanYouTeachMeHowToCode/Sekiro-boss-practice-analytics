@@ -48,8 +48,9 @@ Version 2 (V4 M3, 2026-11-12):
 - merge windows per move (--gaps 1, merge_gaps()): one play of Floating Passage hits over up to 4.3 s, so its hits
   may land up to 3.4 s apart (3.1 s in phase 3) and still be one failure, instead of MERGE_GAP;
 - SURE_MARGIN kept at 0.025: on the 154 failures of the 16 development recordings (version-2 answers, each recording
-  predicted from the others), every wrong first candidate but two was under 0.022, and those two are failures the
-  owner labelled Perilous Thrust whose crops match the jump slash 3030 best (asked of the owner, 2026-11-12).
+  predicted from the others), every wrong first candidate was under 0.022, so 130 answers were sure and all of them
+  right. Two answers had looked sure and wrong until the owner rewatched them (2026-11-12): the jump slash 3030 had
+  hit, not a Perilous Thrust as labelled in the M2 blind review.
 """
 import csv
 import sys
