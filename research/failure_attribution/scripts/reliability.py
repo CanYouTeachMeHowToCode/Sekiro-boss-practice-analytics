@@ -1,7 +1,7 @@
 """Reliability validation (V4 M2): the owner's answers against what the frozen pipeline reported.
 
 Usage: python -I reliability.py snapshot <recording id | all>
-       python -I reliability.py report [--set development|test|all]
+       python -I reliability.py report [--set development|test|all] [--truth v2|v1]
 
 The answers of a recording, in research/ground_truth/annotations/<ruleset>/genichiro/<recording>/:
 - hud_events.csv, the owner's review of the detected events (review_events.py, 事件 view). The real failure events are
@@ -13,6 +13,10 @@ The answers of a recording, in research/ground_truth/annotations/<ruleset>/genic
   2026-10-16); merge_prev joins the row to the one before it. For a test recording the review page's blind 招式 view
   writes it, without showing the system's answer. For the M1 recordings `snapshot` writes it once from the M1 reviews
   (failure_moves.csv, with the overlay answers or the predictions the owner reviewed).
+
+--truth v2 (the default since V4 M3) reads failure_truth_v2.csv where it exists: the version-2 answers of a recording
+labelled under version 1 (truth_v2.py). A recording labelled under version 2 only (the version-2 test batch) has its
+answers in failure_truth.csv. --truth v1 reads failure_truth.csv everywhere, as M2 did.
 
 `report` compares them with work/<id>/events.csv and failure_predictions.csv, for the recordings of a set
 (recordings.json "set": development is everything M1 was built and tuned on, test the M2 recordings held out until the
@@ -47,6 +51,12 @@ TRUTH_FIELDS = ["key", "time_s", "events", "move", "two_slashes", "merge_prev", 
 # the owner's word on a failure of the M1 test recordings that the M1 review file does not hold: castle-1 238.4 s is
 # Floating Passage's opening two slashes without the follow-up, so Two-Hit Slash, which was proposed, is right (2026-10-16)
 M1_TWO_SLASHES = {("2026-10-16-castle-1", "death@238.4")}
+TRUTH = sys.argv[sys.argv.index("--truth") + 1] if "--truth" in sys.argv else "v2"
+
+
+def truth_file(ann):
+    v2 = ann / "failure_truth_v2.csv"
+    return v2 if TRUTH == "v2" and v2.exists() else ann / "failure_truth.csv"
 
 
 def read(path):
@@ -151,7 +161,7 @@ class Recording:
                 r["verdict"] if r else "", "unreviewed")
         self.missed = [r for i, r in enumerate(reviews) if r["verdict"] == "missed" and i not in used]
         # the real failures: the truth rows, merged where the owner said so, keeping only real events
-        truth = sorted(read(ann / "failure_truth.csv"), key=lambda r: float(r["time_s"]))
+        truth = sorted(read(truth_file(ann)), key=lambda r: float(r["time_s"]))
         real_missed = {r["key"] for r in self.missed}
         self.truth = []
         for row in truth:
@@ -223,7 +233,7 @@ def name(slug):
 # the scripts that turn a recording into reported failures: the version the M2 plan freezes. The review page, the
 # registry and this report are left out, since changing them changes no result
 PIPELINE = ["common.py", "hud_pipeline.py", "hud_read.py", "death_screen.py", "events.py", "lockon.py", "boss_track.py",
-            "boss_features.py", "overlay_mask.py", "failure_answers.py", "move_match.py"]
+            "boss_features.py", "overlay_mask.py", "failure_answers.py", "move_match.py", "labelled_refs.py"]
 
 
 def commit_state():
@@ -240,7 +250,8 @@ def report(which):
     recs = [Recording(i, r) for i, r in recordings().items()
             if which == "all" or r.get("set", "development") == which]
     recs = [r for r in recs if r.detected or r.truth]
-    md = [f"# 可靠性验证报告（{which}）", "", f"代码版本 {commit_state()}，生成于 {datetime.now():%Y-%m-%d %H:%M}。", ""]
+    md = [f"# 可靠性验证报告（{which}，答案版本 {TRUTH}）", "",
+          f"代码版本 {commit_state()}，生成于 {datetime.now():%Y-%m-%d %H:%M}。", ""]
     problems = [f"- {r.id}：{p}" for r in recs for p in r.problems]
     if problems:
         md += ["**答案还不完整，下面的数字不算数：**", "", *problems, ""]

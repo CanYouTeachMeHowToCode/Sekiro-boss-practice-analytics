@@ -2,7 +2,7 @@
 
 Usage: python -I move_match.py eval [--model small14] [--part cls|patch|both] [--window 1.5] [--after 1.0]
                                    [--detrend 0.5] [--refs all|other]
-       python -I move_match.py predict <recording id | all> [the same options]
+       python -I move_match.py predict <recording id | all> [the same options] [--labelled 1|0] [--gaps 1|0]
 
 References: every hit of a boss animation in the dev-menu recordings, at the moment its TAE attack window opens
 (projectiles: the moment the shot is fired), labelled from the overlay with the same mapping as failure_answers.py:
@@ -38,6 +38,18 @@ candidates at hand.
 SURE_MARGIN was set on the 82 failures of the M1 recordings (reliability.py, 2026-10-19): under 0.025 were 7 of the 10
 wrong answers and 7 of the 72 right ones, so 68 answers were sure and 65 of them right. Being set on those recordings,
 it is checked on the M2 test recordings.
+
+Version 2 (V4 M3, 2026-11-12):
+- labels: a reference hit by an animation the owner's action -> move table counts apart takes that move
+  (failure_answers.moves_of_hit()): a plain arrow is Arrow Shot, a Mikiri thrust inside another move Perilous Thrust;
+- references from the owner's labels (--labelled 1, labelled_refs.py): the hits of the failures the owner labelled
+  in the development recordings without the overlay, at the moment the HP bar dropped, matched 0 ± LAG_DROP crops
+  apart. Of the recording being predicted, none;
+- merge windows per move (--gaps 1, merge_gaps()): one play of Floating Passage hits over up to 4.3 s, so its hits
+  may land up to 3.4 s apart (3.1 s in phase 3) and still be one failure, instead of MERGE_GAP;
+- SURE_MARGIN kept at 0.025: on the 154 failures of the 16 development recordings (version-2 answers, each recording
+  predicted from the others), every wrong first candidate but two was under 0.022, and those two are failures the
+  owner labelled Perilous Thrust whose crops match the jump slash 3030 best (asked of the owner, 2026-11-12).
 """
 import csv
 import sys
@@ -48,9 +60,10 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (GT, SAME_MOTION, TWO_SLASHES, WORK, accepted, annotation_dir, observation_dir,  # noqa: E402,F401
                     recordings, work_dir)
-from failure_answers import BY_PREVIOUS, MOVES, WINDOWS, Overlay, moves_for, phase_at, read  # noqa: E402
+from failure_answers import MOVES, WINDOWS, Overlay, moves_of_hit, phase_at, read  # noqa: E402
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
+LAG_DROP = 2       # crops either side for a labelled reference: both times are HP drops read by the same detector
 EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
 SURE_MARGIN = 0.025
 # the owner's rules on moves that look the same (TWO_SLASHES, SAME_MOTION, accepted()) are in common.py, shared with the
@@ -114,7 +127,7 @@ class Rec:
                 wins = [w for w in WINDOWS.get((ov.chars[s], anim), ()) if w[0] in ("attack", "bullet")]
                 if not wins:
                     continue
-                entries, _, prev = ov.chain_of(anim, start)
+                entries, chain, prev = ov.chain_of(anim, start)
                 seen = set()
                 for kind, hit, ws, _ in wins:
                     if (kind, round(ws, 2)) in seen:
@@ -125,13 +138,47 @@ class Rec:
                         continue
                     t = float(ov.frames[k]["time_s"])
                     phase = phase_at(t, self.blows, self.ends)
-                    moves = moves_for(entries, phase)
-                    pick = BY_PREVIOUS.get(anim, {}).get(prev)
-                    if len(moves) > 1 and pick in {m["slug"] for m in moves}:
-                        moves = [m for m in moves if m["slug"] == pick]
+                    moves, _ = moves_of_hit(ov.chars[s], anim, entries, phase, prev)
                     refs.append({"rec": self, "anim": anim, "hit": hit, "kind": kind, "t": t, "phase": phase,
-                                 "moves": [m["slug"] for m in moves]})
+                                 "moves": [m["slug"] for m in moves], "play": (self.id, chain)})
         return refs
+
+
+def merge_gaps(refs):
+    """How far apart two hits of one failure may be, per move (version 2). One play of a long move such as Floating
+    Passage hits over more than MERGE_GAP seconds, so its hits can land further apart. From the dev-menu references:
+    a move's window is its longest play, first hit to last, plus LAG_ATTACK (an HP drop comes up to that long after
+    the window opens), but less than the closest two of its plays came minus LAG_ATTACK, so that two plays stay two
+    failures, and never under MERGE_GAP."""
+    plays = {}
+    for ref in refs:
+        if ref.get("play") and ref["play"][1] is not None and len(ref["moves"]) == 1:
+            plays.setdefault((ref["moves"][0], ref["play"]), []).append(ref["t"])
+    span, closest, last = {}, {}, {}
+    for (move, play), ts in sorted(plays.items(), key=lambda kv: (kv[0][1][0], min(kv[1]))):
+        span[move] = max(span.get(move, 0.0), max(ts) - min(ts))
+        if last.get(move, (None,))[0] == play[0]:
+            closest[move] = min(closest.get(move, float("inf")), min(ts) - last[move][1])
+        last[move] = (play[0], max(ts))
+    return {m: max(MERGE_GAP, min(span[m] + LAG_ATTACK, closest.get(m, float("inf")) - LAG_ATTACK)) for m in span}
+
+
+def labelled_references(recs, st, skip):
+    """The owner-labelled hits of the development recordings without the overlay (labelled_refs.py), but those of
+    `skip`: each is the moment the HP bar dropped, labelled with the failure's move."""
+    path = WORK / "labelled_refs.csv"
+    by_rec = {}
+    for x in (read(path) if path.exists() and st["labelled"] else []):
+        if x["recording"] != skip:
+            by_rec.setdefault(x["recording"], []).append(x)
+    refs = []
+    for j, xs in by_rec.items():
+        r = Rec(j, recs[j], st["model"], st["part"], st["trend"])
+        for x in xs:
+            t = float(x["time_s"])
+            refs.append({"rec": r, "anim": None, "hit": None, "kind": "drop", "t": t,
+                         "phase": phase_at(t, r.blows, r.ends), "moves": [x["move"]]})
+    return refs
 
 
 def similarity(q, qrow, r, rrow, before, after):
@@ -154,12 +201,13 @@ def rank(q, t_hit, phase, refs, window, after):
         if not moves:
             continue
         lags = range(0, round(LAG_ATTACK * RATE) + 1) if ref["kind"] == "attack" else \
-            range(0, round(LAG_BULLET * RATE) + 1, 2)
+            range(-LAG_DROP, LAG_DROP + 1) if ref["kind"] == "drop" else range(0, round(LAG_BULLET * RATE) + 1, 2)
         rrow = ref["rec"].row(ref["t"])
         score = max(similarity(q, qrow - lag, ref["rec"], rrow, before, after) for lag in lags)
         for m in moves:
             by_move[m] = max(by_move.get(m, -1.0), score)
-        by_anim[ref["anim"]] = max(by_anim.get(ref["anim"], -1.0), score)
+        if ref["anim"] is not None:
+            by_anim[ref["anim"]] = max(by_anim.get(ref["anim"], -1.0), score)
     order = lambda d: sorted(d, key=d.get, reverse=True)  # noqa: E731
     return order(by_move), order(by_anim), by_move
 
@@ -173,7 +221,8 @@ def lead_time(row):
 
 def settings():
     return {"model": opt("--model", "small14"), "part": opt("--part", "cls"), "window": float(opt("--window", "1.5")),
-            "after": float(opt("--after", "1.0")), "trend": float(opt("--detrend", "0.5"))}
+            "after": float(opt("--after", "1.0")), "trend": float(opt("--detrend", "0.5")),
+            "labelled": opt("--labelled", "1") == "1", "gaps": opt("--gaps", "1") == "1"}
 
 
 def evaluate():
@@ -221,6 +270,8 @@ def predict(rec_id):
     q = Rec(rec_id, recs[rec_id], st["model"], st["part"], st["trend"])
     refs = [ref for j, r in recs.items() if observation_dir(r) and j != rec_id
             for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references()]
+    gaps = merge_gaps(refs)
+    refs += labelled_references(recs, st, rec_id)
     events = read(work_dir(rec_id) / "events.csv")
     for e in events:
         e["t"], e["phase"] = float(e["time_s"]), phase_at(float(e["time_s"]), q.blows, q.ends)
@@ -234,7 +285,8 @@ def predict(rec_id):
             stagger["group"]["events"].append(e)
             continue
         last = run["events"][-1] if run else None
-        same = last and e.get("moves") and run["move"] in e["moves"][:2] and e["t"] - last["t"] <= MERGE_GAP
+        gap = gaps.get(run["move"], MERGE_GAP) if st["gaps"] and run else MERGE_GAP
+        same = last and e.get("moves") and run["move"] in e["moves"][:2] and e["t"] - last["t"] <= gap
         broke = last and e["type"] == "posture_break" and e["t"] - last["t"] <= BREAK_WITH
         if same or broke:
             run["events"].append(e)

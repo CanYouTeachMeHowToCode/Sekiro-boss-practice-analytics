@@ -223,7 +223,7 @@ def save_truth(rec_id, body):
             continue
         rows.append({"key": keys[0], "time_s": f"{times[keys[0]]:.3f}", "events": " ".join(keys), "move": new.get("move", ""),
                      "two_slashes": "1" if new.get("two_slashes") else "", "merge_prev": "1" if new.get("merge_prev") else "",
-                     "source": "blind review (M2)", "note": " ".join(str(new.get("note", "")).split()),
+                     "source": "blind review (v2)", "note": " ".join(str(new.get("note", "")).split()),
                      "updated": datetime.now().isoformat(timespec="seconds")})
     write_csv(truth_file(rec), TRUTH_FIELDS, rows)
     return {"key": sorted(card, key=times.get)[0], "rows": [r for r in rows if set(r["events"].split()) & card]}
@@ -285,7 +285,7 @@ def recheck_items(rec, events):
     items = []
     for t in read_csv(truth_file(rec)):
         options = splits.get(t["move"])
-        if not options:
+        if not options or "(v2)" in t.get("source", ""):       # labelled under version 2 already
             continue
         kinds = [k.replace("missed:", "").split("@")[0] for k in t["events"].split()]
         time = float(t["time_s"])
@@ -503,7 +503,7 @@ const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
-  blind: 'M2 测试录像，盲审：页面上没有系统的答案。先在"事件"视图核对完事件、补上漏检，再在这里给每次失败选招式（看不清就选"看不出来"）。几下来自不同的出招就点"拆开"；和上一次是同一次出招就勾"和上一次算同一次失败"。你补充的漏检也在这里单独列出。点"▶ 播放"从失败前 3 秒开始看。',
+  blind: '版本 2 测试录像，盲审：页面上没有系统的答案。先在"事件"视图核对完事件、补上漏检，再在这里给每次失败选招式（看不清就选"看不出来"）。按打中你的那一下选：别的招式前后附带的普通的箭选"普通射箭攻击"，别的招式里要识破的突刺选"危·突刺"（一阶段跳劈后续危和危·突刺两个都算对）。几下来自不同的出招就点"拆开"；和上一次是同一次出招就勾"和上一次算同一次失败"。你补充的漏检也在这里单独列出。点"▶ 播放"从失败前 3 秒开始看。',
   recheck: '版本 2 复核：这些失败你原来标的招式里，有版本 2 要单独算的动作。重看一下真正打中你的是什么：被招式前后附带的普通的箭射中，选"普通射箭攻击"；被别的招式里要识破的突刺打中（比如跳劈后续、连斩的收尾、完美弹开之后的突刺），选"危·突刺"；被这一招的主要内容打中，就还是原来的招。看不清选"看不出来"。你原来的标注不会改，答案另存。点"▶ 播放"从失败前 3 秒开始看。',
   moves: '每次失败：开发者菜单录像的答案是被打中那一刻弦一郎在放的动画，按你批过的 AI 链和产品招式表对出来的；其他录像的答案是自动识别的，列出前三个候选，点候选就能选。同一招连续几下、打崩和硬直中的追击、死亡和打死你的那一下已经按你的规则合并；自动识别的录像如果把同一次出招拆成了两次，在后一次勾"和上一次算同一次失败"。不对时也可以在下拉框里选正确的招式。点"▶ 播放"从失败前 3 秒开始看。',
 };

@@ -20,6 +20,10 @@ For every damage or posture-break event:
   3. Which product move: the moveset (semantic/genichiro_product_moveset.csv) lists each move's catalog entries and
      phases; P12-20 belongs to two moves, one per phase, so the phase picks. P3-30 (3080) belongs to two moves of
      phase 3, so the animation before it picks (BY_PREVIOUS).
+  4. Version 2 (the owner approved the action -> move table on 2026-11-11, semantic/genichiro_v2_actions.csv): a hit
+     by an animation the table counts apart takes the table's move instead, whatever chain it came in: a plain arrow
+     before or after another move is arrow-shot (普通射箭攻击), a Mikiri thrust inside another move (3025, 3080) is
+     perilous-thrust (危·突刺).
 Phase: 1 + Wolf's deathblows so far (each ends a phase); a death that is not resurrected ends the attempt.
 
 Failures, merged by the owner's rules (plan.md, 2026-10-16):
@@ -66,6 +70,11 @@ for r in read(GT / "engine/genichiro_attack_windows.csv"):
 MOVES = [{"slug": r["slug"], "zh": r["name_zh"], "en": r["name_en"], "phases": set(r["phases"].split("、")),
           "entries": set(r["catalog_entries"].split())}
          for r in read(GT / "semantic/genichiro_product_moveset.csv")]
+# version 2: (character, animation) -> the move the approved table counts it as, for the animations it counts apart
+V2_APART = {"普通射箭攻击": "arrow-shot", "危·突刺": "perilous-thrust"}
+V2_MOVE = {(r["character"], int(r["anim"])): V2_APART[r["proposed_move"]]
+           for r in read(GT / "semantic/genichiro_v2_actions.csv")
+           if r["changed"] == "是" and r["proposed_move"] in V2_APART}
 
 
 class Overlay:
@@ -129,7 +138,8 @@ class Overlay:
                 for kind, hit, s, e in WINDOWS.get((self.chars[k], anim), ()):
                     if kind == "attack" and s - WINDOW_SLACK <= at <= e + WINDOW_SLACK:
                         occ = self.occurrence(anim, k)
-                        found.setdefault((anim, occ), {"anim": anim, "occ": occ, "how": f"第 {hit} 击", "at": at})
+                        found.setdefault((anim, occ), {"anim": anim, "occ": occ, "how": f"第 {hit} 击", "at": at,
+                                                       "char": self.chars[k]})
         if found:
             return list(found.values())
         for k in range(max(1, f - round(BULLET_FLIGHT * self.fps)), min(f, len(self.frames) - 1) + 1):
@@ -138,7 +148,7 @@ class Overlay:
                 for kind, hit, s, e in WINDOWS.get((self.chars[k], anim), ()):
                     if kind == "bullet" and at >= s and before.get(anim, -1.0) < s:
                         occ = self.occurrence(anim, k)
-                        found.setdefault((anim, occ), {"anim": anim, "occ": occ, "at": at,
+                        found.setdefault((anim, occ), {"anim": anim, "occ": occ, "at": at, "char": self.chars[k],
                                                        "how": f"飞行物（{(f - k) / self.fps:.2f} 秒前射出）"})
         return list(found.values())
 
@@ -150,6 +160,20 @@ def phase_at(t, blows, ends):
 
 def moves_for(entries, phase):
     return [m for m in MOVES if m["entries"] & set(entries) and str(phase) in m["phases"]]
+
+
+def moves_of_hit(char, anim, entries, phase, prev):
+    """The product moves a hit by `anim` counts for, and a note on how they were picked: the moves of its chain's
+    catalog entries in this phase, narrowed by the animation before it (BY_PREVIOUS), or the move the version-2 table
+    counts the animation as (V2_MOVE)."""
+    apart = V2_MOVE.get((char, anim))
+    if apart:
+        return [m for m in MOVES if m["slug"] == apart], "（版本 2 单独算）"
+    moves = moves_for(entries, phase)
+    pick = BY_PREVIOUS.get(anim, {}).get(prev)
+    if len(moves) > 1 and pick in {m["slug"] for m in moves}:
+        return [m for m in moves if m["slug"] == pick], f"（前面是 {prev}）"
+    return moves, ""
 
 
 def answer(ov, e, phase):
@@ -164,11 +188,8 @@ def answer(ov, e, phase):
         out["chains"].add(chain)
         if chain is not None:
             out["plays"].append(ov.play(chain))
-        moves = moves_for(entries, phase)
-        pick = BY_PREVIOUS.get(c["anim"], {}).get(prev)
-        if len(moves) > 1 and pick in {m["slug"] for m in moves}:
-            moves = [m for m in moves if m["slug"] == pick]
-            out["hits"][-1] += f"（前面是 {prev}）"
+        moves, how = moves_of_hit(c["char"], c["anim"], entries, phase, prev)
+        out["hits"][-1] += how
         for m in moves:
             out["moves"][m["slug"]] = m
         if not entries:
