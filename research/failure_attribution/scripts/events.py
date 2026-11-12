@@ -54,6 +54,33 @@ PRE_HIGH, PRE_WINDOW, CLEAR_WITHIN, CLEAR_HOLD = 0.6, 1.0, 1.0, 0.5
 RESURRECTION_MARGIN = 2.0
 BOSS_LEFT, BOSS_ZERO, BOSS_PALE, BOSS_HOLD = 0.02, 0.005, 0.8, 0.5
 DEATHBLOW_BEFORE, DEATHBLOW_AFTER = 1.0, 3.0
+# version 2: a reading that jumps up for a few frames and falls back to its old level is no hit (测试录像10, 47.7 s: at
+# 5% HP a flash lifted the reading to 0.38 for 5 frames); and death screens closer than SCREEN_MERGE are one death
+# screen (测试录像10, 104.3 s: the 死 flickered in and was read as three)
+SPIKE_WINDOW, SPIKE_RETURN = 0.3, 0.01
+SCREEN_MERGE = 3.0
+
+
+def jumped_back(t, hp, hpm, start, end):
+    """The reading rose within SPIKE_WINDOW before `start` and the drop ending at `end` lands back on the level it had
+    before that rise: a few frames of glitch, not a hit."""
+    a, b = np.searchsorted(t, t[start] - 2 * SPIKE_WINDOW), np.searchsorted(t, t[start] - SPIKE_WINDOW)
+    if b <= a:
+        return False
+    level = float(np.median(hp[a:b]))
+    rose = hp[b:start + 1].max() > level + MIN_DROP
+    return bool(rose and abs(hpm[end] - level) <= SPIKE_RETURN)
+
+
+def merge_screens(screens):
+    """Death-screen stretches closer than SCREEN_MERGE joined into one."""
+    merged = []
+    for a, b in sorted(screens):
+        if merged and a - merged[-1][1] <= SCREEN_MERGE:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], b))
+        else:
+            merged.append((a, b))
+    return merged
 
 
 def load(path):
@@ -107,7 +134,7 @@ def detect(frame, t, hud, hp, bar, po, ln, boss_bar, boss_hp, boss_lost, boss_v,
                 j += 1
             settle = hpm[min(len(t) - 1, j + int(SETTLE / dt))]
             if before - hpm[j] >= MIN_DROP and before - settle >= MIN_DROP and hud_holds(hud, t, start, HUD_AFTER) \
-                    and not fading(t, boss_v, start):
+                    and not fading(t, boss_v, start) and not jumped_back(t, hp, hpm, start, j):
                 events.append({"type": "damage", "i": start, "hp_before": before, "hp_after": hpm[j]})
             i = j + 1
         else:
@@ -220,7 +247,7 @@ def detect(frame, t, hud, hp, bar, po, ln, boss_bar, boss_hp, boss_lost, boss_v,
 def main():
     frame, t, hud, hp, bar, po, ln, boss_bar, boss_hp, boss_lost, boss_v = load(sys.argv[1])
     path = Path(sys.argv[1]).parent / "death_screens.csv"
-    screens = [(float(r["start_s"]), float(r["end_s"])) for r in csv.DictReader(open(path, encoding="utf-8"))] \
+    screens = merge_screens([(float(r["start_s"]), float(r["end_s"])) for r in csv.DictReader(open(path, encoding="utf-8"))]) \
         if path.exists() else None
     events = detect(frame, t, hud, hp, bar, po, ln, boss_bar, boss_hp, boss_lost, boss_v, screens)
     with open(sys.argv[2], "w", newline="", encoding="utf-8") as fh:
