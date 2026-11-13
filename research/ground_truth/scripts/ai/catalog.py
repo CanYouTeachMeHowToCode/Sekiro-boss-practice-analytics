@@ -231,6 +231,14 @@ NOTES.update({
     ("710000", "Act01"): NOTES[("710000", "Act01")] + "你确认一二阶段也会出现 3010 → 3025 这一支(2026-10-22,三阶段在 M2 测试录像 7 的 3:22 看到同一套);"
                          "TAE 里 c7100 和 c7110 的 3010 攻击判定完全相同(判定 320、321,0.53–0.67 秒和 0.83–0.93 秒)。不专门补录参考(你决定,2026-10-22)。",
 })
+# Seen by the owner in a version-2 test recording without the dev menu (2026-11-13); the owner confirmed it was c7100
+# 3022 by comparing it with the dev-menu clip (2026-10-09-castle 1:55.7). Gameplay evidence only: AtkParam was never
+# extracted, so the files do not show whether the hit can be deflected.
+NOTES.update({
+    ("710000", "Act16"): "能完美弹开:你在测试录像16(2026-11-11-castle-4,没开开发者菜单)0:23 倒地后提前翻滚,完美弹开了这一下;"
+                         "你对照开发者菜单录像 1:55.7 确认是 3022(2026-11-13)。一般来说只能翻滚躲开。"
+                         "只有实战观察:攻击参数(AtkParam)没提取过,文件里看不出能不能弹开。",
+})
 
 CASTLE_FACTS = [  # applied to the chain text: castle Genichiro has 200050 and never 3711500
     (re.compile(r"\[Boss有特效3711500(?: 且 计时器8已到)?: \d+ ｜ 否则: ([^\[\]]+)\]"), r"\1"),
