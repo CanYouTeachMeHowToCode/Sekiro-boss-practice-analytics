@@ -45,7 +45,7 @@ for r in catalog:
     for a in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split():
         in_catalog[(r["character"], int(a.split("(")[0]))].append(r)
 counts = Counter()
-for rec in sorted((GT / "observations/vanilla/genichiro").glob("*-castle")):
+for rec in sorted((GT / "observations/vanilla/genichiro").glob("*-castle*")):
     for r in csv.DictReader(open(rec / "occurrences.csv", encoding="utf-8")):
         counts[(r["character"][:5], int(r["anim"][5:]))] += 1
 

@@ -156,7 +156,7 @@ V4 answers:
 
 > **What happened during the fight without requiring the player to manually enter everything?**
 
-Start with V4 Milestone 1: the failure attribution prototype on local Genichiro recordings (section 38). The V3.1 research in `research/ground_truth/` is its input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
+V4 Milestone 1, the failure attribution prototype on local Genichiro recordings, is done (owner confirmed, 2026-10-16). Its code and tools are in `research/failure_attribution/`, its results in `research/failure_attribution/results.md`: an owner-checked answer set of 7 castle recordings, all HUD failure events correct, and the move behind a failure the top candidate in 88% and among the top three in 93% of the failures in recordings whose parameters were never tuned on them (two rules were added after looking at one of them, so these numbers are optimistic). V4 Milestone 2, reliability validation, is done (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2.md`): on 9 held-out fights labelled blind, failure precision 97% and recall 100%, 81% of the move answers sure and 93% of those right. Current: V4 Milestone 3, video upload and failure report (section 38). Before its report is designed, the next version of the attribution classifies a failure by the action that hit the player and the response it needs, not by the AI chain (owner decision, 2026-10-25): an arrow that opens a combo is its own move, and the perilous thrusts countered by Mikiri are one move; the owner approves the action-to-move table. Every new version keeps the M2 protocol (`plan_m2.md`): frozen, then measured on new recordings without the overlay, labelled blind, and never changed because of a test recording's errors. The V3.1 research in `research/ground_truth/` remains the input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
 
 **Numbering.** The combat ground-truth stage was first planned as V4. It mainly added a research foundation and a Genichiro content update to the V3 product, so it became V3.1 and shipped as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 
@@ -1318,6 +1318,8 @@ Use:
 
 At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
 
+Milestone 3 also checks that an upload is a castle Genichiro fight (not another boss, another game or an unrelated video) and is tested on one recording at another resolution (owner decisions, 2026-10-19).
+
 Every stage should produce useful intermediate tooling.
 
 ---
@@ -1646,9 +1648,9 @@ Examples currently not justified by default:
 V3 and V3.1 are released. V4 order (section 38):
 
 ```text
-1. Failure attribution prototype on local recordings (V4 Milestone 1) — current
-2. Reliability validation on independent recordings (V4 Milestone 2)
-3. Video upload and failure report (V4 Milestone 3)
+1. Failure attribution prototype on local recordings (V4 Milestone 1) — done (2026-10-16)
+2. Reliability validation on independent recordings (V4 Milestone 2) — done (2026-10-25)
+3. Video upload and failure report (V4 Milestone 3) — current
 4. Public deployment (V4 Milestone 4)
 ```
 

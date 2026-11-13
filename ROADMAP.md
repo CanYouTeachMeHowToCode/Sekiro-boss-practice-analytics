@@ -888,7 +888,7 @@ Practice Suggestions
 
 ---
 
-## V4 Milestone 1 — Failure Attribution Prototype
+## V4 Milestone 1 — Failure Attribution Prototype ✅
 
 The first V4 goal is narrow: in the player's own recordings, find each failure and the boss move that caused it.
 
@@ -916,9 +916,17 @@ Recordings made for V3.1 carry the dev-menu animation labels, so they double as 
 
 Output: one recording → one failure report a person can check.
 
+Delivered (owner confirmed, 2026-10-16; `research/failure_attribution/results.md`):
+
+- one command per recording: HUD events (damage, posture break, death by the death screen, Wolf's deathblow, resurrection), boss tracking by the lock-on dot, the moves behind the failures, merged by the owner's rules
+- a local review page: events, the three candidate moves per failure, merging, failures per move, processing progress
+- dev-menu recordings read into observations with one command, checked against the AI chains, and used as answers and as the reference library
+- an owner-checked answer set of 7 castle recordings: 141 events, 82 failures
+- all 141 events correct with none missed; on recordings whose parameters were never tuned on them, the move behind a failure is the top candidate in 36 of 41 (88%) and among the top three in 38 of 41 (93%). Two rules were added after looking at the errors in one of them, so these numbers are optimistic; M2 measures again
+
 ---
 
-## V4 Milestone 2 — Reliability Validation
+## V4 Milestone 2 — Reliability Validation ✅
 
 Check the prototype on independent fight recordings:
 
@@ -929,6 +937,15 @@ Check the prototype on independent fight recordings:
 Keep results the system cannot confirm as uncertain.
 
 Measure precision and recall, for failure detection and for move identification.
+
+Plan (`research/failure_attribution/plan_m2.md`, 2026-10-19): the M1 recordings are the development set. New recordings without the overlay are the test set: they are run only with the frozen pipeline, the owner labels their moves blind (the review page does not show the system's answer), and their errors are recorded, not fixed. Any change after that is a new version, measured on a new batch. A move answer counts as sure only when its score leads the next different move by a set margin; otherwise the report says the move is uncertain and names the top two.
+
+Delivered (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2.md`):
+
+- a held-out test set of 9 fights (37 minutes, 70 failures), run once with the frozen pipeline and labelled blind by the owner
+- the results, against criteria the owner set before seeing them: failure precision 97% and recall 100%; 81% of the move answers sure, and 93% of those right; every rate with its 95% interval
+- the tooling: a blind review view, "uncertain" move answers, and a report of precision, recall, merge errors and failures per move
+- for the next version (owner decision): a failure is classified by the action that hit the player and the response it needs, not by the AI chain; an arrow that opens a combo becomes its own move, and the perilous thrusts countered by Mikiri become one move
 
 ---
 
@@ -943,6 +960,8 @@ Add:
 - metadata
 - processing status
 - storage lifecycle
+- a check that the upload is a castle Genichiro fight, not another boss, another game or an unrelated video (owner decision, 2026-10-19)
+- a test on one recording at another resolution: the prototype reads the HUD at 2560×1440 (owner decision, 2026-10-19)
 
 Show the failure times, their clips, the moves, and the number of failures per move.
 

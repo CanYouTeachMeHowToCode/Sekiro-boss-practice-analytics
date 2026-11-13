@@ -1,0 +1,87 @@
+{
+  "recording": "2026-10-16-castle-4",
+  "recorded_on": "2026-10-16",
+  "ruleset": "vanilla",
+  "resurrection_mod": "off: the owner's setup for V4 M1 (vanilla 1.06), not confirmed separately for this recording",
+  "game_version": "1.06",
+  "game_version_note": "the owner's setup for V4 M1",
+  "encounter": "Genichiro Ashina, top of Ashina Castle, all three phases in one recording",
+  "purpose": "V4 M1: more labelled reference fights for the failure attribution",
+  "video": {
+    "file_name": "开发者菜单录像/开发者菜单3.mp4",
+    "kept": "locally only, never committed",
+    "sha256": "4c8d950ef27e60537c1bf5c056657d4384fdc2fb88db61275e89fdfa93849a55",
+    "width": 2560,
+    "height": 1440,
+    "fps": 59.991846656499234,
+    "frames": 22666,
+    "duration_s": 377.82
+  },
+  "overlay": {
+    "tool": "Sekiro-Debug-Patch",
+    "build": "the same setup as the earlier recordings",
+    "shown": "target character ID line and the 'Active Anime' list (1-5 lines of a000_DDDDDD (t.tt) [cur/tot])"
+  },
+  "extraction": {
+    "scripts": "research/ground_truth/scripts/overlay (steps 1-13 of its README)",
+    "python": "3.10.5",
+    "id_whitelist": "research/ground_truth/engine/c7100_tae_ids.txt + c7110_tae_ids.txt (196 IDs)",
+    "template_frames": "12 frames of this recording read by eye: 3, 25, 75, 100, 125, 150 s as c7100_0000 and 225, 250, 275, 325, 350, 370 s as c7110_0001"
+  },
+  "character_on_screen": [
+    {
+      "frames": [
+        0,
+        10485
+      ],
+      "time_s": [
+        0.0,
+        174.77
+      ]
+    },
+    {
+      "frames": [
+        11859,
+        22665
+      ],
+      "time_s": [
+        197.68,
+        377.8
+      ]
+    }
+  ],
+  "phases": {
+    "status": "proposed from the HUD deathblows and the character line; approved by the project owner on 2026-10-16 together with this recording's events and moves",
+    "1": {
+      "frames": [
+        0,
+        5296
+      ],
+      "time_s": [
+        0.0,
+        88.28
+      ]
+    },
+    "2": {
+      "frames": [
+        5297,
+        10485
+      ],
+      "time_s": [
+        88.3,
+        174.77
+      ]
+    },
+    "3": {
+      "frames": [
+        11859,
+        22665
+      ],
+      "time_s": [
+        197.68,
+        377.8
+      ]
+    }
+  },
+  "verification": "automatic reads with automatic checks; not every read was checked by eye (see README)"
+}

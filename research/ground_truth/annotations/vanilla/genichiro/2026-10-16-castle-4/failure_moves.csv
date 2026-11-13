@@ -1,0 +1,8 @@
+key,time_s,proposed,verdict,correct_move,merge_prev,note,updated
+damage@8.9,8.868,perilous-attack-follow-up,correct,,,,2026-10-16T19:41:24
+damage@70.9,70.910,hawk-shot,correct,,,,2026-10-16T19:41:30
+damage@94.5,94.546,floating-passage,correct,,,,2026-10-16T19:41:38
+damage@128.2,128.217,floating-passage,correct,,,,2026-10-16T19:41:41
+damage@244.1,244.100,floating-passage-phase-3,correct,,,,2026-10-16T19:41:45
+damage@287.4,287.439,receding-tide,correct,,,,2026-10-16T19:41:49
+death@306.2,306.242,floating-passage-phase-3,correct,,,,2026-10-16T19:41:53

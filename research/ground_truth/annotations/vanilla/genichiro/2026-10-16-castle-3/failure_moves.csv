@@ -1,0 +1,6 @@
+key,time_s,proposed,verdict,correct_move,merge_prev,note,updated
+damage@162.8,162.787,closing-tide,wrong,horizontal-slash,,,2026-10-16T18:15:45
+damage@164.3,164.321,receding-tide,wrong,horizontal-slash,,,2026-10-16T18:16:24
+damage@168.1,168.088,slash-combo,correct,,,,2026-10-16T18:16:41
+damage@172.5,172.489,floating-passage-phase-3,correct,,,,2026-10-16T18:16:47
+damage@208.9,208.860,floating-passage-phase-3,correct,,,,2026-10-16T18:16:55

@@ -39,6 +39,7 @@ the above + occurrences.csv     ai/catalog.py          -> semantic/genichiro_cat
 catalog + reachability + TAE   ai/classify.py         -> engine/genichiro_castle_tae_classes.csv, semantic/genichiro_classification.md, genichiro_gap_report.md, deferred/
 catalog + wiki mapping + seed  ai/decisions.py        -> semantic/genichiro_product_decisions.csv, .md
 catalog + occurrences.csv      ai/chain_check.py      -> observations/vanilla/genichiro/chain_check.csv, .md
+<c>_tae.json                   ai/attack_windows.py   -> engine/genichiro_attack_windows.csv
 decisions + catalog + seed     ai/moveset.py          -> semantic/genichiro_product_moveset.csv, .md
 moveset + seed                 ai/content_review.py   -> semantic/genichiro_content_review.csv, .md
 moveset + content review       ai/sync_seed.py        -> backend/seed/bosses.json (genichiro-ashina only)
@@ -62,6 +63,7 @@ python -I research/ground_truth/scripts/ai/catalog.py <work> <work> research/gro
 python -I research/ground_truth/scripts/ai/classify.py <work> research/ground_truth/engine/genichiro_castle_tae_classes.csv research/ground_truth/semantic/genichiro_classification.md research/ground_truth/semantic/genichiro_gap_report.md research/ground_truth/deferred
 python -I research/ground_truth/scripts/ai/decisions.py research/ground_truth/semantic/genichiro_product_decisions.csv research/ground_truth/semantic/genichiro_product_decisions.md
 python -I research/ground_truth/scripts/ai/chain_check.py research/ground_truth/observations/vanilla/genichiro/chain_check.csv research/ground_truth/observations/vanilla/genichiro/chain_check.md
+python -I research/ground_truth/scripts/ai/attack_windows.py <work> research/ground_truth/engine/genichiro_attack_windows.csv
 python -I research/ground_truth/scripts/ai/moveset.py research/ground_truth/semantic/genichiro_product_moveset.csv research/ground_truth/semantic/genichiro_product_moveset.md
 python -I research/ground_truth/scripts/ai/content_review.py research/ground_truth/semantic/genichiro_content_review.csv research/ground_truth/semantic/genichiro_content_review.md
 python -I research/ground_truth/scripts/ai/sync_seed.py            # --check only reports whether the seed is up to date
@@ -78,6 +80,7 @@ python -I research/ground_truth/scripts/ai/sync_seed.py            # --check onl
 | `catalog.py` | Drafts the castle move catalog. Options that request the same chain are merged; the castle's fixed SpEffects (200050, never 3711500) prune the chain text. Triggers, families and wiki candidates are written in the script with their evidence, as proposals. |
 | `catalog_review.py` | A local review page (standard library only, 127.0.0.1): ✅ / ❌ buttons and a reason box per row, written straight into the 审核 / 理由 cells of the sheet's `.md` and the review columns of its CSV. Sheets: `catalog` (default), `classification` (with a confidence filter), `decisions` (with a strength-of-evidence filter) and `content`. Open it in VS Code with Simple Browser. |
 | `classify.py` | Sorts every TAE entry into the completeness classes (CLAUDE.md section 31), with a confidence and the evidence. The entries the owner reviews (castle AI can request them, attack or projectile) go to `engine/genichiro_castle_tae_classes.csv` and the review sheet `semantic/genichiro_classification.md`; the others to `deferred/`. Also writes the gap report `semantic/genichiro_gap_report.md`. |
+| `attack_windows.py` | Every attack, projectile and 危 window of c7100 and c7110 with its time inside the animation and, for attacks, its hit number as `catalog.py` counts hits. Used by the V4 failure attribution to tell which animation was hitting when Wolf lost HP. |
 | `chain_check.py` | Checks the catalog's AI chains against the order of animations in every castle recording. Each chain becomes, per phase, its possible first and last animations and every allowed step. Each observed transition is then classed: a chain step, a visible interrupt, an option start (Act, Kengeki after a visible clash, Parry, Damaged), or a mismatch. Also lists cut chains, phase openers, what follows 8604 / 8704, and the chain steps never recorded. |
 | `sync_seed.py` | Writes the owner's step-8 decisions into the product seed: rewrites only `genichiro-ashina` in `backend/seed/bosses.json` from the moveset and the approved content review. Refuses while any content row is undecided. Slugs are kept so attempts keep their moves; a dropped move needs a migration. |
 | `content_review.py` | The checklist of the product's Genichiro move texts: one row per proposed change of one field of one move (with its evidence and a bilingual draft), one keep row per move without a proposal, and the move types of the new moves. Review sheet `content` in `catalog_review.py`. |

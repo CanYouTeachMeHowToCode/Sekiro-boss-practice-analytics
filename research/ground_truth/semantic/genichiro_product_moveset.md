@@ -6,6 +6,8 @@
 - 目录里的 63 个招式全部对上了产品招式;P3-30(完美弹开后的突刺 3080)同时属于两个招式。
 - 新增招式的 slug 是我起的,你可以改。新增招式和改了含义的招式,描述、预兆、应对方法要另外定(wiki 没有的不编)。
 
+**版本 2(2026-11-12)**:按你批准的动作 → 招式对应表(`genichiro_v2_actions.md`),加了第 27 个招式"普通射箭攻击 / Arrow Shot"(远程,一、二、三阶段),跳起突刺改名为"跃起后危·突刺 / Leaping Perilous Thrust"。版本 1 的这张表存档在 `archive/v1/`。这两处是直接改的,不是 `moveset.py` 重新生成的。
+
 ## 招式
 
 | slug | 中文名 | 英文名 | 阶段 | 改动 | 目录条目 | 决策表行 | 证据 | 备注 |
@@ -19,19 +21,19 @@
 | `guard-breaking-shot` | 破防射击 | Guard Breaking Shot | 1、2 | 不变 | P12-19 | A07 | 已运行观察 | — |
 | `hawk-shot` | 鹰射（后撤/四连射击） | Hawk Shot (Step-back/4 Arrow Shot) | 1、2 | 改名 | P12-23 | A08 | 已运行观察 | — |
 | `two-hit-combo` | 横砍踢击 | Slash into Back Kick | 1、2 | 改名 | P12-02 | A09 | 已运行观察 | — |
-| `deaths-thrust` | 跳起突刺 | Sword Dive Thrust Attack | 3 | 改名 | P3-06 | A10 | 已运行观察 | — |
+| `deaths-thrust` | 跃起后危·突刺 | Leaping Perilous Thrust | 3 | 改名 | P3-06 | A10 | 已运行观察 | 版本 2 改名(2026-11-11):原来叫跳起突刺 / Sword Dive Thrust Attack |
 | `perilous-grab-phase-3` | 危·投技（第三阶段） | Perilous Grab (Phase 3) | 3 | 不变 | P3-07 | A11 | 已运行观察 | — |
 | `lightning-of-tomoe-slash` | 巴之雷·斩击 | Lightning of Tomoe Slash | 3 | 不变 | P3-21 | A12 | 已运行观察 | — |
 | `lightning-of-tomoe-smash` | 巴之雷·砸击 | Lightning of Tomoe Smash | 3 | 不变 | P3-22 P3-14 | A13 | 已运行观察 | — |
 | `perilous-attack` | 倒地后跳刺危攻击 | Perilous recovery jump-back thrust attack | 1、2 | 改名 | P12-18 | A14 B17 | 已运行观察 | — |
-| `perilous-thrust` | 危·突刺 | Perilous Thrust | 1、2、3 | 加阶段 3 | P12-26 P3-25 | A15 B20 | 部分运行观察 | — |
+| `perilous-thrust` | 危·突刺 | Perilous Thrust | 1、2、3 | 加阶段 3 | P12-26 P3-25 | A15 B20 | 已运行观察 | 证据 2026-10-16 更新:P3-25 的 3062 在第 4 段开发者菜单录像(2026-10-16-castle-4)里录到 3 次 |
 | `perilous-sweep` | 危·下段横扫（后可接射击） | Perilous Sweep (Follow-up Shot Available) | 1、2、3 | 改名；加阶段 3 | P12-06 P3-05 P3-27 | A16 B06 B22 | 部分运行观察 | — |
 | `advance` | 二连横砍 | Two-Hit Slash | 1、2、3 | 改名；加阶段 3 | P12-03 P3-02 | A17 B03 | 已运行观察 | — |
 | `chasing-slice` | 追击二连横砍 | Chasing Two-Hit Slash | 1、2、3 | 改名；加阶段 3 | P12-05 P3-04 | A18 B05 | 已运行观察 | — |
-| `receding-tide` | 退潮（射箭+居合斩） | Receding Tide (Bow into Iaijutsu) | 1、2、3 | 改名；加阶段 3；并入 iaijutsu | P12-15 P12-16 P3-15 P3-16 | A20 A19 B15 B16 | 部分运行观察 | — |
+| `receding-tide` | 退潮（射箭+居合斩/射两箭） | Receding Tide (Bow into Iaijutsu / Two Arrows) | 1、2、3 | 改名；加阶段 3；并入 iaijutsu | P12-15 P12-16 P3-15 P3-16 | A20 A19 B15 B16 | 部分运行观察 | — |
 | `floating-passage-phase-3` | 绝技·飞渡浮舟（第三阶段） | Floating Passage (Phase 3) | 3 | 不变 | P3-18 P3-20 P3-26 P3-28 P3-30 P3-31 P3-13 | A21 B14 | 部分运行观察 | 描述里写明:3040 打完第 4 刀时你在 11 米外改射两箭(3018);5.5–11 米时改出死亡突刺(见 deaths-thrust) |
 | `lightning-of-tomoe-shot` | 巴之雷·射击 | Lightning of Tomoe Shot | 3 | 不变 | P3-19 P3-08 | A22 | 已运行观察 | — |
-| `slash-combo` | 连斩（肘击横砍收尾 / 危·突刺收尾） | Slash Combo (Elbow and Slash Finish / Perilous Thrust Finish) | 1、2、3 | 新增 | P12-01 P3-01 | B01 | 部分运行观察 | — |
+| `slash-combo` | 连斩（肘击横砍收尾 / 危·突刺收尾 / 变招） | Slash Combo (Elbow and Slash Finish / Perilous Thrust Finish / Cut Short) | 1、2、3 | 新增 | P12-01 P3-01 | B01 | 部分运行观察 | — |
 | `horizontal-slash` | 横砍 | Horizontal Slash | 1、2、3 | 新增 | P12-04 P3-03 P12-13 P3-12 | B04 B12 | 已运行观察 | — |
 | `backstep-shot` | 后撤射击 | Backstep Shot | 1、2 | 新增 | P12-07 P12-08 | B08 | 已运行观察 | — |
 | `counter-slash` | 拼刀反斩 | Counter Slash | 1、2、3 | 新增 | P12-24 P3-23 P12-25 P3-24 P12-31 P3-29 | B18 B19 B24 | 部分运行观察 | — |
@@ -42,5 +44,6 @@
 | slug | 并入 | 原因 |
 |---|---|---|
 | `iaijutsu` | `receding-tide` | A19 你判为和 A20 重复:居合斩是退潮的后半段,并入退潮 |
+| `arrow-shot` | 普通射箭攻击 | Arrow Shot | 1、2、3 | 新增(版本 2) | — | V2 | 已运行观察 | 版本 2 新增(你在 2026-11-11 批准、2026-11-12 定类型):被别的招式前后附带的普通的箭打中时算这一招,按动画归类:c7100 3011 3013 3014 3017 3018 3031 3034 3036;c7110 3012 3013 3014 3018 3031 3034 3036,见 genichiro_v2_actions.md。没有自己的目录条目;单独的射击招式(后撤射击、破防射击、鹰射)不算在内 |
 
 已有练习记录指向这些招式的,迁移到并入的招式(CLAUDE.md 第 45 节)。数据库对招式删除有约束,有记录指向时删不掉,所以迁移必须在删除之前。
