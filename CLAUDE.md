@@ -1318,7 +1318,7 @@ Use:
 
 At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
 
-Milestone 3 also checks that an upload is a castle Genichiro fight (not another boss, another game or an unrelated video) and is tested on one recording at another resolution (owner decisions, 2026-10-19).
+Milestone 3 also checks that an upload is a castle Genichiro fight (not another boss, another game or an unrelated video) and is tested on one recording at another resolution (owner decisions, 2026-10-19). Reflection-of-Strength Genichiro (named 心中的弦一郎 in every phase, with somewhat different moves) is not castle Genichiro and is rejected. Resurrection-mod uploads are not detected for now: the upload page states that only vanilla Sekiro is supported (owner decisions, 2026-11-13).
 
 Every stage should produce useful intermediate tooling.
 
