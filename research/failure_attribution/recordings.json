@@ -1,5 +1,5 @@
 {
-  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect. After M2 passed (2026-10-25) its nine test recordings became development recordings; version 2 is tested on new ones. The version-2 test recordings are 测试录像13–21 (2026-11-11-castle-1 to -9), registered after version 2 was frozen at 6c590d1 (2026-11-12).",
+  "_note": "Recordings used by the failure attribution work. Videos stay local, in local.config's recordings_dir; only these entries are committed. overlay: true means the dev-menu overlay is on screen (its animation lines are masked for the pipeline). set: development for the recordings V4 M1 was built and tuned on, test for the M2 recordings held out until the pipeline is frozen (reliability.py). bell_demon and charmless: the Bell Demon and the surrendered Kuro's Charm (an imperfect deflect then costs HP too); every recording so far uses both (owner, 2026-10-22). Every HP loss counts as a failure, whether from a hit or from a guard that was not a perfect deflect. After M2 passed (2026-10-25) its nine test recordings became development recordings; version 2 is tested on new ones. The version-2 test recordings are 测试录像13–21 (2026-11-11-castle-1 to -9), registered after version 2 was frozen at 6c590d1 (2026-11-12). set scenario: the owner's clips for one condition each (game UI language, resolution, HP-bar length), not used for tuning or as references; ui gives the game's interface language where it is not Simplified Chinese.",
   "recordings": [
     {
       "id": "2026-10-09-castle",
@@ -302,6 +302,28 @@
       "overlay": false,
       "use": "version-2 test: fight without the overlay, labelled blind by the owner",
       "set": "test"
+    },
+    {
+      "id": "2026-11-13-castle-1",
+      "file_name": "不同情景测试录像/英文弦一郎.mp4",
+      "sha256": "24c19397a30064702ceb8b604a85ec2c4c349bbd3e88b426d4899dcbbb5e9a79",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "UI check: castle fight with the game in English; should be accepted and analysed (owner, 2026-11-13). Holds a successful lightning reversal that cost HP at 3:21",
+      "set": "scenario",
+      "ui": "en"
+    },
+    {
+      "id": "2026-11-13-castle-2",
+      "file_name": "不同情景测试录像/繁体中文弦一郎.mp4",
+      "sha256": "edbad752b8e293cad7dab613bf77d2b1cfe0591d5f0b0d90c7939380b6d6ba32",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "UI check: castle fight with the game in Traditional Chinese; should be accepted and analysed (owner, 2026-11-13)",
+      "set": "scenario",
+      "ui": "zh-Hant"
     }
   ]
 }

@@ -23,7 +23,7 @@ a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the f
 matches the current proposal is shown as needing another look. The side panel counts the failures per move, using the
 owner's corrections and merges.
 
-A test recording of the reliability validation (recordings.json "set": "test", without the overlay) gets the blind
+A test recording of the reliability validation (recordings.json "set": "test" or "scenario", without the overlay) gets the blind
 招式 view instead: the page is never sent the system's answer, its candidates or its scores, so the owner's labels are
 not pulled towards them. Each failure the pipeline reported, and each failure event the owner added as missed that
 no reported failure holds, is a card with its events, thumbnail and player; the owner picks the move from the list
@@ -97,7 +97,7 @@ def truth_file(rec):
 
 
 def blind(rec):
-    return rec.get("set") == "test" and not rec.get("overlay")
+    return rec.get("set") in ("test", "scenario") and not rec.get("overlay")
 
 
 def read_csv(path):
@@ -384,11 +384,13 @@ def progress_page():
         return f"完成，用了 {mins(used)}" if done else \
             f"{step} {frac:.0%} · 已用 {mins(used)}" + (f" · 预计还要 {mins(left)}" if left is not None else "")
 
-    # the test batch is listed whole, waiting recordings too, with a bar for the batch weighted by file size
+    # the latest batch (the set of the last registered recording) is listed whole, waiting recordings too, with a bar
+    # for the batch weighted by file size
     batch, rows = [], []
+    batch_set = list(recordings().values())[-1].get("set")
     for rec_id, rec in recordings().items():
         p = progress(work_dir(rec_id))
-        if rec.get("set") == "test":
+        if rec.get("set") == batch_set:
             try:
                 size = video_path(rec).stat().st_size
             except OSError:
