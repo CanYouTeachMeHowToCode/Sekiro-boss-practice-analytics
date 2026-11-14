@@ -23,7 +23,11 @@ WORK = FA / "work"
 
 def recordings() -> dict:
     data = json.loads((FA / "recordings.json").read_text(encoding="utf-8"))
-    return {r["id"]: r for r in data["recordings"]}
+    out = {r["id"]: r for r in data["recordings"]}
+    local = FA / "recordings.local.json"         # local, gitignored: generated copies such as sim_resolution.py's
+    if local.exists():
+        out.update({r["id"]: r for r in json.loads(local.read_text(encoding="utf-8"))["recordings"]})
+    return out
 
 
 def video_path(rec: dict) -> Path:
@@ -97,6 +101,6 @@ def observation_dir(rec: dict):
 
 
 def annotation_dir(rec: dict) -> Path:
-    d = GT / "annotations" / rec.get("ruleset", "vanilla") / "genichiro" / rec["id"]
+    d = GT / "annotations" / rec.get("ruleset", "vanilla") / "genichiro" / rec.get("answers_of", rec["id"])
     d.mkdir(parents=True, exist_ok=True)
     return d
