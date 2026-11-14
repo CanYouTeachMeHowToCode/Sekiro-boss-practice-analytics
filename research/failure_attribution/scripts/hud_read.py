@@ -17,6 +17,11 @@ Geometry, measured at 2560×1440 and scaled to other resolutions:
                  rows.
 Colours (OpenCV HSV, H 0–179):
     HP           red: H <= 12 or >= 168, S >= 70, V >= 80; just lost (pale): S <= 45, V >= 120; empty track: V <= 70.
+                 At another size than 2560×1440 (the cache keeps the scale) the ~2 px end cap is resampled into the
+                 strip's last two columns and blends into one of them (1080p: V ≈ 110 next to ≈ 155), so only the
+                 brighter of the two has to pass; and the video's colour at half resolution (4:2:0) tints the thin cap
+                 with the red bar beside it (S 39–65 at 1080p against 3–5 at 1440p), so its saturation may reach
+                 CAP_S_SCALED. At 2560×1440 the test is unchanged.
                  The HUD is on screen when the bar's right end cap (the strip's last two columns: light grey, S <= 30,
                  V >= 120, at least 40 brighter than the track just left of it) shows, or when every column reads as
                  red, pale or dark track on a screen that is not black. The empty track is see-through, so with little
@@ -55,6 +60,7 @@ HP_ROWS, HP_X0, HP_X1 = (1304, 1314), 148, 980
 PO_ROWS, PO_CX, PO_HALF, PIN = (1238, 1247), 1280, 290, 6
 LINE_ROWS, ABOVE_ROWS, LINE_IN, LINE_OUT = (1243, 1250), (1232, 1239), 340, 450
 BOSS_ROWS, BOSS_X0, BOSS_X1 = (124, 131), 151, 695
+CAP_S_SCALED = 80
 
 
 def columns(frame, rows, x0, x1):
@@ -88,8 +94,9 @@ def cache(video, out, step):
         n += 1
         if n % 600 == 0:
             report(Path(out).parent, "hud_cache", n / total)
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     np.savez_compressed(out, frame=np.array(frames), fps=fps, hp=np.stack(hp), posture=np.stack(po), line=np.stack(line),
-                        boss=np.stack(boss))
+                        boss=np.stack(boss), scale=width / BASE_W)
     print(f"{n} frames, {len(frames)} cached from {video}")
 
 
@@ -106,7 +113,7 @@ def run_from(mask, start, max_gap=4):
     return end - start
 
 
-def read_hp(cols):
+def read_hp(cols, scale=1.0):
     h, s, v = (cols[:, i].astype(int) for i in range(3))
     red = ((h <= 12) | (h >= 168)) & (s >= 70) & (v >= 80)
     pale = (s <= 45) & (v >= 120)
@@ -114,7 +121,11 @@ def read_hp(cols):
     n = red.size
     hp = run_from(red, 0)
     lost = run_from(pale, hp) if hp < n else 0
-    cap = (s[-2:] <= 30).all() and (v[-2:] >= 120).all() and v[-2:].mean() - v[-8:-3].mean() >= 40
+    if scale == 1.0:
+        cap = (s[-2:] <= 30).all() and (v[-2:] >= 120).all() and v[-2:].mean() - v[-8:-3].mean() >= 40
+    else:   # scaled to 832 columns, the ~2 px cap blends into its neighbour: the brighter of the two columns must pass
+        c = int(np.argmax(v[-2:])) - 2
+        cap = s[c] <= CAP_S_SCALED and v[c] >= 120 and v[c] - v[-8:-3].mean() >= 40
     hud = bool(cap) or ((red | pale | dark).mean() >= 0.9 and v.mean() > 25)
     return hud, hp / n, lost / n
 
@@ -152,12 +163,13 @@ def series(cache_file, out):
     if "line" not in d or "boss" not in d:
         sys.exit(f"{cache_file} has no break-line or boss HP strip: rebuild it (hud_pipeline.py <id> --recache)")
     fps = float(d["fps"])
+    scale = float(d["scale"]) if "scale" in d else 1.0        # caches from before 2026-11-14 are all 2560×1440
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["frame", "time_s", "hud", "hp", "hp_lost", "posture_bar", "posture", "break_line", "boss_bar", "boss_hp",
                     "boss_lost", "boss_v"])
         for n, hp_cols, po_cols, line_cols, boss_cols in zip(d["frame"], d["hp"], d["posture"], d["line"], d["boss"]):
-            hud, hp, lost = read_hp(hp_cols)
+            hud, hp, lost = read_hp(hp_cols, scale)
             bar, posture = read_posture(po_cols) if hud else (False, 0.0)
             line = read_line(line_cols) if hud else 0.0
             boss_bar, boss_hp, boss_lost = read_boss(boss_cols)

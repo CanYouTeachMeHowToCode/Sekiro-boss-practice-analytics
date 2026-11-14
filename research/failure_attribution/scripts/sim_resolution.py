@@ -1,8 +1,8 @@
 """Simulated resolutions (V4 M3): the frozen analyzer on labelled test recordings scaled down to 1080p and 720p.
 
 Usage: python -I sim_resolution.py make        scale the recordings and register the copies
-       python -I sim_resolution.py run         hud_pipeline.py on every copy, then reliability.py report --set simulation
-       python -I sim_resolution.py compare     the original against each copy, failure by failure
+       python -I sim_resolution.py run         hud_pipeline.py on every copy, then compare
+       python -I sim_resolution.py compare     every size against the owner's answers of the original (see compare())
 
 Before the analyzer is packaged for the upload worker, this shows whether it holds up at the resolutions M3 accepts
 (16:9, 720p to 4K): the HUD positions are scaled from 2560×1440, the 死 mask was made at 1440p, and the boss crops are
@@ -57,26 +57,71 @@ def run():
     ids = [r for r, rec in recordings().items() if rec.get("set") == "simulation"]
     for rec_id in ids:
         subprocess.run([sys.executable, "-I", str(HERE / "hud_pipeline.py"), rec_id], check=True)
-    subprocess.run([sys.executable, "-I", str(HERE / "reliability.py"), "report", "--set", "simulation"], check=True)
+    compare()
 
 
-def compare():
-    """Each original failure against the copies: which events were found, and the move answer."""
-    def rows(rec_id):
-        return list(csv.DictReader(open(work_dir(rec_id) / "failure_predictions.csv", encoding="utf-8")))
-    for src in SOURCES:
-        print(f"== {src}")
-        base = rows(src)
-        for w, h in SIZES:
-            sim = rows(f"{src}-{h}p")
-            same = sum(1 for a, b in zip(base, sim) if (a["move"], a["certain"]) == (b["move"], b["certain"]))
-            print(f"  {h}p: {len(sim)} failures (original {len(base)}); same move and sureness on {same}")
-            for b in sim:
-                near = min(base, key=lambda a: abs(float(a["time_s"]) - float(b["time_s"])), default=None)
-                if near is None or abs(float(near["time_s"]) - float(b["time_s"])) > 0.5 \
-                        or (near["move"], near["certain"]) != (b["move"], b["certain"]):
-                    print(f"    {float(b['time_s']):7.1f}s {b['type']:13s} {b['move']} sure={b['certain']}  original: "
-                          + (f"{float(near['time_s']):.1f}s {near['move']} sure={near['certain']}" if near else "-"))
+def events_of(keys):
+    """(type, seconds) of event keys such as damage@28.2 or missed:damage@12.34."""
+    return [(k.split("@")[0].split(":")[-1], float(k.split("@")[1])) for k in keys]
+
+
+def compare(tol=0.35):
+    """Every size of every source against the owner's answers of the original recording, matched by time.
+
+    reliability.py matches the owner's review to the detected events by key, which only works on the recording the
+    owner reviewed: on a copy, an event detected a little earlier or not at all simply falls out of the answers. Here the
+    answers are the original's real failures (Recording.truth), and a reported failure of a copy is the same failure when
+    one of its events has the type and, within tol seconds, the time of one of the answer's events."""
+    from reliability import Recording
+    recs = recordings()
+    answers = {src: Recording(src, recs[src]).truth for src in SOURCES}
+    lines, misses = [], []
+    for label, suffix in [("1440p", "")] + [(f"{h}p", f"-{h}p") for _, h in SIZES]:
+        tot = dict(truth=0, found=0, reported=0, real=0, merged=0, split=0, n=0, sure=0, sure_right=0, top1=0, top3=0)
+        for src in SOURCES:
+            truth = answers[src]
+            preds = []
+            for r in csv.DictReader(open(work_dir(src + suffix) / "failure_predictions.csv", encoding="utf-8")):
+                preds.append({"t": float(r["time_s"]), "events": events_of(r["events"].split()), "sure": r["certain"] == "1",
+                              "top": [c.rsplit(":", 1)[0] for c in r["candidates"].split()]})
+            tev = [events_of(t["events"]) for t in truth]
+            links = [[i for i, te in enumerate(tev) if any(a == b and abs(x - y) <= tol for a, x in p["events"] for b, y in te)]
+                     for p in preds]
+            by_truth = {}
+            for j, ls in enumerate(links):
+                for i in ls:
+                    by_truth.setdefault(i, []).append(j)
+            tot["truth"] += len(truth)
+            tot["found"] += len(by_truth)
+            tot["reported"] += len(preds)
+            tot["real"] += sum(1 for ls in links if ls)
+            tot["merged"] += sum(1 for ls in links if len(ls) > 1)
+            tot["split"] += sum(1 for js in by_truth.values() if len(js) > 1)
+            for i, t in enumerate(truth):
+                js = by_truth.get(i, [])
+                if not js:
+                    misses.append(f"{label} {src} {t['t']:.1f}s missed ({t['row']['move']})")
+                    continue
+                if len(js) != 1 or len(links[js[0]]) != 1 or not t["moves"]:
+                    continue
+                pr = preds[js[0]]
+                tot["n"] += 1
+                tot["sure"] += pr["sure"]
+                tot["sure_right"] += pr["sure"] and bool(set(pr["top"][:1]) & t["moves"])
+                tot["top1"] += bool(set(pr["top"][:1]) & t["moves"])
+                tot["top3"] += bool(set(pr["top"][:3]) & t["moves"])
+            for j, ls in enumerate(links):
+                if not ls:
+                    misses.append(f"{label} {src} {preds[j]['t']:.1f}s reported, no such failure")
+        pc = lambda a, b: f"{a}/{b} = {a / b:.0%}" if b else "-"  # noqa: E731
+        lines.append(f"| {label} | {pc(tot['found'], tot['truth'])} | {pc(tot['real'], tot['reported'])} | {tot['merged']} | "
+                     f"{tot['split']} | {pc(tot['sure'], tot['n'])} | {pc(tot['sure_right'], tot['sure'])} | "
+                     f"{pc(tot['top1'], tot['n'])} | {pc(tot['top3'], tot['n'])} |")
+    print("| size | failures found | reported are real | merged | split | sure | sure right | first right | in top 3 |")
+    print("|---|---|---|---|---|---|---|---|---|")
+    print("\n".join(lines))
+    print()
+    print("\n".join(misses))
 
 
 if __name__ == "__main__":
