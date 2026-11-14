@@ -42,7 +42,7 @@ def work_dir(rec_id: str) -> Path:
 
 
 # the steps of hud_pipeline.py, in order: id, name shown, share of the run time
-STEPS = [("hud_cache", "读 HUD", 0.40), ("events", "找失败事件", 0.02), ("boss_track", "跟踪 Boss", 0.45),
+STEPS = [("hud_cache", "读 HUD", 0.40), ("events", "找失败事件", 0.02), ("reversal", "找雷反", 0.04), ("boss_track", "跟踪 Boss", 0.41),
          ("features", "提取特征", 0.04), ("moves", "认招式", 0.03), ("thumbs", "缩略图", 0.06)]
 
 
