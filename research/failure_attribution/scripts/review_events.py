@@ -74,7 +74,10 @@ def moves_file(rec):
 
 
 def file_label(rec):
-    """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs."""
+    """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs; a generated
+    copy (sim_resolution.py) is named after its original and its size (测试录像13 · 1080p)."""
+    if rec.get("answers_of"):
+        return f"{Path(recordings()[rec['answers_of']]['file_name']).stem} · {rec['id'].rsplit('-', 1)[1]}"
     return Path(rec["file_name"]).stem
 
 
@@ -137,7 +140,7 @@ def page_data():
     out = []
     for rec_id, rec in recordings().items():
         events_csv = work_dir(rec_id) / "events.csv"
-        if not events_csv.exists():
+        if not events_csv.exists() or rec.get("answers_of"):     # a generated copy: its answers are the original's
             continue
         events = drop_repeats(list(csv.DictReader(open(events_csv, encoding="utf-8"))))
         for e in events:
@@ -415,7 +418,9 @@ def progress_page():
                 head += f" · 预计还要 {mins(used * (1 - overall) / overall)}（按目前的速度和剩下的文件大小估算）"
         else:
             head = "还没开始"
-        body += "<h2>测试录像（只跑一次，跑完后你盲审）</h2>" + \
+        title = {"test": "测试录像（只跑一次，跑完后你盲审）", "scenario": "情景录像（跑完后你盲审）",
+                 "simulation": "模拟分辨率（缩小的测试录像，用你原来的答案打分，不用你审）"}.get(batch_set, "最新一批录像")
+        body += f"<h2>{title}</h2>" + \
             row("整批", overall, head).replace('class="rec"', 'class="rec total"', 1)
         for rec_id, rec, size, p in batch:
             name = f"{file_label(rec)}<br><small>{rec_id}</small>"
