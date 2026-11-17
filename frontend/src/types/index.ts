@@ -162,3 +162,63 @@ export interface Credentials {
   username: string;
   password: string;
 }
+
+/** Where an uploaded recording is: checked, then analysed (or rejected), see backend app/worker/jobs.py. */
+export type RecordingStatus = "uploaded" | "checking" | "rejected" | "queued" | "processing" | "done" | "failed";
+
+export interface Recording {
+  id: string;
+  boss_id: string;
+  filename: string;
+  status: RecordingStatus;
+  /** Why it was rejected, as a code the frontend translates. */
+  reject_code: string | null;
+  /** 0 to 1 while it is being analysed. */
+  progress: number;
+  size_bytes: number;
+  /** Known once the worker has checked the video. */
+  duration_s: number | null;
+  width: number | null;
+  height: number | null;
+  /** Below the recommended 1080p: analysed, but fewer failures get a sure move. */
+  low_resolution: boolean;
+  created_at: string;
+  processed_at: string | null;
+}
+
+export type RecordingFailureType = "damage" | "posture_break" | "death";
+
+export interface MoveCandidate {
+  move_id: string;
+  score: number;
+}
+
+export interface RecordingFailure {
+  id: string;
+  time_s: number;
+  type: RecordingFailureType;
+  phase: number;
+  /** The move is named only when the system is sure of it; otherwise the candidates say what it might be. */
+  sure: boolean;
+  move_id: string | null;
+  candidates: MoveCandidate[];
+  events: { type: RecordingFailureType; time_s: number }[];
+  has_clip: boolean;
+}
+
+/** Failure counts per move from the sure answers: not success rates, how often each move came is unknown. */
+export interface MoveFailureCount {
+  move_id: string;
+  damage: number;
+  posture_break: number;
+  death: number;
+  total: number;
+}
+
+export interface RecordingReport {
+  recording: Recording;
+  failures: RecordingFailure[];
+  by_move: MoveFailureCount[];
+  /** Failures whose move the system is not sure of. */
+  uncertain: number;
+}

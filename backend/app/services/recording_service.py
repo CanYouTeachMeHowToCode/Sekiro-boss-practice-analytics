@@ -56,6 +56,7 @@ def max_upload_bytes() -> int:
 def _to_schema(row: db.Recording) -> Recording:
     return Recording(
         id=str(row.id),
+        boss_id=row.boss.slug,
         filename=row.original_filename,
         status=RecordingStatus(row.status),
         reject_code=row.reject_code,
@@ -134,6 +135,7 @@ def list_recordings(session: Session, user_id: int) -> list[Recording]:
     rows = session.scalars(
         select(db.Recording)
         .where(db.Recording.user_id == user_id)
+        .options(selectinload(db.Recording.boss))
         .order_by(db.Recording.created_at.desc(), db.Recording.id.desc())
     )
     return [_to_schema(row) for row in rows]

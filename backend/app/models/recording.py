@@ -22,6 +22,8 @@ class FailureType(str, Enum):
 
 class Recording(BaseModel):
     id: str
+    # the boss fought in the recording (castle Genichiro in M3), whose moveset names the report's moves
+    boss_id: str
     filename: str
     status: RecordingStatus
     # why it was rejected, as a code the frontend translates

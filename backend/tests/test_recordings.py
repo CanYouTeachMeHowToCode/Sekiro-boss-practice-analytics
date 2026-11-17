@@ -64,6 +64,7 @@ def test_upload_streams_the_video_to_disk_and_lists_it_only_for_its_owner(client
     assert resp.status_code == 201, resp.text
     rec = resp.json()
     assert rec["status"] == "uploaded" and rec["filename"] == "fight.mp4" and rec["size_bytes"] == len(VIDEO)
+    assert rec["boss_id"] == "genichiro-ashina"
 
     row = seeded_session.get(db.Recording, int(rec["id"]))
     assert (recordings_dir / row.storage_path).read_bytes() == VIDEO

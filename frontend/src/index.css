@@ -484,3 +484,158 @@ a {
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }
+
+.btn-small {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.notice {
+  border: 1px solid var(--color-border);
+  border-left: 3px solid #d9a441;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+}
+
+.recording-list {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recording-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+}
+
+.recording-main {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.recording-name,
+.recording-title {
+  overflow-wrap: anywhere;
+}
+
+.recording-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.recording-status {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.recording-item.status-done .recording-status {
+  color: var(--color-victory);
+}
+
+.recording-item.status-rejected .recording-status,
+.recording-item.status-failed .recording-status {
+  color: var(--color-failed);
+}
+
+.recording-details {
+  margin-bottom: 1.5rem;
+}
+
+.upload-requirements ul {
+  padding-left: 1.25rem;
+}
+
+.upload-requirements li {
+  margin-bottom: 0.35rem;
+}
+
+.upload-form {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: var(--color-surface);
+  display: grid;
+  gap: 1rem;
+}
+
+.upload-form input[type="file"] {
+  color: var(--color-text);
+  max-width: 100%;
+}
+
+.upload-progress p,
+.recording-progress p {
+  margin: 0.35rem 0 0;
+}
+
+.upload-progress progress,
+.recording-progress progress {
+  width: 100%;
+}
+
+.failure-list ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.failure-item {
+  border-left: 3px solid var(--color-failed);
+  border-radius: 4px;
+  padding: 0.6rem 0.9rem;
+  background: var(--color-surface);
+}
+
+.failure-item.unsure {
+  border-left-color: var(--color-text-muted);
+}
+
+.failure-item p {
+  margin: 0 0 0.4rem;
+}
+
+.failure-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.failure-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.failure-move {
+  font-weight: 600;
+}
+
+.failure-item.unsure .failure-move {
+  font-weight: normal;
+}
+
+.failure-events {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.failure-clip {
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+  border-radius: 4px;
+  background: #000;
+}

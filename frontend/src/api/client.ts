@@ -10,7 +10,7 @@ export class ApiError extends Error {
 
 export const UNAUTHORIZED_EVENT = "api:unauthorized";
 
-function getBaseUrl(): string {
+export function getBaseUrl(): string {
   return import.meta.env.VITE_API_BASE_URL ?? "/api";
 }
 

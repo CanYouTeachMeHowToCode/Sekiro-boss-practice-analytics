@@ -21,6 +21,7 @@ export default function NavBar() {
           {t("nav.brand")}
         </Link>
         <Link to="/bosses">{t("nav.bosses")}</Link>
+        <Link to="/recordings">{t("nav.recordings")}</Link>
       </nav>
       <div className="nav-account">
         <button
