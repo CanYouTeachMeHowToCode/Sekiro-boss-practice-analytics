@@ -1,0 +1,10 @@
+key,type,time_s,verdict,note,updated
+posture_break@13.8,posture_break,13.769,correct,,2026-11-17T02:20:11
+damage@21.3,damage,21.336,correct,,2026-11-17T02:20:17
+damage@48.1,damage,48.140,correct,,2026-11-17T02:20:25
+posture_break@48.2,posture_break,48.240,correct,,2026-11-17T02:20:28
+damage@48.7,damage,48.740,correct,,2026-11-17T02:20:30
+deathblow@54.0,deathblow,54.008,correct,,2026-11-17T02:20:32
+damage@69.6,damage,69.577,wrong,没扣血,2026-11-17T02:21:18
+deathblow@92.0,deathblow,92.047,correct,,2026-11-17T02:21:24
+deathblow@140.1,deathblow,140.120,correct,,2026-11-17T02:21:37
