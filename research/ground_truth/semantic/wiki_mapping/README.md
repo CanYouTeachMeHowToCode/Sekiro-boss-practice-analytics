@@ -24,14 +24,14 @@ For every boss in the product, each row lines up a product move with the Fextral
 | Boss | Product moves | Rows | same | partial | split | conflict | unclear | only Fextralife | only Fandom | engine only | Product moves matched 1:1 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | corrupted-monk | 7 | 9 | 2 | 1 | 2 | 0 | 1 | 0 | 3 | 0 | 2/7 |
-| genichiro-ashina | 26 | 26 | 9 | 3 | 1 | 0 | 0 | 0 | 8 | 5 | 9/26 |
+| genichiro-ashina | 27 | 27 | 9 | 3 | 1 | 0 | 0 | 0 | 8 | 6 | 9/27 |
 | great-shinobi-owl | 9 | 12 | 7 | 1 | 1 | 0 | 0 | 0 | 3 | 0 | 6/9 |
 | guardian-ape | 11 | 14 | 9 | 0 | 2 | 0 | 1 | 0 | 2 | 0 | 8/11 |
 | isshin-sword-saint | 23 | 25 | 11 | 4 | 0 | 1 | 4 | 2 | 3 | 0 | 11/23 |
 | lady-butterfly | 8 | 10 | 4 | 3 | 2 | 0 | 0 | 0 | 1 | 0 | 4/8 |
 | owl-father | 16 | 16 | 9 | 3 | 2 | 0 | 1 | 0 | 1 | 0 | 9/16 |
 | true-corrupted-monk | 10 | 12 | 3 | 2 | 2 | 0 | 1 | 1 | 3 | 0 | 3/10 |
-| **Total** | **110** | **124** | **54** | **17** | **12** | **1** | **8** | **3** | **24** | **5** | **52/110** |
+| **Total** | **111** | **125** | **54** | **17** | **12** | **1** | **8** | **3** | **24** | **6** | **52/111** |
 
 ## corrupted-monk
 
@@ -88,6 +88,7 @@ For every boss in the product, each row lines up a product move with the Fextral
 | `backstep-shot` | — | — | `engine_only` | `owner_confirmed` | Found in the castle AI and recordings (V3.1); neither wiki lists it. |
 | `counter-slash` | — | — | `engine_only` | `owner_confirmed` | Found in the castle AI and recordings (V3.1); neither wiki lists it. |
 | `deflect-counter-slash` | — | — | `engine_only` | `owner_confirmed` | Found in the castle AI and recordings (V3.1); neither wiki lists it. |
+| `arrow-shot` | — | — | `engine_only` | `owner_confirmed` | Version 2 (owner, 2026-11-11): a hit by a plain arrow before or after another move counts here. Both wikis describe these arrows inside Closing Tide, Receding Tide, Lightning of Tomoe and Floating Passage, not as a move of their own. |
 
 ## great-shinobi-owl
 

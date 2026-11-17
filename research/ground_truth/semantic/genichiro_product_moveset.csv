@@ -8,7 +8,7 @@ floating-passage,绝技·飞渡浮舟,Floating Passage,1、2,P12-21 P12-22 P12-2
 guard-breaking-shot,破防射击,Guard Breaking Shot,1、2,P12-19,A07,已运行观察,不变,
 hawk-shot,鹰射（后撤/四连射击）,Hawk Shot (Step-back/4 Arrow Shot),1、2,P12-23,A08,已运行观察,改名,
 two-hit-combo,横砍踢击,Slash into Back Kick,1、2,P12-02,A09,已运行观察,改名,
-deaths-thrust,跳起突刺,Sword Dive Thrust Attack,3,P3-06,A10,已运行观察,改名,
+deaths-thrust,跃起后危·突刺,Leaping Perilous Thrust,3,P3-06,A10,已运行观察,改名,"版本 2 改名(你定,2026-11-11):原来叫跳起突刺 / Sword Dive Thrust Attack;要识破的突刺,你用道具(比如葫芦)会引出这一招,所以不并进危·突刺"
 perilous-grab-phase-3,危·投技（第三阶段）,Perilous Grab (Phase 3),3,P3-07,A11,已运行观察,不变,
 lightning-of-tomoe-slash,巴之雷·斩击,Lightning of Tomoe Slash,3,P3-21,A12,已运行观察,不变,
 lightning-of-tomoe-smash,巴之雷·砸击,Lightning of Tomoe Smash,3,P3-22 P3-14,A13,已运行观察,不变,
@@ -25,3 +25,4 @@ horizontal-slash,横砍,Horizontal Slash,1、2、3,P12-04 P3-03 P12-13 P3-12,B04
 backstep-shot,后撤射击,Backstep Shot,1、2,P12-07 P12-08,B08,已运行观察,新增,
 counter-slash,拼刀反斩,Counter Slash,1、2、3,P12-24 P3-23 P12-25 P3-24 P12-31 P3-29,B18 B19 B24,部分运行观察,新增,
 deflect-counter-slash,强弹反斩,Deflect Counter Slash,1、2,P12-28 P12-30,B21 B23,已运行观察,新增,
+arrow-shot,普通射箭攻击,Arrow Shot,1、2、3,,V2,已运行观察,新增(版本 2),"版本 2 新增(你在 2026-11-11 批准、2026-11-12 定类型):被别的招式前后附带的普通的箭打中时算这一招,按动画归类:c7100 3011 3013 3014 3017 3018 3031 3034 3036;c7110 3012 3013 3014 3018 3031 3034 3036,见 genichiro_v2_actions.md。没有自己的目录条目;单独的射击招式(后撤射击、破防射击、鹰射)不算在内"

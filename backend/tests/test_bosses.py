@@ -46,6 +46,8 @@ def test_get_boss(client):
         "lightning-of-tomoe-smash",
     }
     assert {"closing-tide", "receding-tide", "slash-combo", "counter-slash"} <= phase_3_move_ids & phase_2_move_ids
+    # Version 2 counts a hit by a plain arrow before or after another move as Arrow Shot, in every phase.
+    assert "arrow-shot" in phase_1_move_ids & phase_2_move_ids & phase_3_move_ids
     # Iaijutsu was merged into Receding Tide.
     assert "iaijutsu" not in phase_1_move_ids | phase_2_move_ids | phase_3_move_ids
     assert data["source_url"].endswith("/Genichiro_Ashina,_Second_Encounter")
