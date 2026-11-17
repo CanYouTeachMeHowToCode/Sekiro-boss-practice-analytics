@@ -1,8 +1,13 @@
 """The worker's steps on recordings in PostgreSQL.
 
-    uploaded -> checking -> rejected (reject_code says why)
-                         -> queued -> processing -> done
+    uploaded -> checking -> rejected (reject_code says why: the format)
+                         -> queued -> processing -> rejected (reject_code: not a castle Genichiro fight)
+                                                -> done
                                                 -> failed (error says why)
+
+Checking reads the format with ffprobe (checks.py) and needs nothing else, so a video in the wrong format is turned
+away even before a pipeline is installed. Whether it is a castle Genichiro fight takes the pipeline's models, so that
+check is the first part of processing.
 
 A step claims the oldest recording in a status with SELECT ... FOR UPDATE SKIP LOCKED and moves it on in the same
 transaction, so two workers never take the same recording. M3 runs one worker: when it starts, it puts back what it
@@ -96,13 +101,19 @@ def _progress_saver(session: Session, row: db.Recording) -> Callable[[float], No
 
 
 def process_next(session: Session, analyzer: Analyzer) -> db.Recording | None:
-    """Analyses the oldest queued recording, saves its failures and cuts a clip of each: done, or failed with the
-    error, keeping none of its partial results."""
+    """Checks that the oldest queued recording is a castle Genichiro fight (rejected if not), analyses it, saves its
+    failures and cuts a clip of each: done, or failed with the error, keeping none of its partial results."""
     row = claim(session, "queued", "processing")
     if row is None:
         return None
     recording_id, video = row.id, recordings_dir() / row.storage_path
     try:
+        problem = analyzer.check(video)
+        if problem:
+            row.status, row.reject_code, row.progress = "rejected", problem, 0.0
+            session.commit()
+            log.info("recording %s rejected by the upload check: %s", recording_id, problem)
+            return row
         found = analyzer.analyze(video, _progress_saver(session, row))
         moves = {m.slug: m for m in session.scalars(select(db.Move).where(db.Move.boss_id == row.boss_id))}
         for f in found:

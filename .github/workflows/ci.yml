@@ -204,6 +204,11 @@ jobs:
           echo "status after the worker's check: ${status}"
           test "${status}" = queued
 
+      # The worker image holds the analysis package and its libraries (CI has no analysis data folder, so the
+      # pipeline itself does not run here).
+      - name: Import the analysis pipeline in the worker image
+        run: docker compose exec -T worker python -c "from sekiro_analysis import pipeline; print('pipeline', pipeline.VERSION)"
+
       # Stopping the stack without -v must keep accounts and attempts in the
       # postgres-data volume (V3 success criteria: restart, data persists).
       - name: Restart the stack and check the data persisted

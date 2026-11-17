@@ -1,6 +1,7 @@
 """Run the recording worker: python -m app.worker
 
-Checks every new upload and, once a pipeline version is installed, processes the queued ones; when there is nothing
+Checks the format of every new upload and, when the pipeline is installed (the analysis package and its data folder,
+ANALYSIS_DATA_DIR), checks that the queued ones are castle Genichiro fights and analyses them; when there is nothing
 to do it looks again every WORKER_POLL_SECONDS. A database that is not up yet, or not migrated yet (the backend runs
 the migrations when it starts), is waited for.
 """
@@ -24,7 +25,8 @@ def main() -> None:
     if not media.ffmpeg_available():
         log.error("ffmpeg and ffprobe are needed: uploads will be rejected as unreadable")
     analyzer = load_analyzer()
-    log.info("pipeline: %s", analyzer.version if analyzer else "none installed yet; queued recordings wait")
+    log.info("pipeline: %s", f"{analyzer.version} on {analyzer.device}" if analyzer
+             else "none installed; queued recordings wait")
     sessions = get_sessionmaker()
     recovered = False
     while True:

@@ -13,7 +13,7 @@ from sqlalchemy import select
 
 from app.db import models as db
 from app.worker import checks, jobs, media
-from app.worker.analyzer import FoundFailure
+from app.worker.analyzer import FoundFailure, load_analyzer
 from app.worker.media import VideoInfo
 
 # --- format rules -------------------------------------------------------------
@@ -61,7 +61,8 @@ def make_video(path, width=1280, height=720, fps=60, seconds=6, transfer=None):
     subprocess.run(
         ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"testsrc=size={width}x{height}:rate={fps}",
          "-f", "lavfi", "-i", "sine=frequency=440", "-t", str(seconds), "-c:v", "libx264", "-pix_fmt", "yuv420p",
-         *(["-color_trc", transfer] if transfer else []), "-c:a", "aac", "-shortest", str(path)],
+         # x264 writes the transfer function into the stream itself (ffmpeg 7 ignores -color_trc here)
+         *(["-x264-params", f"transfer={transfer}"] if transfer else []), "-c:a", "aac", "-shortest", str(path)],
         check=True,
     )
     return path
@@ -130,15 +131,21 @@ def add_recording(session, user, recordings_dir, name="fight.mp4", status="uploa
 
 
 class FakeAnalyzer:
-    """Stands in for the pipeline: reports the failures it is given, or raises."""
+    """Stands in for the pipeline: rejects with the code it is given, or reports the failures it is given, or raises."""
 
     version = "test-1"
 
-    def __init__(self, failures=(), error=None, progress_seen=None):
-        self.failures, self.error, self.progress_seen = list(failures), error, progress_seen
+    def __init__(self, failures=(), error=None, progress_seen=None, reject=None):
+        self.failures, self.error, self.progress_seen, self.reject = list(failures), error, progress_seen, reject
+        self.analyzed = False
+
+    def check(self, video):
+        assert video.is_file()
+        return self.reject
 
     def analyze(self, video, progress):
         assert video.is_file()
+        self.analyzed = True
         progress(0.5)
         if self.progress_seen is not None:
             self.progress_seen.append(video)
@@ -232,6 +239,22 @@ def test_a_move_the_boss_does_not_have_fails_the_recording(seeded_session, user,
     seeded_session.refresh(row)
     assert row.status == "failed" and "no-such-move" in row.error
     assert row.failures == []
+
+
+def test_a_video_that_is_not_castle_genichiro_is_rejected_before_the_analysis(seeded_session, user, recordings_dir):
+    row = add_recording(seeded_session, user, recordings_dir, status="queued")
+    analyzer = FakeAnalyzer(TWO_FAILURES, reject="not_castle_genichiro")
+    jobs.process_next(seeded_session, analyzer)
+    seeded_session.refresh(row)
+    assert (row.status, row.reject_code, row.failures) == ("rejected", "not_castle_genichiro", [])
+    assert not analyzer.analyzed
+
+
+def test_no_pipeline_without_its_data_folder(monkeypatch, tmp_path):
+    monkeypatch.delenv("ANALYSIS_DATA_DIR", raising=False)
+    assert load_analyzer() is None
+    monkeypatch.setenv("ANALYSIS_DATA_DIR", str(tmp_path))       # empty, or the package is not installed here
+    assert load_analyzer() is None
 
 
 def test_without_a_pipeline_queued_recordings_wait(seeded_session, user, recordings_dir):

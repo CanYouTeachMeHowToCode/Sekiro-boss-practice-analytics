@@ -50,7 +50,8 @@ describe("recording helpers", () => {
   it("explains known reject and upload error codes, and unknown ones generally", () => {
     expect(rejectReason("too_long", en)).toBe("It is longer than 10 minutes.");
     expect(rejectReason("hdr", zh)).toBe("这段录像是 HDR 的。请在游戏或录屏软件里关闭 HDR 后重新录制。");
-    expect(rejectReason("not_castle_genichiro", en)).toBe("It does not meet the requirements on the upload page.");
+    expect(rejectReason("not_castle_roof", zh)).toBe("战斗不在苇名城天守阁的屋顶上（比如一心战开头的弦一郎）。");
+    expect(rejectReason("some_new_code", en)).toBe("It does not meet the requirements on the upload page.");
     expect(rejectReason(null, zh)).toBe("不符合上传页面上的要求。");
     expect(uploadErrorMessage("too_large", en)).toBe("The file is larger than 2 GB.");
     expect(uploadErrorMessage("aborted", zh)).toBe("上传失败，请重试。");

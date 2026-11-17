@@ -1,3 +1,5 @@
+# The recording worker. Built from the repository root (docker-compose.yml), since it installs the analysis package
+# (analysis/) next to the backend's code; the root .dockerignore sends only those files.
 FROM python:3.10-slim
 
 # ffprobe reads each upload's format; ffmpeg cuts the failure clips as H.264.
@@ -7,10 +9,21 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app ./app
+# The analysis package's libraries, at the versions the research ran with. PyTorch comes from its own index: the CPU
+# build by default; TORCH_INDEX_URL=https://download.pytorch.org/whl/cu128 gives the CUDA build.
+ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir --index-url ${TORCH_INDEX_URL} torch==2.11.0 torchvision==0.26.0
+COPY analysis/requirements.txt ./analysis-requirements.txt
+RUN pip install --no-cache-dir -r analysis-requirements.txt
+
+COPY analysis/sekiro_analysis ./sekiro_analysis
+COPY backend/app ./app
+
+# The pipeline's data folder (game-derived references, never in the image): mounted by docker-compose.yml.
+ENV ANALYSIS_DATA_DIR=/data/analysis
 
 # The backend container applies the migrations; the worker waits for them.
 CMD ["python", "-m", "app.worker"]

@@ -34,13 +34,17 @@ services:
   # Checks uploaded recordings and turns them into failure reports (V4 M3).
   worker:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.worker
+      context: .
+      dockerfile: backend/Dockerfile.worker
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sekiro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-sekiro}
       RECORDINGS_DIR: /data/recordings
+      # cpu, or cuda with a CUDA build of the image and a GPU passed to the container
+      ANALYSIS_DEVICE: ${ANALYSIS_DEVICE:-cpu}
     volumes:
       - recordings-data:/data/recordings
+      # the pipeline's local data folder (export_analysis_data.py); without it uploads are checked but not analysed
+      - ${ANALYSIS_DATA:-./analysis-data}:/data/analysis:ro
     depends_on:
       postgres:
         condition: service_healthy
