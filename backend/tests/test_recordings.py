@@ -131,6 +131,21 @@ def test_report_counts_failures_per_move_from_sure_answers_only(client, seeded_s
     assert [f["has_clip"] for f in report["failures"]] == [True, False, False, False]
 
 
+@pytest.mark.parametrize(
+    ("width", "height", "low"),
+    [(None, None, False), (1280, 720, True), (1600, 900, True), (1920, 1080, False), (2560, 1440, False)],
+)
+def test_a_recording_below_1080p_is_marked_low_resolution(client, seeded_session, recordings_dir, width, height, low):
+    rec_id = upload(client).json()["id"]
+    row = seeded_session.get(db.Recording, int(rec_id))
+    row.width, row.height = width, height
+    seeded_session.flush()
+
+    rec = client.get(f"/api/recordings/{rec_id}").json()["recording"]
+    assert (rec["width"], rec["height"], rec["low_resolution"]) == (width, height, low)
+    assert client.get("/api/recordings").json()[0]["low_resolution"] is low
+
+
 def test_clip_is_served_to_its_owner_with_range_requests(client, seeded_session, recordings_dir):
     rec_id = upload(client).json()["id"]
     failure = add_failures(seeded_session, rec_id, recordings_dir)[0]

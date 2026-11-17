@@ -29,6 +29,11 @@ class Recording(BaseModel):
     progress: float
     size_bytes: int
     duration_s: float | None = None
+    # the video's size, known once the worker has checked it
+    width: int | None = None
+    height: int | None = None
+    # below the recommended 1080p: analysed, but fewer failures get a sure move, which the report tells the user
+    low_resolution: bool = False
     created_at: datetime
     processed_at: datetime | None = None
 

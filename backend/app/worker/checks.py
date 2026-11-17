@@ -9,6 +9,10 @@ from app.worker.media import VideoInfo
 
 MAX_DURATION_S = 600.0
 MIN_HEIGHT, MAX_HEIGHT = 720, 2160
+# Below this height a video is still analysed, but the boss shows too little detail for the move to be recognised as
+# often: on 720p about half the failures get a sure move, against about 80% at 1080p (failures themselves are found
+# as well). The upload page recommends at least 1080p and the report says so (owner decision, 2026-11-17).
+RECOMMENDED_MIN_HEIGHT = 1080
 ASPECT, ASPECT_TOLERANCE = 16 / 9, 0.01
 FRAME_RATES, FRAME_RATE_TOLERANCE = (30.0, 60.0), 1.0
 

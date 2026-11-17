@@ -29,6 +29,7 @@ from app.models.recording import (
     RecordingStatus,
 )
 from app.services import boss_service
+from app.worker.checks import RECOMMENDED_MIN_HEIGHT
 
 # the boss the failure report supports in M3
 BOSS_SLUG = "genichiro-ashina"
@@ -61,6 +62,9 @@ def _to_schema(row: db.Recording) -> Recording:
         progress=row.progress,
         size_bytes=row.size_bytes,
         duration_s=row.duration_s,
+        width=row.width,
+        height=row.height,
+        low_resolution=row.height is not None and row.height < RECOMMENDED_MIN_HEIGHT,
         created_at=row.created_at,
         processed_at=row.processed_at,
     )
