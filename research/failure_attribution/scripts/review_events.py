@@ -390,10 +390,11 @@ def progress_page():
     # the latest batch (the set of the last registered recording) is listed whole, waiting recordings too, with a bar
     # for the batch weighted by file size
     batch, rows = [], []
-    batch_set = list(recordings().values())[-1].get("set")
+    last = [r for r in recordings().values() if not r.get("answers_of")][-1]      # generated copies come last
+    batch_set, batch_day = last.get("set"), last["id"][:10]                       # ids start with the day added
     for rec_id, rec in recordings().items():
         p = progress(work_dir(rec_id))
-        if rec.get("set") == batch_set:
+        if rec.get("set") == batch_set and rec_id.startswith(batch_day):
             try:
                 size = video_path(rec).stat().st_size
             except OSError:

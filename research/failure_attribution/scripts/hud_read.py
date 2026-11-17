@@ -10,7 +10,9 @@ sits at both ends of the range; caches built before this was fixed read some red
 Frames go through mask_overlay() first, like everywhere in the pipeline, although these strips never touch the overlay.
 
 Geometry, measured at 2560×1440 and scaled to other resolutions:
-    HP bar       rows 1304–1314, x 148–980 (left edge to right end cap)
+    HP bar       rows 1304–1314, x 148–980 (left edge to right end cap) for the owner's bar. The bar is shorter with
+                 fewer prayer necklaces (x 148–505 in the owner's clips of 2026-11-17): series() finds the cap's place
+                 in the video (bar_end) and reads the bar up to it.
     posture bar  rows 1238–1247, x 1280 ± 290; a white pin marks the centre (± 6)
     boss HP bar  rows 122–142, x 151–695, top left under the deathblow markers. Only rows 124–131 are read: in the
                  dev-menu recordings the overlay's "[Active Anime]" header (left visible on purpose) crosses the lower
@@ -151,6 +153,28 @@ def read_boss(cols):
     return (red | pale | dark).mean() >= 0.9, hp / n, lost / n
 
 
+def cap_at(cols, scale=1.0):
+    """The column where the HP bar's end cap starts in one frame, or None: the first bright, greyish column with the
+    dark track or the red bar just left of it."""
+    h, s, v = (cols[:, i].astype(int) for i in range(3))
+    red = ((h <= 12) | (h >= 168)) & (s >= 70) & (v >= 80)
+    dark = v <= 70
+    cap = (s <= (40 if scale == 1.0 else CAP_S_SCALED)) & (v >= 120)
+    return next((c for c in range(20, len(v) - 1) if cap[c] and v[c] - v[c - 7:c - 2].mean() >= 40
+                 and (red[c - 6:c - 1] | dark[c - 6:c - 1]).mean() >= 0.8), None)
+
+
+def bar_end(hp, scale=1.0):
+    """The column where the HP bar ends in this video, from the cap's most frequent place, or None when no place is
+    frequent enough. The bar's length follows Wolf's vitality (prayer necklaces), so it is fixed through one fight."""
+    found = [c for c in (cap_at(cols, scale) for cols in hp) if c is not None]
+    if not found:
+        return None
+    values, counts = np.unique(found, return_counts=True)
+    k = int(np.argmax(counts))
+    return int(values[k]) if counts[k] >= max(50, 0.3 * len(found)) else None
+
+
 def read_line(cols):
     h, s, v, s_above, v_above = (cols[:, i].astype(int) for i in (0, 1, 2, 4, 5))
     red = ((h >= 165) | (h <= 6)) & (s >= 100) & (v >= 75) & ((v - v_above >= 30) | (s - s_above >= 50))
@@ -164,12 +188,18 @@ def series(cache_file, out):
         sys.exit(f"{cache_file} has no break-line or boss HP strip: rebuild it (hud_pipeline.py <id> --recache)")
     fps = float(d["fps"])
     scale = float(d["scale"]) if "scale" in d else 1.0        # caches from before 2026-11-14 are all 2560×1440
+    end = bar_end(d["hp"], scale)
+    width = d["hp"].shape[1]
+    # a shorter bar ends inside the strip: read it up to and with its cap, so the cap is the last two columns as for the
+    # full bar; a bar that ends at the strip's end (every recording before 2026-11-17) is read as before
+    cut = end + 2 if end is not None and end < width - 4 else None
+    print(f"HP bar: cap at column {end} of {width}" + (f", read up to column {cut}" if cut else ", whole strip"))
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["frame", "time_s", "hud", "hp", "hp_lost", "posture_bar", "posture", "break_line", "boss_bar", "boss_hp",
                     "boss_lost", "boss_v"])
         for n, hp_cols, po_cols, line_cols, boss_cols in zip(d["frame"], d["hp"], d["posture"], d["line"], d["boss"]):
-            hud, hp, lost = read_hp(hp_cols, scale)
+            hud, hp, lost = read_hp(hp_cols[:cut] if cut else hp_cols, scale)
             bar, posture = read_posture(po_cols) if hud else (False, 0.0)
             line = read_line(line_cols) if hud else 0.0
             boss_bar, boss_hp, boss_lost = read_boss(boss_cols)

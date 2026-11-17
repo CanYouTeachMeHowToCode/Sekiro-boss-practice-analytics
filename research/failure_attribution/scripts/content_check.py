@@ -36,7 +36,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import GT, WORK, recordings, video_path  # noqa: E402
-from hud_read import BOSS_ROWS, BOSS_X0, BOSS_X1, HP_ROWS, HP_X0, HP_X1, columns, read_boss, read_hp  # noqa: E402
+from hud_read import BOSS_ROWS, BOSS_X0, BOSS_X1, HP_ROWS, HP_X0, HP_X1, cap_at, columns, read_boss, read_hp  # noqa: E402
 from overlay_mask import BASE_H, BASE_W, mask_overlay  # noqa: E402
 
 OUT = WORK / "content"
@@ -127,7 +127,11 @@ def text_box(gray):
 
 
 def hud_state(frame):
-    hud, _, _ = read_hp(columns(frame, HP_ROWS, HP_X0, HP_X1))
+    cols = columns(frame, HP_ROWS, HP_X0, HP_X1)
+    hud, _, _ = read_hp(cols)
+    if not hud:                     # a shorter HP bar (fewer prayer necklaces) ends inside the strip, at its cap
+        c = cap_at(cols)
+        hud = c is not None and c < len(cols) - 4 and read_hp(cols[:c + 2])[0]
     boss, _, _ = read_boss(columns(frame, BOSS_ROWS, BOSS_X0, BOSS_X1))
     return hud, boss
 
