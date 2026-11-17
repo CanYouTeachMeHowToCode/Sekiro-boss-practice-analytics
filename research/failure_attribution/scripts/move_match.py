@@ -65,7 +65,6 @@ from failure_answers import MOVES, WINDOWS, Overlay, moves_of_hit, phase_at, rea
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py --step 2)
 LAG_DROP = 2       # crops either side for a labelled reference: both times are HP drops read by the same detector
-LOW_RES, LOW_RES_SCALE = "-720p", 0.6     # videos at this scale of 2560×1440 or less use the 720p references
 EXCLUDE, MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 5.0, 2.0, 0.3, 2.0
 SURE_MARGIN = 0.025
 # the owner's rules on moves that look the same (TWO_SLASHES, SAME_MOTION, accepted()) are in common.py, shared with the
@@ -122,8 +121,7 @@ class Rec:
         return int(np.clip(np.searchsorted(self.t, t), 0, len(self.t) - 1))
 
     def references(self):
-        src = self.rec.get("answers_of", self.id)       # a scaled copy (sim_resolution.py) keeps its original's overlay
-        ov = Overlay(src, GT / "observations" / self.rec.get("ruleset", "vanilla") / "genichiro" / src)
+        ov = Overlay(self.id, GT / "observations" / self.rec.get("ruleset", "vanilla") / "genichiro" / self.id)
         refs = []
         for anim, occs in ov.occ.items():
             for s, e, start in occs:
@@ -166,21 +164,7 @@ def merge_gaps(refs):
     return {m: max(MERGE_GAP, min(span[m] + LAG_ATTACK, closest.get(m, float("inf")) - LAG_ATTACK)) for m in span}
 
 
-def library(rec_id, recs):
-    """The id suffix of the reference library for a recording: "-720p" when its video is 720p or smaller and the 720p
-    copies of the development recordings exist (sim_resolution.py refs720), else "" (the 2560×1440 originals). At 720p
-    the boss crops hold too little detail to match 1440p references (V4 M3: sure answers fell to about half)."""
-    cache = work_dir(rec_id) / "hud_cache.npz"
-    scale = float(np.load(cache)["scale"]) if cache.exists() and "scale" in np.load(cache) else 1.0
-    return LOW_RES if scale <= LOW_RES_SCALE and any(r.get("set") == "reference" + LOW_RES for r in recs.values()) else ""
-
-
-def ref_id(j, recs, suffix):
-    """The recording whose crops serve as references for development recording j: its scaled copy, if there is one."""
-    return j + suffix if suffix and j + suffix in recs else j
-
-
-def labelled_references(recs, st, skip, suffix=""):
+def labelled_references(recs, st, skip):
     """The owner-labelled hits of the development recordings without the overlay (labelled_refs.py), but those of
     `skip`: each is the moment the HP bar dropped, labelled with the failure's move."""
     path = WORK / "labelled_refs.csv"
@@ -190,8 +174,7 @@ def labelled_references(recs, st, skip, suffix=""):
             by_rec.setdefault(x["recording"], []).append(x)
     refs = []
     for j, xs in by_rec.items():
-        k = ref_id(j, recs, suffix)
-        r = Rec(k, recs[k], st["model"], st["part"], st["trend"])
+        r = Rec(j, recs[j], st["model"], st["part"], st["trend"])
         for x in xs:
             t = float(x["time_s"])
             refs.append({"rec": r, "anim": None, "hit": None, "kind": "drop", "t": t,
@@ -286,14 +269,10 @@ def evaluate():
 def predict(rec_id):
     st, recs = settings(), recordings()
     q = Rec(rec_id, recs[rec_id], st["model"], st["part"], st["trend"])
-    suffix = library(rec_id, recs)
-    refs = [ref for j, r in recs.items() if observation_dir(r) and j != rec_id and not r.get("answers_of")
-            for k in [ref_id(j, recs, suffix)]
-            for ref in Rec(k, recs[k], st["model"], st["part"], st["trend"]).references()]
+    refs = [ref for j, r in recs.items() if observation_dir(r) and j != rec_id
+            for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references()]
     gaps = merge_gaps(refs)
-    refs += labelled_references(recs, st, rec_id, suffix)
-    if suffix:
-        print(f"{rec_id}: references from the {suffix[1:]} copies of the development recordings")
+    refs += labelled_references(recs, st, rec_id)
     events = read(work_dir(rec_id) / "events.csv")
     for e in events:
         e["t"], e["phase"] = float(e["time_s"]), phase_at(float(e["time_s"]), q.blows, q.ends)

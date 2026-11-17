@@ -3,8 +3,6 @@
 Usage: python -I sim_resolution.py make        scale the recordings and register the copies
        python -I sim_resolution.py run         hud_pipeline.py on every copy, then compare
        python -I sim_resolution.py compare     every size against the owner's answers of the original (see compare())
-       python -I sim_resolution.py refs720     the 720p reference library from the development recordings
-       python -I sim_resolution.py eval720     predict the 720p videos with it and score them
 
 Before the analyzer is packaged for the upload worker, this shows whether it holds up at the resolutions M3 accepts
 (16:9, 720p to 4K): the HUD positions are scaled from 2560×1440, the 死 mask was made at 1440p, and the boss crops are
@@ -126,62 +124,6 @@ def compare(tol=0.35):
     print("\n".join(misses))
 
 
-REF_DIR = SIM_DIR / "ref720"
-
-
-def refs720():
-    """The 720p reference library: every development recording scaled to 1280×720 like the copies above, registered with
-    set "reference-720p" (move_match.library() uses it for videos of 720p or less), and its boss crops and features.
-    A copy keeps its original's events (same timeline) and, for a dev-menu recording, its overlay animations
-    (Rec.references follows answers_of). Steps already done are skipped, so the job can be run again after a stop."""
-    import shutil
-    recs = recordings()
-    local = json.loads(LOCAL.read_text(encoding="utf-8")) if LOCAL.exists() else {"recordings": []}
-    have = {e["id"] for e in local["recordings"]}
-    REF_DIR.mkdir(parents=True, exist_ok=True)
-    devs = [(j, r) for j, r in recs.items() if r.get("set") == "development" and not r.get("answers_of")]
-    for k, (j, rec) in enumerate(devs, 1):
-        cid, out = f"{j}-720p", REF_DIR / f"{j}-720p.mp4"
-        if not out.exists():
-            tmp = out.with_name(out.stem + ".part.mp4")
-            subprocess.run([ffmpeg(), "-hide_banner", "-loglevel", "error", "-y", "-i", str(video_path(rec)), "-vf",
-                            "scale=1280:720:flags=area", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
-                            "-pix_fmt", "yuv420p", "-an", str(tmp)], check=True)
-            tmp.replace(out)
-        if cid not in have:
-            local["recordings"].append({"id": cid, "file_name": str(out), "ruleset": rec["ruleset"],
-                                        "game_version": rec["game_version"], "overlay": bool(rec.get("overlay")),
-                                        "set": "reference-720p", "answers_of": j,
-                                        "use": f"{j} scaled to 1280×720: the 720p reference library"})
-            LOCAL.write_text(json.dumps(local, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-            have.add(cid)
-        w = work_dir(cid)
-        w.mkdir(parents=True, exist_ok=True)
-        if not (w / "events.csv").exists():
-            shutil.copy(work_dir(j) / "events.csv", w / "events.csv")
-        if not (w / "boss_crops.npz").exists():
-            subprocess.run([sys.executable, "-I", str(HERE / "boss_track.py"), cid], check=True)
-        if not (w / "boss_feats_small14.npy").exists():
-            subprocess.run([sys.executable, "-I", str(HERE / "boss_features.py"), cid], check=True)
-        print(f"[{k}/{len(devs)}] {cid} ready", flush=True)
-
-
-def eval720():
-    """Predict the 720p videos again (move_match picks the 720p library now) and score them: the four scaled test
-    recordings against their originals' answers, the owner's real 720p clip (2026-11-17-castle-4) in the scenario
-    report. The predictions made with the 1440p library are kept as failure_predictions_lib1440.csv."""
-    import shutil
-    queries = [f"{s}-720p" for s in SOURCES] + ["2026-11-17-castle-4"]
-    for q in queries:
-        pred = work_dir(q) / "failure_predictions.csv"
-        keep = work_dir(q) / "failure_predictions_lib1440.csv"
-        if pred.exists() and not keep.exists():
-            shutil.copy(pred, keep)
-        subprocess.run([sys.executable, "-I", str(HERE / "move_match.py"), "predict", q], check=True)
-    compare()
-    subprocess.run([sys.executable, "-I", str(HERE / "reliability.py"), "report", "--set", "scenario"], check=True)
-
-
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
-    {"make": make, "run": run, "compare": compare, "refs720": refs720, "eval720": eval720}[sys.argv[1]]()
+    {"make": make, "run": run, "compare": compare}[sys.argv[1]]()
