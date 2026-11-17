@@ -230,15 +230,16 @@ def name(slug):
     return {"other": "其他", "unsure": "看不出来", "": "—"}.get(slug, ZH.get(slug, slug))
 
 
-# the scripts that turn a recording into reported failures: the version the M2 plan freezes. The review page, the
-# registry and this report are left out, since changing them changes no result
-PIPELINE = ["common.py", "hud_pipeline.py", "hud_read.py", "death_screen.py", "events.py", "lockon.py", "boss_track.py",
+# the scripts that turn a recording into reported failures: the version the M2 plan freezes, and since 2026-11-17 the
+# analysis package that holds the steps. The review page, the registry and this report are left out, since changing
+# them changes no result
+PIPELINE = ["common.py", "hud_pipeline.py", "hud_read.py", "death_screen.py", "events.py", "reversal.py", "boss_track.py",
             "boss_features.py", "overlay_mask.py", "failure_answers.py", "move_match.py", "labelled_refs.py"]
 
 
 def commit_state():
     """The last commit that changed the pipeline's scripts, and whether any of them has uncommitted changes."""
-    paths = [str(FA / "scripts" / f) for f in PIPELINE]
+    paths = [str(FA / "scripts" / f) for f in PIPELINE] + [str(REPO / "analysis" / "sekiro_analysis")]
     head = subprocess.run(["git", "-C", str(REPO), "log", "-1", "--format=%h", "--", *paths],
                           capture_output=True, text=True).stdout.strip()
     dirty = subprocess.run(["git", "-C", str(REPO), "status", "--porcelain", "--", *paths],

@@ -41,6 +41,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import GT, observation_dir, recordings, work_dir  # noqa: E402
+from sekiro_analysis.moves import phase_at  # noqa: E402  (shared with the worker)
 
 HIT_LOOKBACK, WINDOW_SLACK, BULLET_FLIGHT = 0.1, 0.1, 1.5
 BREAK_WITH, PUNISH_WINDOW = 0.3, 2.0
@@ -151,11 +152,6 @@ class Overlay:
                         found.setdefault((anim, occ), {"anim": anim, "occ": occ, "at": at, "char": self.chars[k],
                                                        "how": f"飞行物（{(f - k) / self.fps:.2f} 秒前射出）"})
         return list(found.values())
-
-
-def phase_at(t, blows, ends):
-    start = max([e for e in ends if e < t], default=-1.0)
-    return 1 + sum(1 for b in blows if start < b < t)
 
 
 def moves_for(entries, phase):

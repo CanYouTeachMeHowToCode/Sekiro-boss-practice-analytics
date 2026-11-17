@@ -11,6 +11,7 @@
 import configparser
 import json
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -19,6 +20,11 @@ FA = HERE.parent
 REPO = FA.parent.parent
 GT = REPO / "research/ground_truth"
 WORK = FA / "work"
+# the pipeline's steps live in the analysis package (analysis/sekiro_analysis), shared with the recording worker
+ANALYSIS = REPO / "analysis"
+if str(ANALYSIS) not in sys.path:
+    sys.path.insert(0, str(ANALYSIS))
+from sekiro_analysis.moves import SAME_MOTION  # noqa: E402,F401
 
 
 def recordings() -> dict:
@@ -80,10 +86,8 @@ def progress(work: Path):
 # deflect look like Two-Hit Slash, so either answer is right for such a play
 OPENERS, FOLLOW_UP = {3068, 3063}, 3092
 TWO_SLASHES = {"advance", "floating-passage", "floating-passage-phase-3"}
-# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other;
-# (2026-11-12) the phase-1 Perilous Attack Follow Up is mainly its Mikiri thrust, so it and Perilous Thrust count for
-# each other (the follow-up exists in phase 1 only, so the rule never reaches another phase)
-SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}, {"perilous-attack-follow-up", "perilous-thrust"}]
+# and SAME_MOTION (sekiro_analysis.moves): Counter Slash and Deflect Counter Slash, and the phase-1 Perilous Attack
+# Follow Up and Perilous Thrust, always count for each other (the follow-up exists in phase 1 only)
 
 
 def accepted(truth, play):

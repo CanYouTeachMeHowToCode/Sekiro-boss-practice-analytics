@@ -11,7 +11,7 @@ deathblow markers, and the masked overlay box. Coordinates are in 2560×1440 pix
 import cv2
 import numpy as np
 
-from overlay_mask import BASE_H, BASE_W
+from .overlay_mask import BASE_H, BASE_W
 
 SEARCH_BOTTOM, CORNER = 1150, (720, 380)          # rows below are HUD; the top-left corner holds the boss bar
 R_IN, R_OUT = (0, 4), (9, 13)                     # inner disc and surrounding ring, full-size pixels
