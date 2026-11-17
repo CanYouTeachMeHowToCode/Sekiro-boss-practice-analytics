@@ -23,7 +23,7 @@ damage@218.3,damage,218.293,correct,,2026-11-17T03:29:03
 posture_break@218.5,posture_break,218.493,correct,,2026-11-17T03:29:06
 deathblow@243.0,deathblow,242.959,correct,,2026-11-17T03:29:07
 damage@274.3,damage,274.291,correct,,2026-11-17T03:29:09
-reversal@283.8,reversal,283.758,wrong,雷反失败，扣血,2026-11-17T03:31:26
+damage@283.8,damage,283.758,correct,你标的：雷反失败，扣血（这一下把狼打死了；系统当时认成了雷反，改规则后恢复成扣血，2026-11-17）,2026-11-17T03:42:33
 death@283.9,death,283.924,correct,,2026-11-17T03:30:13
 resurrection@287.6,resurrection,287.624,correct,,2026-11-17T03:30:14
 reversal@292.1,reversal,292.124,correct,,2026-11-17T03:32:33

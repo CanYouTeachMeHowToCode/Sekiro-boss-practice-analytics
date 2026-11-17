@@ -9,7 +9,8 @@ Usage:
 The owner's rule: Wolf can take a little damage when he catches Genichiro's lightning in the air and sends it back. That
 is a successful Lightning Reversal, not a failure. It shows on Genichiro: within a second or two of the hit, the golden
 glyph 打雷 floats over him (English game, 3:21.8–3:23.5 of 不同情景测试录像/英文弦一郎.mp4). A damage event followed by the
-glyph within WINDOW seconds is a reversal and does not count as a failure.
+glyph within WINDOW seconds is a reversal and does not count as a failure, unless it emptied the HP bar: a successful
+reversal never kills Wolf.
 
 The glyph is pale gold (H ≈ 20–27, S ≈ 25–40, V ≈ 220–250) and its size changes with the distance to the camera. A frame
 is scaled to 1280×720 and the region above the HUD bars searched with the template at several scales (normalised
@@ -38,6 +39,7 @@ SCALES = (0.6, 0.75, 0.9, 1.1, 1.3, 1.6, 2.0)
 WINDOW = (0.3, 3.0)                       # seconds after the HP drop
 RUN_T, MIN_RUN, GAP = 0.65, 0.5, 2        # the glyph stays: scores >= RUN_T for MIN_RUN s, gaps of GAP samples
 ISOLATION = 3.0                           # the glyph's warmth against the ring around it
+EMPTY = 0.02                              # a hit that leaves this much HP or less killed Wolf: never a reversal
 
 
 def warm_map(frame):
@@ -140,8 +142,11 @@ def scan(rec_id, glyph):
         samples = scores(video_path(rec), t + WINDOW[0], t + WINDOW[1], glyph)
         best = max(samples, key=lambda x: x[1], default=(t, 0.0))
         run = longest_run(samples)
+        # a successful reversal costs a little HP; a hit that empties the bar is the lightning (or anything else) killing
+        # Wolf, whatever the glyph says (720p clip, 283.8 s: a failed reversal, the glyph held for 0.55 s)
+        killed = float(e["hp_after"]) <= EMPTY
         rows.append({"key": e["key"], "time_s": e["time_s"], "score": f"{best[1]:.3f}", "glyph_s": f"{best[0]:.2f}",
-                     "run_s": f"{run:.2f}", "reversal": int(run >= MIN_RUN)})
+                     "run_s": f"{run:.2f}", "reversal": int(run >= MIN_RUN and not killed)})
     with open(work_dir(rec_id) / "reversals.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["key", "time_s", "score", "glyph_s", "run_s", "reversal"],
                            lineterminator="\r\n")
