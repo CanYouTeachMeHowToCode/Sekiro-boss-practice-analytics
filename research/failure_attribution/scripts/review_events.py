@@ -23,7 +23,7 @@ a note. Those reviews go to failure_moves.csv next to hud_events.csv: key (the f
 matches the current proposal is shown as needing another look. The side panel counts the failures per move, using the
 owner's corrections and merges.
 
-A test recording of the reliability validation (recordings.json "set": "test", without the overlay) gets the blind
+A test recording of the reliability validation (recordings.json "set": "test" or "scenario", without the overlay) gets the blind
 招式 view instead: the page is never sent the system's answer, its candidates or its scores, so the owner's labels are
 not pulled towards them. Each failure the pipeline reported, and each failure event the owner added as missed that
 no reported failure holds, is a card with its events, thumbnail and player; the owner picks the move from the list
@@ -50,7 +50,7 @@ from common import GT, TWO_SLASHES, annotation_dir, progress, recordings, video_
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
-TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
+TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow", "reversal"}   # reversal: reversal.py
 MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "merge_prev", "note", "updated"]
 MOVE_VERDICTS = {"correct", "wrong", "unsure", ""}
 OTHER_MOVE = "other"
@@ -74,7 +74,10 @@ def moves_file(rec):
 
 
 def file_label(rec):
-    """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs."""
+    """The recording's file name without folder and extension (测试录像5), shown with its id on the tabs; a generated
+    copy (sim_resolution.py) is named after its original and its size (测试录像13 · 1080p)."""
+    if rec.get("answers_of"):
+        return f"{Path(recordings()[rec['answers_of']]['file_name']).stem} · {rec['id'].rsplit('-', 1)[1]}"
     return Path(rec["file_name"]).stem
 
 
@@ -97,7 +100,7 @@ def truth_file(rec):
 
 
 def blind(rec):
-    return rec.get("set") == "test" and not rec.get("overlay")
+    return rec.get("set") in ("test", "scenario") and not rec.get("overlay")
 
 
 def read_csv(path):
@@ -137,7 +140,7 @@ def page_data():
     out = []
     for rec_id, rec in recordings().items():
         events_csv = work_dir(rec_id) / "events.csv"
-        if not events_csv.exists():
+        if not events_csv.exists() or rec.get("answers_of"):     # a generated copy: its answers are the original's
             continue
         events = drop_repeats(list(csv.DictReader(open(events_csv, encoding="utf-8"))))
         for e in events:
@@ -384,11 +387,14 @@ def progress_page():
         return f"完成，用了 {mins(used)}" if done else \
             f"{step} {frac:.0%} · 已用 {mins(used)}" + (f" · 预计还要 {mins(left)}" if left is not None else "")
 
-    # the test batch is listed whole, waiting recordings too, with a bar for the batch weighted by file size
+    # the latest batch (the set of the last registered recording) is listed whole, waiting recordings too, with a bar
+    # for the batch weighted by file size
     batch, rows = [], []
+    last = [r for r in recordings().values() if not r.get("answers_of")][-1]      # generated copies come last
+    batch_set, batch_day = last.get("set"), last["id"][:10]                       # ids start with the day added
     for rec_id, rec in recordings().items():
         p = progress(work_dir(rec_id))
-        if rec.get("set") == "test":
+        if rec.get("set") == batch_set and rec_id.startswith(batch_day):
             try:
                 size = video_path(rec).stat().st_size
             except OSError:
@@ -413,7 +419,9 @@ def progress_page():
                 head += f" · 预计还要 {mins(used * (1 - overall) / overall)}（按目前的速度和剩下的文件大小估算）"
         else:
             head = "还没开始"
-        body += "<h2>测试录像（只跑一次，跑完后你盲审）</h2>" + \
+        title = {"test": "测试录像（只跑一次，跑完后你盲审）", "scenario": "情景录像（跑完后你盲审）",
+                 "simulation": "模拟分辨率（缩小的测试录像，用你原来的答案打分，不用你审）"}.get(batch_set, "最新一批录像")
+        body += f"<h2>{title}</h2>" + \
             row("整批", overall, head).replace('class="rec"', 'class="rec total"', 1)
         for rec_id, rec, size, p in batch:
             name = f"{file_label(rec)}<br><small>{rec_id}</small>"
@@ -538,7 +546,7 @@ ul.hits { margin:4px 0 8px; padding-left:18px; font-size:13px; }
 const DATA = JSON.parse(document.getElementById('data').textContent);
 const recs = DATA.recs, MOVES = DATA.moves, TWO = new Set(DATA.two_slashes);
 const MOVE = Object.fromEntries(MOVES.map((m) => [m.slug, m]));
-const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）' };
+const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）', reversal: '成功的雷反（不算失败；不是成功的雷反就标错，并在同一时间补一个扣血）' };
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',

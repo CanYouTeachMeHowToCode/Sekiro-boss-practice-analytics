@@ -241,3 +241,4 @@ research/ground_truth/local.config
 
 # Failure attribution: work files derived from the recordings (caches, series, thumbnails)
 research/failure_attribution/work/
+research/failure_attribution/recordings.local.json

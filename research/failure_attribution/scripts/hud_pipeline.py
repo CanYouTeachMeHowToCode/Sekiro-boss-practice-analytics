@@ -2,7 +2,8 @@
 
 Usage: python -I hud_pipeline.py <recording id | all> [--recache]
 
-Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/:
+Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/ (events.csv
+with the lightning reversals marked by reversal.py, owner's rule of 2026-11-13, and reversals.csv):
 hud_cache.npz (skipped when present, unless --recache), hud.csv, death_screens.csv, events.csv, boss_track.csv, boss_crops.npz and
 boss_feats_small14.npy (skipped when present, unless --recache), thumbs/<event key>.jpg, and the moves behind the
 failures: for a dev-menu recording the answers read from the overlay (failure_answers.py), for any other the predictions
@@ -71,6 +72,8 @@ def main():
         run("hud_read.py", "series", work / "hud_cache.npz", work / "hud.csv")
         run("death_screen.py", rec_id)
         run("events.py", work / "hud.csv", work / "events.csv")
+        report(work, "reversal")
+        run("reversal.py", "apply", rec_id)          # a lightning reversal that cost HP is not a failure
         report(work, "boss_track")
         if "--recache" in sys.argv or not (work / "boss_crops.npz").exists():
             run("boss_track.py", rec_id)
