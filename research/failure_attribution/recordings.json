@@ -348,6 +348,30 @@
       "set": "scenario",
       "bell_demon": false,
       "charmless": false
+    },
+    {
+      "id": "2026-11-17-castle-3",
+      "file_name": "不同情景测试录像/1080p弦一郎.mp4",
+      "sha256": "1f26e4c732c7d9ed9c2017d57427bd66685b7361e606027f060654eecaf06650",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "resolution check: castle fight recorded at 1080p (game and recorder), with the Bell Demon and Charmless as usual (owner); should be accepted and analysed (owner, 2026-11-17)",
+      "set": "scenario",
+      "bell_demon": true,
+      "charmless": true
+    },
+    {
+      "id": "2026-11-17-castle-4",
+      "file_name": "不同情景测试录像/720p弦一郎.mp4",
+      "sha256": "f544e2508ab06b7a2be74fdd1e88d3f47dac89d9e5ca6fc1c275cc5ccc0032b5",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "resolution check: castle fight recorded at 720p (game and recorder), with the Bell Demon and Charmless as usual (owner); should be accepted and analysed (owner, 2026-11-17)",
+      "set": "scenario",
+      "bell_demon": true,
+      "charmless": true
     }
   ]
 }

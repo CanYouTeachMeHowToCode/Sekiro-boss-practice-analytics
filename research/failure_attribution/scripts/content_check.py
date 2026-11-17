@@ -62,6 +62,8 @@ TEMPLATE_SOURCES = [
 OTHER_CLIPS = [
     ("不同情景测试录像/心中的弦一郎.mp4", "reject", "心中的弦一郎 (Reflection of Strength), same roof"),
     ("不同情景测试录像/最终战芦苇地弦一郎.mp4", "reject", "Isshin fight, first phase: 巴流 苇名弦一郎 in the reeds"),
+    ("不同情景测试录像/无关视频.mp4", "reject", "another Sekiro boss on the castle roofs (1080p, 120 fps: the format check rejects it first)"),
+    ("不同情景测试录像/无关视频2.mp4", "reject", "another game (1080p, 120 fps: the format check rejects it first)"),
 ]
 
 
