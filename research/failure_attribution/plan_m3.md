@@ -125,6 +125,12 @@ worker 用 `SELECT … FOR UPDATE SKIP LOCKED` 领任务，所以不需要单独
     - 上传页始终显示：「建议用 1080p 或更高分辨率录制。720p 也能分析，但更多失败会显示"招式不确定"。」/ "Record at 1080p or higher if you can. 720p videos are analysed too, but more failures will show the move as unsure."
     - 报告页在录像低于 1080p 时显示：「这段录像低于 1080p，招式识别的把握较低，更多失败会显示"招式不确定"。下次建议用 1080p 或更高分辨率录制。」/ "This recording is below 1080p, so move recognition is less sure and more failures show the move as unsure. Record at 1080p or higher next time."
     - 后端：接口返回的录像带 `width`、`height` 和 `low_resolution`（高度低于 1080 为真），门槛是 `checks.RECOMMENDED_MIN_HEIGHT`（`feature/recording-upload`，f1cf839）。
+16. **网站的视觉风格选 B「天守之夜」**（你定，2026-11-17，从三种原创风格里选的）。公网部署前做，放在 M3 剩下的步骤之后，避免页面再改时返工。只用原创的图形，不用游戏截图、官方美术或 Boss 图（项目规则第 22 节，也避免版权问题）。要点：
+    - 颜色：底色 #0f1218，卡片 #161b24，线条 #2a3140，正文 #e8e3d6，次要文字 #9aa3b2，强调金色 #c9a55a（链接 #d8b86e），死亡用 #ee7a63。
+    - 字体：标题用衬线（Noto Serif SC），正文用无衬线（Noto Sans SC）。
+    - 页头：自己画的月亮和城楼屋檐轮廓线，金色描边。
+    - Boss 标记：金色圆形家纹，中间一个字，代替 Boss 图；每个 Boss 用哪个字由你定（示意里是弦、蝶、猿、剑）。
+    - 提示框用金色细边框；卡片圆角 10px。
 
 ## 冻结后的进展（2026-11-13，`feature/upload-checks`）
 
