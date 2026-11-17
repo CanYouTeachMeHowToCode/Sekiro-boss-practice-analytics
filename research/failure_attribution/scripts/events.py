@@ -57,19 +57,26 @@ DEATHBLOW_BEFORE, DEATHBLOW_AFTER = 1.0, 3.0
 # version 2: a reading that jumps up for a few frames and falls back to its old level is no hit (测试录像10, 47.7 s: at
 # 5% HP a flash lifted the reading to 0.38 for 5 frames); and death screens closer than SCREEN_MERGE are one death
 # screen (测试录像10, 104.3 s: the 死 flickered in and was read as three)
-SPIKE_WINDOW, SPIKE_RETURN = 0.3, 0.01
+SPIKE_WINDOW, SPIKE_RETURN = 0.3, 0.01
+# 2026-11-17: a red sunset sky seen through the see-through empty track made the reading jump for 0.55 s (owner's
+# short-bar clip 2, 69.6 s), so the level before the rise was inside the jumping too; look further back as well
+SPIKE_LOOKBACKS = (1, 2, 3)          # in SPIKE_WINDOWs: the rise may last up to 0.3, 0.6 or 0.9 s
 SCREEN_MERGE = 3.0
 
 
 def jumped_back(t, hp, hpm, start, end):
-    """The reading rose within SPIKE_WINDOW before `start` and the drop ending at `end` lands back on the level it had
-    before that rise: a few frames of glitch, not a hit."""
-    a, b = np.searchsorted(t, t[start] - 2 * SPIKE_WINDOW), np.searchsorted(t, t[start] - SPIKE_WINDOW)
-    if b <= a:
-        return False
-    level = float(np.median(hp[a:b]))
-    rose = hp[b:start + 1].max() > level + MIN_DROP
-    return bool(rose and abs(hpm[end] - level) <= SPIKE_RETURN)
+    """The reading rose within k SPIKE_WINDOWs before `start` (k in SPIKE_LOOKBACKS) and the drop ending at `end` lands
+    back on the level it had before that rise: a stretch of glitch, not a hit."""
+    for k in SPIKE_LOOKBACKS:
+        w = k * SPIKE_WINDOW
+        a, b = np.searchsorted(t, t[start] - w - SPIKE_WINDOW), np.searchsorted(t, t[start] - w)
+        if b <= a:
+            continue
+        level = float(np.median(hp[a:b]))
+        rose = hp[b:start + 1].max() > level + MIN_DROP
+        if rose and abs(hpm[end] - level) <= SPIKE_RETURN:
+            return True
+    return False
 
 
 def merge_screens(screens):
