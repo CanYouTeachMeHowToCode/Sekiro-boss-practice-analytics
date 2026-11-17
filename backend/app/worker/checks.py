@@ -15,6 +15,9 @@ MIN_HEIGHT, MAX_HEIGHT = 720, 2160
 RECOMMENDED_MIN_HEIGHT = 1080
 ASPECT, ASPECT_TOLERANCE = 16 / 9, 0.01
 FRAME_RATES, FRAME_RATE_TOLERANCE = (30.0, 60.0), 1.0
+# HDR video (PQ or HLG) is rejected until a real HDR recording shows how to map it to the colours the analysis was
+# measured on (owner decision, 2026-11-17)
+HDR_TRANSFERS = {"smpte2084", "arib-std-b67"}
 
 
 def format_problem(info: VideoInfo) -> str | None:
@@ -29,4 +32,6 @@ def format_problem(info: VideoInfo) -> str | None:
         return "unsupported_resolution"
     if not any(abs(info.fps - rate) <= FRAME_RATE_TOLERANCE for rate in FRAME_RATES):
         return "unsupported_frame_rate"
+    if info.transfer in HDR_TRANSFERS:
+        return "hdr"
     return None

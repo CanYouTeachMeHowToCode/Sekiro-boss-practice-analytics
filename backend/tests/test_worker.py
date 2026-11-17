@@ -34,6 +34,9 @@ from app.worker.media import VideoInfo
         (VideoInfo(2560, 1440, 144.0, 300.0), "unsupported_frame_rate"),
         (VideoInfo(2560, 1440, 24.0, 300.0), "unsupported_frame_rate"),
         (VideoInfo(2560, 1440, 60.0, 0.0), "unreadable"),
+        (VideoInfo(2560, 1440, 60.0, 300.0, "smpte2084"), "hdr"),
+        (VideoInfo(3840, 2160, 60.0, 300.0, "arib-std-b67"), "hdr"),
+        (VideoInfo(1920, 1080, 60.0, 300.0, "bt709"), None),
     ],
 )
 def test_format_rules(info, code):
@@ -52,13 +55,13 @@ def ffmpeg():
     pytest.skip("ffmpeg and ffprobe are not installed")
 
 
-def make_video(path, width=1280, height=720, fps=60, seconds=6):
-    """A test pattern with a tone, encoded as H.264 and AAC."""
+def make_video(path, width=1280, height=720, fps=60, seconds=6, transfer=None):
+    """A test pattern with a tone, encoded as H.264 and AAC; `transfer` tags it with a transfer function."""
     path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"testsrc=size={width}x{height}:rate={fps}",
          "-f", "lavfi", "-i", "sine=frequency=440", "-t", str(seconds), "-c:v", "libx264", "-pix_fmt", "yuv420p",
-         "-c:a", "aac", "-shortest", str(path)],
+         *(["-color_trc", transfer] if transfer else []), "-c:a", "aac", "-shortest", str(path)],
         check=True,
     )
     return path
@@ -69,6 +72,11 @@ def test_probe_reads_the_size_frame_rate_and_length(ffmpeg, tmp_path):
     assert (info.width, info.height) == (1920, 1080)
     assert info.fps == pytest.approx(60.0)
     assert info.duration_s == pytest.approx(2.0, abs=0.1)
+
+
+def test_probe_reads_the_transfer_function_that_marks_hdr(ffmpeg, tmp_path):
+    info = media.probe(make_video(tmp_path / "hdr.mp4", seconds=1, transfer="smpte2084"))
+    assert info.transfer == "smpte2084" and checks.format_problem(info) == "hdr"
 
 
 def test_probe_refuses_a_file_that_is_not_a_video(ffmpeg, tmp_path):

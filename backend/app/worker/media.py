@@ -18,6 +18,8 @@ class VideoInfo:
     height: int
     fps: float
     duration_s: float
+    # the transfer function ffprobe names (bt709, smpte2084 = HDR10's PQ, arib-std-b67 = HLG), when the file says
+    transfer: str | None = None
 
 
 def ffmpeg_available() -> bool:
@@ -25,9 +27,9 @@ def ffmpeg_available() -> bool:
 
 
 def probe(path: Path) -> VideoInfo:
-    """The size, frame rate and length of a video's first video stream."""
-    cmd = ["ffprobe", "-v", "error", "-select_streams", "v:0",
-           "-show_entries", "stream=width,height,avg_frame_rate,r_frame_rate:format=duration", "-of", "json", str(path)]
+    """The size, frame rate, length and transfer function of a video's first video stream."""
+    entries = "stream=width,height,avg_frame_rate,r_frame_rate,color_transfer:format=duration"
+    cmd = ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", entries, "-of", "json", str(path)]
     try:
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=True).stdout
         data = json.loads(out)
@@ -36,7 +38,7 @@ def probe(path: Path) -> VideoInfo:
         if not rate or rate == "0/0":
             rate = stream["r_frame_rate"]
         return VideoInfo(width=int(stream["width"]), height=int(stream["height"]), fps=float(Fraction(rate)),
-                         duration_s=float(data["format"]["duration"]))
+                         duration_s=float(data["format"]["duration"]), transfer=stream.get("color_transfer"))
     except (subprocess.SubprocessError, OSError, KeyError, IndexError, ValueError, ZeroDivisionError) as exc:
         raise MediaError(f"cannot read {path.name}: {exc}") from exc
 
