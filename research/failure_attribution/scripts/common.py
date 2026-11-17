@@ -76,8 +76,10 @@ def progress(work: Path):
 # deflect look like Two-Hit Slash, so either answer is right for such a play
 OPENERS, FOLLOW_UP = {3068, 3063}, 3092
 TWO_SLASHES = {"advance", "floating-passage", "floating-passage-phase-3"}
-# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other
-SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}]
+# and (2026-10-16) Counter Slash and Deflect Counter Slash move almost the same, so they always count for each other;
+# (2026-11-12) the phase-1 Perilous Attack Follow Up is mainly its Mikiri thrust, so it and Perilous Thrust count for
+# each other (the follow-up exists in phase 1 only, so the rule never reaches another phase)
+SAME_MOTION = [{"counter-slash", "deflect-counter-slash"}, {"perilous-attack-follow-up", "perilous-thrust"}]
 
 
 def accepted(truth, play):
