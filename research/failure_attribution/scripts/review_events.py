@@ -50,7 +50,7 @@ from common import GT, TWO_SLASHES, annotation_dir, progress, recordings, video_
 
 FIELDS = ["key", "type", "time_s", "verdict", "note", "updated"]
 VERDICTS = {"correct", "wrong", "unsure", "missed", ""}
-TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow"}
+TYPES = {"damage", "death", "resurrection", "posture_break", "deathblow", "reversal"}   # reversal: reversal.py
 MOVE_FIELDS = ["key", "time_s", "proposed", "verdict", "correct_move", "merge_prev", "note", "updated"]
 MOVE_VERDICTS = {"correct", "wrong", "unsure", ""}
 OTHER_MOVE = "other"
@@ -546,7 +546,7 @@ ul.hits { margin:4px 0 8px; padding-left:18px; font-size:13px; }
 const DATA = JSON.parse(document.getElementById('data').textContent);
 const recs = DATA.recs, MOVES = DATA.moves, TWO = new Set(DATA.two_slashes);
 const MOVE = Object.fromEntries(MOVES.map((m) => [m.slug, m]));
-const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）' };
+const TYPE = { damage: '扣血', death: '死亡', resurrection: '回生（不算失败）', posture_break: '被打崩', deathblow: '狼的忍杀（不算失败）', reversal: '成功的雷反（不算失败；不是成功的雷反就标错，并在同一时间补一个扣血）' };
 const VERDICT = { correct: '✅ 对', wrong: '❌ 不对', unsure: '？不确定' };
 const HINT = {
   events: '每个事件：看图或点"▶ 播放"从事件前 2 秒开始看录像，然后标 ✅ 对 / ❌ 不对 / ？不确定，可以写备注。点图片放大。回生和忍杀不算失败，只是方便你看清发生了什么。漏掉的事件在右边补上。',
