@@ -1,0 +1,12 @@
+# HTTPS in front of the app (deploy/compose.server.yml). Caddy gets and renews the certificate for SITE_ADDRESS by
+# itself and redirects plain HTTP to HTTPS.
+{$SITE_ADDRESS} {
+	# The private test: everyone needs the shared password before reaching the app (deploy/plan_m4.md).
+	basic_auth {
+		{$SITE_USER} {$SITE_PASSWORD_HASH}
+	}
+
+	# The frontend's nginx serves the pages and passes /api to the backend, with the 2 GB upload limit.
+	# Request bodies are streamed, not buffered, so large uploads go straight through.
+	reverse_proxy frontend:80
+}

@@ -1,0 +1,37 @@
+# The server's additions to docker-compose.yml (deploy/README.md): only Caddy is reachable from outside, with HTTPS and a
+# site-wide shared password in front of the app. The server's .env names both files in COMPOSE_FILE, so a plain
+# `docker compose ...` in the repository folder uses them.
+services:
+  postgres:
+    ports: !reset []
+
+  backend:
+    ports: !reset []
+    environment:
+      # the session cookie only travels over HTTPS
+      COOKIE_SECURE: "true"
+
+  frontend:
+    ports: !reset []
+
+  caddy:
+    image: caddy:2.11.7
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?Set SITE_ADDRESS in .env (deploy/README.md)}
+      SITE_USER: ${SITE_USER:-tester}
+      SITE_PASSWORD_HASH: ${SITE_PASSWORD_HASH:?Set SITE_PASSWORD_HASH in .env (deploy/README.md)}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      # certificates and Caddy's state, kept across restarts
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  caddy-data:
+  caddy-config:
