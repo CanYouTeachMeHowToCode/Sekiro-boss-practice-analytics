@@ -1201,7 +1201,7 @@ Do not introduce Kubernetes by default.
 
 # 34. Deferred — Boss Expansion
 
-Not part of V3.1 (owner decision, 2026-10-13). It starts after the V4 end-to-end flow works for Genichiro and is publicly deployed (section 33); when exactly is the project owner's decision.
+Not part of V3.1 (owner decision, 2026-10-13). It starts after the V4 end-to-end flow works for Genichiro and is publicly deployed (section 33); when exactly is the project owner's decision. The target is every boss the game lets the player fight again, 17 by the owner's count (2026-11-18); per-boss product features such as the style B crest are stored as boss data, not hard-coded for the current eight.
 
 Each new boss then goes through the whole pipeline once: the ground truth (V3.1 tooling) and the data that V4's recognition needs, such as reference clips and labels. Expanding earlier would mean redoing those bosses once V4 shows what it needs.
 
