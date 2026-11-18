@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { adminClipUrl, getAdminRecordingReport } from "../api/admin";
 import { getBossById } from "../api/bosses";
 import { ApiError } from "../api/client";
 import { clipUrl, deleteRecording, getRecordingReport } from "../api/recordings";
@@ -7,7 +8,7 @@ import { useAuth } from "../auth/authContext";
 import LoginPrompt from "../components/LoginPrompt";
 import { formatPhase, useLanguage } from "../i18n/language";
 import type { Language, MessageKey, Translate } from "../i18n/language";
-import type { Boss, Recording, RecordingFailure, RecordingReport } from "../types";
+import type { AdminRecordingReport, Boss, Recording, RecordingFailure, RecordingReport } from "../types";
 import { getMoveName } from "../utils/moves";
 import {
   REPORT_POLL_MS,
@@ -56,7 +57,10 @@ function StatusMessage({ recording, t }: { recording: Recording; t: Translate })
   }
 }
 
-function FailureItem({ recordingId, failure, boss }: { recordingId: string; failure: RecordingFailure; boss: Boss | null }) {
+/** Where the browser gets a failure's clip: the owner's or the admin's path. */
+type ClipSource = (failureId: string) => string;
+
+function FailureItem({ clipSrc, failure, boss }: { clipSrc: ClipSource; failure: RecordingFailure; boss: Boss | null }) {
   const { language, t } = useLanguage();
   const [showClip, setShowClip] = useState(false);
   const candidates = failure.candidates.slice(0, CANDIDATES_SHOWN).map((c) => moveLabel(boss, c.move_id, language));
@@ -88,7 +92,7 @@ function FailureItem({ recordingId, failure, boss }: { recordingId: string; fail
             {showClip ? t("report.hideClip") : t("report.playClip")}
           </button>
           {showClip && (
-            <video className="failure-clip" src={clipUrl(recordingId, failure.id)} controls autoPlay preload="metadata" />
+            <video className="failure-clip" src={clipSrc(failure.id)} controls autoPlay preload="metadata" />
           )}
         </>
       )}
@@ -96,7 +100,7 @@ function FailureItem({ recordingId, failure, boss }: { recordingId: string; fail
   );
 }
 
-function FailureReport({ report, boss }: { report: RecordingReport; boss: Boss | null }) {
+function FailureReport({ report, boss, clipSrc }: { report: RecordingReport; boss: Boss | null; clipSrc: ClipSource }) {
   const { language, t } = useLanguage();
   const { failures, by_move: byMove } = report;
   const count = (type: string) => failures.filter((f) => f.type === type).length;
@@ -164,7 +168,7 @@ function FailureReport({ report, boss }: { report: RecordingReport; boss: Boss |
             <h2>{t("report.failures")}</h2>
             <ol>
               {failures.map((f) => (
-                <FailureItem key={f.id} recordingId={report.recording.id} failure={f} boss={boss} />
+                <FailureItem key={f.id} clipSrc={clipSrc} failure={f} boss={boss} />
               ))}
             </ol>
           </section>
@@ -174,26 +178,31 @@ function FailureReport({ report, boss }: { report: RecordingReport; boss: Boss |
   );
 }
 
-/** One recording: where it is in the checks and analysis, and once analysed, its failure report. */
-export default function RecordingReportPage() {
+/** One recording: where it is in the checks and analysis, and once analysed, its failure report. With `admin`, the
+ * read-only admin view of any user's recording (owner decision, 2026-11-18): no delete, a link back to the admin
+ * list, and a page that does not exist for anyone but an admin. */
+export default function RecordingReportPage({ admin = false }: { admin?: boolean }) {
   const { recordingId } = useParams<{ recordingId: string }>();
   const { status: authStatus, user } = useAuth();
   const { language, t } = useLanguage();
   const navigate = useNavigate();
-  const [report, setReport] = useState<RecordingReport | null>(null);
+  const [report, setReport] = useState<RecordingReport | AdminRecordingReport | null>(null);
   const [boss, setBoss] = useState<Boss | null>(null);
   const [state, setState] = useState<LoadState>("loading");
   const [deleteFailed, setDeleteFailed] = useState(false);
   const bossId = report?.recording.boss_id;
 
+  const allowed = admin ? user?.is_admin === true : user !== null;
+
   useEffect(() => {
-    if (!user || !recordingId) return;
+    if (!allowed || !recordingId) return;
     let cancelled = false;
     let timer: number | undefined;
     let loaded = false;
     setState("loading");
+    const fetchReport = admin ? getAdminRecordingReport : getRecordingReport;
     const load = () => {
-      getRecordingReport(recordingId)
+      fetchReport(recordingId)
         .then((data) => {
           if (cancelled) return;
           loaded = true;
@@ -213,7 +222,7 @@ export default function RecordingReportPage() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [user, recordingId]);
+  }, [allowed, admin, recordingId]);
 
   // the boss's moveset names the moves; without it the report still shows, with the moves' ids
   useEffect(() => {
@@ -240,6 +249,14 @@ export default function RecordingReportPage() {
     }
   }
 
+  if (authStatus !== "loading" && admin && !allowed) {
+    return (
+      <main className="page">
+        <p role="alert">{t("admin.notFound")}</p>
+      </main>
+    );
+  }
+
   if (authStatus === "loading" || (user && state === "loading")) {
     return (
       <main className="page">
@@ -256,11 +273,13 @@ export default function RecordingReportPage() {
     );
   }
 
+  const back = admin ? { to: "/admin", label: t("admin.back") } : { to: "/recordings", label: t("report.back") };
+
   if (state === "not-found" || state === "error" || !report) {
     return (
       <main className="page">
-        <Link to="/recordings" className="back-link">
-          {t("report.back")}
+        <Link to={back.to} className="back-link">
+          {back.label}
         </Link>
         <p role="alert">{state === "not-found" ? t("report.notFound") : t("report.loadError")}</p>
       </main>
@@ -268,14 +287,22 @@ export default function RecordingReportPage() {
   }
 
   const { recording } = report;
+  const owner = "owner" in report ? report.owner : null;
+  const clipSrc: ClipSource = (failureId) => (admin ? adminClipUrl : clipUrl)(recording.id, failureId);
 
   return (
     <main className="page">
-      <Link to="/recordings" className="back-link">
-        {t("report.back")}
+      <Link to={back.to} className="back-link">
+        {back.label}
       </Link>
       <h1 className="recording-title">{recording.filename}</h1>
       <dl className="comparison recording-details">
+        {owner !== null && (
+          <>
+            <dt>{t("admin.owner")}</dt>
+            <dd>{owner}</dd>
+          </>
+        )}
         <dt>{t("report.uploaded")}</dt>
         <dd>{formatUploadTime(recording.created_at, language)}</dd>
         {recording.duration_s !== null && (
@@ -298,14 +325,18 @@ export default function RecordingReportPage() {
       {recording.low_resolution && recording.status !== "rejected" && (
         <p className="notice">{t("report.lowResolution")}</p>
       )}
-      {recording.status === "done" && <FailureReport report={report} boss={boss} />}
+      {recording.status === "done" && <FailureReport report={report} boss={boss} clipSrc={clipSrc} />}
 
-      {deleteFailed && <p role="alert">{t("recordings.deleteError")}</p>}
-      <div className="form-actions">
-        <button type="button" className="btn" onClick={() => handleDelete(recording)}>
-          {t("recordings.delete")}
-        </button>
-      </div>
+      {!admin && (
+        <>
+          {deleteFailed && <p role="alert">{t("recordings.deleteError")}</p>}
+          <div className="form-actions">
+            <button type="button" className="btn" onClick={() => handleDelete(recording)}>
+              {t("recordings.delete")}
+            </button>
+          </div>
+        </>
+      )}
     </main>
   );
 }

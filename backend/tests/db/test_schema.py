@@ -355,3 +355,20 @@ def test_fastapi_dependency_reaches_postgres(engine, database_url, monkeypatch):
 
     assert resp.status_code == 200
     assert resp.json() == {"tables": True}
+
+
+def test_existing_users_are_not_admins_after_the_admin_migration(engine, database_url):
+    config = alembic_config(database_url)
+    command.downgrade(config, "a7c3e19d5b42")  # the revision before users.is_admin
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("INSERT INTO users (username, password_hash) VALUES ('mig-before-admin', 'x')"))
+
+        command.upgrade(config, "head")
+
+        with engine.connect() as conn:
+            is_admin = conn.scalar(text("SELECT is_admin FROM users WHERE username = 'mig-before-admin'"))
+        assert is_admin is False
+    finally:
+        remove_mig_rows(engine)
+        command.upgrade(config, "head")

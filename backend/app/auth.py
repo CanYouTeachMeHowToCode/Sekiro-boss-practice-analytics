@@ -42,3 +42,20 @@ def get_current_user(
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not logged in")
     return user
+
+
+def not_found() -> HTTPException:
+    """FastAPI's own answer for a path that does not exist."""
+    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+
+
+def get_admin_user(
+    session_token: str | None = Cookie(default=None, alias=SESSION_COOKIE),
+    db: Session = Depends(get_db),
+) -> User:
+    """The logged-in admin. Anyone else, logged in or not, gets the 404 of a path that does not exist, so the admin
+    endpoints give nothing away."""
+    user = auth_service.get_user_for_token(db, session_token) if session_token else None
+    if user is None or not user.is_admin:
+        raise not_found()
+    return user
