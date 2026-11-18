@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { spawn, spawnSync } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,6 +25,8 @@ const API_BASE_URL = `http://127.0.0.1:${PORT}/api`;
 const DATABASE_NAME = "sekiro_integration_test";
 
 let backendProcess: ChildProcess;
+// uploaded videos go to a temporary folder, not into the repository
+let recordingsDir: string;
 
 // Node's fetch has no cookie jar. Browsers keep the session cookie automatically;
 // this keeps it for the real api/ layer the same way.
@@ -95,7 +98,8 @@ async function waitForHealth(timeoutMs: number): Promise<void> {
 }
 
 beforeAll(async () => {
-  const env = { ...process.env, DATABASE_URL: integrationDatabaseUrl() };
+  recordingsDir = mkdtempSync(join(tmpdir(), "sekiro-recordings-"));
+  const env = { ...process.env, DATABASE_URL: integrationDatabaseUrl(), RECORDINGS_DIR: recordingsDir };
 
   const reset = spawnSync(resolvePython(), ["-m", "scripts.reset_test_database"], {
     cwd: BACKEND_DIR,
@@ -127,6 +131,7 @@ beforeAll(async () => {
 
 afterAll(() => {
   backendProcess?.kill();
+  if (recordingsDir) rmSync(recordingsDir, { recursive: true, force: true });
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
 });
@@ -321,5 +326,50 @@ describe("frontend calling the real backend", () => {
     expect(floatingPassage?.name_zh).toBe("绝技·飞渡浮舟");
     expect(floatingPassage?.description).toBeTruthy();
     expect(floatingPassage?.description_zh).toBeTruthy();
+  });
+  it("uploads a recording, reads it back, keeps it from another user and deletes it", async () => {
+    const { register } = await import("../src/api/auth");
+    const { deleteRecording, getRecordingReport, listRecordings, uploadUrl } = await import("../src/api/recordings");
+    type Recording = Awaited<ReturnType<typeof listRecordings>>[number];
+
+    // The browser uploads with XMLHttpRequest to report progress, which Node does not have: the same request by fetch.
+    const res = await fetch(uploadUrl("castle fight.mp4"), {
+      method: "POST",
+      headers: { "Content-Type": "application/octet-stream" },
+      body: new Uint8Array(4096),
+    });
+    expect(res.status).toBe(201);
+    const created = (await res.json()) as Recording;
+    // no worker runs here, so the recording stays uploaded: not yet checked, size unknown
+    expect(created).toMatchObject({
+      boss_id: "genichiro-ashina",
+      filename: "castle fight.mp4",
+      status: "uploaded",
+      reject_code: null,
+      size_bytes: 4096,
+      duration_s: null,
+      width: null,
+      height: null,
+      low_resolution: false,
+    });
+
+    expect((await listRecordings()).map((r) => r.id)).toEqual([created.id]);
+    expect(await getRecordingReport(created.id)).toEqual({ recording: created, failures: [], by_move: [], uncertain: 0 });
+
+    const firstUserCookies = new Map(cookieJar);
+    cookieJar.clear();
+    try {
+      await register({ username: "integration_kuro", password: "kusabimaru" });
+      expect(await listRecordings()).toEqual([]);
+      await expect(getRecordingReport(created.id)).rejects.toMatchObject({ status: 404 });
+      await expect(deleteRecording(created.id)).rejects.toMatchObject({ status: 404 });
+    } finally {
+      cookieJar.clear();
+      for (const [name, value] of firstUserCookies) cookieJar.set(name, value);
+    }
+
+    await deleteRecording(created.id);
+    expect(await listRecordings()).toEqual([]);
+    await expect(getRecordingReport(created.id)).rejects.toMatchObject({ status: 404 });
   });
 });

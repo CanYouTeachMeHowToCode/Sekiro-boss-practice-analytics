@@ -14,7 +14,8 @@ from app.db.models import Attempt, Boss, BossPhase, Game, Move, PhaseMove, User
 from scripts.claim_attempts import claim_attempts
 from scripts.reset_test_database import alembic_config
 
-APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts", "users", "user_sessions"}
+APP_TABLES = {"games", "bosses", "boss_phases", "moves", "phase_moves", "attempts", "users", "user_sessions",
+              "recordings", "recording_failures"}
 BEFORE_NOT_NULL = "5bc59c89a1b6"  # the revision before attempts.user_id becomes NOT NULL
 
 

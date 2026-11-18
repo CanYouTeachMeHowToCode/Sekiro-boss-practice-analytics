@@ -1,0 +1,8 @@
+# Only the recording worker is built from the repository root (backend/Dockerfile.worker): send it just what it copies,
+# never the research work folders, recordings, virtual environments or node_modules.
+*
+!backend/requirements.txt
+!backend/app
+!analysis/requirements.txt
+!analysis/sekiro_analysis
+**/__pycache__
