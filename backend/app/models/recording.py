@@ -80,3 +80,15 @@ class RecordingReport(BaseModel):
     by_move: list[MoveFailureCount]
     # failures whose move the system is not sure of
     uncertain: int
+
+
+class AdminRecording(Recording):
+    """A recording in the read-only admin view (owner decision, 2026-11-18): whose it is, and the worker's error."""
+
+    owner: str
+    error: str | None = None
+    fps: float | None = None
+
+
+class AdminRecordingReport(RecordingReport):
+    owner: str

@@ -11,7 +11,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 def _to_response(user: models.User) -> User:
-    return User(id=str(user.id), username=user.username, preferred_language=user.preferred_language)
+    return User(
+        id=str(user.id), username=user.username, preferred_language=user.preferred_language, is_admin=user.is_admin
+    )
 
 
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)

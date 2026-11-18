@@ -39,7 +39,7 @@ function setBrowserLanguage(language: string) {
   vi.spyOn(window.navigator, "language", "get").mockReturnValue(language);
 }
 
-const user = (preferred_language: User["preferred_language"]): User => ({ id: "1", username: "wolf", preferred_language });
+const user = (preferred_language: User["preferred_language"]): User => ({ id: "1", username: "wolf", preferred_language, is_admin: false });
 
 describe("LanguageProvider", () => {
   beforeEach(() => {

@@ -156,6 +156,8 @@ export interface User {
   username: string;
   /** Interface language saved in the account; null until the user picks one. */
   preferred_language: "en" | "zh" | null;
+  /** May open every user's recordings and reports, read-only; set only on the server. */
+  is_admin: boolean;
 }
 
 export interface Credentials {
@@ -221,4 +223,15 @@ export interface RecordingReport {
   by_move: MoveFailureCount[];
   /** Failures whose move the system is not sure of. */
   uncertain: number;
+}
+
+/** A recording in the read-only admin view: whose it is, and the worker's error when it failed. */
+export interface AdminRecording extends Recording {
+  owner: string;
+  error: string | null;
+  fps: number | null;
+}
+
+export interface AdminRecordingReport extends RecordingReport {
+  owner: string;
 }

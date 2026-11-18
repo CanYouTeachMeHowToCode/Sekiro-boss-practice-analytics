@@ -36,6 +36,8 @@ class User(BaseModel):
     id: str
     username: str
     preferred_language: Language | None = None
+    # may open every user's recordings and reports, read-only; set only on the server (scripts/set_admin.py)
+    is_admin: bool = False
 
 
 class UpdateUserRequest(BaseModel):

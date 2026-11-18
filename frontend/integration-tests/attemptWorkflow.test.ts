@@ -372,4 +372,50 @@ describe("frontend calling the real backend", () => {
     expect(await listRecordings()).toEqual([]);
     await expect(getRecordingReport(created.id)).rejects.toMatchObject({ status: 404 });
   });
+
+  it("shows every user's recordings to an admin, read-only, and to nobody else", async () => {
+    const { getCurrentUser, register } = await import("../src/api/auth");
+    const { getAdminRecordingReport, listAdminRecordings } = await import("../src/api/admin");
+    const { deleteRecording, getRecordingReport, uploadUrl } = await import("../src/api/recordings");
+
+    const res = await fetch(uploadUrl("unicorn fight.mp4"), {
+      method: "POST",
+      headers: { "Content-Type": "application/octet-stream" },
+      body: new Uint8Array(2048),
+    });
+    expect(res.status).toBe(201);
+    const { id } = (await res.json()) as { id: string };
+    const ownReport = await getRecordingReport(id);
+
+    // not an admin: the admin paths answer like paths that do not exist
+    expect((await getCurrentUser())?.is_admin).toBe(false);
+    await expect(listAdminRecordings()).rejects.toMatchObject({ status: 404, message: "Not Found" });
+    await expect(getAdminRecordingReport(id)).rejects.toMatchObject({ status: 404 });
+
+    const firstUserCookies = new Map(cookieJar);
+    cookieJar.clear();
+    try {
+      await register({ username: "integration_admin", password: "kusabimaru" });
+      // admin is set only on the server, from the command line
+      const setAdmin = spawnSync(resolvePython(), ["-m", "scripts.set_admin", "integration_admin"], {
+        cwd: BACKEND_DIR,
+        env: { ...process.env, DATABASE_URL: integrationDatabaseUrl() },
+        encoding: "utf-8",
+      });
+      expect(setAdmin.status, setAdmin.stderr).toBe(0);
+      expect((await getCurrentUser())?.is_admin).toBe(true);
+
+      const rows = await listAdminRecordings();
+      expect(rows.find((r) => r.id === id)).toMatchObject({ owner: "integration_wolf", filename: "unicorn fight.mp4" });
+      expect(await getAdminRecordingReport(id)).toEqual({ ...ownReport, owner: "integration_wolf" });
+      // the owners' own API stays per user, admin or not
+      await expect(getRecordingReport(id)).rejects.toMatchObject({ status: 404 });
+      await expect(deleteRecording(id)).rejects.toMatchObject({ status: 404 });
+    } finally {
+      cookieJar.clear();
+      for (const [name, value] of firstUserCookies) cookieJar.set(name, value);
+    }
+
+    await deleteRecording(id);
+  });
 });

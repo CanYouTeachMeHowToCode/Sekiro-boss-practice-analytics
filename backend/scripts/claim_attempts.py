@@ -29,10 +29,12 @@ class ClaimError(Exception):
 
 def claim_attempts(session: Session, username: str) -> int:
     """Gives every ownerless attempt to `username`; returns how many were claimed."""
-    user = session.scalar(select(User).where(User.username == normalize_username(username)))
-    if user is None:
+    # Only the id is read: this runs against databases from before later migrations (such as users.is_admin), whose
+    # users table lacks columns the User model has.
+    user_id = session.scalar(select(User.id).where(User.username == normalize_username(username)))
+    if user_id is None:
         raise ClaimError(f"No user named '{username}'. Register the account in the app first.")
-    result = session.execute(update(Attempt).where(Attempt.user_id.is_(None)).values(user_id=user.id))
+    result = session.execute(update(Attempt).where(Attempt.user_id.is_(None)).values(user_id=user_id))
     session.commit()
     return result.rowcount
 

@@ -1,7 +1,8 @@
 """Uploaded fight recordings and their failure reports (V4 Milestone 3).
 
-Every function takes the current user's id and only ever reads or changes that user's recordings: another user's
-recording behaves exactly like one that does not exist.
+Every function that looks up recordings takes the current user's id and only ever reads or changes that user's
+recordings: another user's recording behaves exactly like one that does not exist. The row helpers (report_query,
+build_report, failure_clip) take no user: admin_service reuses them for the read-only admin view.
 
 Videos are written under RECORDINGS_DIR (a Docker volume in Compose), one folder per user, and never into the
 database. An upload is streamed to a `.part` file and renamed when complete, so a recording row only ever points at
@@ -53,7 +54,7 @@ def max_upload_bytes() -> int:
     return int(os.environ.get("MAX_UPLOAD_BYTES", MAX_UPLOAD_BYTES))
 
 
-def _to_schema(row: db.Recording) -> Recording:
+def to_schema(row: db.Recording) -> Recording:
     return Recording(
         id=str(row.id),
         boss_id=row.boss.slug,
@@ -128,7 +129,7 @@ class Upload:
         session.add(row)
         session.commit()
         session.refresh(row)
-        return _to_schema(row)
+        return to_schema(row)
 
 
 def list_recordings(session: Session, user_id: int) -> list[Recording]:
@@ -138,24 +139,30 @@ def list_recordings(session: Session, user_id: int) -> list[Recording]:
         .options(selectinload(db.Recording.boss))
         .order_by(db.Recording.created_at.desc(), db.Recording.id.desc())
     )
-    return [_to_schema(row) for row in rows]
+    return [to_schema(row) for row in rows]
 
 
 def get_recording(session: Session, user_id: int, recording_id: str) -> Recording | None:
     row = _own(session, user_id, recording_id)
-    return _to_schema(row) if row else None
+    return to_schema(row) if row else None
 
 
 def get_report(session: Session, user_id: int, recording_id: str) -> RecordingReport | None:
     if not recording_id.isdigit():
         return None
-    row = session.scalar(
-        select(db.Recording)
-        .where(db.Recording.id == int(recording_id), db.Recording.user_id == user_id)
-        .options(selectinload(db.Recording.failures).selectinload(db.RecordingFailure.move))
+    row = session.scalar(report_query().where(db.Recording.id == int(recording_id), db.Recording.user_id == user_id))
+    return build_report(row) if row else None
+
+
+def report_query():
+    """A select of recordings with what build_report reads loaded."""
+    return select(db.Recording).options(
+        selectinload(db.Recording.boss), selectinload(db.Recording.failures).selectinload(db.RecordingFailure.move)
     )
-    if row is None:
-        return None
+
+
+def build_report(row: db.Recording) -> RecordingReport:
+    """The report of one recording row; callers decide who may see it."""
     failures = [
         RecordingFailure(
             id=str(f.id),
@@ -186,7 +193,7 @@ def get_report(session: Session, user_id: int, recording_id: str) -> RecordingRe
     ]
     by_move.sort(key=lambda m: (-m.total, m.move_id))
     return RecordingReport(
-        recording=_to_schema(row),
+        recording=to_schema(row),
         failures=failures,
         by_move=by_move,
         uncertain=sum(1 for f in failures if not f.sure),
@@ -196,7 +203,12 @@ def get_report(session: Session, user_id: int, recording_id: str) -> RecordingRe
 def clip_path(session: Session, user_id: int, recording_id: str, failure_id: str) -> Path | None:
     """The clip of one failure of the user's own recording, or None."""
     row = _own(session, user_id, recording_id)
-    if row is None or not failure_id.isdigit():
+    return failure_clip(session, row, failure_id) if row else None
+
+
+def failure_clip(session: Session, row: db.Recording, failure_id: str) -> Path | None:
+    """The clip file of one failure of this recording, or None; callers decide who may see it."""
+    if not failure_id.isdigit():
         return None
     failure = session.scalar(
         select(db.RecordingFailure).where(

@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import AdminPage from "./pages/AdminPage";
 import AuthPage from "./pages/AuthPage";
 import BossSelectionPage from "./pages/BossSelectionPage";
 import BossDashboardPage from "./pages/BossDashboardPage";
@@ -21,6 +22,8 @@ export default function App() {
         <Route path="/recordings" element={<RecordingsPage />} />
         <Route path="/recordings/upload" element={<UploadRecordingPage />} />
         <Route path="/recordings/:recordingId" element={<RecordingReportPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/recordings/:recordingId" element={<RecordingReportPage admin />} />
       </Routes>
     </>
   );
