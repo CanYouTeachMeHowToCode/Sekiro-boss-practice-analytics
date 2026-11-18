@@ -41,10 +41,12 @@ describe("UploadRecordingPage", () => {
     vi.restoreAllMocks();
   });
 
-  it("states what can be analysed and recommends at least 1080p", () => {
+  it("states what can be analysed and recommends at least 1080p and 60 fps", () => {
     renderUpload();
 
     expect(screen.getByText(/in vanilla Sekiro/)).toBeInTheDocument();
+    expect(screen.getByText(/a constant 30 or 60 frames per second/)).toBeInTheDocument();
+    expect(screen.getByText(/30 fps videos are analysed too, but .* for reference only/)).toBeInTheDocument();
     expect(
       screen.getByText(
         "Record at 1080p or higher if you can. 720p videos are analysed too, but more failures will show the move as unsure."
@@ -56,6 +58,7 @@ describe("UploadRecordingPage", () => {
     renderUpload("zh");
 
     expect(screen.getByText(/原版《只狼》/)).toBeInTheDocument();
+    expect(screen.getByText("建议用 60 帧录制。30 帧也能分析，但 30 帧的识别还在验证，结果仅供参考。")).toBeInTheDocument();
     expect(
       screen.getByText('建议用 1080p 或更高分辨率录制。720p 也能分析，但更多失败会显示"招式不确定"。')
     ).toBeInTheDocument();

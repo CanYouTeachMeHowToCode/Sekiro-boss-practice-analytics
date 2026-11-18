@@ -2,7 +2,7 @@
 
 Research use: python -I research/failure_attribution/scripts/boss_track.py <recording id | all> [--step N]
 
-Every N-th frame (default 2, 30 per second) goes through mask_overlay() first, then lockon.Tracker finds the white
+Every N-th frame (default: 30 a second, sampling.step) goes through mask_overlay() first, then lockon.Tracker finds the white
 lock-on dot. The crop is a CROP-pixel square (at 2560×1440, scaled for other sizes) centred DROP pixels below the dot,
 since the dot sits on the chest and the legs matter more than the sky; it is stored at OUT×OUT. When the dot is
 missing (a flash, the camera too close), the last dot is used for up to HOLD seconds; after that the crop is the
@@ -19,6 +19,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from . import sampling
 from .lockon import Tracker
 from .overlay_mask import BASE_H, BASE_W, mask_overlay
 
@@ -35,10 +36,12 @@ def crop(frame, x, y):
     return cv2.resize(part, (OUT, OUT), interpolation=cv2.INTER_AREA)
 
 
-def track(video, work, step=2, progress=None):
-    """Tracks the boss through the video; `progress` (optional) is called with the fraction read."""
+def track(video, work, step=None, progress=None):
+    """Tracks the boss through the video, reading every `step`-th frame (default: 30 a second, sampling.step);
+    `progress` (optional) is called with the fraction read."""
     cap = cv2.VideoCapture(str(video))
     fps, total = cap.get(cv2.CAP_PROP_FPS), max(1, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+    step = step or sampling.step(fps)
     work = Path(work)
     tracker, rows, blobs = Tracker(), [], []
     last, last_t, n, start = None, -1e9, 0, time.time()

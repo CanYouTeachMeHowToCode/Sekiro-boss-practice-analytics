@@ -1,7 +1,7 @@
 # analysis: the failure attribution pipeline
 
-The V4 failure attribution pipeline (version 2: frozen 2026-11-12, passed its blind test 2026-11-13) as one Python
-package, `sekiro_analysis`. The research scripts in `research/failure_attribution/scripts/` and the recording worker
+The V4 failure attribution pipeline (version 2: frozen 2026-11-12, passed its blind test 2026-11-13; version 3,
+2026-11-18, reads other frame rates and is version 2 at 60 fps) as one Python package, `sekiro_analysis`. The research scripts in `research/failure_attribution/scripts/` and the recording worker
 (`backend/app/worker/`) run the same code from here.
 
 | Module | Step |
@@ -18,6 +18,7 @@ package, `sekiro_analysis`. The research scripts in `research/failure_attributio
 | `content_check.py` | the upload check: Sekiro HUD, castle Genichiro's name, the castle roof |
 | `pipeline.py` | the worker's entry point: `check()` and `analyze()` |
 | `decode.py` | checks that OpenCV decodes video exactly as in the research, on a synthetic sample (`decode_sample.mp4`) |
+| `sampling.py` | how often the steps read a video: 30 samples a second at any frame rate (version 3) |
 
 ## The data folder
 
@@ -52,3 +53,20 @@ a false damage event on a test recording. The Linux 4.12.0.88 wheel (FFmpeg 5.1)
 `requirements.txt` pins it on Linux. With it, the steps that read the video gave byte-identical outputs on every
 labelled recording without the overlay. `python -m sekiro_analysis.decode` checks a platform's decoding on a synthetic
 sample, and the worker refuses to analyse when it differs; change OpenCV only together with that check and a rerun.
+
+## Frame rates (version 3)
+
+Version 2 was built and measured on 60 fps recordings, read every other frame: 30 samples a second, and every constant
+that counts samples (events.py's LINE_HOLD and LINE_GAP, moves.py's RATE and the windows it turns into rows) means a
+30th of a second. A 30 fps upload read the same way gave 15 samples a second: the windows covered twice the time, the
+boss's motion ran at twice the references' speed, and a window near the start of the video ran past it (every
+candidate -1). Version 3 (`sampling.py`) reads 30 samples a second whatever the rate: every frame at 30 fps, every
+other at 60. The steps that sample at other rates (the lightning reversal at 20 a second, the content check's name
+window at 10) follow the same rule, from the nominal rate (the multiple of 30 nearest the file's).
+
+At 60 fps version 3 reads the same frames as version 2, so its outputs are version 2's, byte for byte: every registered
+recording reads as 59.5–60.005 fps, and a full rerun of both versions on three of them gave identical files. The
+attribution has been measured at 60 fps only: the worker accepts 30 fps, and the report says its results are for
+reference only (`checks.VALIDATED_FRAME_RATES`), until new 30 fps fights labelled blind pass under the plan_m2.md
+protocol. `research/failure_attribution/scripts/sim_frame_rate.py` is a development check on frame-dropped copies of
+the labelled recordings, not that measurement.

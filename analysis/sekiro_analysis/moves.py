@@ -29,7 +29,9 @@ from pathlib import Path
 
 import numpy as np
 
-LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, 30          # RATE: crops per second (boss_track.py, step 2)
+from . import sampling
+
+LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, sampling.SAMPLES_PER_S   # RATE: crops per second (boss_track.py)
 LAG_DROP = 2       # crops either side for a labelled reference: both times are HP drops read by the same detector
 MERGE_GAP, BREAK_WITH, PUNISH_WINDOW = 2.0, 0.3, 2.0
 SURE_MARGIN = 0.025

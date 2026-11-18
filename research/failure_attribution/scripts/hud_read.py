@@ -14,7 +14,7 @@ from sekiro_analysis.hud_read import cache, series  # noqa: E402
 
 if __name__ == "__main__":
     if sys.argv[1] == "cache":
-        step = int(sys.argv[sys.argv.index("--step") + 1]) if "--step" in sys.argv else 2
+        step = int(sys.argv[sys.argv.index("--step") + 1]) if "--step" in sys.argv else None   # None: 30 a second
         out = Path(sys.argv[3])
         cache(sys.argv[2], out, step, progress=lambda f: report(out.parent, "hud_cache", f))
     else:

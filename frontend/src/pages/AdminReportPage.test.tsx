@@ -64,6 +64,20 @@ describe("RecordingReportPage in the admin view", () => {
     expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
   });
 
+  it("shows the admin every failure's candidate scores", async () => {
+    const report = { ...makeReport(), owner: "unicorn" };
+    report.failures[3].candidates = [
+      { move_id: "counter-slash", score: 0.1234 },
+      { move_id: "hawk-shot", score: -1 },
+    ];
+    vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue(report);
+
+    renderAdminReport();
+
+    expect(await screen.findByText("Scores: Floating Passage 0.210")).toBeInTheDocument();
+    expect(await screen.findByText("Scores: Counter Slash 0.123, Hawk Shot —")).toBeInTheDocument();
+  });
+
   it("plays clips through the admin path", async () => {
     const user = userEvent.setup();
     vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue({ ...makeReport(), owner: "unicorn" });

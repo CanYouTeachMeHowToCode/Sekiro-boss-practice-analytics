@@ -2,6 +2,7 @@
 
 import json
 import shutil
+import statistics
 import subprocess
 from dataclasses import dataclass
 from fractions import Fraction
@@ -20,6 +21,8 @@ class VideoInfo:
     duration_s: float
     # the transfer function ffprobe names (bt709, smpte2084 = HDR10's PQ, arib-std-b67 = HLG), when the file says
     transfer: str | None = None
+    # share of frame intervals far from the usual one (frame_irregularity); None when not measured
+    irregular: float | None = None
 
 
 def ffmpeg_available() -> bool:
@@ -38,9 +41,28 @@ def probe(path: Path) -> VideoInfo:
         if not rate or rate == "0/0":
             rate = stream["r_frame_rate"]
         return VideoInfo(width=int(stream["width"]), height=int(stream["height"]), fps=float(Fraction(rate)),
-                         duration_s=float(data["format"]["duration"]), transfer=stream.get("color_transfer"))
+                         duration_s=float(data["format"]["duration"]), transfer=stream.get("color_transfer"),
+                         irregular=frame_irregularity(path))
     except (subprocess.SubprocessError, OSError, KeyError, IndexError, ValueError, ZeroDivisionError) as exc:
         raise MediaError(f"cannot read {path.name}: {exc}") from exc
+
+
+def frame_irregularity(path: Path) -> float | None:
+    """The share of frame intervals more than a quarter off the usual one, from the video packets' timestamps
+    (nothing is decoded): about 0 at a constant frame rate, where a dropped frame now and then adds a little (at most
+    0.2% on the owner's recordings, 2026-11-18), and large at a variable one. None for a video too short to tell.
+    The header's rates cannot tell: a constant 60 fps recording can declare r_frame_rate 240."""
+    cmd = ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "packet=pts_time", "-of", "csv=p=0",
+           str(path)]
+    out = subprocess.run(cmd, capture_output=True, text=True, timeout=300, check=True).stdout
+    pts = sorted(float(x) for x in out.replace(",", " ").split() if x != "N/A")
+    gaps = [b - a for a, b in zip(pts, pts[1:])]
+    if len(gaps) < 10:
+        return None
+    usual = statistics.median(gaps)
+    if usual <= 0:
+        return None
+    return sum(abs(g - usual) > 0.25 * usual for g in gaps) / len(gaps)
 
 
 CLIP_HEIGHT = 720

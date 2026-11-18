@@ -20,7 +20,7 @@ ACTIVE = ("uploaded", "checking", "queued", "processing")
 
 def _to_admin(row: db.Recording) -> AdminRecording:
     return AdminRecording(
-        **recording_service.to_schema(row).model_dump(), owner=row.user.username, error=row.error, fps=row.fps
+        **recording_service.to_schema(row).model_dump(), owner=row.user.username, error=row.error
     )
 
 
