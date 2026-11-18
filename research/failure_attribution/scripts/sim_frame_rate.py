@@ -10,16 +10,28 @@ nearly the same moments version 2 sees reading every other frame of the original
 recorders, bitrates, a game capped at 30). Real tester footage at 30 fps is held out of development (owner,
 2026-11-18); the measurement is on new 30 fps fights labelled blind after version 3 is frozen (plan_m2.md protocol).
 
-The copies are the version-2 test recordings (测试录像13–21) through ffmpeg's select filter (even frames only), re-timed
-to a constant 30 fps and encoded as sim_resolution.py does (H.264 CRF 18, the bundled binary of imageio-ffmpeg), at
-their own size. They go to SIM_DIR (local, outside the repository) and into recordings.local.json (gitignored), with set
-"simulation-fps" and answers_of the original.
+The copies are the version-2 test recordings (测试录像13–21) through ffmpeg's fps filter: a constant 30 fps on the
+original's own timeline, the frame nearest each 30th of a second (mostly every other frame), and where the recorder
+dropped a frame the one before it repeated, as a constant-rate recorder does. Encoded as sim_resolution.py does (H.264
+CRF 18, the bundled binary of imageio-ffmpeg), at their own size. They go to SIM_DIR (local, outside the repository) and
+into recordings.local.json (gitignored), with set "simulation-fps" and answers_of the original.
+
+The pipeline times a frame as frame / fps, and the owner's answers are on that scale. Where a recorder dropped frames
+the two scales part: 测试录像13's recorder kept 4 frames in its last 1.25 s, so it averages 59.52 fps, and frame / fps
+runs ahead of its timestamps by up to 1.1 s (0.8%). A copy's frame / 30 is its timestamp, so compare() maps the copy's
+times to the original's frame / fps (original_time()) before matching; without that, 7 of 测试录像13's failures were
+counted as missed and reported at the wrong time (first two runs, 2026-11-18).
 """
 import csv
 import json
+import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+
+import cv2
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import FA, HERE, recordings, video_path, work_dir  # noqa: E402
@@ -41,7 +53,7 @@ def make():
         out = SIM_DIR / f"{src}{SUFFIX}.mp4"
         if not out.exists():
             subprocess.run([ffmpeg(), "-hide_banner", "-loglevel", "error", "-y", "-i", str(video_path(rec)),
-                            "-vf", r"select=not(mod(n\,2)),setpts=N/30/TB", "-r", "30", "-c:v", "libx264", "-preset",
+                            "-vf", "fps=30", "-c:v", "libx264", "-preset",
                             "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", "-an", str(out)], check=True)
         entries.append({"id": src + SUFFIX, "file_name": str(out), "ruleset": rec["ruleset"],
                         "game_version": rec["game_version"], "overlay": False, "set": SET, "answers_of": src,
@@ -58,9 +70,40 @@ def run():
     compare()
 
 
-def predictions(rec_id):
+def frame_times(video):
+    """The video's frame timestamps in seconds, sorted (ffmpeg's mkvtimestamp_v2 muxer: packets only, no decoding)."""
+    fd, tmp = tempfile.mkstemp(suffix=".txt")
+    os.close(fd)
+    try:
+        subprocess.run([ffmpeg(), "-v", "error", "-y", "-i", str(video), "-map", "0:v:0", "-c", "copy", "-f",
+                        "mkvtimestamp_v2", tmp], check=True)
+        lines = Path(tmp).read_text(encoding="ascii").splitlines()
+    finally:
+        os.remove(tmp)
+    return np.sort([float(x) / 1000 for x in lines if x.strip() and not x.startswith("#")])
+
+
+def original_time(src):
+    """A function from a time in src's copy (its timestamp) to src's frame / fps: the original's frame nearest that
+    timestamp, over the frame rate the pipeline reads (CAP_PROP_FPS)."""
+    video = video_path(recordings()[src])
+    pts = frame_times(video)
+    cap = cv2.VideoCapture(str(video))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    cap.release()
+
+    def to(t):
+        i = int(np.clip(np.searchsorted(pts, t), 1, len(pts) - 1))
+        return (i if abs(pts[i] - t) < abs(pts[i - 1] - t) else i - 1) / fps
+    return to
+
+
+def predictions(rec_id, to=None):
+    """rec_id's failure_predictions.csv; `to` (optional) maps its times to another time scale."""
+    to = to or (lambda t: t)
     path = work_dir(rec_id) / "failure_predictions.csv"
-    return [{"t": float(r["time_s"]), "events": events_of(r["events"].split()), "sure": r["certain"] == "1",
+    return [{"t": to(float(r["time_s"])), "events": [(a, to(x)) for a, x in events_of(r["events"].split())],
+             "sure": r["certain"] == "1",
              "top": [c.rsplit(":", 1)[0] for c in r["candidates"].split()],
              "scores": [float(c.rsplit(":", 1)[1]) for c in r["candidates"].split()]}
             for r in csv.DictReader(open(path, encoding="utf-8"))]
@@ -68,7 +111,7 @@ def predictions(rec_id):
 
 def compare(tol=0.35):
     """The originals (60 fps) and the copies (30 fps) against the owner's answers of the originals, matched by time as
-    in sim_resolution.compare()."""
+    in sim_resolution.compare(), the copies' times mapped to the originals' frame / fps (original_time())."""
     from reliability import Recording
     recs = recordings()
     answers = {src: Recording(src, recs[src]).truth for src in SOURCES}
@@ -77,7 +120,7 @@ def compare(tol=0.35):
         tot = dict(truth=0, found=0, reported=0, real=0, merged=0, split=0, n=0, sure=0, sure_right=0, top1=0, top3=0,
                    none=0)
         for src in SOURCES:
-            truth, preds = answers[src], predictions(src + suffix)
+            truth, preds = answers[src], predictions(src + suffix, original_time(src) if suffix else None)
             tev = [events_of(t["events"]) for t in truth]
             links = [[i for i, te in enumerate(tev) if any(a == b and abs(x - y) <= tol for a, x in p["events"] for b, y in te)]
                      for p in preds]
