@@ -345,6 +345,8 @@ Boss reference content remains global.
 
 User attempts remain personal.
 
+**Exception (owner decision, 2026-11-18): the read-only admin view.** During the M4 private test an admin (`users.is_admin`, set only on the server with `python -m scripts.set_admin <username>`) may list every user's recordings and open their reports and clips, and nothing more: no edit, delete or reassignment, and no API changes who is an admin. For everyone else the admin paths are a 404. Whether it stays after the public launch is decided in M4 step 4 (`deploy/plan_m4.md`); the owners' own endpoints stay strictly per user.
+
 ---
 
 # 8. V3 Milestone 1 — Accounts and Authentication ✅
