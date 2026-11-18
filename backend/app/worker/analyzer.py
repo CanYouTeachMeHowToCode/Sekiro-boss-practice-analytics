@@ -5,7 +5,8 @@ its move when the pipeline is sure of it and its candidates otherwise. The pipel
 (analysis/sekiro_analysis, version 2), installed in the worker's image; it needs a local data folder
 (ANALYSIS_DATA_DIR) with the references taken from the owner's recordings and the game's images, which are never in
 the repository (research/failure_attribution/scripts/export_analysis_data.py writes it). Without the package or the
-folder there is no analyzer, and queued recordings wait.
+folder, or when the image decodes video differently from the research, there is no analyzer, and queued recordings
+wait.
 """
 
 import logging
@@ -66,7 +67,8 @@ class PipelineAnalyzer:
 
 
 def load_analyzer() -> Analyzer | None:
-    """The installed pipeline, or None (and why, in the log) while the package or its data folder is missing."""
+    """The installed pipeline, or None (and why, in the log) while the package or its data folder is missing or the
+    decoding is not the research's."""
     folder = os.environ.get("ANALYSIS_DATA_DIR")
     if not folder:
         log.warning("ANALYSIS_DATA_DIR is not set: no pipeline")
@@ -79,5 +81,13 @@ def load_analyzer() -> Analyzer | None:
     missing = Data(folder).missing()
     if missing:
         log.warning("the analysis data folder %s lacks %s: no pipeline", folder, ", ".join(missing))
+        return None
+    # The steps read the HUD and the boss from decoded pixels; with another decoding the results would differ from
+    # the measured version 2 (sekiro_analysis/decode.py).
+    from sekiro_analysis import decode
+
+    if not decode.same_as_research():
+        log.error("this image's OpenCV decodes video differently from the research (sekiro_analysis/decode.py): "
+                  "no pipeline")
         return None
     return PipelineAnalyzer(folder, os.environ.get("ANALYSIS_DEVICE") or None)

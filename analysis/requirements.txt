@@ -1,7 +1,11 @@
 # The versions the research pipeline ran with (V4 M3, version 2). torch==2.11.0 and torchvision==0.26.0 are installed
 # from PyTorch's own index, so the CPU or the CUDA build can be chosen (backend/Dockerfile.worker).
 numpy==2.2.6
-opencv-python-headless==5.0.0.93
+# OpenCV decodes video with the FFmpeg bundled in its wheel, and the wheels differ by platform. On Linux the 5.0.0.93
+# wheel (FFmpeg 8) converts the frames to other pixels than the Windows 5.0.0.93 wheel the research ran with; the Linux
+# 4.12.0.88 wheel (FFmpeg 5.1) gives exactly the research's pixels and outputs (sekiro_analysis/decode.py).
+opencv-python-headless==5.0.0.93; sys_platform == "win32"
+opencv-python-headless==4.12.0.88; sys_platform != "win32"
 timm==1.0.30
 safetensors==0.8.0
 huggingface_hub==2.2.0

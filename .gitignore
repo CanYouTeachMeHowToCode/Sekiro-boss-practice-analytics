@@ -229,6 +229,8 @@ research/ground_truth/local.config
 *.mov
 *.npy
 *.npz
+# ...except the analysis package's synthetic decode sample (FFmpeg testsrc2, not game footage)
+!analysis/sekiro_analysis/decode_sample.mp4
 # Ground truth research: game scripts, params and AI decompilations stay local
 *.lua
 *.luabnd

@@ -257,6 +257,24 @@ def test_no_pipeline_without_its_data_folder(monkeypatch, tmp_path):
     assert load_analyzer() is None
 
 
+def test_no_pipeline_when_the_image_decodes_video_differently(monkeypatch, tmp_path):
+    pipeline = pytest.importorskip("sekiro_analysis.pipeline")      # installed in the worker image
+    from sekiro_analysis import decode, references
+
+    data = pipeline.Data(tmp_path)
+    for path in (data.death_mask, data.glyph, data.name_templates, data.scene_refs, data.weights,
+                 tmp_path / references.NPZ, tmp_path / references.JSON):
+        path.write_bytes(b"")
+    assert data.missing() == []
+    monkeypatch.setenv("ANALYSIS_DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(decode, "DIGEST", "0" * 64)
+    assert load_analyzer() is None
+    monkeypatch.undo()
+    monkeypatch.setenv("ANALYSIS_DATA_DIR", str(tmp_path))
+    assert decode.same_as_research(), "this OpenCV does not decode the sample as the research did"
+    assert load_analyzer() is not None
+
+
 def test_without_a_pipeline_queued_recordings_wait(seeded_session, user, recordings_dir):
     row = add_recording(seeded_session, user, recordings_dir, status="queued")
     assert jobs.run_once(seeded_session, None) is False

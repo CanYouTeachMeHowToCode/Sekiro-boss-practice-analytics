@@ -205,9 +205,12 @@ jobs:
           test "${status}" = queued
 
       # The worker image holds the analysis package and its libraries (CI has no analysis data folder, so the
-      # pipeline itself does not run here).
+      # pipeline itself does not run here). Its OpenCV must decode video exactly as the research did, or the
+      # worker refuses to analyse (sekiro_analysis/decode.py).
       - name: Import the analysis pipeline in the worker image
-        run: docker compose exec -T worker python -c "from sekiro_analysis import pipeline; print('pipeline', pipeline.VERSION)"
+        run: |
+          docker compose exec -T worker python -c "from sekiro_analysis import pipeline; print('pipeline', pipeline.VERSION)"
+          docker compose exec -T worker python -m sekiro_analysis.decode
 
       # Stopping the stack without -v must keep accounts and attempts in the
       # postgres-data volume (V3 success criteria: restart, data persists).
