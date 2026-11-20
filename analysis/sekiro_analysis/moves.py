@@ -29,7 +29,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import sampling
+from . import phase_read, sampling
 
 LAG_ATTACK, LAG_BULLET, RATE = 0.2, 1.5, sampling.SAMPLES_PER_S   # RATE: crops per second (boss_track.py)
 LAG_DROP = 2       # crops either side for a labelled reference: both times are HP drops read by the same detector
@@ -99,12 +99,13 @@ class Rec:
         events = read(work / "events.csv")
         self.blows = [float(e["time_s"]) for e in events if e["type"] == "deathblow"]
         self.ends = [float(e["time_s"]) for e in events if e["type"] == "death" and e["note"].startswith("not resurrected")]
+        self.hud = phase_read.load(work)            # the phase cues of version 4 (None in an older work folder)
 
     @classmethod
     def from_arrays(cls, t, ok, f):
         """A reference recording from its saved arrays: times, crops with a dot, detrended features."""
         r = cls.__new__(cls)
-        r.t, r.ok, r.f, r.blows, r.ends = t, ok, f, [], []
+        r.t, r.ok, r.f, r.blows, r.ends, r.hud = t, ok, f, [], [], None
         return r
 
     def row(self, t):
@@ -167,7 +168,8 @@ def predict_rows(q, events, refs, gaps, moves, st=SETTINGS):
     the rows of failure_predictions.csv (FIELDS)."""
     zh = {m["slug"]: m["zh"] for m in moves}
     for e in events:
-        e["t"], e["phase"] = float(e["time_s"]), phase_at(float(e["time_s"]), q.blows, q.ends)
+        e["t"] = float(e["time_s"])
+        e["phase"] = phase_read.phase_at(e["t"], q.hud, phase_at(e["t"], q.blows, q.ends))
         if e["type"] in ("damage", "posture_break"):
             e["moves"], _, e["scores"] = rank(q, e["t"], e["phase"], refs, st["window"], st["after"], moves)
     top = lambda e: e["moves"][0] if e.get("moves") else None  # noqa: E731

@@ -14,11 +14,13 @@ from pathlib import Path
 
 import numpy as np
 
-from . import boss_features, boss_track, content_check, death_screen, events, hud_read, moves, references, reversal
+from . import (boss_features, boss_track, content_check, death_screen, events, hud_read, moves, phase_read, references,
+               reversal, sampling)
 
 # version 3 (2026-11-18): the steps read 30 samples a second at any frame rate (sampling.py); at 60 fps the outputs are
-# version 2's, byte for byte
-VERSION = "v3"
+# version 2's, byte for byte. Version 4 (2026-11-20): the phase is read from the HUD, the deathblow dots and the boss's
+# name (phase_read.py), instead of counted from the deathblows
+VERSION = "v4"
 # share of the run time of each step, as measured in research (common.STEPS, without the review thumbnails)
 STEPS = [("hud_cache", 0.40), ("events", 0.02), ("reversal", 0.04), ("boss_track", 0.41), ("features", 0.04),
          ("moves", 0.03)]
@@ -78,7 +80,9 @@ def analyze(video, work, data, device=None, progress=None):
         done = sum(w for _, w in STEPS[:i])
         return (lambda f: progress((done + STEPS[i][1] * f) / total)) if progress else None
 
-    hud_read.cache(video, work / "hud_cache.npz", None, stage(0))           # 30 samples a second (sampling.step)
+    phases = phase_read.Reader(content_check.load_templates(data.name_templates), sampling.video_fps(video))
+    hud_read.cache(video, work / "hud_cache.npz", None, stage(0), phases)   # 30 samples a second (sampling.step)
+    phases.write(work)                                                      # the phase cues, 5 a second
     hud_read.series(work / "hud_cache.npz", work / "hud.csv")
     death_screen.scan(video, work, np.load(data.death_mask))
     events.write_events(work / "hud.csv", work / "events.csv")

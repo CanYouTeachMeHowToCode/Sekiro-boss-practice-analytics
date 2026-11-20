@@ -1326,6 +1326,8 @@ Milestone 3 also checks that an upload is a castle Genichiro fight (not another 
 
 Pipeline version 3 (owner decisions, 2026-11-18; `research/failure_attribution/plan_v3.md`) reads 30 samples a second at any frame rate, so its output at 60 fps is version 2's byte for byte. Constant 30 fps uploads are accepted, but their report says the results are for reference only until new 30 fps fights, labelled blind, pass under the M2 protocol; variable-frame-rate uploads are rejected. `python -m scripts.reanalyze <id>` sends a recording back to the worker after a new version.
 
+Pipeline version 4 (owner decisions, 2026-11-20; `research/failure_attribution/plan_v4.md`) reads the fight's phase from the HUD, the deathblow dots above the boss bar and the 巴流 name of phase 3, instead of counting deathblows: in a tester's darker recording every deathblow was missed, so every failure was phase 1 and its move chosen among phase 1's. On the owner's recordings every phase is version 3's, so the outputs are too. The 30 fps measurement is made on version 4.
+
 The pipeline is one package, `analysis/sekiro_analysis`: the research scripts call it and the Compose worker runs it, by default on the CPU. Its data folder (move references, name templates, model weights) is taken from the owner's recordings and the game's images, so it stays local and is mounted into the worker. Every step reads decoded pixels, so the worker's OpenCV must decode video exactly as the research's did (`analysis/README.md`, `python -m sekiro_analysis.decode`): do not change OpenCV or its FFmpeg without that check and a rerun on the labelled recordings.
 
 Every stage should produce useful intermediate tooling.
