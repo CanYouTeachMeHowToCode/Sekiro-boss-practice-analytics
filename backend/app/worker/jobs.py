@@ -23,13 +23,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import models as db
-from app.services.recording_service import clips_dir, recordings_dir
+from app.services.recording_service import CLIP_AFTER_S, CLIP_BEFORE_S, clips_dir, recordings_dir
 from app.worker import checks, media
 from app.worker.analyzer import Analyzer
 
 log = logging.getLogger(__name__)
 
-CLIP_BEFORE_S, CLIP_AFTER_S = 3.0, 2.0
 PROGRESS_STEP = 0.01          # save the progress at most once per percent
 
 

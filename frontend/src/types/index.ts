@@ -210,6 +210,8 @@ export interface RecordingFailure {
   candidates: MoveCandidate[];
   events: { type: RecordingFailureType; time_s: number }[];
   has_clip: boolean;
+  /** Where the clip starts in the video, in seconds (null without a clip). */
+  clip_start_s: number | null;
 }
 
 /** Failure counts per move from the sure answers: not success rates, how often each move came is unknown. */
