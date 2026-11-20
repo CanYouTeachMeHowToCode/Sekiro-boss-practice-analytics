@@ -5,6 +5,7 @@ import { getBossById } from "../api/bosses";
 import { ApiError } from "../api/client";
 import { clipUrl, deleteRecording, getRecordingReport } from "../api/recordings";
 import { useAuth } from "../auth/authContext";
+import FailureClip from "../components/FailureClip";
 import LoginPrompt from "../components/LoginPrompt";
 import { formatPhase, useLanguage } from "../i18n/language";
 import type { Language, MessageKey, Translate } from "../i18n/language";
@@ -16,6 +17,7 @@ import type {
   RecordingFailure,
   RecordingReport,
 } from "../types";
+import { clipMarks } from "../utils/clipMarks";
 import { getMoveName } from "../utils/moves";
 import {
   REPORT_POLL_MS,
@@ -76,11 +78,14 @@ const comparable = (c: MoveCandidate) => c.score > -1;
 function FailureItem({
   clipSrc,
   failure,
+  failures,
   boss,
   showScores,
 }: {
   clipSrc: ClipSource;
   failure: RecordingFailure;
+  /** every failure of the recording, to mark the others that fall inside this one's clip */
+  failures: RecordingFailure[];
   boss: Boss | null;
   showScores: boolean;
 }) {
@@ -127,9 +132,12 @@ function FailureItem({
           <button type="button" className="btn btn-small" onClick={() => setShowClip((v) => !v)}>
             {showClip ? t("report.hideClip") : t("report.playClip")}
           </button>
-          {showClip && (
-            <video className="failure-clip" src={clipSrc(failure.id)} controls autoPlay preload="metadata" />
-          )}
+          {showClip &&
+            (failure.clip_start_s === null ? (
+              <video className="failure-clip" src={clipSrc(failure.id)} controls autoPlay preload="metadata" />
+            ) : (
+              <FailureClip src={clipSrc(failure.id)} start={failure.clip_start_s} marks={clipMarks(failure, failures)} />
+            ))}
         </>
       )}
     </li>
@@ -214,7 +222,14 @@ function FailureReport({
             <h2>{t("report.failures")}</h2>
             <ol>
               {failures.map((f) => (
-                <FailureItem key={f.id} clipSrc={clipSrc} failure={f} boss={boss} showScores={showScores} />
+                <FailureItem
+                  key={f.id}
+                  clipSrc={clipSrc}
+                  failure={f}
+                  failures={failures}
+                  boss={boss}
+                  showScores={showScores}
+                />
               ))}
             </ol>
           </section>

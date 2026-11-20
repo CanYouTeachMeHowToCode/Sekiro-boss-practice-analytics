@@ -87,6 +87,7 @@ export function makeReport(recording: Partial<Recording> = {}): RecordingReport 
         candidates: [{ move_id: "floating-passage", score: 0.21 }],
         events: [{ type: "damage", time_s: 12.5 }],
         has_clip: true,
+        clip_start_s: 9.5,
       },
       {
         id: "2",
@@ -101,6 +102,7 @@ export function makeReport(recording: Partial<Recording> = {}): RecordingReport 
           { type: "death", time_s: 40.2 },
         ],
         has_clip: false,
+        clip_start_s: null,
       },
       {
         id: "3",
@@ -112,6 +114,7 @@ export function makeReport(recording: Partial<Recording> = {}): RecordingReport 
         candidates: [{ move_id: "hawk-shot", score: 0.3 }],
         events: [{ type: "damage", time_s: 70 }],
         has_clip: false,
+        clip_start_s: null,
       },
       {
         id: "4",
@@ -128,6 +131,7 @@ export function makeReport(recording: Partial<Recording> = {}): RecordingReport 
         ],
         events: [{ type: "posture_break", time_s: 283.8 }],
         has_clip: false,
+        clip_start_s: null,
       },
     ],
     by_move: [

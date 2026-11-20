@@ -36,6 +36,9 @@ from app.worker.checks import RECOMMENDED_MIN_HEIGHT, validated_frame_rate
 BOSS_SLUG = "genichiro-ashina"
 MAX_UPLOAD_BYTES = 2 * 1024**3          # owner decision, 2026-10-25 (with at most 10 minutes, checked by the worker)
 VIDEO_SUFFIXES = {".mp4", ".mkv", ".mov"}
+# a failure's clip runs from CLIP_BEFORE_S before it to CLIP_AFTER_S after, within the video: the worker cuts it and
+# the report says where in the video it starts
+CLIP_BEFORE_S, CLIP_AFTER_S = 3.0, 2.0
 
 
 class UploadError(ValueError):
@@ -176,6 +179,7 @@ def build_report(row: db.Recording) -> RecordingReport:
             candidates=[MoveCandidate(move_id=c["move"], score=c["score"]) for c in f.candidates or []],
             events=[FailureEvent(type=e["type"], time_s=e["time_s"]) for e in f.events or []],
             has_clip=bool(f.clip_path),
+            clip_start_s=max(0.0, f.time_s - CLIP_BEFORE_S) if f.clip_path else None,
         )
         for f in row.failures
     ]

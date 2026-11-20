@@ -130,6 +130,18 @@ def test_report_counts_failures_per_move_from_sure_answers_only(client, seeded_s
     assert unsure["sure"] is False and unsure["move_id"] is None
     assert [c["move_id"] for c in unsure["candidates"]] == ["counter-slash", "deflect-counter-slash"]
     assert [f["has_clip"] for f in report["failures"]] == [True, False, False, False]
+    # the clip starts CLIP_BEFORE_S (3 s) before the failure; no clip, no start
+    assert [f["clip_start_s"] for f in report["failures"]] == [9.5, None, None, None]
+
+
+def test_a_clip_of_a_failure_in_the_first_seconds_starts_with_the_video(client, seeded_session, recordings_dir):
+    rec_id = upload(client).json()["id"]
+    first = add_failures(seeded_session, rec_id, recordings_dir)[0]
+    first.time_s, first.events = 1.2, [{"type": "damage", "time_s": 1.2}]
+    seeded_session.flush()
+
+    report = client.get(f"/api/recordings/{rec_id}").json()
+    assert report["failures"][0]["clip_start_s"] == 0.0
 
 
 @pytest.mark.parametrize(

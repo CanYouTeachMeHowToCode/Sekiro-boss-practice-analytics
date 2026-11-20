@@ -66,6 +66,9 @@ class RecordingFailure(BaseModel):
     candidates: list[MoveCandidate] = []
     events: list[FailureEvent] = []
     has_clip: bool
+    # where the clip starts in the video, in seconds (None without a clip): the report shows the video's own time
+    # over the clip and marks the failure's events on it
+    clip_start_s: float | None = None
 
 
 class MoveFailureCount(BaseModel):
