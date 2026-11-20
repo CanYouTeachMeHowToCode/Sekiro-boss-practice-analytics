@@ -74,19 +74,23 @@ def columns(frame, rows, x0, x1):
     return med.astype(np.uint8)
 
 
-def cache(video, out, step=None, progress=None):
+def cache(video, out, step=None, progress=None, frames=None):
     """Writes the cache to `out`, reading every `step`-th frame (default: 30 a second, sampling.step); `progress`
-    (optional) is called with the fraction of the video read."""
+    (optional) is called with the fraction of the video read; `frames` (optional) with the number and the decoded,
+    unmasked image of every frame read, so another step reads them without decoding the video again
+    (phase_read.Reader, version 4)."""
     cap = cv2.VideoCapture(str(video))
     fps, total = cap.get(cv2.CAP_PROP_FPS), max(1, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
     step = step or sampling.step(fps)
-    frames, hp, po, line, boss = [], [], [], [], []
+    read, hp, po, line, boss = [], [], [], [], []
     n = 0
     while cap.grab():
         if n % step == 0:
             ok, frame = cap.retrieve()
+            if frames:
+                frames(n, frame)
             frame = mask_overlay(frame)
-            frames.append(n)
+            read.append(n)
             hp.append(columns(frame, HP_ROWS, HP_X0, HP_X1))
             po.append(columns(frame, PO_ROWS, PO_CX - PO_HALF, PO_CX + PO_HALF))
             sides = [(PO_CX - LINE_OUT, PO_CX - LINE_IN), (PO_CX + LINE_IN, PO_CX + LINE_OUT)]
@@ -97,9 +101,9 @@ def cache(video, out, step=None, progress=None):
         if n % 600 == 0 and progress:
             progress(n / total)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-    np.savez_compressed(out, frame=np.array(frames), fps=fps, hp=np.stack(hp), posture=np.stack(po), line=np.stack(line),
+    np.savez_compressed(out, frame=np.array(read), fps=fps, hp=np.stack(hp), posture=np.stack(po), line=np.stack(line),
                         boss=np.stack(boss), scale=width / BASE_W)
-    print(f"{n} frames, {len(frames)} cached from {video}")
+    print(f"{n} frames, {len(read)} cached from {video}")
 
 
 def run_from(mask, start, max_gap=4):

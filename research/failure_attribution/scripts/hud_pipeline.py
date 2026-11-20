@@ -4,7 +4,8 @@ Usage: python -I hud_pipeline.py <recording id | all> [--recache]
 
 Reads the video named in recordings.json from recordings_dir (local.config); writes to work/<recording id>/ (events.csv
 with the lightning reversals marked by reversal.py, owner's rule of 2026-11-13, and reversals.csv):
-hud_cache.npz (skipped when present, unless --recache), hud.csv, death_screens.csv, events.csv, boss_track.csv, boss_crops.npz and
+hud_cache.npz (skipped when present, unless --recache), hud.csv, death_screens.csv, events.csv, hud_phase.csv (the phase
+cues of version 4, skipped when present, unless --recache), boss_track.csv, boss_crops.npz and
 boss_feats_small14.npy (skipped when present, unless --recache), thumbs/<event key>.jpg, and the moves behind the
 failures: for a dev-menu recording the answers read from the overlay (failure_answers.py), for any other the predictions
 (move_match.py predict), which need the dev-menu recordings processed first. A thumbnail shows six moments around the
@@ -20,8 +21,9 @@ import cv2
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import HERE, observation_dir, recordings, report, video_path, work_dir  # noqa: E402
+from common import HERE, WORK, observation_dir, recordings, report, video_path, work_dir  # noqa: E402
 from overlay_mask import mask_overlay  # noqa: E402
+from sekiro_analysis import content_check, phase_read  # noqa: E402
 
 OFFSETS = (-1.0, -0.5, -0.15, 0.15, 0.5, 1.0)
 THUMB_W, THUMB_H = 400, 225
@@ -74,6 +76,10 @@ def main():
         run("events.py", work / "hud.csv", work / "events.csv")
         report(work, "reversal")
         run("reversal.py", "apply", rec_id)          # a lightning reversal that cost HP is not a failure
+        if "--recache" in sys.argv or not (work / "hud_phase.csv").exists():
+            # the worker reads these in hud_read's pass (pipeline.analyze); here the cache is often there already
+            templates = content_check.load_templates(WORK / "content" / "name_templates.npz")
+            phase_read.scan(video, work, templates, overlay=bool(rec.get("overlay")))
         report(work, "boss_track")
         if "--recache" in sys.argv or not (work / "boss_crops.npz").exists():
             run("boss_track.py", rec_id)

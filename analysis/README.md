@@ -1,7 +1,8 @@
 # analysis: the failure attribution pipeline
 
 The V4 failure attribution pipeline (version 2: frozen 2026-11-12, passed its blind test 2026-11-13; version 3,
-2026-11-18, reads other frame rates and is version 2 at 60 fps) as one Python package, `sekiro_analysis`. The research scripts in `research/failure_attribution/scripts/` and the recording worker
+2026-11-18, reads other frame rates and is version 2 at 60 fps; version 4, 2026-11-20, reads the phase from the HUD) as
+one Python package, `sekiro_analysis`. The research scripts in `research/failure_attribution/scripts/` and the recording worker
 (`backend/app/worker/`) run the same code from here.
 
 | Module | Step |
@@ -19,6 +20,7 @@ The V4 failure attribution pipeline (version 2: frozen 2026-11-12, passed its bl
 | `pipeline.py` | the worker's entry point: `check()` and `analyze()` |
 | `decode.py` | checks that OpenCV decodes video exactly as in the research, on a synthetic sample (`decode_sample.mp4`) |
 | `sampling.py` | how often the steps read a video: 30 samples a second at any frame rate (version 3) |
+| `phase_read.py` | the fight's phase from the HUD: the deathblow dots and the boss's name (version 4) |
 
 ## The data folder
 
@@ -70,3 +72,19 @@ attribution has been measured at 60 fps only: the worker accepts 30 fps, and the
 reference only (`checks.VALIDATED_FRAME_RATES`), until new 30 fps fights labelled blind pass under the plan_m2.md
 protocol. `research/failure_attribution/scripts/sim_frame_rate.py` is a development check on frame-dropped copies of
 the labelled recordings, not that measurement.
+
+## Phases (version 4)
+
+Up to version 3 the phase was counted: 1 plus the deathblows since the last lost fight, a deathblow being the boss HP
+bar clearing with its "just lost" part pale (`events.py`). One missed deathblow put every later failure in the wrong
+phase, and its move was then chosen among the wrong phase's moves. A tester's recording about 17% darker than the
+owner's (2026-11-20) lost all three: the pale part's texture fell below the pale threshold.
+
+Version 4 reads the phase from the HUD (`phase_read.py`, the owner's idea): castle Genichiro has two deathblow dots
+above his HP bar in phase 1, the second grey in phase 2, one in phase 3, where his name becomes 巴流 苇名弦一郎. The
+name (the upload check's templates) tells phase 3 from 1-2 and the second dot, lit red or not, tells 1 from 2, from the
+last second of samples before each failure. A lit dot is saturated and bright, far from the thresholds a darker video
+moved. Where the HUD says nothing (no dots on screen in the last 30 s, or no name under the dev-menu overlay) the
+deathblow count decides, as before. The phase cues are read 5 times a second from the frames `hud_read.cache()` reads
+anyway, so the worker does not decode the video again. On the owner's recordings the phase of every event is version
+3's, so the failures and their moves are too (`research/failure_attribution/plan_v4.md`).
