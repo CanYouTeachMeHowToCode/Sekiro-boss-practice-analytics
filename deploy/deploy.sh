@@ -43,8 +43,15 @@ echo "backend: up"
 
 # the worker analyses only when it decodes video exactly as the research did (analysis/README.md)
 docker compose exec -T worker python -m sekiro_analysis.decode
-sleep 5
-docker compose logs worker | grep "pipeline:" | tail -1
+# the worker logs the pipeline it runs once it has loaded it, which can take longer than a few seconds (version 4
+# took more than 5 s, 2026-11-20); wait up to a minute, and go on to the remaining checks either way
+line=""
+for i in $(seq 30); do
+    line=$(docker compose logs worker 2>/dev/null | grep "pipeline:" | tail -1 || true)
+    [ -n "$line" ] && break
+    sleep 2
+done
+echo "${line:-the worker has not logged its pipeline within a minute: docker compose logs worker}"
 
 # HTTPS through Caddy (the first start may still be getting the certificate)
 site=$(grep '^SITE_ADDRESS=' .env | cut -d= -f2)
