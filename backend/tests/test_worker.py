@@ -36,6 +36,11 @@ from app.worker.media import VideoInfo
         (VideoInfo(2560, 1440, 60.0, 0.0), "unreadable"),
         (VideoInfo(2560, 1440, 60.0, 300.0, "smpte2084"), "hdr"),
         (VideoInfo(3840, 2160, 60.0, 300.0, "arib-std-b67"), "hdr"),
+        # a variable frame rate, whatever the average (version 3, 2026-11-18); a dropped frame now and then is not one
+        (VideoInfo(2560, 1440, 60.0, 300.0, irregular=0.30), "variable_frame_rate"),
+        (VideoInfo(2560, 1440, 47.0, 300.0, irregular=0.30), "variable_frame_rate"),
+        (VideoInfo(2560, 1440, 59.5, 300.0, irregular=0.008), None),
+        (VideoInfo(2560, 1440, 30.0, 300.0, irregular=0.0), None),
         (VideoInfo(1920, 1080, 60.0, 300.0, "bt709"), None),
     ],
 )
@@ -78,6 +83,31 @@ def test_probe_reads_the_size_frame_rate_and_length(ffmpeg, tmp_path):
 def test_probe_reads_the_transfer_function_that_marks_hdr(ffmpeg, tmp_path):
     info = media.probe(make_video(tmp_path / "hdr.mp4", seconds=1, transfer="smpte2084"))
     assert info.transfer == "smpte2084" and checks.format_problem(info) == "hdr"
+
+
+@pytest.mark.parametrize(("fps", "validated"), [(60.0, True), (59.94, True), (30.0, False), (29.97, False), (None, True)])
+def test_only_60_fps_is_a_validated_frame_rate(fps, validated):
+    assert checks.validated_frame_rate(fps) is validated
+
+
+def test_probe_measures_a_constant_frame_rate_as_regular(ffmpeg, tmp_path):
+    info = media.probe(make_video(tmp_path / "fight.mp4", 1280, 720, 30, 2))
+    assert info.fps == pytest.approx(30.0) and info.irregular == pytest.approx(0.0)
+    assert checks.format_problem(info) is None
+
+
+def test_probe_finds_a_variable_frame_rate(ffmpeg, tmp_path):
+    """Frames at irregular times, kept as they are (as some recorders write them): the check rejects the video."""
+    path = tmp_path / "vfr.mp4"
+    subprocess.run(
+        ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=1280x720:rate=60", "-t", "2",
+         "-vf", "setpts='(N+0.5*mod(N,3))/60/TB'", "-fps_mode", "passthrough", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+         str(path)],
+        check=True,
+    )
+    info = media.probe(path)
+    assert info.irregular > checks.MAX_IRREGULAR
+    assert checks.format_problem(info) == "variable_frame_rate"
 
 
 def test_probe_refuses_a_file_that_is_not_a_video(ffmpeg, tmp_path):

@@ -22,7 +22,7 @@ def load_crops(rec_id):
 
 def main():
     recs = recordings()
-    step = int(sys.argv[sys.argv.index("--step") + 1]) if "--step" in sys.argv else 2
+    step = int(sys.argv[sys.argv.index("--step") + 1]) if "--step" in sys.argv else None   # None: 30 a second
     ids = list(recs) if sys.argv[1] == "all" else [sys.argv[1]]
     for rec_id in ids:
         track(rec_id, recs[rec_id], step)

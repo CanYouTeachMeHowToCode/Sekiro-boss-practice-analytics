@@ -127,6 +127,53 @@ describe("RecordingReportPage", () => {
     expect(recordingsApi.getRecordingReport).toHaveBeenCalledTimes(2);
   });
 
+  it("says a 30 fps report is for reference only, in both languages, and nothing at 60 fps", async () => {
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport({ fps: 30, unvalidated_frame_rate: true }));
+    const { unmount } = renderReport("zh");
+    expect(
+      await screen.findByText("这段录像是 30 帧。30 帧的识别还在验证，结果仅供参考；用 60 帧录制的结果是验证过的。")
+    ).toBeInTheDocument();
+    unmount();
+
+    renderReport("en");
+    expect(await screen.findByText(/This recording is 30 fps\. .* for reference only/)).toBeInTheDocument();
+  });
+
+  it("shows no frame-rate note for a 60 fps recording", async () => {
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport());
+    renderReport();
+    expect(await screen.findByRole("heading", { name: "genichiro.mp4" })).toBeInTheDocument();
+    expect(screen.queryByText(/for reference only/)).not.toBeInTheDocument();
+  });
+
+  it("names no move for an unsure failure whose candidates could not be compared", async () => {
+    const report = makeReport();
+    report.failures[3].candidates = [
+      { move_id: "counter-slash", score: -1 },
+      { move_id: "hawk-shot", score: -1 },
+    ];
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(report);
+    renderReport();
+
+    const items = await screen.findAllByRole("listitem");
+    expect(within(items[3]).getByText("Move unsure")).toBeInTheDocument();
+    // the owner sees no scores
+    expect(screen.queryByText(/^Scores:/)).not.toBeInTheDocument();
+  });
+
+  it("names only the candidates that could be compared", async () => {
+    const report = makeReport();
+    report.failures[3].candidates = [
+      { move_id: "counter-slash", score: 0.12 },
+      { move_id: "hawk-shot", score: -1 },
+    ];
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(report);
+    renderReport();
+
+    const items = await screen.findAllByRole("listitem");
+    await waitFor(() => expect(within(items[3]).getByText("Move unsure, possibly Counter Slash")).toBeInTheDocument());
+  });
+
   it("says when the recording does not exist (or is someone else's)", async () => {
     vi.mocked(recordingsApi.getRecordingReport).mockRejectedValue(new ApiError(404, "Recording not found"));
 

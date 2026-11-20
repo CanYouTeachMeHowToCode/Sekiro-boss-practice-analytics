@@ -30,7 +30,7 @@ from app.models.recording import (
     RecordingStatus,
 )
 from app.services import boss_service
-from app.worker.checks import RECOMMENDED_MIN_HEIGHT
+from app.worker.checks import RECOMMENDED_MIN_HEIGHT, validated_frame_rate
 
 # the boss the failure report supports in M3
 BOSS_SLUG = "genichiro-ashina"
@@ -67,6 +67,8 @@ def to_schema(row: db.Recording) -> Recording:
         width=row.width,
         height=row.height,
         low_resolution=row.height is not None and row.height < RECOMMENDED_MIN_HEIGHT,
+        fps=row.fps,
+        unvalidated_frame_rate=not validated_frame_rate(row.fps),
         created_at=row.created_at,
         processed_at=row.processed_at,
     )

@@ -4,7 +4,7 @@ Research use (research/failure_attribution/scripts/reversal.py):
     python -I reversal.py template                      cut the glyph template (local, like the other game images)
     python -I reversal.py scan <recording id | all>     score every damage event of the recordings
     python -I reversal.py apply <recording id>          scan, then mark the reversals in events.csv (hud_pipeline.py)
-    python -I reversal.py probe <video> <t0> <t1>       the glyph score of every third frame between t0 and t1
+    python -I reversal.py probe <video> <t0> <t1>       the glyph score at 20 frames a second between t0 and t1
 The template (work/content/glyph_dalei.npy, in the worker's local data folder too) is passed to Glyph.
 
 The owner's rule: Wolf can take a little damage when he catches Genichiro's lightning in the air and sends it back. That
@@ -27,6 +27,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from . import sampling
 from .overlay_mask import mask_overlay
 
 W, H = 1280, 720
@@ -34,6 +35,7 @@ SEARCH_Y = (0, 590)                       # at 1280×720: everything above Wolf'
 SCALES = (0.6, 0.75, 0.9, 1.1, 1.3, 1.6, 2.0)
 WINDOW = (0.3, 3.0)                       # seconds after the HP drop
 RUN_T, MIN_RUN, GAP = 0.65, 0.5, 2        # the glyph stays: scores >= RUN_T for MIN_RUN s, gaps of GAP samples
+GLYPH_RATE = 20                           # samples a second (every third frame at 60 fps)
 ISOLATION = 3.0                           # the glyph's warmth against the ring around it
 EMPTY = 0.02                              # a hit that leaves this much HP or less killed Wolf: never a reversal
 
@@ -82,9 +84,12 @@ class Glyph:
         return best
 
 
-def scores(video, t0, t1, glyph, every=3):
+def scores(video, t0, t1, glyph, every=None):
+    """(time, glyph score) of every `every`-th frame between t0 and t1 seconds (default: 20 a second, every third
+    frame at 60 fps as in version 2)."""
     cap = cv2.VideoCapture(str(video))
     fps = cap.get(cv2.CAP_PROP_FPS)
+    every = every or sampling.every(fps, GLYPH_RATE)
     i = int(max(t0, 0) * fps)
     cap.set(cv2.CAP_PROP_POS_FRAMES, i)
     out = []

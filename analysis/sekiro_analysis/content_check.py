@@ -31,6 +31,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from . import sampling
 from .hud_read import BOSS_ROWS, BOSS_X0, BOSS_X1, HP_ROWS, HP_X0, HP_X1, cap_at, columns, read_boss, read_hp
 from .overlay_mask import BASE_H, BASE_W, mask_overlay
 
@@ -68,10 +69,12 @@ def frames(video, step_s=SAMPLE_S, limit=MAX_SAMPLES):
             yield float(t), prepare(f)
 
 
-def window(video, t0, t1, every=6):
-    """Every `every`-th frame between t0 and t1 seconds, read in order after one seek."""
+def window(video, t0, t1, every=None):
+    """Every `every`-th frame between t0 and t1 seconds (default: 10 a second, every sixth frame at 60 fps), read in
+    order after one seek."""
     cap = cv2.VideoCapture(str(video))
     fps = cap.get(cv2.CAP_PROP_FPS)
+    every = every or sampling.every(fps, 10)
     cap.set(cv2.CAP_PROP_POS_FRAMES, int(max(t0, 0) * fps))
     i = int(max(t0, 0) * fps)
     while i <= t1 * fps:

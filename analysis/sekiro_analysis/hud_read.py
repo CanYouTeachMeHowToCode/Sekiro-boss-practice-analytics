@@ -4,7 +4,7 @@ Research use (research/failure_attribution/scripts/hud_read.py runs these functi
     python -I hud_read.py cache  <video> <cache.npz> [--step N]   decode once, keep per-column HUD colours
     python -I hud_read.py series <cache.npz> <out.csv>             HP, posture and HUD visibility per frame
 
-The cache keeps, for every N-th frame (default 2), the median HSV colour of each column of the HUD strips, so
+The cache keeps, for every N-th frame (default: 30 a second, sampling.step), the median HSV colour of each column of the HUD strips, so
 thresholds can be tuned without decoding the video again. The hue median is taken with the hue rotated by 90, since red
 sits at both ends of the range; caches built before this was fixed read some red columns as cyan and must be rebuilt.
 Frames go through mask_overlay() first, like everywhere in the pipeline, although these strips never touch the overlay.
@@ -52,6 +52,7 @@ import csv
 import cv2
 import numpy as np
 
+from . import sampling
 from .overlay_mask import BASE_H, BASE_W, mask_overlay
 
 HP_ROWS, HP_X0, HP_X1 = (1304, 1314), 148, 980
@@ -73,10 +74,12 @@ def columns(frame, rows, x0, x1):
     return med.astype(np.uint8)
 
 
-def cache(video, out, step=2, progress=None):
-    """Writes the cache to `out`; `progress` (optional) is called with the fraction of the video read."""
+def cache(video, out, step=None, progress=None):
+    """Writes the cache to `out`, reading every `step`-th frame (default: 30 a second, sampling.step); `progress`
+    (optional) is called with the fraction of the video read."""
     cap = cv2.VideoCapture(str(video))
     fps, total = cap.get(cv2.CAP_PROP_FPS), max(1, int(cap.get(cv2.CAP_PROP_FRAME_COUNT)))
+    step = step or sampling.step(fps)
     frames, hp, po, line, boss = [], [], [], [], []
     n = 0
     while cap.grab():

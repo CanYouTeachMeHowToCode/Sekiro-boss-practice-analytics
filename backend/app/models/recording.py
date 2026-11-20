@@ -36,6 +36,11 @@ class Recording(BaseModel):
     height: int | None = None
     # below the recommended 1080p: analysed, but fewer failures get a sure move, which the report tells the user
     low_resolution: bool = False
+    # frames per second, known once the worker has checked it
+    fps: float | None = None
+    # a frame rate the attribution has not been measured at (anything but 60): the report says its results are for
+    # reference only
+    unvalidated_frame_rate: bool = False
     created_at: datetime
     processed_at: datetime | None = None
 
@@ -87,7 +92,6 @@ class AdminRecording(Recording):
 
     owner: str
     error: str | None = None
-    fps: float | None = None
 
 
 class AdminRecordingReport(RecordingReport):

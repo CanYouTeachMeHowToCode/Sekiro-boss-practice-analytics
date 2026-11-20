@@ -8,7 +8,14 @@ import { useAuth } from "../auth/authContext";
 import LoginPrompt from "../components/LoginPrompt";
 import { formatPhase, useLanguage } from "../i18n/language";
 import type { Language, MessageKey, Translate } from "../i18n/language";
-import type { AdminRecordingReport, Boss, Recording, RecordingFailure, RecordingReport } from "../types";
+import type {
+  AdminRecordingReport,
+  Boss,
+  MoveCandidate,
+  Recording,
+  RecordingFailure,
+  RecordingReport,
+} from "../types";
 import { getMoveName } from "../utils/moves";
 import {
   REPORT_POLL_MS,
@@ -23,6 +30,8 @@ import {
 
 /** How many of an unsure failure's candidates are named. */
 const CANDIDATES_SHOWN = 3;
+/** How many candidates the admin view lists with their scores. */
+const SCORES_SHOWN = 5;
 
 const FAILURE_TYPES = ["damage", "posture_break", "death"] as const;
 
@@ -60,10 +69,27 @@ function StatusMessage({ recording, t }: { recording: Recording; t: Translate })
 /** Where the browser gets a failure's clip: the owner's or the admin's path. */
 type ClipSource = (failureId: string) => string;
 
-function FailureItem({ clipSrc, failure, boss }: { clipSrc: ClipSource; failure: RecordingFailure; boss: Boss | null }) {
+/** A score of -1 means the move could not be compared at all (its window ran past the video's start or end, or too
+ * few frames showed the boss): such a candidate names nothing. */
+const comparable = (c: MoveCandidate) => c.score > -1;
+
+function FailureItem({
+  clipSrc,
+  failure,
+  boss,
+  showScores,
+}: {
+  clipSrc: ClipSource;
+  failure: RecordingFailure;
+  boss: Boss | null;
+  showScores: boolean;
+}) {
   const { language, t } = useLanguage();
   const [showClip, setShowClip] = useState(false);
-  const candidates = failure.candidates.slice(0, CANDIDATES_SHOWN).map((c) => moveLabel(boss, c.move_id, language));
+  const candidates = failure.candidates
+    .filter(comparable)
+    .slice(0, CANDIDATES_SHOWN)
+    .map((c) => moveLabel(boss, c.move_id, language));
   let move: string;
   if (failure.sure && failure.move_id) move = moveLabel(boss, failure.move_id, language);
   else if (candidates.length > 0) move = t("report.failure.unsure", { moves: alternatives(candidates, t) });
@@ -77,6 +103,16 @@ function FailureItem({ clipSrc, failure, boss }: { clipSrc: ClipSource; failure:
         <span>{t(`failureType.${failure.type}`)}</span>
       </p>
       <p className="failure-move">{move}</p>
+      {showScores && failure.candidates.length > 0 && (
+        <p className="failure-scores">
+          {t("report.failure.scores", {
+            scores: failure.candidates
+              .slice(0, SCORES_SHOWN)
+              .map((c) => `${moveLabel(boss, c.move_id, language)} ${comparable(c) ? c.score.toFixed(3) : "—"}`)
+              .join(t("listSeparator")),
+          })}
+        </p>
+      )}
       {failure.events.length > 1 && (
         <p className="failure-events">
           {t("report.failure.events", {
@@ -100,7 +136,17 @@ function FailureItem({ clipSrc, failure, boss }: { clipSrc: ClipSource; failure:
   );
 }
 
-function FailureReport({ report, boss, clipSrc }: { report: RecordingReport; boss: Boss | null; clipSrc: ClipSource }) {
+function FailureReport({
+  report,
+  boss,
+  clipSrc,
+  showScores,
+}: {
+  report: RecordingReport;
+  boss: Boss | null;
+  clipSrc: ClipSource;
+  showScores: boolean;
+}) {
   const { language, t } = useLanguage();
   const { failures, by_move: byMove } = report;
   const count = (type: string) => failures.filter((f) => f.type === type).length;
@@ -168,7 +214,7 @@ function FailureReport({ report, boss, clipSrc }: { report: RecordingReport; bos
             <h2>{t("report.failures")}</h2>
             <ol>
               {failures.map((f) => (
-                <FailureItem key={f.id} clipSrc={clipSrc} failure={f} boss={boss} />
+                <FailureItem key={f.id} clipSrc={clipSrc} failure={f} boss={boss} showScores={showScores} />
               ))}
             </ol>
           </section>
@@ -325,7 +371,12 @@ export default function RecordingReportPage({ admin = false }: { admin?: boolean
       {recording.low_resolution && recording.status !== "rejected" && (
         <p className="notice">{t("report.lowResolution")}</p>
       )}
-      {recording.status === "done" && <FailureReport report={report} boss={boss} clipSrc={clipSrc} />}
+      {recording.unvalidated_frame_rate && recording.status !== "rejected" && recording.fps !== null && (
+        <p className="notice">{t("report.frameRateUnvalidated", { fps: Math.round(recording.fps) })}</p>
+      )}
+      {recording.status === "done" && (
+        <FailureReport report={report} boss={boss} clipSrc={clipSrc} showScores={admin} />
+      )}
 
       {!admin && (
         <>

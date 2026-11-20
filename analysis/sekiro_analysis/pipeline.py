@@ -16,7 +16,9 @@ import numpy as np
 
 from . import boss_features, boss_track, content_check, death_screen, events, hud_read, moves, references, reversal
 
-VERSION = "v2"
+# version 3 (2026-11-18): the steps read 30 samples a second at any frame rate (sampling.py); at 60 fps the outputs are
+# version 2's, byte for byte
+VERSION = "v3"
 # share of the run time of each step, as measured in research (common.STEPS, without the review thumbnails)
 STEPS = [("hud_cache", 0.40), ("events", 0.02), ("reversal", 0.04), ("boss_track", 0.41), ("features", 0.04),
          ("moves", 0.03)]
@@ -76,12 +78,12 @@ def analyze(video, work, data, device=None, progress=None):
         done = sum(w for _, w in STEPS[:i])
         return (lambda f: progress((done + STEPS[i][1] * f) / total)) if progress else None
 
-    hud_read.cache(video, work / "hud_cache.npz", 2, stage(0))
+    hud_read.cache(video, work / "hud_cache.npz", None, stage(0))           # 30 samples a second (sampling.step)
     hud_read.series(work / "hud_cache.npz", work / "hud.csv")
     death_screen.scan(video, work, np.load(data.death_mask))
     events.write_events(work / "hud.csv", work / "events.csv")
     reversal.apply(video, work, reversal.Glyph(np.load(data.glyph)))     # a lightning reversal is not a failure
-    boss_track.track(video, work, 2, stage(3))
+    boss_track.track(video, work, None, stage(3))
     boss_features.features(work, boss_features.MODEL, device, weights=data.weights if data.weights.exists() else None,
                            progress=stage(4))
     refs, gaps, move_list, st = references.load(data.folder)

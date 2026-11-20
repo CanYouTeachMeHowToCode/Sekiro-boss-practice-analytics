@@ -14,6 +14,8 @@ export function makeRecording(overrides: Partial<Recording> = {}): Recording {
     width: 2560,
     height: 1440,
     low_resolution: false,
+    fps: 60,
+    unvalidated_frame_rate: false,
     created_at: "2026-11-17T10:30:00Z",
     processed_at: "2026-11-17T10:45:00Z",
     ...overrides,

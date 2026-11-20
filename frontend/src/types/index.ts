@@ -184,6 +184,10 @@ export interface Recording {
   height: number | null;
   /** Below the recommended 1080p: analysed, but fewer failures get a sure move. */
   low_resolution: boolean;
+  /** Frames per second, known once the worker has checked the video. */
+  fps: number | null;
+  /** A frame rate the attribution has not been measured at (anything but 60): its results are for reference only. */
+  unvalidated_frame_rate: boolean;
   created_at: string;
   processed_at: string | null;
 }
@@ -229,7 +233,6 @@ export interface RecordingReport {
 export interface AdminRecording extends Recording {
   owner: string;
   error: string | null;
-  fps: number | null;
 }
 
 export interface AdminRecordingReport extends RecordingReport {
