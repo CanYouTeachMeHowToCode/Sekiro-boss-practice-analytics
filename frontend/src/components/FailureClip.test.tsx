@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import FailureClip from "./FailureClip";
@@ -24,6 +24,8 @@ function renderClip(marks: ClipMark[], language: Language = "en") {
 const own: ClipMark = { time_s: 12.5, types: ["damage"], own: true };
 
 afterEach(() => {
+  // unmount first: a pending effect that calls a mocked API must run before the mocks are restored
+  cleanup();
   vi.restoreAllMocks();
 });
 

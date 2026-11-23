@@ -1,4 +1,4 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AdminPage from "./AdminPage";
@@ -39,6 +39,8 @@ function renderAdmin(language: Language = "en", auth: Partial<AuthState> = { use
 describe("AdminPage", () => {
   afterEach(() => {
     vi.useRealTimers();
+    // unmount first: a pending effect that calls a mocked API must run before the mocks are restored
+    cleanup();
     vi.restoreAllMocks();
   });
 

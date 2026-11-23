@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -38,6 +38,8 @@ function video(name = "fight.mp4") {
 
 describe("UploadRecordingPage", () => {
   afterEach(() => {
+    // unmount first: a pending effect that calls a mocked API must run before the mocks are restored
+    cleanup();
     vi.restoreAllMocks();
   });
 
