@@ -16,7 +16,9 @@
   --radius-card: 10px;
   --radius-control: 6px;
   --font-sans: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  /* headings: Noto Serif has Latin only, so Chinese falls through to the Kai (楷体, owner, 2026-11-23); the
+     system Kai fonts stand in when the web font cannot load */
+  --font-serif: "Noto Serif", "LXGW WenKai TC", "Kaiti SC", "STKaiti", "KaiTi", Georgia, serif;
 
   color-scheme: dark;
 }
