@@ -16,9 +16,10 @@
   --radius-card: 10px;
   --radius-control: 6px;
   --font-sans: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-  /* headings: Noto Serif has Latin only, so Chinese falls through to the Kai (楷体, owner, 2026-11-23); the
-     system Kai fonts stand in when the web font cannot load */
-  --font-serif: "Noto Serif", "LXGW WenKai TC", "Kaiti SC", "STKaiti", "KaiTi", Georgia, serif;
+  /* headings: Noto Serif has Latin only, so Chinese falls through to the brush regular script 马善政楷书 (owner,
+     2026-11-23: a calligraphic 楷书); the system Kai fonts stand in when the web font cannot load. The brush font has
+     one weight, so headings never ask for a bold it would have to fake */
+  --font-heading: "Noto Serif", "Ma Shan Zheng", "Kaiti SC", "STKaiti", "KaiTi", Georgia, serif;
 
   color-scheme: dark;
 }
@@ -44,10 +45,11 @@ body {
 h1,
 h2,
 h3 {
-  line-height: 1.25;
-  font-family: var(--font-serif);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  line-height: 1.3;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.03em;
 }
 
 h1 {
@@ -152,9 +154,10 @@ a:hover {
 
 .crest-char {
   fill: var(--color-gold);
-  font-family: var(--font-serif);
-  font-size: 18px;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 400;
+  font-synthesis: none;
 }
 
 .crest-mark {
@@ -523,8 +526,10 @@ a:hover {
 }
 
 .nav-bar .nav-brand {
-  font-family: var(--font-serif);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-synthesis: none;
   color: var(--color-gold);
   letter-spacing: 0.04em;
 }
