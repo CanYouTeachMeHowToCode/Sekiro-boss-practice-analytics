@@ -55,7 +55,8 @@ describe("RecordingReportPage", () => {
     expect(await screen.findByRole("heading", { name: "genichiro.mp4" })).toBeInTheDocument();
     expect(screen.getByText("2560×1440")).toBeInTheDocument();
     expect(screen.getByText("5:07")).toBeInTheDocument();
-    expect(screen.getByText(/failure counts, not success rates/)).toBeInTheDocument();
+    // failure counts only, and no rates anywhere (CLAUDE.md 7.2); the table title says they are counts
+    expect(screen.queryByText(/success rate/i)).not.toBeInTheDocument();
     const table = screen.getByRole("table");
     await waitFor(() => expect(within(table).getByText("Floating Passage")).toBeInTheDocument());
     const rows = within(table).getAllByRole("row").map((row) => row.textContent);
@@ -131,19 +132,19 @@ describe("RecordingReportPage", () => {
     vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport({ fps: 30, unvalidated_frame_rate: true }));
     const { unmount } = renderReport("zh");
     expect(
-      await screen.findByText("这段录像是 30 帧。30 帧的识别还在验证，结果仅供参考；用 60 帧录制的结果是验证过的。")
+      await screen.findByText("这段录像是 30 帧，结果仅供参考：目前只有 60 帧录像的识别准确度经过验证。建议下次用 60 帧录制。")
     ).toBeInTheDocument();
     unmount();
 
     renderReport("en");
-    expect(await screen.findByText(/This recording is 30 fps\. .* for reference only/)).toBeInTheDocument();
+    expect(await screen.findByText(/This recording is 30 fps, so treat these results as a guide only/)).toBeInTheDocument();
   });
 
   it("shows no frame-rate note for a 60 fps recording", async () => {
     vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport());
     renderReport();
     expect(await screen.findByRole("heading", { name: "genichiro.mp4" })).toBeInTheDocument();
-    expect(screen.queryByText(/for reference only/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/as a guide only/)).not.toBeInTheDocument();
   });
 
   it("names no move for an unsure failure whose candidates could not be compared", async () => {
