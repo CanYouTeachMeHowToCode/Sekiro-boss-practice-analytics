@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -44,6 +44,8 @@ describe("RecordingReportPage", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    // unmount first: a pending effect that calls a mocked API must run before the mocks are restored
+    cleanup();
     vi.restoreAllMocks();
   });
 
