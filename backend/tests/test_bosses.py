@@ -164,6 +164,12 @@ def test_get_boss_not_found(client):
     assert resp.status_code == 404
 
 
+def test_bosses_have_no_crest_until_the_owner_picks_one(client):
+    # visual style B marks each boss with a crest character; the seed has none yet (owner, 2026-11-23)
+    assert {b["crest"] for b in client.get("/api/bosses").json()} == {None}
+    assert client.get("/api/bosses/genichiro-ashina").json()["crest"] is None
+
+
 def test_boss_list_includes_chinese_names(client):
     names = {b["id"]: b["name_zh"] for b in client.get("/api/bosses").json()}
     assert names["genichiro-ashina"] == "苇名弦一郎"

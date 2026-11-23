@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/authContext";
 import { useLanguage } from "../i18n/language";
+import HeaderArt from "./HeaderArt";
 
 export default function NavBar() {
   const { status, user, logout } = useAuth();
@@ -15,42 +16,45 @@ export default function NavBar() {
   const otherLanguage = language === "en" ? "zh" : "en";
 
   return (
-    <header className="nav-bar">
-      <nav aria-label={t("nav.main")}>
-        <Link to="/" className="nav-brand">
-          {t("nav.brand")}
-        </Link>
-        <Link to="/bosses">{t("nav.bosses")}</Link>
-        <Link to="/recordings">{t("nav.recordings")}</Link>
-        {user?.is_admin && <Link to="/admin">{t("nav.admin")}</Link>}
-      </nav>
-      <div className="nav-account">
-        <button
-          type="button"
-          className="language-toggle"
-          onClick={() => setLanguage(otherLanguage)}
-          aria-label={t("nav.switchLanguageLabel")}
-          lang={otherLanguage === "zh" ? "zh-Hans" : "en"}
-        >
-          {t("nav.switchLanguage")}
-        </button>
-        {status === "ready" &&
-          (user ? (
-            <>
-              <span className="nav-username">{user.username}</span>
-              <button type="button" className="btn" onClick={handleLogout}>
-                {t("nav.logOut")}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">{t("nav.logIn")}</Link>
-              <Link to="/register" className="btn btn-primary">
-                {t("nav.register")}
-              </Link>
-            </>
-          ))}
+    <header className="site-header">
+      <div className="nav-bar">
+        <nav aria-label={t("nav.main")}>
+          <Link to="/" className="nav-brand">
+            {t("nav.brand")}
+          </Link>
+          <Link to="/bosses">{t("nav.bosses")}</Link>
+          <Link to="/recordings">{t("nav.recordings")}</Link>
+          {user?.is_admin && <Link to="/admin">{t("nav.admin")}</Link>}
+        </nav>
+        <div className="nav-account">
+          <button
+            type="button"
+            className="language-toggle"
+            onClick={() => setLanguage(otherLanguage)}
+            aria-label={t("nav.switchLanguageLabel")}
+            lang={otherLanguage === "zh" ? "zh-Hans" : "en"}
+          >
+            {t("nav.switchLanguage")}
+          </button>
+          {status === "ready" &&
+            (user ? (
+              <>
+                <span className="nav-username">{user.username}</span>
+                <button type="button" className="btn" onClick={handleLogout}>
+                  {t("nav.logOut")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">{t("nav.logIn")}</Link>
+                <Link to="/register" className="btn btn-primary">
+                  {t("nav.register")}
+                </Link>
+              </>
+            ))}
+        </div>
       </div>
+      <HeaderArt />
     </header>
   );
 }

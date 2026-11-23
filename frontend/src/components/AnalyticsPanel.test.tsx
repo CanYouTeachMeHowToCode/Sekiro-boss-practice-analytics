@@ -4,6 +4,7 @@ import AnalyticsPanel from "./AnalyticsPanel";
 import type { Boss, BossAnalytics, RecentAnalytics } from "../types";
 
 const boss: Boss = {
+  crest: null,
   id: "genichiro-ashina",
   name: "Genichiro Ashina",
   game: "sekiro",

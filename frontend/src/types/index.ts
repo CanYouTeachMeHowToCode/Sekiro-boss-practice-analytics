@@ -43,6 +43,8 @@ export interface Boss {
   phases: BossPhase[];
   source_name: string | null;
   source_url: string | null;
+  /** The one character in the boss's crest (visual style B); null until the owner picks it. */
+  crest: string | null;
 }
 
 export interface BossSummary {
@@ -51,6 +53,7 @@ export interface BossSummary {
   name_zh: string | null;
   location: string;
   location_zh: string | null;
+  crest: string | null;
 }
 
 export interface Attempt {

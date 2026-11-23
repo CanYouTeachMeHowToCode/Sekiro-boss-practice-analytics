@@ -4,6 +4,7 @@ import ProgressionChart from "./ProgressionChart";
 import type { Boss, ProgressionPoint } from "../types";
 
 const boss: Boss = {
+  crest: null,
   id: "owl-father",
   name: "Owl (Father)",
   name_zh: null,

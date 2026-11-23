@@ -68,6 +68,8 @@ def _validate(bosses: list[BossData]) -> None:
 
         if boss.location_zh is None:
             errors.append(f"boss '{boss.id}' has no Chinese location (location_zh)")
+        if boss.crest is not None and len(boss.crest) != 1:
+            errors.append(f"boss '{boss.id}' has a crest of {len(boss.crest)} characters; it takes exactly one")
         for phase in boss.phases:
             if phase.name_zh is None:
                 errors.append(f"boss '{boss.id}' phase {phase.phase_number} has no Chinese name (name_zh)")
@@ -143,6 +145,7 @@ def sync_reference_data(session: Session, bosses: list[BossData]) -> SyncReport:
         boss.location_zh = data.location_zh
         boss.source_name = data.source_name
         boss.source_url = data.source_url
+        boss.crest = data.crest
         report.bosses += 1
 
         moves_by_slug = {m.slug: m for m in boss.moves}

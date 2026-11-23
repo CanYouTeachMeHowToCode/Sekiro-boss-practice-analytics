@@ -357,6 +357,18 @@ def test_fastapi_dependency_reaches_postgres(engine, database_url, monkeypatch):
     assert resp.json() == {"tables": True}
 
 
+def test_existing_bosses_have_no_crest_after_the_crest_migration(engine, database_url):
+    config = alembic_config(database_url)
+    command.downgrade(config, "e5b2c8d41f07")  # the revision before bosses.crest
+    try:
+        command.upgrade(config, "head")
+        with engine.connect() as conn:
+            crests = conn.scalars(text("SELECT crest FROM bosses")).all()
+        assert all(c is None for c in crests)
+    finally:
+        command.upgrade(config, "head")
+
+
 def test_existing_users_are_not_admins_after_the_admin_migration(engine, database_url):
     config = alembic_config(database_url)
     command.downgrade(config, "a7c3e19d5b42")  # the revision before users.is_admin

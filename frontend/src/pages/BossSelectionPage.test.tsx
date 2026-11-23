@@ -18,7 +18,7 @@ function renderPage() {
 describe("BossSelectionPage", () => {
   it("renders each boss returned by the API as a link to its dashboard", async () => {
     vi.mocked(bossesApi.getBosses).mockResolvedValue([
-      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: "苇名城" },
+      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: "苇名城", crest: null },
     ]);
 
     renderPage();
@@ -39,7 +39,7 @@ describe("BossSelectionPage", () => {
 
   it("shows Chinese boss names and locations in Chinese mode", async () => {
     vi.mocked(bossesApi.getBosses).mockResolvedValue([
-      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: "苇名城" },
+      { id: "genichiro-ashina", name: "Genichiro Ashina", name_zh: "苇名弦一郎", location: "Ashina Castle", location_zh: "苇名城", crest: null },
     ]);
 
     render(withLanguage(<MemoryRouter><BossSelectionPage /></MemoryRouter>, "zh"));
