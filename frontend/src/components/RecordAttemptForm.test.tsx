@@ -10,6 +10,7 @@ import type { Attempt, Boss } from "../types";
 vi.mock("../api/attempts");
 
 const boss: Boss = {
+  crest: null,
   id: "genichiro-ashina",
   name: "Genichiro Ashina",
   game: "sekiro",

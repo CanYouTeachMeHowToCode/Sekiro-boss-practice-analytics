@@ -44,6 +44,7 @@ function move(id: string, name: string, nameZh: string): BossMove {
 }
 
 export const genichiro: Boss = {
+  crest: null,
   id: "genichiro-ashina",
   name: "Genichiro Ashina",
   name_zh: "苇名弦一郎",

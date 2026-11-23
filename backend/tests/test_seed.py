@@ -104,6 +104,17 @@ def test_sync_rejects_a_move_described_differently_across_phases(session):
     assert count(session, Boss) == 0
 
 
+def test_sync_stores_a_one_character_crest_and_rejects_a_longer_one(session):
+    data = load_boss_data()
+    data[0].crest = "弦"
+    sync_reference_data(session, data)
+    assert session.scalar(select(Boss.crest).where(Boss.slug == data[0].id)) == "弦"
+
+    data[0].crest = "弦一"
+    with pytest.raises(SeedError, match="crest of 2 characters"):
+        sync_reference_data(session, data)
+
+
 def test_sync_rejects_an_unknown_game(session):
     data = load_boss_data()
     data[0].game = "elden-ring"

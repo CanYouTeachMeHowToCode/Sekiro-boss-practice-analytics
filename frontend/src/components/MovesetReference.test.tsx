@@ -5,6 +5,7 @@ import { withLanguage } from "../i18n/testLanguage";
 import type { Boss } from "../types";
 
 const boss: Boss = {
+  crest: null,
   id: "isshin-sword-saint",
   name: "Isshin, the Sword Saint",
   name_zh: "剑圣 苇名一心",

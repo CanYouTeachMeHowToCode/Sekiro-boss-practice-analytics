@@ -1,14 +1,22 @@
+/* Visual style B「天守之夜」(owner, 2026-11-17; research/failure_attribution/plan_m3.md, decision 16). Every text colour
+   reaches WCAG AA (4.5:1) on both the page and the card colour. */
 :root {
-  --color-bg: #14161a;
-  --color-surface: #1e2126;
-  --color-border: #2c3038;
-  --color-text: #e7e9ec;
-  --color-text-muted: #9aa1ac;
-  --color-primary: #c9432f;
-  --color-primary-hover: #e04f38;
-  --color-victory: #4caf7d;
-  --color-failed: #c9432f;
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-bg: #0f1218;
+  --color-surface: #161b24;
+  --color-border: #2a3140;
+  --color-text: #e8e3d6;
+  --color-text-muted: #9aa3b2;
+  --color-gold: #c9a55a;
+  --color-link: #d8b86e;
+  --color-primary: var(--color-gold);
+  --color-primary-hover: var(--color-link);
+  --color-on-primary: #0f1218;
+  --color-victory: #6fbf8e;
+  --color-failed: #ee7a63;
+  --radius-card: 10px;
+  --radius-control: 6px;
+  --font-sans: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
 
   color-scheme: dark;
 }
@@ -34,11 +42,27 @@ body {
 h1,
 h2,
 h3 {
-  line-height: 1.2;
+  line-height: 1.25;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  color: var(--color-gold);
 }
 
 a {
-  color: var(--color-primary-hover);
+  color: var(--color-link);
+}
+
+a:hover {
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
 }
 
 .back-link {
@@ -50,7 +74,7 @@ a {
 .btn {
   display: inline-block;
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
@@ -64,14 +88,21 @@ a {
   cursor: not-allowed;
 }
 
+.btn:hover:not(:disabled) {
+  border-color: var(--color-gold);
+}
+
 .btn-primary {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
+  font-weight: 500;
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-on-primary);
 }
 
 .boss-list {
@@ -83,15 +114,74 @@ a {
 }
 
 .boss-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.25rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 1rem 1.25rem;
   background: var(--color-surface);
 }
 
+.boss-card h3 {
+  margin: 0;
+}
+
 .boss-card p {
   color: var(--color-text-muted);
-  margin: 0.25rem 0 0.75rem;
+  margin: 0.25rem 0 0;
+}
+
+.boss-crest {
+  flex: none;
+}
+
+.crest-ring {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.5;
+}
+
+.crest-ring.inner {
+  stroke-width: 0.75;
+  opacity: 0.6;
+}
+
+.crest-char {
+  fill: var(--color-gold);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.crest-mark {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.25;
+  opacity: 0.8;
+}
+
+.boss-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.boss-title h1 {
+  margin: 0;
+}
+
+.boss-title p {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.boss-card .btn {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 0.5rem;
 }
 
 .stat-grid {
@@ -103,16 +193,17 @@ a {
 
 .stat-grid > div {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 0.75rem 1rem;
   background: var(--color-surface);
 }
 
 .stat-grid h3 {
   margin: 0 0 0.35rem;
+  font-family: var(--font-sans);
   font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   color: var(--color-text-muted);
 }
 
@@ -126,8 +217,27 @@ a {
   overflow-x: auto;
 }
 
+/* numbers stay on one line; a long name may wrap, so a table fits a phone's width where it can */
 .table-scroll .failure-breakdown td {
   white-space: nowrap;
+}
+
+.table-scroll .failure-breakdown td:first-child {
+  white-space: normal;
+}
+
+/* a narrow cell wraps between words, never between the characters of a Chinese word: a table too wide for a
+   phone scrolls sideways instead */
+.failure-breakdown th,
+.failure-breakdown td {
+  word-break: keep-all;
+}
+
+@media (max-width: 480px) {
+  .failure-breakdown th,
+  .failure-breakdown td {
+    padding: 0.4rem 0.35rem;
+  }
 }
 
 .boss-comparison,
@@ -141,7 +251,7 @@ a {
 .progression-scroll {
   overflow-x: auto;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   background: var(--color-surface);
 }
 
@@ -222,8 +332,7 @@ a {
 .failure-breakdown caption {
   text-align: left;
   font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--color-text-muted);
   margin-bottom: 0.4rem;
 }
@@ -247,12 +356,13 @@ a {
 
 .attempt {
   display: flex;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.75rem;
   align-items: baseline;
   border-left: 3px solid var(--color-failed);
   padding: 0.5rem 0.75rem;
   background: var(--color-surface);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
 }
 
 .attempt.victory {
@@ -266,6 +376,11 @@ a {
 
 .attempt-cause {
   color: var(--color-text-muted);
+}
+
+/* on a phone a row wraps between its parts rather than inside a boss name or a phase */
+.attempt > * {
+  word-break: keep-all;
 }
 
 .moveset-phase {
@@ -293,7 +408,7 @@ a {
 
 .record-attempt-form {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 1.25rem;
   margin-top: 1rem;
   background: var(--color-surface);
@@ -335,15 +450,58 @@ a {
   color: var(--color-failed);
 }
 
+/* The page header: the nav row, then a band with a moon and a castle's eaves drawn in gold lines (HeaderArt) */
+.site-header {
+  background: linear-gradient(180deg, #131823 0%, var(--color-bg) 100%);
+  border-bottom: 1px solid var(--color-border);
+}
+
 .nav-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
+  padding: 0.75rem 1.5rem 0;
+}
+
+.header-art {
+  display: flex;
+  align-items: flex-end;
+  height: 44px;
+  padding: 0 1.5rem;
+  overflow: hidden;
+}
+
+/* the horizon, fading in from the left, runs into the drawing's own ground line */
+.header-art::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, transparent, rgba(201, 165, 90, 0.45));
+}
+
+.header-art svg {
+  flex: none;
+  display: block;
+}
+
+.header-art .line {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.header-art .faint {
+  opacity: 0.45;
+}
+
+.header-art .moon {
+  fill: rgba(201, 165, 90, 0.12);
 }
 
 .nav-bar nav,
@@ -362,8 +520,11 @@ a {
   color: var(--color-primary-hover);
 }
 
-.nav-brand {
-  font-weight: 600;
+.nav-bar .nav-brand {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: 0.04em;
 }
 
 .nav-username {
@@ -378,7 +539,7 @@ a {
   display: grid;
   gap: 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 1.25rem;
   background: var(--color-surface);
 }
@@ -412,7 +573,7 @@ a {
 
 .login-prompt {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 1rem 1.25rem;
   background: var(--color-surface);
 }
@@ -491,9 +652,8 @@ a {
 }
 
 .notice {
-  border: 1px solid var(--color-border);
-  border-left: 3px solid #d9a441;
-  border-radius: 4px;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-card);
   padding: 0.75rem 1rem;
   background: var(--color-surface);
 }
@@ -512,7 +672,7 @@ a {
   align-items: center;
   gap: 0.5rem 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 0.75rem 1rem;
   background: var(--color-surface);
 }
@@ -561,7 +721,7 @@ a {
 
 .upload-form {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   padding: 1.25rem;
   background: var(--color-surface);
   display: grid;
@@ -593,7 +753,7 @@ a {
 
 .failure-item {
   border-left: 3px solid var(--color-failed);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
   padding: 0.6rem 0.9rem;
   background: var(--color-surface);
 }
@@ -636,7 +796,7 @@ a {
   display: block;
   width: 100%;
   margin-top: 0.6rem;
-  border-radius: 4px;
+  border-radius: var(--radius-control);
   background: #000;
 }
 

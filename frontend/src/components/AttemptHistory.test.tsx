@@ -6,6 +6,7 @@ import { withLanguage } from "../i18n/testLanguage";
 import type { Attempt, Boss } from "../types";
 
 const boss: Boss = {
+  crest: null,
   id: "genichiro-ashina",
   name: "Genichiro Ashina",
   game: "sekiro",

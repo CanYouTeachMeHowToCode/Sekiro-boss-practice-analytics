@@ -50,6 +50,8 @@ class Boss(BaseModel):
     phases: list[BossPhase]
     source_name: str | None = None
     source_url: str | None = None
+    # the one character in the boss's crest (visual style B); None until the owner picks it
+    crest: str | None = None
 
 
 class BossSummary(BaseModel):
@@ -58,3 +60,4 @@ class BossSummary(BaseModel):
     name_zh: str | None = None
     location: str
     location_zh: str | None = None
+    crest: str | None = None

@@ -7,6 +7,7 @@ import { useAuth } from "../auth/authContext";
 import { bossLocation, bossName } from "../i18n/content";
 import { formatPhase, useLanguage } from "../i18n/language";
 import type { Attempt, Boss, BossAnalytics, ProgressionPoint } from "../types";
+import BossCrest from "../components/BossCrest";
 import RecordAttemptForm from "../components/RecordAttemptForm";
 import AnalyticsPanel from "../components/AnalyticsPanel";
 import AttemptHistory from "../components/AttemptHistory";
@@ -111,8 +112,13 @@ export default function BossDashboardPage() {
         {t("boss.back")}
       </Link>
 
-      <h1>{bossName(boss, language)}</h1>
-      <p>{bossLocation(boss, language)}</p>
+      <div className="boss-title">
+        <BossCrest crest={boss.crest} size={52} />
+        <div>
+          <h1>{bossName(boss, language)}</h1>
+          <p>{bossLocation(boss, language)}</p>
+        </div>
+      </div>
 
       {!analytics ? (
         <p className="login-prompt">

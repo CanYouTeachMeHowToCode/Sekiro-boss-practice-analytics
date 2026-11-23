@@ -44,6 +44,9 @@ class Boss(Base):
     # Where this boss's phase and move data came from; moves share their boss's source.
     source_name: Mapped[str | None] = mapped_column(String(200))
     source_url: Mapped[str | None] = mapped_column(Text)
+    # The one character in the boss's gold crest, which marks the boss on the site instead of a picture (visual style
+    # B); None until the owner picks it.
+    crest: Mapped[str | None] = mapped_column(String(1))
 
     game: Mapped[Game] = relationship(back_populates="bosses")
     phases: Mapped[list["BossPhase"]] = relationship(
