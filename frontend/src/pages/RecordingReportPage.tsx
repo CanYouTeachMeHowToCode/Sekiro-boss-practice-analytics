@@ -184,7 +184,6 @@ function FailureReport({
         <>
           <section className="failures-by-move">
             <h2>{t("report.byMove")}</h2>
-            <p className="form-hint">{t("report.byMove.note")}</p>
             {byMove.length === 0 ? (
               <p>{t("report.byMove.empty")}</p>
             ) : (
