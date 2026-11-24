@@ -379,6 +379,8 @@
       "sha256": "10605dab0022a1cd59f2407849f7b701dd9006000b9521ce2b08ca1724b959c8",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
@@ -389,6 +391,8 @@
       "sha256": "63cb2ea2a733bdddd0b8af161126a62a98f5fb5925567af7bcf53d2eac4fd9e2",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
@@ -399,6 +403,8 @@
       "sha256": "d00230afac1571ec826b475201e71cb45409fd7c08cad199e8aa38030070a77d",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
@@ -409,6 +415,8 @@
       "sha256": "2c69e0a3056ee87c5100269f94f8565922fbb8846dfc09d7f12e15d1d98174fc",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
@@ -419,6 +427,8 @@
       "sha256": "3ef25c338509e6d1eb1e57b8fd563821d25cfafb8495b4bbc8ba880336563a3a",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
@@ -429,6 +439,8 @@
       "sha256": "cb22f0fe0e374169c61158246b8dee460ded1da0568ba3019d5c90da706a7a28",
       "ruleset": "vanilla",
       "game_version": "1.06",
+      "bell_demon": true,
+      "charmless": true,
       "overlay": false,
       "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "test"
