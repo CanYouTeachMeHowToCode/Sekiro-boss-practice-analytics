@@ -15,10 +15,10 @@ MIN_HEIGHT, MAX_HEIGHT = 720, 2160
 RECOMMENDED_MIN_HEIGHT = 1080
 ASPECT, ASPECT_TOLERANCE = 16 / 9, 0.01
 FRAME_RATES, FRAME_RATE_TOLERANCE = (30.0, 60.0), 1.0
-# The attribution was measured on 60 fps recordings only. Others are analysed (version 3 reads 30 samples a second at
-# any rate), but the report says their results are for reference only until they are measured too (owner decision,
-# 2026-11-18).
-VALIDATED_FRAME_RATES = (60.0,)
+# The frame rates the attribution has been measured at: 60 fps (versions 1 and 2) and 30 fps (version 4 on six new
+# fights labelled blind, passed: owner, 2026-11-24, research/failure_attribution/results_v4.md). A video at another
+# rate would be analysed but its report would say the results are for reference only (owner decision, 2026-11-18).
+VALIDATED_FRAME_RATES = (30.0, 60.0)
 # A variable frame rate: more than this share of frame intervals far from the usual one (media.frame_irregularity;
 # at most 0.2% on the owner's constant-rate recordings). The steps turn frame numbers into seconds with one rate.
 MAX_IRREGULAR = 0.05
