@@ -444,6 +444,16 @@
       "overlay": false,
       "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
       "set": "development"
+    },
+    {
+      "id": "2026-11-24-castle-1",
+      "file_name": "测试者录像/测试者A-录像2.mkv",
+      "sha256": "b167cac5a57d8bdd3878acd3ceb95ee8ffe30ec002def964fa42fc9a4bb44b24",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": false,
+      "use": "tester A's second upload to the test server, used with the tester's consent (owner relayed, 2026-11-24): labelled by the owner in the blind view (set scenario), then development data for version 5",
+      "set": "scenario"
     }
   ]
 }
