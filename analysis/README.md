@@ -68,10 +68,11 @@ window at 10) follow the same rule, from the nominal rate (the multiple of 30 ne
 
 At 60 fps version 3 reads the same frames as version 2, so its outputs are version 2's, byte for byte: every registered
 recording reads as 59.5–60.005 fps, and a full rerun of both versions on three of them gave identical files. The
-attribution has been measured at 60 fps only: the worker accepts 30 fps, and the report says its results are for
-reference only (`checks.VALIDATED_FRAME_RATES`), until new 30 fps fights labelled blind pass under the plan_m2.md
-protocol. `research/failure_attribution/scripts/sim_frame_rate.py` is a development check on frame-dropped copies of
-the labelled recordings, not that measurement.
+attribution has been measured at both rates: 60 fps since version 1, and 30 fps on version 4, with six new fights
+labelled blind under the plan_m2.md protocol (passed: owner, 2026-11-24, `research/failure_attribution/results_v4.md`).
+Both are in `checks.VALIDATED_FRAME_RATES`; a report at any other rate would say its results are for reference only.
+`research/failure_attribution/scripts/sim_frame_rate.py` is a development check on frame-dropped copies of the
+labelled recordings, not that measurement.
 
 ## Phases (version 4)
 

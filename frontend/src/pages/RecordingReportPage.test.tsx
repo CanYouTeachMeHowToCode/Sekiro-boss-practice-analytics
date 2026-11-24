@@ -130,16 +130,24 @@ describe("RecordingReportPage", () => {
     expect(recordingsApi.getRecordingReport).toHaveBeenCalledTimes(2);
   });
 
-  it("says a 30 fps report is for reference only, in both languages, and nothing at 60 fps", async () => {
-    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport({ fps: 30, unvalidated_frame_rate: true }));
+  it("says a report at a frame rate not yet validated is for reference only, in both languages", async () => {
+    // only 30 and 60 fps are accepted and both are validated; the note stays for a rate added later
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport({ fps: 50, unvalidated_frame_rate: true }));
     const { unmount } = renderReport("zh");
     expect(
-      await screen.findByText("这段录像是 30 帧，结果仅供参考：目前只有 60 帧录像的识别准确度经过验证。建议下次用 60 帧录制。")
+      await screen.findByText("这段录像是 50 帧，结果仅供参考：这个帧率的识别准确度还没有验证过。建议用 30 或 60 帧录制。")
     ).toBeInTheDocument();
     unmount();
 
     renderReport("en");
-    expect(await screen.findByText(/This recording is 30 fps, so treat these results as a guide only/)).toBeInTheDocument();
+    expect(await screen.findByText(/This recording is 50 fps, so treat these results as a guide only/)).toBeInTheDocument();
+  });
+
+  it("shows no frame-rate note for a 30 fps recording", async () => {
+    vi.mocked(recordingsApi.getRecordingReport).mockResolvedValue(makeReport({ fps: 30, unvalidated_frame_rate: false }));
+    renderReport();
+    expect(await screen.findByRole("heading", { name: "genichiro.mp4" })).toBeInTheDocument();
+    expect(screen.queryByText(/as a guide only/)).not.toBeInTheDocument();
   });
 
   it("shows no frame-rate note for a 60 fps recording", async () => {

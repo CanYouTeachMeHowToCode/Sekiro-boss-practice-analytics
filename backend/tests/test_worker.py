@@ -85,8 +85,11 @@ def test_probe_reads_the_transfer_function_that_marks_hdr(ffmpeg, tmp_path):
     assert info.transfer == "smpte2084" and checks.format_problem(info) == "hdr"
 
 
-@pytest.mark.parametrize(("fps", "validated"), [(60.0, True), (59.94, True), (30.0, False), (29.97, False), (None, True)])
-def test_only_60_fps_is_a_validated_frame_rate(fps, validated):
+@pytest.mark.parametrize(
+    ("fps", "validated"), [(60.0, True), (59.94, True), (30.0, True), (29.97, True), (None, True), (50.0, False)]
+)
+def test_30_and_60_fps_are_validated_frame_rates(fps, validated):
+    # 30 fps passed its blind measurement on version 4 (owner, 2026-11-24); any other rate is not validated
     assert checks.validated_frame_rate(fps) is validated
 
 

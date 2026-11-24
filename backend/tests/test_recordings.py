@@ -159,7 +159,9 @@ def test_a_recording_below_1080p_is_marked_low_resolution(client, seeded_session
     assert client.get("/api/recordings").json()[0]["low_resolution"] is low
 
 
-@pytest.mark.parametrize(("fps", "unvalidated"), [(None, False), (60.0, False), (59.94, False), (30.0, True)])
+@pytest.mark.parametrize(
+    ("fps", "unvalidated"), [(None, False), (60.0, False), (59.94, False), (30.0, False), (29.97, False), (50.0, True)]
+)
 def test_a_frame_rate_the_attribution_was_not_measured_at_is_marked(client, seeded_session, recordings_dir, fps, unvalidated):
     rec_id = upload(client).json()["id"]
     row = seeded_session.get(db.Recording, int(rec_id))

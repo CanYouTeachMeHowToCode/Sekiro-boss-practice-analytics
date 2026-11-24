@@ -13,7 +13,6 @@ const REQUIREMENTS: MessageKey[] = [
   "upload.req.format",
   "upload.req.language",
   "upload.req.resolution",
-  "upload.req.frameRate",
   "upload.req.private",
 ];
 

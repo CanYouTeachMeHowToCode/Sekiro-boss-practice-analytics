@@ -20,7 +20,7 @@ here or anywhere in the repository. English below.
 - **只支持原版《只狼》的天守阁苇名弦一郎**，三个阶段都可以。不支持装了 mod 的游戏，也不支持再战里的「心中的弦一郎」和剑圣一心战开头的弦一郎。
 - **游戏语言**：简体中文、繁體中文或英文。
 - **分辨率**：16:9，建议 1080p 或更高。720p 也能分析，但更多失败会显示"招式不确定"。
-- **帧率**：建议 60 帧。30 帧也能分析，但结果仅供参考，因为 30 帧的识别还在验证。录制软件要设成**固定帧率**（可变帧率的视频会被拒绝），不要开 HDR。
+- **帧率**：30 帧或 60 帧都可以。录制软件要设成**固定帧率**（可变帧率的视频会被拒绝），不要开 HDR。
 - 最长 10 分钟，最大 2 GB；MP4、MKV 或 MOV 格式。
 
 ### 怎么录，结果最准
@@ -72,9 +72,8 @@ Castle, and the site finds every time you lost HP, had your posture broken or di
 - **Game language**: English, Simplified Chinese or Traditional Chinese.
 - **Resolution**: 16:9, 1080p or higher recommended. 720p is analysed too, but more failures will show the move as
   unsure.
-- **Frame rate**: 60 fps recommended. 30 fps is analysed too, but its results are for reference only while
-  recognition at 30 fps is being validated. Set your recorder to a **constant frame rate** (variable frame rate videos
-  are rejected), and turn HDR off.
+- **Frame rate**: 30 or 60 fps. Set your recorder to a **constant frame rate** (variable frame rate videos are
+  rejected), and turn HDR off.
 - At most 10 minutes and 2 GB; MP4, MKV or MOV.
 
 ### How to record for the best results
