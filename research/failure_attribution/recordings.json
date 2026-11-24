@@ -382,8 +382,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-11-23-castle-1",
@@ -394,8 +394,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-11-23-castle-2",
@@ -406,8 +406,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-11-23-castle-3",
@@ -418,8 +418,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-11-23-castle-4",
@@ -430,8 +430,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     },
     {
       "id": "2026-11-23-castle-5",
@@ -442,8 +442,8 @@
       "bell_demon": true,
       "charmless": true,
       "overlay": false,
-      "use": "version-4 30 fps test: fight recorded at 30 fps without the overlay, labelled blind by the owner",
-      "set": "test"
+      "use": "version-4 30 fps test, development since version 5: fight recorded at 30 fps without the overlay, labelled blind by the owner",
+      "set": "development"
     }
   ]
 }
