@@ -452,8 +452,8 @@
       "ruleset": "vanilla",
       "game_version": "1.06",
       "overlay": false,
-      "use": "tester A's second upload to the test server, used with the tester's consent (owner relayed, 2026-11-24): labelled by the owner in the blind view (set scenario), then development data for version 5",
-      "set": "scenario"
+      "use": "tester A's second upload to the test server, used with the tester's consent (owner relayed, 2026-11-24): labelled by the owner in the blind view, development data for version 5",
+      "set": "development"
     }
   ]
 }
