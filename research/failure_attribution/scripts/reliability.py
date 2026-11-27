@@ -1,7 +1,7 @@
 """Reliability validation (V4 M2): the owner's answers against what the frozen pipeline reported.
 
 Usage: python -I reliability.py snapshot <recording id | all>
-       python -I reliability.py report [--set development|test|all] [--truth v2|v1]
+       python -I reliability.py report [--set development|test|all] [--truth v2|v1] [--predictions <file>]
 
 The answers of a recording, in research/ground_truth/annotations/<ruleset>/genichiro/<recording>/:
 - hud_events.csv, the owner's review of the detected events (review_events.py, 事件 view). The real failure events are
@@ -18,7 +18,8 @@ The answers of a recording, in research/ground_truth/annotations/<ruleset>/genic
 labelled under version 1 (truth_v2.py). A recording labelled under version 2 only (the version-2 test batch) has its
 answers in failure_truth.csv. --truth v1 reads failure_truth.csv everywhere, as M2 did.
 
-`report` compares them with work/<id>/events.csv and failure_predictions.csv, for the recordings of a set
+`report` compares them with work/<id>/events.csv and failure_predictions.csv (or the file --predictions names, such
+as the predictions of a comparison written by move_match.py predict --out), for the recordings of a set
 (recordings.json "set": development is everything M1 was built and tuned on, test the M2 recordings held out until the
 pipeline was frozen), and writes work/reliability_report.md and work/reliability_failures.csv:
 - events, per type: precision (detected events that are real) and recall (real events that were detected);
@@ -52,6 +53,7 @@ TRUTH_FIELDS = ["key", "time_s", "events", "move", "two_slashes", "merge_prev", 
 # Floating Passage's opening two slashes without the follow-up, so Two-Hit Slash, which was proposed, is right (2026-10-16)
 M1_TWO_SLASHES = {("2026-10-16-castle-1", "death@238.4")}
 TRUTH = sys.argv[sys.argv.index("--truth") + 1] if "--truth" in sys.argv else "v2"
+PREDICTIONS = sys.argv[sys.argv.index("--predictions") + 1] if "--predictions" in sys.argv else "failure_predictions.csv"
 
 
 def truth_file(ann):
@@ -179,7 +181,7 @@ class Recording:
         if any(s == "unreviewed" for s in self.status.values()):
             self.problems.append(f"{sum(s == 'unreviewed' for s in self.status.values())} 个检测到的事件还没核对")
         self.reported = []
-        for p in read(work / "failure_predictions.csv"):
+        for p in read(work / PREDICTIONS):
             cands = [c.rsplit(":", 1) for c in p["candidates"].split()]
             self.reported.append({"row": p, "events": set(p["events"].split()), "t": float(p["time_s"]),
                                   "top": [c[0] for c in cands], "sure": p.get("certain", "1") == "1",
