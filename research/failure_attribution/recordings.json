@@ -454,6 +454,16 @@
       "overlay": false,
       "use": "tester A's second upload to the test server, used with the tester's consent (owner relayed, 2026-11-24): labelled by the owner in the blind view, development data for version 5",
       "set": "development"
+    },
+    {
+      "id": "2026-11-27-castle-1",
+      "file_name": "开发者菜单录像/投技录像1.mp4",
+      "sha256": "f9482222c6f36ea0c49f26289f12524b5890f0c63d3af4b576bc808e6e5f1bd0",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": true,
+      "use": "reference: dev-menu fight recorded for version 5, taking perilous grabs (phase 1-2) on purpose",
+      "set": "development"
     }
   ]
 }
