@@ -464,6 +464,16 @@
       "overlay": true,
       "use": "reference: dev-menu fight recorded for version 5, taking perilous grabs (phase 1-2) on purpose",
       "set": "development"
+    },
+    {
+      "id": "2026-11-27-castle-2",
+      "file_name": "开发者菜单录像/投技录像2.mp4",
+      "sha256": "9b3bd7fd979f819c763ac29493c9a3c9eb7936b096383cbdedc6afdd557a1487",
+      "ruleset": "vanilla",
+      "game_version": "1.06",
+      "overlay": true,
+      "use": "reference: dev-menu fight recorded for version 5, taking perilous grabs (phase 3) on purpose",
+      "set": "development"
     }
   ]
 }
