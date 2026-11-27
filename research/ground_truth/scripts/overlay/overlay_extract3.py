@@ -56,7 +56,13 @@ for t, _, c in labeled(data):
     char_samples.setdefault(c, []).extend(chars[f0 - 10: f0 + 11])
 char_names = sorted(char_samples)
 char_mean = {c: z(np.stack(char_samples[c])).mean(axis=0) for c in char_names}
-diff = np.abs(char_mean[char_names[0]] - char_mean[char_names[1]])
+if len(char_names) > 1:
+    diff = np.abs(char_mean[char_names[0]] - char_mean[char_names[1]])
+else:
+    # one character in the whole recording (a fight that never reaches phase 3, like the version-5 grab recording
+    # 2026-11-27-castle-1): every frame with the character line is that character; the mask only keeps the line's
+    # most contrasted pixels
+    diff = np.abs(char_mean[char_names[0]])
 char_mask = diff > np.percentile(diff, 90)                       # the most discriminative 10% of pixels
 char_T = np.stack([z(char_mean[c][None])[0] for c in char_names])
 char_full = np.stack([z(char_mean[c][None])[0] for c in char_names])
@@ -96,7 +102,8 @@ for s in range(0, N, B):
         out_rows.append([f, f"{f / fps:.3f}", f"{pre[i]:.3f}", whitelist[best[i]], f"{bcost[i]:.3f}", f"{margin[i]:.3f}",
                          f"{worst_cell[i]:.3f}", int((free[i] == wl_digits[best[i]]).all()),
                          f"{tdig[i, 0]}.{tdig[i, 1]}{tdig[i, 2]}", f"{tbest[i]:.3f}", f"{tmargin[i]:.3f}",
-                         char_names[int(cs[i].argmax())], f"{cs[i].max():.3f}", f"{abs(cs[i, 0] - cs[i, 1]):.3f}",
+                         char_names[int(cs[i].argmax())], f"{cs[i].max():.3f}",
+                         f"{abs(cs[i, 0] - cs[i, 1]):.3f}" if len(char_names) > 1 else "1.000",
                          f"{cfull[i].max():.3f}"])
     print("frames", s + n, flush=True)
 
