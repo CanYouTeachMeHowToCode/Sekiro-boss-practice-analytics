@@ -11,9 +11,15 @@ One row per TAE entry of c7100 (compared with castle phases 1-2) and c7110 (cast
 
 Category, from the TAE events (an ImportOtherAnim entry uses the events of the entry it imports):
   attack      has InvokeAttackBehavior
-  bullet      no attack, but InvokeBulletBehavior other than the marker below
-  other       neither
+  throw       no attack, but Throw Atk: the damage of a throw that caught Wolf (version 5, throws.py)
+  bullet      neither, but InvokeBulletBehavior other than the marker below
+  other       none of these
   A bullet with judge 980-989 on DummyPoly 6 is a marker of unknown meaning, not a projectile.
+
+Throw follow-ups (throws.FOLLOW_UPS: c7100 3020 -> 4100, c7110 3009 -> 4110, owner-confirmed 2026-11-27) are played by
+the game when the catch connects; no AI requests them. Such a follow-up can play in every phase where its catch can:
+castle_ai_phaseN copies the catch, castle_ai_paths stays empty (no AI function requests it) and throw_after names the
+catch.
 
 Castle wiring (map m11_01, params, events; see characters/genichiro.json):
   phases 1-2  AI 710000, NpcParam 71001000: boss has SpEffect 200050, not 200051; remaining deathblows 2 then 1
@@ -33,6 +39,10 @@ import csv
 import json
 import sys
 from collections import defaultdict
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from throws import CATCH_OF, CONDITION, throws  # noqa: E402
 
 moves_dir, tae_dir, cov_path, out_path = sys.argv[1:5]
 CASTLE = {"710000": ("c7100", ("1", "2")), "711000": ("c7110", ("3",))}
@@ -88,16 +98,22 @@ for ai, (char, phases) in CASTLE.items():
         bullets = [e for e in evs if e["type"] == 2 and not is_marker(e)]
         anim = a["id_int"]
         c = cov[a["id"]]
+        catch = CATCH_OF.get((char, anim))
+        if catch is not None:      # a throw follow-up plays wherever its catch can (no AI function requests it)
+            for p in phases:
+                reach[anim][p] = reach[anim][p] or ([f"{CONDITION} {catch}"] if reach[catch][p] else [])
         row = {
             "character": char, "anim": a["id"],
-            "category": "attack" if attacks else "bullet" if bullets else "other",
+            "category": "attack" if attacks else "throw" if throws(evs) else "bullet" if bullets else "other",
             "reuse": f"imports {a['imports_from']}" if a["kind"] == "import_other_anim" else
                      (f"plays {a['hkx']}" if a.get("hkx") and a["hkx"] != a["id"] else ""),
         }
         for p in ("1", "2", "3"):
             row[f"recorded_phase{p}"] = c[f"occ_phase{p}"] if p in phases else ""
             row[f"castle_ai_phase{p}"] = ("yes" if reach[anim][p] else "no") if p in phases else ""
-        row["castle_ai_paths"] = "; ".join(f"{ai}:{fn}" for fn in sorted({f for p in phases for f in reach[anim][p]}))
+        row["castle_ai_paths"] = "; ".join(f"{ai}:{fn}" for fn in sorted({f for p in phases for f in reach[anim][p]})
+                                           if not fn.startswith(CONDITION))
+        row["throw_after"] = f"{catch:04d}" if catch is not None else ""
         recorded = any(int(c[f"occ_phase{p}"]) for p in phases)
         reachable = any(reach[anim][p] for p in phases)
         row["castle_status"] = ("recorded" if recorded else "reachable_not_recorded") if reachable else (
@@ -135,7 +151,7 @@ with open(out_path, "w", newline="", encoding="utf-8") as fh:
 sys.stdout.reconfigure(encoding="utf-8")
 for char in ("c7100", "c7110"):
     rs = [r for r in rows if r["character"] == char]
-    for cat in ("attack", "bullet", "other"):
+    for cat in ("attack", "throw", "bullet", "other"):
         rc = [r for r in rs if r["category"] == cat]
         st = defaultdict(int)
         for r in rc:

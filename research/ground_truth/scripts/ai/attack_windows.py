@@ -9,14 +9,21 @@ One row per TAE event that can hurt Wolf or marks 危, with its time inside the 
     bullet    InvokeBulletBehavior (type 2) with a judge ID >= 0 outside 980–989: the projectile is fired at start_s
               (arrows, lightning) and hits later
     peril     InvokeBulletBehavior with a judge ID in 980–989: the red 危 kanji, which hurts no one
-`hit` numbers the distinct attack windows of an animation as catalog.py counts them (overlapping or touching windows
-are one hit), so a row can say "the 6th hit of 3092". Entries that import another entry's events
+    throw     Throw Atk (type 304) with a judge ID >= 0: the damage of a throw that has caught Wolf, in the follow-up the
+              game plays after the catch, not one the AI requests (c7100 4100 after the grab 3020, c7110 4110 after
+              3009; owner, 2026-11-27). Version 5: V3.1 counted only attack and projectile events, so these were missed
+`hit` numbers the distinct attack and throw windows of an animation as catalog.py counts them (overlapping or touching
+windows are one hit), so a row can say "the 6th hit of 3092". Entries that import another entry's events
 (import_other_anim) get that entry's windows. The failure attribution uses this table to tell which animation was
 hitting at the moment Wolf lost HP; it is derived metadata (identifiers and times), not game assets.
 """
 import csv
 import json
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from throws import THROW_ATK  # noqa: E402
 
 tae_dir, out = sys.argv[1:3]
 rows = []
@@ -32,6 +39,8 @@ for c in ("c7100", "c7110"):
             judge = e["params"].get("BehaviorJudgeID", -1)
             if e["type"] == 1 and judge >= 0:
                 kind = "attack"
+            elif e["type"] == THROW_ATK and judge >= 0:
+                kind = "throw"
             elif e["type"] == 2 and judge >= 0:
                 kind = "peril" if 980 <= judge <= 989 else "bullet"
             else:
@@ -41,7 +50,7 @@ for c in ("c7100", "c7110"):
         hit, end = 0, None
         for kind, judge, s, en, sf, ef in found:
             n = ""
-            if kind == "attack":
+            if kind in ("attack", "throw"):
                 if end is None or sf > end:
                     hit += 1
                     end = ef

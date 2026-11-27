@@ -16,8 +16,9 @@ chain. Options that request the same chain become one entry. The chain text come
 castle's fixed facts applied: the boss has SpEffect 200050 and never 3711500, so branches that need 3711500 are
 dropped and conditions on 200050 are always true.
 
-An entry is a move candidate when its chain contains an attack or projectile animation; the rest (guards,
-deflects, steps) are listed as not moves. Families, wiki candidates and triggers are proposals written from the
+An entry is a move candidate when its chain contains an attack, throw or projectile animation; the rest (guards,
+deflects, steps) are listed as not moves. A chain that ends with a throw's catch continues with the follow-up the game
+plays when the catch connects (throws.py, version 5): 3037 → 3020 → [抓中: 4100]. Families, wiki candidates and triggers are proposals written from the
 evidence named in each row. The project owner confirms every name, grouping and variant, in the 审核 and 理由 columns
 of the .md; those are read back and kept when the catalog is regenerated.
 """
@@ -32,6 +33,7 @@ HERE = Path(__file__).resolve().parent
 GT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 import ai_flowchart as af  # noqa: E402
+from throws import CONDITION, FOLLOW_UPS, throws  # noqa: E402
 
 ai_dir, tae_dir, out_csv, out_md = sys.argv[1:5]
 RECS = sorted(p for p in (GT / "observations/vanilla/genichiro").glob("*-castle*") if (p / "occurrences.csv").exists())
@@ -193,6 +195,9 @@ OWNER[("c7100", 3045)] = "踢一脚(横砍踢击 3003 → 3045 的第二段;2026
 OWNER[("c7100", 3002)] = "肘击(2026-10-15)"
 OWNER[("c7110", 3007)] = "危·下段"  # owner, 2026-10-15; c7100 3007 was 下段(非危) until the owner corrected it the same day
 OWNER[("c7110", 3010)] = "跳起来横砍一下、再劈砍一下(你在 M2 测试录像 7 的 3:24 看到,2026-10-22)"
+# The throw follow-ups (plan_v5.md, 2026-11-27): the owner watched the overlay recordings 2026-11-27-castle-1 and -2
+OWNER[("c7100", 4100)] = "3020 抓中后必出的锤击,和抓取一起算危·投技(你确认,2026-11-27)"
+OWNER[("c7110", 4110)] = "3009 抓中后的摔打,算危·投技(第三阶段)(你确认,2026-11-27)"
 
 # Notes the owner asked for while reviewing (2026-10-13), with the evidence checked in the decompiled AI.
 NOTES = {
@@ -284,6 +289,17 @@ for c in ("c7100", "c7110"):
             else:
                 end = max(end, en)
         hits[(c, a["id_int"])] = n
+        # a throw follow-up's damage: its Throw Atk windows, counted the same way
+        wins = sorted((e["start_frame_30"], e["end_frame_30"]) for e in throws(src["events"]))
+        n, end = 0, None
+        for st, en in wins:
+            if end is None or st > end:
+                n += 1
+                end = en
+            else:
+                end = max(end, en)
+        if n and not hits[(c, a["id_int"])]:
+            hits[(c, a["id_int"])] = n
 
 # ---------------------------------------------------------------- entries
 entries = {}
@@ -303,6 +319,17 @@ for ai, (char, phases) in CASTLE.items():
         e["options"].append(opt)
         e["anims"] |= anims
 
+# a chain that ends with a throw's catch continues with the follow-up the game plays when the catch connects
+for key in list(entries):
+    char, chain = key
+    for (c, catch), follow in FOLLOW_UPS.items():
+        if c == char and catch in entries[key]["anims"]:
+            assert chain.endswith(str(catch)), (chain, catch)   # a catch inside a chain would need its own rule
+            e = entries.pop(key)
+            e["chain"] = f"{chain} → [{CONDITION}: {follow}]"
+            e["anims"].add(follow)
+            entries[(char, e["chain"])] = e
+
 
 def mmss(t):
     return f"{int(t // 60)}:{t % 60:04.1f}"
@@ -313,7 +340,7 @@ for (char, chain), e in entries.items():
     ai = e["ai"]
     anims = sorted(e["anims"])
     cats = {a: info[(char, a)]["category"] for a in anims}
-    combat = [a for a in anims if cats[a] in ("attack", "bullet")]
+    combat = [a for a in anims if cats[a] in ("attack", "throw", "bullet")]
     phase_cols = ("1", "2") if char == "c7100" else ("3",)
     rec = {a: counts[(char, a)] for a in anims}
     seen = [a for a in combat if rec[a]]
@@ -340,6 +367,7 @@ for (char, chain), e in entries.items():
         "chain": chain,
         "trigger": "；".join(dict.fromkeys(TRIGGERS.get(k, "") for k in keys if TRIGGERS.get(k))),
         "attack_anims": " ".join(f"{a}({hits[(char, a)]}击)" for a in anims if cats[a] == "attack"),
+        "throw_anims": " ".join(f"{a}({hits[(char, a)]}击)" for a in anims if cats[a] == "throw"),
         "bullet_anims": " ".join(str(a) for a in anims if cats[a] == "bullet"),
         "other_anims": " ".join(str(a) for a in anims if cats[a] == "other"),
         "recorded": " ".join(f"{a}:{rec[a]}" for a in combat),
@@ -353,6 +381,7 @@ for (char, chain), e in entries.items():
     })
 
 rows.sort(key=lambda r: (r["character"], r["kind"], min(int(x.split("(")[0]) for x in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split())))
+# (the throw follow-ups are left out of the sort key, so entry numbers do not move)
 counter = defaultdict(int)
 for r in rows:
     pre = "P12" if r["character"] == "c7100" else "P3"
@@ -363,10 +392,10 @@ for r in rows:
 
 shared = defaultdict(list)    # attack/bullet animation -> entries that contain it
 for r in rows:
-    for a in (r["attack_anims"] + " " + r["bullet_anims"]).split():
+    for a in (r["attack_anims"] + " " + r["throw_anims"] + " " + r["bullet_anims"]).split():
         shared[(r["character"], a.split("(")[0])].append(r["entry"])
 for r in rows:
-    others = sorted({x for a in (r["attack_anims"] + " " + r["bullet_anims"]).split()
+    others = sorted({x for a in (r["attack_anims"] + " " + r["throw_anims"] + " " + r["bullet_anims"]).split()
                      for x in shared[(r["character"], a.split("(")[0])] if x != r["entry"]})
     r["shares_animations_with"] = " ".join(others)
 
@@ -408,8 +437,8 @@ for r in rows:
     r["owner_review"] = review_status(mark)
     r["owner_reason"] = reason
 
-FIELDS = ["entry", "character", "phases", "kind", "ai_options", "chain", "trigger", "attack_anims", "bullet_anims",
-          "other_anims", "recorded", "first_seen", "evidence", "family_proposed", "variant_proposed", "family_basis",
+FIELDS = ["entry", "character", "phases", "kind", "ai_options", "chain", "trigger", "attack_anims", "throw_anims",
+          "bullet_anims", "other_anims", "recorded", "first_seen", "evidence", "family_proposed", "variant_proposed", "family_basis",
           "wiki_candidate", "wiki_basis", "owner_labels", "shares_animations_with", "notes", "owner_review", "owner_reason"]
 with open(out_csv, "w", newline="", encoding="utf-8") as fh:
     w = csv.DictWriter(fh, fieldnames=FIELDS)
@@ -429,6 +458,7 @@ md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
       "- 招式族、变体、wiki 候选和触发条件都是建议,依据写在后面。标\"已确认\"的是你确认过的,其余等你审核。",
       "- 动画链里的条件按天守阁的情况化简过:天守阁的弦一郎带特效 200050,没有 3711500(剑圣战巴流的不死斩标记)。",
       "- 括号里的\"击\"是 TAE 里独立的攻击窗口个数:重叠或相连的攻击判定算一击,判定 ID 为 -1 的空事件不算。"
+      "\"投技\"是投技抓中后游戏接着播的动画,伤害是 TAE 里的 `Throw Atk` 事件,不是攻击判定;AI 不请求它(版本 5,你确认,2026-11-27)。"
       "权重和条件的细节见 `engine/genichiro_castle_ai.md`。",
       "- 主动选招还有一个冷却:同一招 15 秒内出过,它的权重降为 1(公用 AI 函数 SetCoolTime)。",
       "",
@@ -448,7 +478,7 @@ md = ["# 天守阁弦一郎招式目录(草稿,待你审核)", "",
       "",
       "## 证据等级", "",
       "| 等级 | 含义 |", "|---|---|",
-      "| 已运行观察 | 这串里所有攻击和飞行物动画,都在录像的对应阶段出现过 |",
+      "| 已运行观察 | 这串里所有攻击、投技和飞行物动画,都在录像的对应阶段出现过 |",
       "| 部分运行观察 | 只录到其中一部分 |",
       "| 仅静态证据 | 一个都没录到,只有 AI 和 TAE 的证据 |",
       "",
@@ -474,14 +504,15 @@ def cell(x):
 
 
 def table(rs):
-    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 飞行物 | 录到次数 | 最早录到 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 | 说明 |",
+    out = [REVIEW_HEAD + " 阶段 | 动画链 | 触发 | 攻击(击数) / 投技 / 飞行物 | 录到次数 | 最早录到 | 证据 | 建议的招式族 / 变体 | wiki 候选 | 你的标注 | 共用动画 | 说明 |",
            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rs:
         fam = " / ".join(x for x in (r["family_proposed"], r["variant_proposed"]) if x)
         if r["family_basis"]:
             fam += f"(依据:{r['family_basis']})"
         wiki = r["wiki_candidate"] + (f"(依据:{r['wiki_basis']})" if r["wiki_basis"] else "")
-        ab = " ".join(x for x in (r["attack_anims"], ("飞行物 " + r["bullet_anims"]) if r["bullet_anims"] else "") if x)
+        ab = " ".join(x for x in (r["attack_anims"], ("投技 " + r["throw_anims"]) if r["throw_anims"] else "",
+                                  ("飞行物 " + r["bullet_anims"]) if r["bullet_anims"] else "") if x)
         chain = r["chain"]
         out.append(f"| {r['entry']} | {r['review_mark']} | {r['owner_reason']} | {r['phases']} | {cell(chain)} | {cell(r['trigger'])} | {cell(ab)} | {cell(r['recorded'])} "
                    f"| {cell(r['first_seen'])} | {cell(r['evidence'])} | {cell(fam)} | {cell(wiki)} | {cell(r['owner_labels'])} "
@@ -496,7 +527,7 @@ for char, title in (("c7100", "一、二阶段(c7100,AI 710000)"), ("c7110", "�
     md += [f"## 其他招式候选:{title}", ""]
     md += table([r for r in moves if r["character"] == char and r not in fp]) + [""]
 md += ["## 不算招式(建议)", "",
-       "这些选项请求的动画里没有攻击判定或飞行物,比如他弹开你、后跳、侧移。全集里其余的编号(受击、忍杀、移动、过场等)在 M5 分类。", "",
+       "这些选项请求的动画里没有攻击判定、投技或飞行物,比如他弹开你、后跳、侧移。全集里其余的编号(受击、忍杀、移动、过场等)在 M5 分类。", "",
        REVIEW_HEAD + " 阶段 | AI 选项 | 动画 | 触发 |", "|---|---|---|---|---|---|---|"]
 for r in rows:
     if r["kind"] == "not_move":

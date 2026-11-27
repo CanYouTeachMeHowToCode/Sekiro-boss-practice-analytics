@@ -13,6 +13,8 @@ apart:
   needs its own response). The jumping thrust (c7110 3008) stays its own move, renamed 跃起后危·突刺: unlike the other
   thrusts, using an item such as the gourd draws it out.
 An animation two moves share is told apart by what comes before and after it, as now.
+Version 5 (owner, 2026-11-27): a throw's follow-up (c7100 4100 after the grab 3020, c7110 4110 after 3009, throws.py)
+counts for its grab: 4100 is 危·投技 and 4110 危·投技（第三阶段）.
 
 Inputs: semantic/genichiro_catalog.csv (entries, hits, owner labels), semantic/genichiro_product_moveset.csv (the
 current moves), engine/genichiro_attack_windows.csv (attack, projectile and 危 windows). Writes
@@ -54,6 +56,7 @@ DECIDED = [
     "跳起突刺（c7110 3008）是要识破的突刺（Q4）；它不并进危·突刺，因为你用道具（比如葫芦）会引出这一招，和别的突刺不同。名字改成\"跃起后危·突刺\"（B）。",
     "连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算\"危·突刺\"（A）。",
     "招式前后附带的普通的箭算新的一招\"普通射箭攻击 / Arrow Shot\"（C）。",
+    "投技抓中后游戏接着播的动画算这次投技：一二阶段的锤击 4100 算危·投技，三阶段的摔打 4110 算危·投技（第三阶段）（版本 5，2026-11-27）。",
 ]
 QUESTIONS_ANSWERED = {
     "A": "需要识破的危·突刺还合并吗？就是把连斩的危·突刺收尾、跳劈后续里的突刺（3025）和完美弹开后的突刺（3080）都算\"危·突刺\"。"
@@ -78,6 +81,8 @@ def proposal(ch, anim, kinds, current, label):
         return "危·突刺", "要识破的突刺，在别的招式里，算危·突刺；和下段危分开（你定，A、Q1）" + inferred, ""
     if ch == "c7110" and anim == 3008:
         return "跃起后危·突刺", "要识破的突刺，自成一招：用道具（比如葫芦）会引出来（你定，Q4、B）；这一招改名", ""
+    if "throw" in kinds:
+        return " / ".join(current), "投技抓中后游戏接着播的动画，算这次投技（你定，2026-11-27）", ""
     if "peril" in kinds:
         reason = {3007: "下段危，留在自己的招式里（你定，Q1）", 3067: "下段危，留在自己的招式里，按前后动作决定是哪一招（你定，Q1）",
                   3020: "一二阶段的危·投技可以弹开，不和三阶段合并（你定，Q2）", 3009: "三阶段的危·投技，不和一二阶段合并（你定，Q2）",
@@ -131,7 +136,7 @@ def main():
             continue
         labels = dict(x.split(" ", 1) for x in r["owner_labels"].split("；") if " " in x)
         recorded = dict(x.split(":") for x in r["recorded"].split())
-        for a in (r["attack_anims"] + " " + r["bullet_anims"]).split():
+        for a in (r["attack_anims"] + " " + r["throw_anims"] + " " + r["bullet_anims"]).split():
             anim = int(a.split("(")[0])
             d = rows.setdefault((r["character"], anim), {"entries": [], "moves": [], "label": "", "recorded": "0",
                                                           "hits": a.split("(")[1].rstrip(")") if "(" in a else "飞行物"})
@@ -144,7 +149,7 @@ def main():
     for (ch, anim), d in sorted(rows.items()):
         k = kinds[(ch, anim)]
         move, reason, q = proposal(ch, anim, k, d["moves"], d["label"])
-        kind = "危" if "peril" in k else ("飞行物" if "bullet" in k else "普通")
+        kind = "危" if "peril" in k else ("投技" if "throw" in k else "飞行物" if "bullet" in k else "普通")
         mark, why = marks.get((ch, str(anim)), ("☐", ""))
         out.append({"character": ch, "phases": PHASES[ch], "anim": anim, "kind": kind, "hits": d["hits"],
                     "recorded": d["recorded"], "entries": " ".join(d["entries"]), "current_moves": " / ".join(d["moves"]),
