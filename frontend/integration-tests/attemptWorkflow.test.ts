@@ -378,7 +378,7 @@ describe("frontend calling the real backend", () => {
     const { getAdminRecordingReport, listAdminRecordings } = await import("../src/api/admin");
     const { deleteRecording, getRecordingReport, uploadUrl } = await import("../src/api/recordings");
 
-    const res = await fetch(uploadUrl("unicorn fight.mp4"), {
+    const res = await fetch(uploadUrl("tester fight.mp4"), {
       method: "POST",
       headers: { "Content-Type": "application/octet-stream" },
       body: new Uint8Array(2048),
@@ -406,7 +406,7 @@ describe("frontend calling the real backend", () => {
       expect((await getCurrentUser())?.is_admin).toBe(true);
 
       const rows = await listAdminRecordings();
-      expect(rows.find((r) => r.id === id)).toMatchObject({ owner: "integration_wolf", filename: "unicorn fight.mp4" });
+      expect(rows.find((r) => r.id === id)).toMatchObject({ owner: "integration_wolf", filename: "tester fight.mp4" });
       expect(await getAdminRecordingReport(id)).toEqual({ ...ownReport, owner: "integration_wolf" });
       // the owners' own API stays per user, admin or not
       await expect(getRecordingReport(id)).rejects.toMatchObject({ status: 404 });

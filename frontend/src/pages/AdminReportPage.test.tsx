@@ -54,20 +54,20 @@ describe("RecordingReportPage in the admin view", () => {
   });
 
   it("shows any user's report read-only, with whose it is and a way back to the admin list", async () => {
-    vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue({ ...makeReport(), owner: "unicorn" });
+    vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue({ ...makeReport(), owner: "tester_a" });
 
     renderAdminReport();
 
     expect(await screen.findByRole("heading", { name: "genichiro.mp4" })).toBeInTheDocument();
     expect(adminApi.getAdminRecordingReport).toHaveBeenCalledWith("7");
     expect(recordingsApi.getRecordingReport).not.toHaveBeenCalled();
-    expect(screen.getByText("unicorn")).toBeInTheDocument();
+    expect(screen.getByText("tester_a")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "← All recordings" })).toHaveAttribute("href", "/admin");
     expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
   });
 
   it("shows the admin every failure's candidate scores", async () => {
-    const report = { ...makeReport(), owner: "unicorn" };
+    const report = { ...makeReport(), owner: "tester_a" };
     report.failures[3].candidates = [
       { move_id: "counter-slash", score: 0.1234 },
       { move_id: "hawk-shot", score: -1 },
@@ -82,7 +82,7 @@ describe("RecordingReportPage in the admin view", () => {
 
   it("plays clips through the admin path", async () => {
     const user = userEvent.setup();
-    vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue({ ...makeReport(), owner: "unicorn" });
+    vi.mocked(adminApi.getAdminRecordingReport).mockResolvedValue({ ...makeReport(), owner: "tester_a" });
     const { container } = renderAdminReport("zh");
 
     await user.click(await screen.findByRole("button", { name: "播放片段" }));

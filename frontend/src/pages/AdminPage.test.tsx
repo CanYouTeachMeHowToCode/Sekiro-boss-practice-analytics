@@ -19,7 +19,7 @@ vi.mock("../api/admin", async (importOriginal) => ({
 const admin = { ...testUser, username: "chief", is_admin: true };
 
 function adminRecording(overrides: Partial<AdminRecording> = {}): AdminRecording {
-  return { ...makeRecording(), owner: "unicorn", error: null, fps: 59.94, ...overrides };
+  return { ...makeRecording(), owner: "tester_a", error: null, fps: 59.94, ...overrides };
 }
 
 function renderAdmin(language: Language = "en", auth: Partial<AuthState> = { user: admin }) {
