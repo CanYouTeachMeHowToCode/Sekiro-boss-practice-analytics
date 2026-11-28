@@ -19,8 +19,10 @@ from . import (boss_features, boss_track, content_check, death_screen, events, h
 
 # version 3 (2026-11-18): the steps read 30 samples a second at any frame rate (sampling.py); at 60 fps the outputs are
 # version 2's, byte for byte. Version 4 (2026-11-20): the phase is read from the HUD, the deathblow dots and the boss's
-# name (phase_read.py), instead of counted from the deathblows
-VERSION = "v4"
+# name (phase_read.py), instead of counted from the deathblows. Version 5 (2026-11-27): more move references (the
+# perilous grabs and their Throw Atk follow-ups, in the data folder), and a death links to the hit that emptied the
+# bar when the 死 shows within 8 s (events.py); research/failure_attribution/plan_v5.md
+VERSION = "v5"
 # share of the run time of each step, as measured in research (common.STEPS, without the review thumbnails)
 STEPS = [("hud_cache", 0.40), ("events", 0.02), ("reversal", 0.04), ("boss_track", 0.41), ("features", 0.04),
          ("moves", 0.03)]

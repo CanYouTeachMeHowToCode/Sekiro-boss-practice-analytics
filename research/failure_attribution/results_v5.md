@@ -21,6 +21,7 @@
   - **6 段里一次投技都没有**：这次只能检验"别的招式没变差"，检验不了投技。投技的提升目前只有开发数据的证据（[`plan_v5.md`](plan_v5.md) 的留一法比较：12 次投技里有把握且对从 3 次到 9 次）。
 - **版本**：冻结在 `f8af2f5` 的版本 5，1238 条参考。
   - 报告里写的代码版本 `18cb61e` 是最后一次改流水线脚本或 `analysis/` 的提交。到 `f8af2f5` 只改了数据文件夹的版本说明（`export_analysis_data.py` 的一行）。
+  - 合并进 dev 之后，「公网部署相关」发现 `pipeline.VERSION` 还是 `"v4"`（worker 把它存为每段录像的 `pipeline_version`），部署前改成 `"v5"`（2026-11-28）。只是标签，不影响任何结果。
   - 6 段只跑过一遍（2026-11-27 19:44–19:46），版本 4（887 条参考）同时在同样 6 段上跑了一遍做对照。跑完没有改任何东西。
 - **答案**：M3 时你盲审标的，早就提交了。
 - **报告**：`scripts/reliability.py report --set scenario --predictions failure_predictions_v5.csv`（版本 4：`failure_predictions_v4.csv`），存为 `work/reliability_report_scenario_v5.md` / `_v4.md`。比例后面括号里是 95% 区间（Wilson）。
