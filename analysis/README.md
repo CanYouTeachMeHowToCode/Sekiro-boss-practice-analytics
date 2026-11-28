@@ -1,7 +1,8 @@
 # analysis: the failure attribution pipeline
 
 The V4 failure attribution pipeline (version 2: frozen 2026-11-12, passed its blind test 2026-11-13; version 3,
-2026-11-18, reads other frame rates and is version 2 at 60 fps; version 4, 2026-11-20, reads the phase from the HUD) as
+2026-11-18, reads other frame rates and is version 2 at 60 fps; version 4, 2026-11-20, reads the phase from the HUD;
+version 5, 2026-11-27, more references, the grabs' Throw Atk windows and a longer death link) as
 one Python package, `sekiro_analysis`. The research scripts in `research/failure_attribution/scripts/` and the recording worker
 (`backend/app/worker/`) run the same code from here.
 

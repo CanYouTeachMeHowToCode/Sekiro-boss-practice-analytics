@@ -9,7 +9,11 @@ Events (one row each):
                    0 from 224.5 s, the 死 at 240.8 s). When the 死 shows within SCREEN_AFTER of the HP reaching 0,
                    the death is that moment and is `linked` to the hit that emptied the bar (within KILL_WITHIN);
                    when it shows later, the killing hit left no mark on the bar, so the death is put SCREEN_DELAY
-                   before the 死 (2.1–2.8 s on the reviewed deaths) with no link. A recording that ends with the bar
+                   before the 死 (2.1–2.8 s on the reviewed deaths) with no link. SCREEN_AFTER is 8 s since version 5
+                   (owner, 2026-11-27): a perilous grab's punch (c7100 4100) is a long animation, and the 死 came
+                   5.7–6.3 s after the bar emptied on the four grab deaths recorded, so 6 s left half of them unlinked;
+                   every linked death of the other recordings took at most 5.8 s, and a sliver Wolf fought on with at
+                   least 11.4 s (2026-11-17-castle-4). A recording that ends with the bar
                    at 0 after a killing hit, before any 死, also ends with a death. Without death_screens.csv the HP
                    rule alone is used (0 for DEATH_HOLD right after a hit that emptied the bar). `resurrected` says
                    whether HP came back within RESURRECT_WITHIN of the death screen with the boss bar still on
@@ -46,7 +50,7 @@ import numpy as np
 
 MIN_DROP, STEP_DOWN, SETTLE, BASELINE = 0.01, 0.004, 0.2, 0.3
 HUD_AFTER, FADE_RATIO, RESURRECT_WITHIN = 0.5, 0.5, 30.0
-SCREEN_AFTER, SCREEN_DELAY, NEAR_ZERO = 6.0, 2.4, 0.02
+SCREEN_AFTER, SCREEN_DELAY, NEAR_ZERO = 8.0, 2.4, 0.02
 DEATH_HOLD, ZERO, KILL_WITHIN = 0.5, 0.003, 1.5
 LINE_MIN, LINE_HOLD, LINE_GAP = 0.6, 2, 3       # share of line columns; samples in the line; samples of gap allowed
 PRE_HIGH, PRE_WINDOW, CLEAR_WITHIN, CLEAR_HOLD = 0.6, 1.0, 1.0, 0.5

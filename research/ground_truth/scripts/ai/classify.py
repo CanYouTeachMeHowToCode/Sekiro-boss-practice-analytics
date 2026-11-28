@@ -17,8 +17,9 @@ Also reads, from research/ground_truth:
 Classes (CLAUDE.md section 31): mapped_to_semantic_move, non_combat, locomotion, hit_reaction,
 cinematic_or_scripted, duplicate_or_shared, unused_or_unreachable, unknown.
 
-Only an entry with an attack or projectile event can hurt the player. Each of those is either in an approved catalog
-entry, or the castle AI never requests it (with the reason). The other entries are sorted with the evidence named in
+Only an entry with an attack, throw (Throw Atk, version 5) or projectile event can hurt the player. Each of those is
+either in an approved catalog entry, or the castle AI never requests it (with the reason). A throw follow-up is never
+requested by an AI: it is in the catalog when its catch is (throws.py), and otherwise not reachable at the castle. The other entries are sorted with the evidence named in
 each row and a confidence:
     高  the owner confirmed it, or the AI and the recordings agree;
     中  a consistent pattern in the recordings (what comes right before or after it);
@@ -33,6 +34,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from throws import CATCH_OF, CONFIRMED, UNPAIRED  # noqa: E402
 GT = HERE.parent.parent
 tae_dir, out_csv, out_md, out_gap, deferred_dir = sys.argv[1:6]
 DEFER = Path(deferred_dir)
@@ -42,7 +45,7 @@ reach = {(r["character"], int(r["anim"][5:])): r
 catalog = list(csv.DictReader(open(GT / "semantic/genichiro_catalog.csv", encoding="utf-8")))
 in_catalog = defaultdict(list)                     # (character, anim) -> catalog entries containing it
 for r in catalog:
-    for a in (r["attack_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split():
+    for a in (r["attack_anims"] + " " + r["throw_anims"] + " " + r["bullet_anims"] + " " + r["other_anims"]).split():
         in_catalog[(r["character"], int(a.split("(")[0]))].append(r)
 counts = Counter()
 for rec in sorted((GT / "observations/vanilla/genichiro").glob("*-castle*")):
@@ -82,7 +85,8 @@ OTHER = [
     ({400000, 401050, 500000, 501040, 505000, 505001, 505002, 505003, 505400, 505401, 505402, 505403, 0}, "locomotion",
      "推测是移动或待机的基础动画(000000 借用 400000;505xxx 和 405xxx 编号对应;编号段推测)", "低", "低"),
 ]
-ASK = "没有攻击判定和飞行物,不会伤到玩家"
+ASK = "没有攻击判定、投技和飞行物,不会伤到玩家"
+COMBAT = ("attack", "throw", "bullet")
 
 
 def other_class(a, seen):
@@ -108,11 +112,15 @@ for c in ("c7100", "c7110"):
         seen = counts[(c, n)]
         ai = "会出" if r["castle_status"] in ("recorded", "reachable_not_recorded") else "不会出"
         note = ""
-        if cat in ("attack", "bullet"):
+        if cat in COMBAT:
             if moves:
                 cls, conf = "mapped_to_semantic_move", "高"
                 fam = sorted({e["family_proposed"] or "(未命名)" for e in moves})
                 basis = "招式目录 " + "、".join(e["entry"] for e in moves) + "(你审核通过);招式族:" + "、".join(fam)
+                if (c, n) in CATCH_OF:
+                    basis += f";投技 {CATCH_OF[(c, n)]:04d} 抓中后游戏接着播,AI 不请求;{CONFIRMED}"
+            elif (c, n) in UNPAIRED:
+                cls, conf, basis = "unused_or_unreachable", "中", UNPAIRED[(c, n)]
             elif any((c, s) in in_catalog for s in imported_by.get(n, [])):
                 cls, conf = "duplicate_or_shared", "高"
                 basis = "动画和事件被 " + "、".join(f"{s:06d}" for s in imported_by[n]) + " 完全借用,画面上显示的是借用它的编号"
@@ -179,17 +187,17 @@ def cell(x):
     return (str(x) if x not in ("", None) else "—").replace("|", "｜")
 
 
-combat = [r for r in rows if r["tae_category"] in ("attack", "bullet")]
+combat = [r for r in rows if r["tae_category"] in COMBAT]
 conf = Counter(r["confidence"] for r in rows)
 TABLE_HEAD = " 类别 | 天守阁 AI | 两次录像出现 | 目录条目 | 置信度 | 依据 | 备注 |"
 
 
 def stats(where):
-    out = ["| 分类 | c7100 | c7110 | 其中带攻击或飞行物 | 在哪里 |", "|---|---|---|---|---|"]
+    out = ["| 分类 | c7100 | c7110 | 其中带攻击、投技或飞行物 | 在哪里 |", "|---|---|---|---|---|"]
     for cls in ORDER:
         rc = [r for r in rows if r["class"] == cls]
         out.append(f"| {CLASS_ZH[cls]}(`{cls}`) | {sum(1 for r in rc if r['character'] == 'c7100')} | "
-                   f"{sum(1 for r in rc if r['character'] == 'c7110')} | {sum(1 for r in rc if r['tae_category'] in ('attack', 'bullet'))} "
+                   f"{sum(1 for r in rc if r['character'] == 'c7110')} | {sum(1 for r in rc if r['tae_category'] in COMBAT)} "
                    f"| {where[cls == 'mapped_to_semantic_move']} |")
     out.append(f"| 合计 | {sum(1 for r in rows if r['character'] == 'c7100')} | {sum(1 for r in rows if r['character'] == 'c7110')} | {len(combat)} | |")
     return out
@@ -198,9 +206,10 @@ def stats(where):
 md = ["# 天守阁弦一郎:天守阁 AI 会出的攻击动画(待你审核)", "",
       "由 `scripts/ai/classify.py` 生成,数据在 `engine/genichiro_castle_tae_classes.csv`。对应计划第 7 步(V3.1 M5)。", "",
       "- c7100(一、二阶段)和 c7110(三阶段)共 %d 个 TAE 编号,全部分了类。" % len(rows),
-      "- **按你 2026-10-13 的决定,只审核天守阁 AI 会出、带攻击判定或飞行物的编号**,共 %d 个,都属于招式目录里你审核通过的条目。" % len(review_rows),
+      "- **按你 2026-10-13 的决定,只审核天守阁 AI 会出、带攻击判定或飞行物的编号**,共 %d 个,都属于招式目录里你审核通过的条目。"
+      "版本 5 起投技伤害(`Throw Atk`)也算:投技抓中后游戏接着播的 4100、4110 不由 AI 请求,跟着抓取算会出(你确认,2026-11-27)。" % len(review_rows),
       "- 其余 %d 个编号的分类草稿暂存在 `deferred/`,不审核。以后实际测试中出现目录里没有的攻击动画,再从那里查它的分类和依据补进来。"
-      "带攻击判定或飞行物的编号里分到 unknown 的:%d 个。" % (len(deferred), sum(1 for r in combat if r["class"] == "unknown")), "",
+      "带攻击判定、投技或飞行物的编号里分到 unknown 的:%d 个。" % (len(deferred), sum(1 for r in combat if r["class"] == "unknown")), "",
       "## 怎么审核", "",
       "用鼠标审核:在终端运行 `python -I research/ground_truth/scripts/ai/catalog_review.py 8765 classification`,"
       "然后在 VS Code 里 Ctrl+Shift+P → Simple Browser: Show,打开 http://127.0.0.1:8765。", "",
@@ -218,8 +227,8 @@ open(out_md, "w", encoding="utf-8").write("\n".join(md))
 dmd = ["# 天守阁弦一郎:暂存的 TAE 编号分类(不审核)", "",
        "由 `scripts/ai/classify.py` 生成,数据在同目录的 `genichiro_castle_tae_deferred.csv`。", "",
        "按你 2026-10-13 的决定,这里的 %d 个编号只做了分类草稿,不审核:" % len(deferred), "",
-       "- 天守阁 AI 不会出的攻击和飞行物,以及被借用的源动画;",
-       "- 所有没有攻击判定和飞行物的动画(受击、拼刀反应、移动、忍杀、死亡、演出等),它们不会伤到玩家。", "",
+       "- 天守阁 AI 不会出的攻击、投技和飞行物,以及被借用的源动画;",
+       "- 所有没有攻击判定、投技和飞行物的动画(受击、拼刀反应、移动、忍杀、死亡、演出等),它们不会伤到玩家。", "",
        "以后实际测试或新录像里出现招式目录里没有的攻击动画时,先在这里查它的分类和依据,再补进招式目录。", "",
        "置信度:高 = 你已确认,或 AI 和录像一致;中 = 两次录像里有稳定的规律;低 = 只凭编号段,或它借用的动画。", ""] +       stats({True: "审核表 `semantic/genichiro_classification.md`", False: "本文件"}) + [""]
 for cls in ORDER:
@@ -261,7 +270,7 @@ gap.append("")
 open(out_gap, "w", encoding="utf-8").write("\n".join(gap))
 
 sys.stdout.reconfigure(encoding="utf-8")
-print(len(rows), "TAE entries;", len(combat), "with attack/projectile;", sum(1 for r in combat if r["class"] == "unknown"), "of them unknown")
+print(len(rows), "TAE entries;", len(combat), "with attack/throw/projectile;", sum(1 for r in combat if r["class"] == "unknown"), "of them unknown")
 for cls in ORDER:
     print(f"  {cls:25s}", sum(1 for r in rows if r["class"] == cls))
 print("confidence:", dict(conf))

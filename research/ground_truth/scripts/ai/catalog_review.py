@@ -41,7 +41,8 @@ def catalog_view(r):
         group = (1, "其他招式候选:一、二阶段(c7100)") if r["character"] == "c7100" else (2, "其他招式候选:三阶段(c7110)")
     else:
         group = (3, "不算招式(建议)")
-    fields = [("触发", r["trigger"]), ("攻击(击数)", r["attack_anims"]), ("飞行物", r["bullet_anims"]),
+    fields = [("触发", r["trigger"]), ("攻击(击数)", r["attack_anims"]), ("投技", r.get("throw_anims", "")),
+              ("飞行物", r["bullet_anims"]),
               ("其他动画", r["other_anims"] if r["kind"] == "not_move" else ""), ("录到次数", r["recorded"]),
               ("最早录到", r["first_seen"]),
               ("建议的招式族", fam + (f"(依据:{r['family_basis']})" if r["family_basis"] else "") if fam else ""),

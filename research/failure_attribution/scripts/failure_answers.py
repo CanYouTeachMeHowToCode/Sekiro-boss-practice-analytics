@@ -137,7 +137,9 @@ class Overlay:
         for k in range(max(0, f - round(HIT_LOOKBACK * self.fps)), min(f, len(self.frames) - 1) + 1):
             for anim, at in self.lines(k):
                 for kind, hit, s, e in WINDOWS.get((self.chars[k], anim), ()):
-                    if kind == "attack" and s - WINDOW_SLACK <= at <= e + WINDOW_SLACK:
+                    # a throw's damage (Throw Atk in the follow-up the game plays after the catch, version 5) hits
+                    # like an attack window
+                    if kind in ("attack", "throw") and s - WINDOW_SLACK <= at <= e + WINDOW_SLACK:
                         occ = self.occurrence(anim, k)
                         found.setdefault((anim, occ), {"anim": anim, "occ": occ, "how": f"第 {hit} 击", "at": at,
                                                        "char": self.chars[k]})

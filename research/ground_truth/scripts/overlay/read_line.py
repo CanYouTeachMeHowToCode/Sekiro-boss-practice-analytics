@@ -31,7 +31,7 @@ def z(a):
     return a / np.maximum(a.std(axis=(-2, -1), keepdims=True), 1e-3)
 
 
-prefix = z(z(np.stack([line1[n, CELL_Y0:CELL_Y1, PREFIX_X0:PREFIX_X1] for n in range(1000, 16000, 50)])).mean(axis=0))
+prefix = z(z(np.stack([line1[n, CELL_Y0:CELL_Y1, PREFIX_X0:PREFIX_X1] for n in range(1000, min(16000, len(line1)), 50)])).mean(axis=0))
 
 rows = []
 for s in range(0, N, 1000):

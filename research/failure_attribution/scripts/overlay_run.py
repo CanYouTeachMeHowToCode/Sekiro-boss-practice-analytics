@@ -101,7 +101,9 @@ def phase_bounds(rec_id, work, segs):
     occ = list(csv.DictReader(open(work / "occurrences.csv", encoding="utf-8")))
     near = [o for o in occ if blows and 12000 <= int(o["anim"][5:]) < 14000
             and float(o["start_time"]) - 1.0 <= blows[0] <= float(o["end_time"]) + 1.0]
-    p1_end = max(int(o["end_frame"]) for o in near) + 1 if near else int((blows[0] if blows else 0) * fps)
+    if not blows:   # no deathblow (a short dev-menu recording such as 2026-11-27-castle-1): all of c7100 is phase 1
+        return {"1": [0, segs[0][1]], "2": [segs[0][1], segs[0][1]]}
+    p1_end = max(int(o["end_frame"]) for o in near) + 1 if near else int(blows[0] * fps)
     bounds = {"1": [0, p1_end], "2": [p1_end, segs[0][1]]}
     if len(segs) > 1:
         bounds["3"] = [segs[1][0], segs[-1][1]]

@@ -150,7 +150,8 @@ def rank(q, t_hit, phase, refs, window, after, moves):
         ref_moves = [m for m in ref["moves"] if m in phase_moves]
         if not ref_moves:
             continue
-        lags = range(0, round(LAG_ATTACK * RATE) + 1) if ref["kind"] == "attack" else \
+        # a throw's damage (version 5: the follow-up after a caught grab) lands at its window, like an attack
+        lags = range(0, round(LAG_ATTACK * RATE) + 1) if ref["kind"] in ("attack", "throw") else \
             range(-LAG_DROP, LAG_DROP + 1) if ref["kind"] == "drop" else range(0, round(LAG_BULLET * RATE) + 1, 2)
         rrow = ref["rec"].row(ref["t"])
         score = max(similarity(q, qrow - lag, ref["rec"], rrow, before, after) for lag in lags)

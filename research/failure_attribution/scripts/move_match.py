@@ -3,12 +3,22 @@
 Usage: python -I move_match.py eval [--model small14] [--part cls|patch|both] [--window 1.5] [--after 1.0]
                                    [--detrend 0.5] [--refs all|other]
        python -I move_match.py predict <recording id | all> [the same options] [--labelled 1|0] [--gaps 1|0]
+                                   [--out failure_predictions.csv] [--labelled-file labelled_refs.csv]
+                                   [--skip-refs <id>,<id>] [--kinds attack,throw,bullet]
+
+The last four rebuild an earlier reference set for a comparison, without touching the predictions the review page and
+reliability.py use (version 5, 2026-11-27): --out names the predictions file in the recording's work folder,
+--labelled-file the owner-labelled hits in the work folder (labelled_refs.py), --skip-refs leaves recordings out of
+the references, --kinds keeps only these window kinds of the dev-menu references. Version 4's 887 references are
+--labelled-file labelled_refs_v4.csv (the file as version 2 to 4 used it) --skip-refs 2026-11-27-castle-1,2026-11-27-castle-2
+--kinds attack,bullet. They are read at prediction time only; settings() and the worker's data folder do not hold them.
 
 How a failure's move is recognised (scores, merging, how sure) is in the analysis package,
 analysis/sekiro_analysis/moves.py, which the recording worker runs with the same references. Here:
 
 References: every hit of a boss animation in the dev-menu recordings, at the moment its TAE attack window opens
-(projectiles: the moment the shot is fired), labelled from the overlay with the same mapping as failure_answers.py:
+(projectiles: the moment the shot is fired; throws, version 5: the moment the Throw Atk of the follow-up after a caught
+grab opens), labelled from the overlay with the same mapping as failure_answers.py:
 animation, hit number, catalog entries, product move. The overlay's animation lines are read only from the V3.1
 tables, never from the crops (which went through mask_overlay()). Version 2 (V4 M3, 2026-11-12) adds:
 - labels: a reference hit by an animation the owner's action -> move table counts apart takes that move
@@ -63,7 +73,7 @@ class Rec(mm.Rec):
         refs = []
         for anim, occs in ov.occ.items():
             for s, e, start in occs:
-                wins = [w for w in WINDOWS.get((ov.chars[s], anim), ()) if w[0] in ("attack", "bullet")]
+                wins = [w for w in WINDOWS.get((ov.chars[s], anim), ()) if w[0] in ("attack", "throw", "bullet")]
                 if not wins:
                     continue
                 entries, chain, prev = ov.chain_of(anim, start)
@@ -83,13 +93,18 @@ class Rec(mm.Rec):
         return refs
 
 
+def skipped_refs():
+    """The recordings --skip-refs leaves out of the references."""
+    return set(filter(None, opt("--skip-refs", "").split(",")))
+
+
 def labelled_references(recs, st, skip):
     """The owner-labelled hits of the development recordings without the overlay (labelled_refs.py), but those of
     `skip`: each is the moment the HP bar dropped, labelled with the failure's move."""
-    path = WORK / "labelled_refs.csv"
+    path = WORK / opt("--labelled-file", "labelled_refs.csv")
     by_rec = {}
     for x in (read(path) if path.exists() and st["labelled"] else []):
-        if x["recording"] != skip:
+        if x["recording"] != skip and x["recording"] not in skipped_refs():
             by_rec.setdefault(x["recording"], []).append(x)
     refs = []
     for j, xs in by_rec.items():
@@ -161,8 +176,9 @@ def evaluate():
 
 def references(recs, st, skip=None):
     """Every reference a prediction uses but those of `skip`, and the merge windows (from the dev-menu ones only)."""
-    refs = [ref for j, r in recs.items() if observation_dir(r) and j != skip
-            for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references()]
+    kinds = tuple(opt("--kinds", "attack,throw,bullet").split(","))
+    refs = [ref for j, r in recs.items() if observation_dir(r) and j != skip and j not in skipped_refs()
+            for ref in Rec(j, r, st["model"], st["part"], st["trend"]).references() if ref["kind"] in kinds]
     gaps = merge_gaps(refs)
     return refs + labelled_references(recs, st, skip), gaps
 
@@ -173,7 +189,7 @@ def predict(rec_id):
     refs, gaps = references(recs, st, rec_id)
     events = read(work_dir(rec_id) / "events.csv")
     rows = mm.predict_rows(q, events, refs, gaps, MOVES, st)
-    out = work_dir(rec_id) / "failure_predictions.csv"
+    out = work_dir(rec_id) / opt("--out", "failure_predictions.csv")
     mm.write_rows(rows, out)
     print(f"{rec_id}: {len(rows)} failures from {sum(1 for e in events if 'scores' in e)} hits, "
           f"{len(refs)} references -> {out}")
