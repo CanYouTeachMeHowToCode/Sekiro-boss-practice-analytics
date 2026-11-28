@@ -49,7 +49,7 @@ gcloud compute ssh sekiro-test --zone=$ZONE --command "SITE_ADDRESS=$SITE_ADDRES
 `BRANCH` is the branch the server runs. The testers' user name is `tester`; the shared password is in
 `/srv/sekiro/site-password.txt` on the server.
 
-Upload the analysis data folder (`analysis/README.md`, about 500 MB) from the computer that has it:
+Upload the analysis data folder (`analysis/README.md`, about 820 MB since version 5) from the computer that has it:
 
 ```bash
 gcloud compute scp --recurse <folder>/* sekiro-test:/srv/sekiro/analysis-data/ --zone=$ZONE
