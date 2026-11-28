@@ -4,7 +4,7 @@ damage@14.7,14.700,damage@14.7,closing-tide,,,blind review (v2),,2026-11-25T23:1
 damage@48.9,48.900,damage@48.9 damage@50.7,floating-passage,,,blind review (v2),,2026-11-25T23:10:21
 damage@79.7,79.733,damage@79.7,floating-passage,,,blind review (v2),,2026-11-25T23:10:35
 damage@85.6,85.600,damage@85.6,perilous-grab,,,blind review (v2),,2026-11-25T23:11:12
-damage@87.8,87.800,damage@87.8,perilous-grab,,,blind review (v2),,2026-11-25T23:11:20
+damage@87.8,87.800,damage@87.8,perilous-grab,,1,blind review (v2),owner 2026-11-27: one grab with the hit at 85.6 s (lead-in + catch + punch),2026-11-27T23:44:49
 damage@89.1,89.133,damage@89.1,perilous-grab,,1,blind review (v2),,2026-11-25T23:16:05
 death@89.1,89.133,death@89.1,perilous-grab,,1,blind review (v2),key was death@92.9 until version 5 linked the death to the punch (SCREEN_AFTER 8 s); the owner's verdict carried over,2026-11-25T23:14:18
 damage@102.8,102.800,damage@102.8,deflect-counter-slash,,,blind review (v2),,2026-11-25T23:16:23
