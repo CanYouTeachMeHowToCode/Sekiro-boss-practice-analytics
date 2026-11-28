@@ -156,13 +156,13 @@ V4 answers:
 
 > **What happened during the fight without requiring the player to manually enter everything?**
 
-V4 Milestone 1, the failure attribution prototype on local Genichiro recordings, is done (owner confirmed, 2026-10-16). Its code and tools are in `research/failure_attribution/`, its results in `research/failure_attribution/results.md`: an owner-checked answer set of 7 castle recordings, all HUD failure events correct, and the move behind a failure the top candidate in 88% and among the top three in 93% of the failures in recordings whose parameters were never tuned on them (two rules were added after looking at one of them, so these numbers are optimistic). V4 Milestone 2, reliability validation, is done (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2.md`): on 9 held-out fights labelled blind, failure precision 97% and recall 100%, 81% of the move answers sure and 93% of those right. V4 Milestone 3, video upload and failure report, is done (owner confirmed, 2026-11-18; PR #31; `research/failure_attribution/plan_m3.md`): a user uploads a castle Genichiro recording, the Compose worker checks it and runs the pipeline, and the report lists every failure with its move, how sure, and a clip; end to end, the report equals the research tools'. Current: V4 Milestone 4, public deployment (section 33; plan in `deploy/plan_m4.md`): a private test with at most 20 testers on one Google Cloud VM, and visual style B, then the public launch. Before M3's report was designed, the next version of the attribution classifies a failure by the action that hit the player and the response it needs, not by the AI chain (owner decision, 2026-10-25): an arrow that opens a combo is its own move, and the perilous thrusts countered by Mikiri are one move; the owner approves the action-to-move table. That version 2 passed (owner confirmed, 2026-11-13; `research/failure_attribution/results_v2.md`): frozen at 6c590d1 and run once on 9 new fights labelled blind, failure precision and recall 100%, 86% of the move answers sure and 93% of those right (100% after the owner rechecked the four disagreements and found them labelling slips). Every new version keeps the M2 protocol (`plan_m2.md`): frozen, then measured on new recordings without the overlay, labelled blind, and never changed because of a test recording's errors. The V3.1 research in `research/ground_truth/` remains the input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
+V4 Milestone 1, the failure attribution prototype on local Genichiro recordings, is done (owner confirmed, 2026-10-16). Its code and tools are in `research/failure_attribution/`, its results in `research/failure_attribution/results.md`: an owner-checked answer set of 7 castle recordings, all HUD failure events correct, and the move behind a failure the top candidate in 88% and among the top three in 93% of the failures in recordings whose parameters were never tuned on them (two rules were added after looking at one of them, so these numbers are optimistic). V4 Milestone 2, reliability validation, is done (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2.md`): on 9 held-out fights labelled blind, failure precision 97% and recall 100%, 81% of the move answers sure and 93% of those right. V4 Milestone 3, video upload and failure report, is done (owner confirmed, 2026-11-18; PR #31; `research/failure_attribution/plan_m3.md`): a user uploads a castle Genichiro recording, the Compose worker checks it and runs the pipeline, and the report lists every failure with its move, how sure, and a clip; end to end, the report equals the research tools'. V4 Milestone 4 is the private test (section 33; `deploy/plan_m4.md`): at most 20 testers on one Google Cloud VM, with visual style B, until 2027-02-17, when the Google Cloud trial ends. The public launch is deferred (owner decision, 2026-11-28): the private test runs the whole flow, and its feedback is about how well moves are recognised, so the product comes first. Current: the rendered-reference experiment, then V4 Milestone 5 (whole-fight move detection) and the per-move counts, to give the second tester batch a fuller product (section 38). Before M3's report was designed, the next version of the attribution classifies a failure by the action that hit the player and the response it needs, not by the AI chain (owner decision, 2026-10-25): an arrow that opens a combo is its own move, and the perilous thrusts countered by Mikiri are one move; the owner approves the action-to-move table. That version 2 passed (owner confirmed, 2026-11-13; `research/failure_attribution/results_v2.md`): frozen at 6c590d1 and run once on 9 new fights labelled blind, failure precision and recall 100%, 86% of the move answers sure and 93% of those right (100% after the owner rechecked the four disagreements and found them labelling slips). Every new version keeps the M2 protocol (`plan_m2.md`): frozen, then measured on new recordings without the overlay, labelled blind, and never changed because of a test recording's errors. The V3.1 research in `research/ground_truth/` remains the input: the owner-approved move catalog, the AI chains, and the dev-menu recordings, which double as labelled reference data.
 
 **Numbering.** The combat ground-truth stage was first planned as V4. It mainly added a research foundation and a Genichiro content update to the V3 product, so it became V3.1 and shipped as `v3.1.0` (owner decision, 2026-10-15). The later stages moved down by one: automated gameplay analysis is V4 and the multi-game platform V5. Commits, PR #23 and research notes written before that date use the old names.
 
 V3 and V3.1 are released. Sections 7–17 remain the reference for how the current product is built; their product rules (lightweight attempt recording, honest analytics, per-user isolation, one language per page) still apply. Sections 18–36 remain the reference for the ground-truth pipeline, which every later boss goes through (section 34).
 
-Public deployment is V4 Milestone 4, the current one: a user can now upload a recording and see which moves caused their failures (M3); visual style B and the deployment itself remain (section 33).
+V4 Milestone 4 is the private test: a user can upload a recording and see which moves caused their failures (M3), on a test server with visual style B. The public launch is deferred (section 33).
 
 Resurrection mod work is deferred (section 35). Boss expansion is deferred until the Genichiro end-to-end flow works in V4 (section 34).
 
@@ -1021,7 +1021,7 @@ Every entry carries an evidence status: `runtime observed`, `static evidence onl
 
 Outputs: a reviewable move ↔ animation table, and time-labelled reference clips for the moves the product will support.
 
-**Rendered move clips (owner decision, 2026-11-28).** Every catalog chain can be rendered straight from the game files, with no recording: the model, the animation and its root motion, weapons shown or hidden by bone scale as in the game, and the encounter's model display mask (`research/ground_truth/render/`). The owner judged Genichiro's 63 rendered moves enough to recognise and name moves. For a new boss, the look and the names of moves are reviewed on these clips. Dev-menu recordings still give the runtime evidence (which chains occur, the phase structure, when one animation hands over to the next) and, until the rendered-reference experiment shows otherwise, the recognition references. A render shows how a move looks, not its exact in-game timing: the phase-3 throw's follow-up (c7110 4110) kicks about 0.2 s earlier in the game than in the raw animation, cause unknown.
+**Rendered move clips (owner decision, 2026-11-28).** Every catalog chain can be rendered straight from the game files, with no recording: the model, the animation and its root motion, weapons shown or hidden by bone scale as in the game, and the encounter's model display mask (`research/ground_truth/scripts/render/`). The owner judged Genichiro's 63 rendered moves enough to recognise and name moves. For a new boss, the look and the names of moves are reviewed on these clips. Dev-menu recordings still give the runtime evidence (which chains occur, the phase structure, when one animation hands over to the next) and, until the rendered-reference experiment shows otherwise, the recognition references. A render shows how a move looks, not its exact in-game timing: the phase-3 throw's follow-up (c7110 4110) kicks about 0.2 s earlier in the game than in the raw animation, cause unknown.
 
 For each semantic move, gather evidence such as:
 
@@ -1170,6 +1170,8 @@ Let the actual research data determine the relational model.
 
 Public deployment moved from V3.1 to V4 (owner decision, 2026-10-12). The public product starts with the end-to-end flow: a user uploads a recording and sees their failures and the moves that caused them. It comes right after the video upload and failure report (section 38).
 
+**Deferred (owner decision, 2026-11-28).** The private test runs the whole flow without process problems; testers' feedback is about how well moves are recognised. So the public launch waits, and product work comes first (section 38). The private test server stays up as the end-to-end test bed until 2027-02-17, when the Google Cloud trial ends. The project owner decides when to launch; the checklist below still applies then.
+
 Before deployment ensure:
 
 - the upload → failure report flow works and has passed reliability validation
@@ -1207,7 +1209,7 @@ Do not introduce Kubernetes by default.
 
 # 34. Deferred — Boss Expansion
 
-Not part of V3.1 (owner decision, 2026-10-13). It starts after the V4 end-to-end flow works for Genichiro and is publicly deployed (section 33); when exactly is the project owner's decision. The target is every boss the game lets the player fight again, 17 by the owner's count (2026-11-18); per-boss product features such as the style B crest are stored as boss data, not hard-coded for the current eight.
+Not part of V3.1 (owner decision, 2026-10-13). It starts once the whole Genichiro sequence of section 38 works end to end; the public launch no longer gates it (owner decision, 2026-11-28). The target is every boss the game lets the player fight again, 17 by the owner's count (2026-11-18); per-boss product features such as the style B crest are stored as boss data, not hard-coded for the current eight.
 
 Each new boss then goes through the whole pipeline once: the ground truth (V3.1 tooling) and the data that V4's recognition needs, such as reference clips and labels. Expanding earlier would mean redoing those bosses once V4 shows what it needs.
 
@@ -1328,12 +1330,14 @@ Use:
     → look back → identify the move → merge one failure → failure report)
 2. Reliability validation on independent recordings
 3. Video upload and failure report (failure counts per move)
-4. Public deployment (section 33)
+4. Private test (section 33): until 2027-02-17; the public launch is deferred
 5. Whole-fight move detection (short clips first, then temporal segmentation)
-6. Player-response detection
-7. True per-move analytics
-8. Recommendations
+6. Per-move counts: how often each move came and how often it hit
+7. Recommendations from those counts
+8. Player-response detection (deflect, block, dodge, jump, Mikiri)
 ```
+
+The order of 6–8 changed (owner decision, 2026-11-28). Counting occurrences and hits needs only milestone 5: a failure is a hit, so "came 12 times, hit you 5" is valid once occurrences are observed (section 40). Recommendations can build on those counts (section 41). Player responses are the hardest step, because the overlay shows only the boss's animations, so they come last and refine the counts into handled versus failed. Before milestone 5 comes the rendered-reference experiment (`research/ground_truth/scripts/render/README.md`). Milestone 5 needs no new labelling at first: the overlay readings of the dev-menu recordings name every animation the boss played. It is then measured on blind fights, as every version is. The aim is a fuller product for the second tester batch.
 
 At first the system proposes move candidates and a person confirms them. Recordings made with the dev-menu overlay are labelled reference data; mask the overlay when training or evaluating.
 
@@ -1676,10 +1680,15 @@ V3 and V3.1 are released. V4 order (section 38):
 1. Failure attribution prototype on local recordings (V4 Milestone 1) — done (2026-10-16)
 2. Reliability validation on independent recordings (V4 Milestone 2) — done (2026-10-25)
 3. Video upload and failure report (V4 Milestone 3) — done (2026-11-18)
-4. Public deployment (V4 Milestone 4) — current; a private test and visual style B, then the public launch (deploy/plan_m4.md)
+4. Private test (V4 Milestone 4) — running until 2027-02-17 (deploy/plan_m4.md); the public launch is deferred (owner, 2026-11-28)
+5. Rendered-reference experiment — current (research/ground_truth/scripts/render/README.md)
+6. Whole-fight move detection (V4 Milestone 5)
+7. Per-move counts in the report (V4 Milestone 6)
+8. Recommendations (V4 Milestone 7)
+9. Player-response detection (V4 Milestone 8)
 ```
 
-The later V4 milestones (whole-fight move detection, player responses, per-move analytics, recommendations) follow. Preparing the boss expansion (owner, 2026-11-28): rendering moves from the game files works (section 29); next comes an experiment on rendered clips as recognition references (`research/ground_truth/render/README.md`), then the per-boss data refactor (section 34). Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Resurrection is deferred (section 35).
+Rendering moves from the game files works (section 29). Boss expansion starts once this whole Genichiro sequence works end to end, with the per-boss data refactor first (section 34). Resurrection is deferred (section 35).
 
 Keep the released product working: fix product bugs on `dev` as they appear.
 
