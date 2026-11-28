@@ -48,7 +48,7 @@ def write(folder):
         shutil.copyfile(src, folder / name)
     st = settings()
     refs, gaps = references(recordings(), st)
-    saved.save(folder, refs, gaps, MOVES, st, about="move references of version 2, from the research work folder")
+    saved.save(folder, refs, gaps, MOVES, st, about="move references of version 5, from the research work folder")
     print(f"{folder}: {len(refs)} references, {len(gaps)} merge windows, {len(MOVES)} moves; missing: "
           f"{Data(folder).missing() or 'nothing'}")
 
