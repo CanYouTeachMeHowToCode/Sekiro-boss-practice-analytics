@@ -776,6 +776,8 @@ Each new boss then goes through the whole pipeline once: the ground truth and th
 
 Expand systematically.
 
+The target is the 17 fights the game lets the player repeat. They use 11 character models (several fights share one, such as castle Genichiro, Inner Genichiro and the first phase of the Isshin fight), and animations, references and renders belong to a model, so a shared model is processed once. Before the second boss, the Genichiro-specific constants move into per-boss data and the render tools go into the repository.
+
 Prioritize bosses that exercise different combat structures, for example:
 
 ```text
@@ -795,6 +797,8 @@ static engine tracing
 ↓
 semantic mapping
 ↓
+rendered move clips from the game files: the owner reviews looks and names
+↓
 controlled gameplay validation
 ↓
 completeness review
@@ -803,6 +807,8 @@ reference clips and labels for recognition (V4)
 ```
 
 Do not return to Wiki-only bulk content expansion.
+
+Rendering moves from the game files (2026-11-28): the model, animation, root motion and display masks give a clip of every catalog move without recording it; for Genichiro's 63 moves the owner judged them enough to recognise and name moves. Dev-menu recordings remain the runtime evidence. Whether rendered clips can also serve as recognition references is the next experiment; if they can, each boss needs fewer recordings.
 
 ---
 

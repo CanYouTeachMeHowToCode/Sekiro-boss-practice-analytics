@@ -217,6 +217,20 @@ V3.1 checked castle Genichiro's moves against the game itself, then rebuilt the 
 
 ---
 
+## V4 — Automated Gameplay Analysis
+
+### In progress: a private test on a cloud server
+
+Upload a recording of a castle Genichiro fight and get a failure report: every HP loss, posture break and death, the move that caused it, and a short clip of each. When the system is not sure of the move, the report says so and lists the candidates.
+
+* ✅ **Failure attribution:** the HUD gives the failure events and the fight's phase; image features of the boss before each hit, compared with labelled references, give the move. Each version is frozen and measured on new fights labelled blind; the latest passed with failure precision and recall of 100%.
+* ✅ **Upload and report:** upload page, background worker, report with clips, and a read-only admin view; running for a small group of testers on a Google Cloud VM.
+* ✅ **Moves rendered from the game files:** every catalog move as a clip, from the game's model and animation data, for reviewing and naming moves without recording them.
+
+How the pipeline got here, version by version, and the problems each version solved: [docs/genichiro-analysis.md](docs/genichiro-analysis.md).
+
+---
+
 ## Future Direction
 
 The full plan is in [ROADMAP.md](ROADMAP.md). In short:
