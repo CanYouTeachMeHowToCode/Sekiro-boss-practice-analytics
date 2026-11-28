@@ -1021,7 +1021,7 @@ Every entry carries an evidence status: `runtime observed`, `static evidence onl
 
 Outputs: a reviewable move ↔ animation table, and time-labelled reference clips for the moves the product will support.
 
-**Rendered move clips (owner decision, 2026-11-28).** Every catalog chain can be rendered straight from the game files, with no recording: the model, the animation and its root motion, weapons shown or hidden by bone scale as in the game, and the encounter's model display mask (`research/ground_truth/render/`). The owner judged Genichiro's 63 rendered moves enough to recognise and name moves. For a new boss, the look and the names of moves are reviewed on these clips. Dev-menu recordings still give the runtime evidence (which chains occur, the phase structure, when one animation hands over to the next) and, until the rendered-reference experiment shows otherwise, the recognition references. A render shows how a move looks, not its exact in-game timing: the phase-3 throw's follow-up (c7110 4110) kicks about 0.2 s earlier in the game than in the raw animation, cause unknown.
+**Rendered move clips (owner decision, 2026-11-28).** Every catalog chain can be rendered straight from the game files, with no recording: the model, the animation and its root motion, weapons shown or hidden by bone scale as in the game, and the encounter's model display mask (`research/ground_truth/scripts/render/`). The owner judged Genichiro's 63 rendered moves enough to recognise and name moves. For a new boss, the look and the names of moves are reviewed on these clips. Dev-menu recordings still give the runtime evidence (which chains occur, the phase structure, when one animation hands over to the next) and, until the rendered-reference experiment shows otherwise, the recognition references. A render shows how a move looks, not its exact in-game timing: the phase-3 throw's follow-up (c7110 4110) kicks about 0.2 s earlier in the game than in the raw animation, cause unknown.
 
 For each semantic move, gather evidence such as:
 
@@ -1679,7 +1679,7 @@ V3 and V3.1 are released. V4 order (section 38):
 4. Public deployment (V4 Milestone 4) — current; a private test and visual style B, then the public launch (deploy/plan_m4.md)
 ```
 
-The later V4 milestones (whole-fight move detection, player responses, per-move analytics, recommendations) follow. Preparing the boss expansion (owner, 2026-11-28): rendering moves from the game files works (section 29); next comes an experiment on rendered clips as recognition references (`research/ground_truth/render/README.md`), then the per-boss data refactor (section 34). Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Resurrection is deferred (section 35).
+The later V4 milestones (whole-fight move detection, player responses, per-move analytics, recommendations) follow. Preparing the boss expansion (owner, 2026-11-28): rendering moves from the game files works (section 29); next comes an experiment on rendered clips as recognition references (`research/ground_truth/scripts/render/README.md`), then the per-boss data refactor (section 34). Boss expansion is deferred until the Genichiro end-to-end flow works (section 34). Resurrection is deferred (section 35).
 
 Keep the released product working: fix product bugs on `dev` as they appear.
 

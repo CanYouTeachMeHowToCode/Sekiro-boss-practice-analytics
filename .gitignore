@@ -246,3 +246,6 @@ research/failure_attribution/work/
 research/failure_attribution/recordings.local.json
 # The recording worker's analysis data folder (export_analysis_data.py): game-derived references, local only
 /analysis-data/
+# Render tools (research/ground_truth/scripts/render): .NET build output
+research/ground_truth/scripts/render/*/bin/
+research/ground_truth/scripts/render/*/obj/

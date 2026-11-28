@@ -4,3 +4,7 @@
 game_dir = D:\SteamLibrary\steamapps\common\Sekiro
 ; Where the dev-menu recordings are kept. Recordings are never committed.
 recordings_dir = C:\path\to\recordings
+; Render tools (scripts/render): DS Anim Studio 4.9.3's folder, for SoulsAssetPipeline.dll and SoulsFormats.dll
+; (referenced, never committed), and where renders go. Renders are game-derived: keep render_dir outside the repository.
+ds_anim_studio_dir = C:\path\to\DS Anim Studio v4.9.3 PUBLIC VER
+render_dir = C:\path\to\render-output
