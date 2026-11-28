@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- DS Anim Studio's libraries, by local path (never committed): dotnet build -p:DSAnimStudioDir=<folder>,
+       or python -I build.py, which reads ds_anim_studio_dir from research/ground_truth/local.config -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SoulsAssetPipeline"><HintPath>$(DSAnimStudioDir)\SoulsAssetPipeline.dll</HintPath></Reference>
+    <Reference Include="SoulsFormats"><HintPath>$(DSAnimStudioDir)\SoulsFormats.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
