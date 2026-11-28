@@ -7,7 +7,7 @@ damage@79.7,damage,79.733,correct,,2026-11-25T23:03:02
 damage@85.6,damage,85.600,correct,,2026-11-25T23:03:10
 damage@87.8,damage,87.800,correct,,2026-11-25T23:03:18
 damage@89.1,damage,89.133,correct,,2026-11-25T23:04:18
-death@92.9,death,92.900,correct,,2026-11-25T23:05:08
+death@89.1,death,89.133,correct,key was death@92.9 until version 5 linked the death to the punch (SCREEN_AFTER 8 s); the owner's verdict carried over,2026-11-25T23:05:08
 resurrection@96.6,resurrection,96.633,correct,,2026-11-25T23:05:10
 damage@102.8,damage,102.800,correct,,2026-11-25T23:05:12
 damage@111.8,damage,111.833,correct,,2026-11-25T23:05:14
