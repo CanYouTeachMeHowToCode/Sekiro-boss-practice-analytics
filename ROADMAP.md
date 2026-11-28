@@ -955,7 +955,7 @@ Delivered (owner confirmed, 2026-10-25; `research/failure_attribution/results_m2
 
 ---
 
-## V4 Milestone 3 — Video Upload and Failure Report
+## V4 Milestone 3 — Video Upload and Failure Report ✅
 
 Once attribution is reliable, let users upload recordings.
 
@@ -979,9 +979,11 @@ PostgreSQL should store metadata and references.
 
 ---
 
-## V4 Milestone 4 — Public Deployment
+## V4 Milestone 4 — Private Test (running; public launch deferred)
 
 Public deployment moves here from V3.1. The public product starts with the end-to-end flow: a user uploads a recording and sees their failures and the moves that caused them.
+
+The private test is running: at most 20 testers on one Google Cloud VM, with visual style B, until 2027-02-17 when the Google Cloud trial ends. It runs the whole flow without process problems, and testers' feedback is about how well moves are recognised. So the public launch is deferred (owner decision, 2026-11-28): Milestones 5–8 come first, and the project owner decides when to launch. The conditions and concerns below still apply then.
 
 Deploy only after:
 
@@ -1033,46 +1035,30 @@ full fight
 → move classification
 ```
 
+The dev-menu recordings' overlay readings name every animation the boss played, so this is first measured without new labelling, then on blind fights. Rendered clips from the game files may add references (the rendered-reference experiment comes first).
+
 Expand coverage from what the system could not attribute in users' recordings: add samples, then the other Genichiro encounters (prologue, the Sword Saint fight's Way of Tomoe phase, Inner Genichiro).
 
 ---
 
-## V4 Milestone 6 — Player Response Detection
+## V4 Milestone 6 — Per-Move Counts
 
-Detect or infer responses such as:
-
-- deflect
-- block
-- dodge
-- Mikiri Counter
-- jump counter
-- Lightning Reversal
-- hit taken
-- death
-
-Only calculate metrics supported by observed events.
-
----
-
-## V4 Milestone 7 — True Per-Move Analytics
-
-Once move occurrences and outcomes are observable:
+Once Milestone 5 observes every move occurrence, the report can say how often each move came and how often it hit:
 
 ```text
 Floating Passage
 
 Occurrences: 12
-Handled Successfully: 8
-Failed / Damaged: 4
+Hit you: 4
 ```
 
-True rates become valid because the denominator is known.
+A failure is a hit, so this rate is valid as soon as occurrences are observed; it does not need the player's responses.
 
 This is fundamentally different from V1–V3 failure-count analytics.
 
 ---
 
-## V4 Milestone 8 — Practice Recommendations
+## V4 Milestone 7 — Practice Recommendations
 
 Practice recommendations move here from the old V3 roadmap.
 
@@ -1094,6 +1080,33 @@ Practice the final sequence of Floating Passage.
 Recommendations must remain explainable.
 
 Do not introduce LLM-generated or opaque skill scores unless a real product need emerges.
+
+---
+
+## V4 Milestone 8 — Player Response Detection
+
+Detect or infer responses such as:
+
+- deflect
+- block
+- dodge
+- Mikiri Counter
+- jump counter
+- Lightning Reversal
+- hit taken
+- death
+
+The overlay shows only the boss's animations, so this is the hardest step; it comes last (owner decision, 2026-11-28). It refines the per-move counts:
+
+```text
+Floating Passage
+
+Occurrences: 12
+Handled Successfully: 8
+Failed / Damaged: 4
+```
+
+Only calculate metrics supported by observed events.
 
 ---
 
